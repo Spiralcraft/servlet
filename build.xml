@@ -1,0 +1,20 @@
+<project name="spiralcraft-servlet" default="build" basedir=".">
+
+
+  <target name="build">
+    <javac srcdir="source" classpath="${java-servlet.jar}:${spiralcraft-core.jar}:${spiralcraft-net.jar}"/>
+  </target>
+
+  <target name="jar" depends="build">
+    <jar 
+      destfile="../../lib/spiralcraft-servlet.jar" 
+      basedir="source"
+      includes="spiralcraft/**/*.class,spiralcraft/**/*.assembly.xml"
+      >
+      <Manifest>
+        <attribute name="Class-Path" value="spiralcraft-core.jar spiralcraft-net.jar"/>
+      </Manifest>
+    </jar>
+  </target>
+
+</project>
