@@ -21,6 +21,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.ServletException;
 
 import java.io.IOException;
 
@@ -46,7 +47,9 @@ public abstract class AutoFilter
   private boolean overridable;
   private boolean global;
   private Path path;
-  private String pattern;
+  protected String pattern;
+  
+  protected FilterConfig config;
 
   /**
    * @return whether this Filter augments a more general Filter instance
@@ -135,9 +138,25 @@ public abstract class AutoFilter
     System.err.println("AutoFilter.appliesToPath(): "+pattern+"->"+relativePath.format("/"));
     if (this.isGlobal())
     {
-      
-      if (relativePath.lastElement()!=null && relativePath.lastElement().equals(pattern))
+      if (pattern.equals("*"))
       { return true;
+      }
+      else if (pattern.startsWith("*"))
+      {
+        if (relativePath.lastElement()!=null
+            && relativePath.lastElement().endsWith(pattern.substring(1))
+            )
+        { return true;
+        }
+        else
+        { return false;
+        }
+      }
+      else
+      {
+        if (relativePath.lastElement()!=null && relativePath.lastElement().equals(pattern))
+        { return true;
+        }
       }
     }
     else
@@ -153,12 +172,28 @@ public abstract class AutoFilter
         { return false;
         }
       }
-      
-      if (relativePath.size()>0 
-          && relativePath.getElement(0)!=null
-          && relativePath.getElement(0).equals(pattern)
-          )
+      else if (pattern.equals("*"))
       { return true;
+      }
+      else if (pattern.startsWith("*"))
+      {
+        if (relativePath.lastElement()!=null
+           && relativePath.lastElement().endsWith(pattern.substring(1))
+           )
+        { return true;
+        }
+        else
+        { return false;
+        }
+      }
+      else 
+      {
+        if (relativePath.size()>0 
+            && relativePath.getElement(0)!=null
+            && relativePath.getElement(0).equals(pattern)
+            )
+        { return true;
+        }
       }
     }
     return false;
@@ -177,14 +212,19 @@ public abstract class AutoFilter
   
   
   public void init(FilterConfig config)
-  { }
+  { 
+    this.config=config;
+    if (pattern==null)
+    { pattern="*";
+    }
+  }
   
   public abstract void doFilter
     (ServletRequest request
     ,ServletResponse response
     ,FilterChain chain
     )
-    throws IOException;
+    throws IOException,ServletException;
   
   public void destroy()
   { }

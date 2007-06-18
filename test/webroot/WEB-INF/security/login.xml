@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="Cp1252"?>
+
+<security:Login.list
+	xmlns:security="java:/spiralcraft/security"
+	>
+
+  <security:Login>
+  	<username>test1
+  	</username>
+		<clearpass>test1
+		</clearpass>
+  </security:Login>
+
+  <security:Login>
+  	<username>test2
+  	</username>
+		<clearpass>test2
+		</clearpass>
+  </security:Login>
+
+</security:Login.list>

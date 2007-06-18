@@ -21,7 +21,10 @@ import spiralcraft.util.Path;
 import spiralcraft.util.tree.PathTree;
 
 import spiralcraft.stream.Resource;
+
 import spiralcraft.stream.file.FileResource;
+
+import spiralcraft.stream.context.ContextResource;
 
 import spiralcraft.time.Clock;
 
@@ -40,12 +43,17 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.File;
+import java.io.PrintStream;
 
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.MalformedURLException;
+
+
 
 
 /**
@@ -78,20 +86,51 @@ public class Controller
   private FilterConfig config;
   private Resource root;
   private long lastUpdate;
-  
+  private URI contextURI;
 
   /**
    * Filter.init()
    */
   public void init(FilterConfig config)
+    throws ServletException
   {
     this.config=config;
     String realPath=config.getServletContext().getRealPath("/");
     if (realPath!=null)
     { root=new FileResource(new File(realPath));
     }
-    System.err.println("Controller.init(): path="+realPath);
-    updateConfig();
+    
+    try
+    { contextURI =config.getServletContext().getResource("/").toURI();
+    }
+    catch (URISyntaxException x)
+    { 
+      try
+      {
+        throw new ServletException
+          ("Error reading context URL '"
+          +config.getServletContext().getResource("/").toString()
+          ,x);
+      }
+      catch (MalformedURLException y)
+      { y.printStackTrace();
+      }
+    }
+    catch (MalformedURLException x)
+    { x.printStackTrace();
+    }
+    System.err.println
+      ("Controller.init(): path="+realPath+" contextURI="+contextURI);
+    
+    
+    URI oldWar=ContextResource.lookup("war");
+    ContextResource.bind("war",contextURI);
+    try
+    { updateConfig();
+    }
+    finally
+    { ContextResource.bind("war",oldWar);
+    }
   }
   
   /**
@@ -104,12 +143,21 @@ public class Controller
     )
     throws ServletException,IOException
   {
-    updateConfig();
-    HttpServletRequest request=(HttpServletRequest) servletRequest;
+    URI oldWar=ContextResource.lookup("war");
+    ContextResource.bind("war",contextURI);
+    try
+    {
     
-    String pathString=request.getRequestURI();
-    FilterChain chain=resolveChain(pathString,endpoint);
-    chain.doFilter(servletRequest,servletResponse);
+      updateConfig();
+      HttpServletRequest request=(HttpServletRequest) servletRequest;
+    
+      String pathString=request.getRequestURI();
+      FilterChain chain=resolveChain(pathString,endpoint);
+      chain.doFilter(servletRequest,servletResponse);
+    }
+    finally
+    { ContextResource.bind("war",oldWar);
+    }
     
   }
   
@@ -122,6 +170,10 @@ public class Controller
   
   private synchronized void updateConfig()
   {
+    if (root==null)
+    { return;
+    }
+    
     long time=Clock.instance().approxTimeMillis();
     if (time-lastUpdate>updateIntervalMs)
     { 
@@ -191,14 +243,17 @@ public class Controller
             }
             
           }
-          catch (PersistenceException x)
+          catch (Throwable x)
           { 
             
             Resource errorResource=resource.asContainer().getChild(controlFileName+".err");
             try
             {
-              OutputStream out=errorResource.getOutputStream();
-              out.write(x.toString().getBytes());
+              PrintStream out=new PrintStream(errorResource.getOutputStream());
+              out.println("Error processing filter definitions");
+              out.println(x.toString());
+              out.println("Stack trace ----------------------------------------");
+              x.printStackTrace(out);
               out.flush();
               out.close();
             }
@@ -451,6 +506,9 @@ public class Controller
     { 
       this.resource=resource;
       this.lastModified=resource.getLastModified();
+      
+      // XXX Set a context so that resources can access the web root
+      //   file system in a context independent manner
       
       XmlBean <List<AutoFilter>> bean
         =new XmlBean<List<AutoFilter>>

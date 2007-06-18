@@ -37,7 +37,6 @@ public class RedirectFilter
     
   }
   
-  @Override
   public void doFilter
     (ServletRequest request
     , ServletResponse response
@@ -49,12 +48,10 @@ public class RedirectFilter
     httpResponse.sendRedirect(httpResponse.encodeRedirectURL(redirectURL));
   }
 
-  @Override
   public String getFilterType()
   { return "redirect";
   }
 
-  @Override
   public void setParentInstance(AutoFilter parentInstance)
   {
 
