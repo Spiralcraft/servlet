@@ -246,19 +246,17 @@ public class TranslationFilter
     }
     
   }
-  
-  @Override
-  public String getFilterType()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
 
   @Override
   public void setParentInstance(AutoFilter parentInstance)
   {
     // TODO Auto-generated method stub
 
+  }
+  
+  @Override
+  public Class<? extends AutoFilter> getCommonType()
+  { return TranslationFilter.class;
   }
 
 }

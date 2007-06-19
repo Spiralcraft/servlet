@@ -57,4 +57,7 @@ public class RedirectFilter
 
   }
 
+  public Class<? extends AutoFilter> getCommonType()
+  { return RedirectFilter.class;
+  }
 }

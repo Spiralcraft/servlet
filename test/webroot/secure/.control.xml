@@ -3,12 +3,13 @@
   >
 
 	<autofilter:AuthenticateFilter>
-	
+				
 		<authenticator>
 			<security:DataAuthenticator
 			  xmlns:security="java:/spiralcraft/security/spi"
 			  >
-			
+
+				
 				<realmName>test
 				</realmName>
 				

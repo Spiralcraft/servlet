@@ -43,8 +43,10 @@ import java.io.IOException;
 public abstract class AutoFilter
   implements Filter
 {
-  private boolean additive;
-  private boolean overridable;
+
+  
+  private boolean additive=true;
+  private boolean overridable=true;
   private boolean global;
   private Path path;
   protected String pattern;
@@ -55,6 +57,10 @@ public abstract class AutoFilter
    * @return whether this Filter augments a more general Filter instance
    *   for an enclosing scope. If false, this Filter will override
    *   the general Filter.
+   *   
+   * <P>Generally, this defaults to true, but some specific types of filters
+   *   might want to disable the influence of any parent filter by setting 
+   *   this to false.
    */
   public boolean isAdditive()
   { return additive;
@@ -71,14 +77,20 @@ public abstract class AutoFilter
   /**
    * @return whether this Filter can be overridden in a more 
    *   specific scope.
+   *   
+   * <P>Generally, this defaults to true, but some specific types of filters
+   *   (ie. security related) might not permit overrides.
    */
   public boolean isOverridable()
   { return overridable;
   }
 
   /**
-   * Indicate whether this Filter can be overridden in a more
+   * <P>Indicate whether this Filter can be overridden in a more
    *   specific scope.
+   *   
+   * <P>Generally, this defaults to true, but some specific types of filters
+   *   (ie. security related) might not permit overrides.
    */
   public void setOverridable(boolean overridable)
   { this.overridable=overridable;
@@ -119,11 +131,20 @@ public abstract class AutoFilter
   
   /**
    * 
-   * @return The pattern which determines whether this Filter applies to a given path. The
-   *   pattern will be matched against the path.
+   * @return The pattern which determines whether this Filter applies to a 
+   *   given path. The pattern will be matched against the path.
    */
   public void setPattern(String pattern)
   { this.pattern=pattern;
+  }
+  
+  /**
+   * 
+   * @return The pattern which determines whether this Filter applies to a 
+   *   given path. The pattern will be matched against the path.
+   */
+  public String getPattern()
+  { return pattern;
   }
   
   /**
@@ -201,15 +222,12 @@ public abstract class AutoFilter
   
   /**
    * Called when a more general Filter already applies that
-   *   this filter adds to or overrides.
+   *   this filter adds to or overrides. If this filter overrides the
+   *   parent filter, 
    */
   public abstract void setParentInstance(AutoFilter parentInstance);
   
-  /**
-   * @return A unique identifier for the type of filter 
-   */
-  public abstract String getFilterType();
-  
+  public abstract Class<? extends AutoFilter> getCommonType();
   
   public void init(FilterConfig config)
   { 

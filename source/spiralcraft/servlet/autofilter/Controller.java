@@ -122,7 +122,7 @@ public class Controller
     System.err.println
       ("Controller.init(): path="+realPath+" contextURI="+contextURI);
     
-    
+    // Bind the "context://war" resource prefix to this thread.
     URI oldWar=ContextResource.lookup("war");
     ContextResource.bind("war",contextURI);
     try
@@ -143,6 +143,7 @@ public class Controller
     )
     throws ServletException,IOException
   {
+    // Bind the "context://war" resource prefix to this thread.
     URI oldWar=ContextResource.lookup("war");
     ContextResource.bind("war",contextURI);
     try
@@ -154,6 +155,7 @@ public class Controller
       String pathString=request.getRequestURI();
       FilterChain chain=resolveChain(pathString,endpoint);
       chain.doFilter(servletRequest,servletResponse);
+      
     }
     finally
     { ContextResource.bind("war",oldWar);
@@ -490,6 +492,20 @@ public class Controller
       lastModified=0;
     }
     
+    private boolean patternsIntersect(String pattern1, String pattern2)
+    {
+      if (pattern1.equals("*"))
+      { return true;
+      }
+      else if (pattern2.equals("*"))
+      { return true;
+      }
+      else if (pattern1.equals(pattern2))
+      { return true;
+      }
+      return false;
+    }
+    
     /**
      * Called to recompute the effective filters
      */
@@ -497,8 +513,90 @@ public class Controller
     { 
       System.err.println("Controller.FilterSet.compute()");
       effectiveFilters.clear();
-      effectiveFilters.addAll(localFilters);
       
+      ArrayList<AutoFilter> localExcludes
+        =new ArrayList<AutoFilter>();
+      
+      
+      FilterSet parentSet=findParentSet();
+      if (parentSet!=null)
+      {
+        // Integrate the parent filter set into this level
+        for (AutoFilter parentFilter: parentSet.effectiveFilters)
+        { 
+          if (parentFilter.isGlobal())
+          { 
+            // Only global filters are considered for inheritance
+            
+            boolean addParent=true;
+            for (AutoFilter localFilter : localFilters)
+            {
+              if (localFilter.getCommonType()
+                  .isAssignableFrom(parentFilter.getClass())
+                  )
+              {
+                
+                if (patternsIntersect
+                      (parentFilter.getPattern(),localFilter.getPattern()))
+                {
+                
+                  // Determine how the parent filter relates to a local filter
+                  //   of a compatible type and an intersecting pattern
+                
+                  if (parentFilter.isOverridable())
+                  {
+                    if (!localFilter.isAdditive())
+                    { 
+                      // Completely override the parent
+                      addParent=false;
+                    }
+
+                    // Let the filter and it's parent figure out what to do
+                    localFilter.setParentInstance(parentFilter);
+                  }
+                  else
+                  { 
+                    if (!localFilter.isAdditive())
+                    { 
+                      // Completely ignore the local filter
+                      localExcludes.add(localFilter);
+                    }
+                    else
+                    { 
+                      // Let the filter and it's parent figure out what to do
+                      localFilter.setParentInstance(parentFilter);
+                    }
+                  }
+                }
+              }
+            }
+            
+            if (addParent)
+            { effectiveFilters.add(parentFilter);
+            }
+          }
+          
+        }
+      }
+      
+      for (AutoFilter filter: localFilters)
+      { 
+        if (!localExcludes.contains(filter))
+        { effectiveFilters.add(filter);
+        }
+      }
+    }
+    
+    private FilterSet findParentSet()
+    { 
+      PathTree<FilterSet> parentNode=node.getParent();
+      FilterSet parentSet=null;
+      while (parentNode!=null && parentSet==null)
+      {
+        parentSet=parentNode.get();
+        parentNode=parentNode.getParent();
+      }
+      return parentSet;
     }
     
     public void loadResource(Resource resource,Path container)

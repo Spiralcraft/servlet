@@ -35,6 +35,18 @@ import spiralcraft.security.auth.AuthSession;
 
 import java.io.IOException;
 
+/**
+ * <P>Requires HTTP based authentication using an application supplied 
+ *   Authenticator implementation.
+ * 
+ * <P>By default, in order to mitigate the effects of misconfiguration
+ *  this filter is global (applies to subdirectories), overridable,
+ *  and is not additive (the HTTP protocol only allows one active
+ *  set of credentials at a time)
+ * 
+ * @author mike
+ *
+ */
 public class AuthenticateFilter
     extends AutoFilter
 {
@@ -44,6 +56,12 @@ public class AuthenticateFilter
   private HttpAdapter httpAdapter;
   private String sessionName;
   private boolean useSession;
+  
+  { 
+    setOverridable(true);
+    setAdditive(false);
+    setGlobal(true);
+  }
 
   
   public void setUseSession(boolean val)
@@ -157,14 +175,14 @@ public class AuthenticateFilter
     }
   }
   
-
-  public String getFilterType()
-  { return "authenticate";
-  }
-
+  @Override
   public void setParentInstance(AutoFilter parentInstance)
   {
-    
+  }
+  
+  @Override
+  public Class<? extends AutoFilter> getCommonType()
+  { return AuthenticateFilter.class;
   }
 
 }
