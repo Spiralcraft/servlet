@@ -39,6 +39,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -153,6 +154,11 @@ public class Controller
       HttpServletRequest request=(HttpServletRequest) servletRequest;
     
       String pathString=request.getRequestURI();
+      if (pathString.startsWith("/WEB-INF"))
+      { 
+        ((HttpServletResponse) servletResponse).sendError(403);
+        return;
+      }
       FilterChain chain=resolveChain(pathString,endpoint);
       chain.doFilter(servletRequest,servletResponse);
       
