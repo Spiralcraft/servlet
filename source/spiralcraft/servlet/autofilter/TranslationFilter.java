@@ -14,30 +14,28 @@
 //
 package spiralcraft.servlet.autofilter;
 
+import java.io.File;
 import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.ServletException;
-
-import javax.servlet.http.HttpServletRequest;
-
-import spiralcraft.stream.Resource;
-import spiralcraft.stream.Resolver;
-import spiralcraft.stream.StreamUtil;
-import spiralcraft.stream.Translator;
-
-import spiralcraft.util.Path;
-
-import java.util.HashMap;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.HashMap;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
+import spiralcraft.util.Path;
+
+import spiralcraft.vfs.Resolver;
+import spiralcraft.vfs.Resource;
+import spiralcraft.vfs.StreamUtil;
+import spiralcraft.vfs.Translator;
 
 /**
  * <P>A filter which generates a virtual translated resources from existing

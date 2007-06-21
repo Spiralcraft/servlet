@@ -14,15 +14,13 @@
 //
 package spiralcraft.servlet.autofilter;
 
+import java.io.IOException;
+import java.net.URI;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-
-import java.net.URI;
 
 public class RedirectFilter
     extends AutoFilter

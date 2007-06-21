@@ -14,26 +14,23 @@
 //
 package spiralcraft.servlet.autofilter;
 
+import java.io.IOException;
+
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.ServletException;
-
-import javax.servlet.FilterConfig;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import spiralcraft.security.auth.AuthSession;
+import spiralcraft.security.auth.Authenticator;
+import spiralcraft.security.auth.Credential;
+import spiralcraft.security.auth.TestAuthenticator;
 import spiralcraft.servlet.security.BasicHttpAdapter;
 import spiralcraft.servlet.security.HttpAdapter;
-
-import spiralcraft.security.auth.Credential;
-import spiralcraft.security.auth.Authenticator;
-import spiralcraft.security.auth.TestAuthenticator;
-import spiralcraft.security.auth.AuthSession;
-
-import java.io.IOException;
 
 /**
  * <P>Requires HTTP based authentication using an application supplied 

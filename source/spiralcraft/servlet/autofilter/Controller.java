@@ -14,45 +14,35 @@
 //
 package spiralcraft.servlet.autofilter;
 
-import spiralcraft.servlet.util.LinkedFilterChain;
-
-import spiralcraft.util.Path;
-
-import spiralcraft.util.tree.PathTree;
-
-import spiralcraft.stream.Resource;
-
-import spiralcraft.stream.file.FileResource;
-
-import spiralcraft.stream.context.ContextResource;
-
-import spiralcraft.time.Clock;
-
-import spiralcraft.data.persist.XmlBean;
-import spiralcraft.data.persist.PersistenceException;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.ServletException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.File;
-import java.io.PrintStream;
-
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.MalformedURLException;
+import spiralcraft.data.persist.PersistenceException;
+import spiralcraft.data.persist.XmlBean;
+import spiralcraft.servlet.util.LinkedFilterChain;
+import spiralcraft.time.Clock;
+import spiralcraft.util.Path;
+import spiralcraft.util.tree.PathTree;
+import spiralcraft.vfs.Resource;
+import spiralcraft.vfs.context.ContextResource;
+import spiralcraft.vfs.file.FileResource;
 
 
 
