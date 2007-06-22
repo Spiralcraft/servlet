@@ -7,7 +7,7 @@
   <security:Login>
   	<username>test1
   	</username>
-		<clearpass>test11
+		<clearpass>test1
 		</clearpass>
   </security:Login>
 

@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=Cp1252">
+  <title></title>
+</head>
+<body>
+<h1>Spiralcraft</h1>
+<hr size="2" width="100%">
+<h2>spiralcraft.servlet package</h2>
+The spiralcraft.servlet package provides a framework for developing
+applications that utilize the Java(tm) Servlet API.<br>
+<br>
+<h3><span style="font-weight: bold;">Contextual Resources</span><br>
+</h3>
+The spiralcraft.servlet package works in conjuction with the
+spiralcraft.vfs package to provide contextual resources. The following
+URI authorities are contributed by this package:<br>
+<ul>
+  <li><code>context://war</code><br>
+Maps to the root of the servlet context/web application , ie. <code>servletContext.getResource("/")</code></li>
+  <li><code>context://data</code><br>
+Maps to the root of the directory that holds persistent data for the
+web application deployment. This defaults to <code>servletContext.getResource("/WEB-INF/data")</code>.<br>
+  </li>
+</ul>
+For example, resolving the URI&nbsp; <code>context://data/mydata.xml</code>
+somewhere in the context of an appropriately&nbsp; configured
+spiralcraft.servlet component with a root directory of <code>/home/mike/www/mydomain.com</code>
+will return a Resource which provides access to a file called <code>mydata.xml</code>
+in <code>/home/mike/www/mydomain.com</code><code>/WEB-INF/data</code>.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

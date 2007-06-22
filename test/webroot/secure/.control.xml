@@ -2,33 +2,7 @@
   xmlns:autofilter="java:/spiralcraft/servlet/autofilter"
   >
 
-	<autofilter:AuthenticateFilter>
+	<autofilter:AuthenticateFilter ref="context://data/config/Authenticator.xml"/>
 				
-		<authenticator>
-			<security:DataAuthenticator
-			  xmlns:security="java:/spiralcraft/security/spi"
-			  >
-
-				
-				<realmName>test
-				</realmName>
-				
-				<source>
-				
-					<dataxml:XmlQueryable
-						xmlns:dataxml="java:/spiralcraft/data/xml"
-						>
-						<resourceURI>context://war/WEB-INF/security/login.xml
-						</resourceURI>
-							
-					</dataxml:XmlQueryable>
-					
-				</source>
-			
-			</security:DataAuthenticator>
-		</authenticator>
-
-	</autofilter:AuthenticateFilter>
-
 </autofilter:AutoFilter.list>
 

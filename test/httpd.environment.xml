@@ -1,8 +1,8 @@
-<exec:ApplicationEnvironment
+<exec:ApplicationEnvironment.assy
   xmlns:exec="java:/spiralcraft/exec"
   >
   <mainClass>spiralcraft.exec.Executor</mainClass>
-  <commandLine>HttpDaemon -</commandLine>
+  <commandLine>HttpDaemon.assy -</commandLine>
   <modules>
     <String>spiralcraft-pioneer</String>
     <String>spiralcraft-pioneer-legacy</String>
@@ -10,4 +10,4 @@
     <String>spiralcraft-core</String>
     <String>java-servlet-2.3</String>
   </modules>
-</exec:ApplicationEnvironment>
+</exec:ApplicationEnvironment.assy>

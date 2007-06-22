@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="Cp1252"?>
+
+<autofilter:AuthenticateFilter
+	xmlns:autofilter="java:/spiralcraft/servlet/autofilter"
+	>
+				
+	<authenticator>
+		<security:DataAuthenticator
+		  xmlns:security="java:/spiralcraft/security/spi"
+		  >
+		
+			
+			<realmName>test
+			</realmName>
+			
+			<source>
+			
+				<dataxml:XmlQueryable
+					xmlns:dataxml="java:/spiralcraft/data/xml"
+					>
+					<resourceURI>context://data/security/login.xml
+					</resourceURI>
+						
+				</dataxml:XmlQueryable>
+				
+			</source>
+		
+		</security:DataAuthenticator>
+	</authenticator>
+	
+</autofilter:AuthenticateFilter>

@@ -41,7 +41,7 @@ import spiralcraft.time.Clock;
 import spiralcraft.util.Path;
 import spiralcraft.util.tree.PathTree;
 import spiralcraft.vfs.Resource;
-import spiralcraft.vfs.context.ContextResource;
+import spiralcraft.vfs.context.ContextResourceMap;
 import spiralcraft.vfs.file.FileResource;
 
 
@@ -77,7 +77,8 @@ public class Controller
   private FilterConfig config;
   private Resource root;
   private long lastUpdate;
-  private URI contextURI;
+  private final ContextResourceMap contextResourceMap
+    = new ContextResourceMap();
 
   /**
    * Filter.init()
@@ -91,6 +92,7 @@ public class Controller
     { root=new FileResource(new File(realPath));
     }
     
+    URI contextURI=null;
     try
     { contextURI =config.getServletContext().getResource("/").toURI();
     }
@@ -113,14 +115,16 @@ public class Controller
     System.err.println
       ("Controller.init(): path="+realPath+" contextURI="+contextURI);
     
-    // Bind the "context://war" resource prefix to this thread.
-    URI oldWar=ContextResource.lookup("war");
-    ContextResource.bind("war",contextURI);
+    // Bind the "context://www","context://data" resources to this thread.
+    contextResourceMap.put("war",contextURI);
+    contextResourceMap.put("data",contextURI.resolve("WEB-INF/data/"));
+    
+    contextResourceMap.push();
     try
     { updateConfig();
     }
     finally
-    { ContextResource.bind("war",oldWar);
+    { contextResourceMap.pop();
     }
   }
   
@@ -134,9 +138,7 @@ public class Controller
     )
     throws ServletException,IOException
   {
-    // Bind the "context://war" resource prefix to this thread.
-    URI oldWar=ContextResource.lookup("war");
-    ContextResource.bind("war",contextURI);
+    contextResourceMap.push();
     try
     {
     
@@ -154,7 +156,7 @@ public class Controller
       
     }
     finally
-    { ContextResource.bind("war",oldWar);
+    { contextResourceMap.pop();
     }
     
   }
