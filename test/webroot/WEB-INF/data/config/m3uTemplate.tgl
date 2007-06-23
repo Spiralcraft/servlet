@@ -1,0 +1,3 @@
+#EXTM3U
+#EXTINF:0,<%=URI.toString().substring(0,URI.toString().length()-4)/%>
+<%=URI.toString().substring(0,URI.toString().length()-4).concat(".mp3") /%>

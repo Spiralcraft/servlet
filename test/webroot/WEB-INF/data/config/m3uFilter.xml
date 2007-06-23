@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="Cp1252"?>
+
+<autofilter:TranslationFilter
+	xmlns:autofilter="java:/spiralcraft/servlet/autofilter"
+	>
+    
+	<global>true
+	</global>
+
+	<pattern>*.m3u
+	</pattern>
+
+	<originalSuffix>mp3
+	</originalSuffix>
+
+	<contentType>audio-x/mpegurl
+	</contentType>
+
+	<translator>
+  	<textgen:MetaTranslator
+    	xmlns:textgen="java:/spiralcraft/textgen/util"
+    	>
+
+    	<templateURI>context://data/config/m3uTemplate.tgl
+    	</templateURI>
+  	</textgen:MetaTranslator>
+	</translator>
+
+</autofilter:TranslationFilter> 

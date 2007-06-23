@@ -8,6 +8,7 @@
     <String>spiralcraft-pioneer-legacy</String>
     <String>spiralcraft-servlet</String>
     <String>spiralcraft-core</String>
+    <String>spiralcraft-textgen</String>
     <String>java-servlet-2.3</String>
   </modules>
 </exec:ApplicationEnvironment.assy>

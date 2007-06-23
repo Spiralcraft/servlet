@@ -1,10 +1,10 @@
 <autofilter:AutoFilter.list
   xmlns:autofilter="java:/spiralcraft/servlet/autofilter"
   >
-
-	<autofilter:AutoFilter
-		ref="context://data/config/Authenticator.xml"
-	/>
-				
+	
+  <autofilter:AutoFilter
+ 		ref="context://data/config/m3uFilter.xml"
+ 	/>
+  
 </autofilter:AutoFilter.list>
 
