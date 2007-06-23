@@ -3,7 +3,7 @@
   >
 
 	<autofilter:AutoFilter
-		ref="context://data/config/Authenticator.xml"
+		ref="context://data/config/httpAuthFilter.xml"
 	/>
 				
 </autofilter:AutoFilter.list>
