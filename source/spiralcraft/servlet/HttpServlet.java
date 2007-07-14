@@ -14,13 +14,17 @@
 //
 package spiralcraft.servlet;
 
+import java.io.IOException;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.ServletException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * Base class for web servlets
@@ -40,6 +44,7 @@ public class HttpServlet
   
 
   public void init(ServletConfig config)
+    throws ServletException
   { _config=config;
   }
   
@@ -48,34 +53,42 @@ public class HttpServlet
   }
   
   protected void doGet(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException,IOException
   {
   }
   
   protected void doHead(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException,IOException
   { 
   }
 
   protected void doPost(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException,IOException
   {
   }
 
   protected void doPut(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException,IOException
   {
   }
 
   protected void doOptions(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException,IOException
   { 
   }
 
   protected void doTrace(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException,IOException
   {
   }
 
   protected void doDelete(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException,IOException
   {
   }
 
   public void service(ServletRequest request,ServletResponse response)
+    throws ServletException,IOException
   {
     HttpServletRequest httpRequest=(HttpServletRequest) request;
     HttpServletResponse httpResponse=(HttpServletResponse) response;

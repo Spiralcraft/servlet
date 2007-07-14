@@ -125,7 +125,7 @@ public class AuthenticateFilter
       return true;
     }
     
-    Credential[] credentials
+    Credential<?>[] credentials
       =httpAdapter.readAuthorization(httpRequest);
     
     if (credentials==null)

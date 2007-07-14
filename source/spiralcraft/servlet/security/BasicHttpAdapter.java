@@ -57,7 +57,7 @@ public class BasicHttpAdapter
   { this.realm=realm;
   }
     
-  public Credential[] readAuthorization(HttpServletRequest request)
+  public Credential<?>[] readAuthorization(HttpServletRequest request)
     throws IOException,ServletException
   {
     // Get encoded username and password 

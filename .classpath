@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="SPIRALCRAFT_HOME/lib/java-servlet-2.3.jar"/>
 	<classpathentry kind="var" path="SPIRALCRAFT_HOME/lib/spiralcraft-core.jar"/>
+	<classpathentry kind="var" path="SPIRALCRAFT_HOME/lib/spiralcraft-textgen.jar"/>
 	<classpathentry kind="output" path="source"/>
 </classpath>

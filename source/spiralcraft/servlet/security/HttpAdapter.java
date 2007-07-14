@@ -51,7 +51,7 @@ public interface HttpAdapter
    * @throws IOException
    * @throws ServletException
    */
-  Credential[] readAuthorization(HttpServletRequest request)
+  Credential<?>[] readAuthorization(HttpServletRequest request)
     throws IOException,ServletException;
   
   /**
