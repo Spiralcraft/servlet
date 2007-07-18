@@ -1,0 +1,104 @@
+<HTML>
+	<BODY>
+		This is a generated page
+		<TABLE border="1">
+			<TR>
+				<TH>Expression</TH>
+				<TH>Result</TH>
+			</TR>
+
+			<TR>
+				<TD>[http:request] .authType</TD>
+				<TD><%=[http:request] .authType /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .contextPath</TD>
+				<TD><%=[http:request] .contextPath /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .cookies</TD>
+				<TD>
+					<%Iterate x="[http:request] .cookies" %>
+						<%=./%><BR>
+					<%/Iterate%>
+				</TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .headerNames</TD>
+				<TD>
+					<%Iterate x="[http:request] .headerNames" %>
+						<%=./%><BR>
+					<%/Iterate%>
+				</TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .method</TD>
+				<TD><%=[http:request] .method /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .pathInfo</TD>
+				<TD><%=[http:request] .pathInfo /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .pathTranslated</TD>
+				<TD><%=[http:request] .pathTranslated /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .queryString</TD>
+				<TD><%=[http:request] .queryString /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .remoteUser</TD>
+				<TD><%=[http:request] .remoteUser /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .requestedSessionId</TD>
+				<TD><%=[http:request] .requestedSessionId /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .requestURI</TD>
+				<TD><%=[http:request] .requestURI /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .requestURL</TD>
+				<TD><%=[http:request] .requestURL /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .servletPath</TD>
+				<TD><%=[http:request] .servletPath /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .userPrincipal</TD>
+				<TD><%=[http:request] .userPrincipal /%></TD>
+		 	</TR>
+		 	
+			<TR>
+				<TD>[http:request] .requestedSessionIdFromCookie</TD>
+				<TD><%=[http:request] .requestedSessionIdFromCookie /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .requestedSessionIdFromURL</TD>
+				<TD><%=[http:request] .requestedSessionIdFromURL /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .requestedSessionIdValid</TD>
+				<TD><%=[http:request] .requestedSessionIdValid /%></TD>
+		 	</TR>
+	  </TABLE>
+	</BODY>
+</HTML>  

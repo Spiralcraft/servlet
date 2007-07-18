@@ -27,16 +27,25 @@
 					<servletMappings>
 					
 						<phttpd:ServletMapping>
-							
+
 							<servletName>file
 							</servletName>
-							
+
 							<URLPattern>/
 							</URLPattern>
+
+						</phttpd:ServletMapping>
+
+						<phttpd:ServletMapping>
 							
+							<servletName>generator
+							</servletName>
+							
+							<URLPattern>*.ghtml
+							</URLPattern>
 							
 						</phttpd:ServletMapping>
-						
+
 					</servletMappings>
 					
 					<servletHolders>
@@ -47,6 +56,16 @@
 							</servletName>
 							
 							<servletClass>com.spiralcraft.httpd.FileServlet
+							</servletClass>
+							
+						</phttpd:ServletHolder>
+						
+						<phttpd:ServletHolder>
+							
+							<servletName>generator
+							</servletName>
+							
+							<servletClass>spiralcraft.servlet.pages.GeneratorServlet
 							</servletClass>
 							
 						</phttpd:ServletHolder>

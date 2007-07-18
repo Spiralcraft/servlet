@@ -11,6 +11,21 @@
 The spiralcraft.servlet package provides a framework for developing
 applications that utilize the Java(tm) Servlet API.<br>
 <br>
+<h3><span style="font-weight: bold;">Application Lifecycle</span><br>
+</h3>
+The various components in the spiralcraft.servlet package which
+interface with the Servlet API and provide application specific
+functionality use a common mechanism for maintaining state at both the
+application level and the session level.<br>
+<br>
+The spiralcraft.builder.Assembly is the underlying "scaffolding"
+mechanism which enables this functionality.<br>
+<h4>ApplicationContext</h4>
+An ApplicationContext is dynamically loaded and defines a namespace
+which exposes an application specific set of components for access by
+user interface components in the request processing chain.<br>
+<h4>SessionContext</h4>
+<br>
 <h3><span style="font-weight: bold;">Contextual Resources</span><br>
 </h3>
 The spiralcraft.servlet package works in conjuction with the

@@ -184,6 +184,7 @@ public abstract class AutoFilter
     { 
       if (pattern.equals("/"))
       {
+//        System.err.println("AutoFilter: relativePath="+relativePath);
         if (relativePath.size()==0)
         { 
           // Only applies to the directory

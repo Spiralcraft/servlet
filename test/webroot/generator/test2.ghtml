@@ -1,0 +1,46 @@
+<HTML>
+	<BODY>
+		This is a generated page
+		<TABLE border="1">
+			<TR>
+				<TH>Expression</TH>
+				<TH>Result</TH>
+			</TR>
+
+			
+			<TR>
+				<TD>[data:dataSession] .class</TD>
+				<TD><%=[data:dataSession] .class /%></TD>
+		 	</TR>
+		 	
+
+			<TR>
+				<TD>[data:dataSession] data</TD>
+				<TD><%=[data:dataSession] data /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[data:dataSession] view</TD>
+				<TD><%=[data:dataSession] view /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>Iteration: [data:dataSession] view.login</TD>
+				<TD>
+					<%=[data:dataSession] view.login /%>
+					<TABLE>
+						<%Iterate x="[data:dataSession] view.login" %>
+							<TR>
+								<TD><%=.username/%>
+								</TD>
+								<TD><%=.clearpass/%>
+								</TD>
+							</TR>
+						<%/Iterate%>
+					</TABLE>
+				</TD>
+		 	</TR>
+			
+	  </TABLE>
+	</BODY>
+</HTML>  

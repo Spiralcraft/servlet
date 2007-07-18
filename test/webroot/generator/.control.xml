@@ -1,0 +1,23 @@
+<autofilter:AutoFilter.list
+  xmlns:autofilter="java:/spiralcraft/servlet/autofilter"
+  >
+  <autofilter:SessionAssemblyFilter>
+    
+    <pattern>*
+    </pattern>
+    
+    <namespace>data
+    </namespace>
+    
+    <name>dataSession
+    </name>
+    
+    <sessionAttributeName>spiralcraft.data.session
+    </sessionAttributeName>
+    
+ 		<typeURI>context://data/config/testDataSession.assy
+ 		</typeURI>
+
+  </autofilter:SessionAssemblyFilter>
+</autofilter:AutoFilter.list>
+

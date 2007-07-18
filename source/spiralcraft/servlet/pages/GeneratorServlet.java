@@ -18,9 +18,11 @@ import spiralcraft.servlet.HttpServlet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.servlet.ServletException;
 
 import java.io.IOException;
+import java.io.Writer;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,12 +34,15 @@ import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
 
+import spiralcraft.textgen.GenerationContext;
 import spiralcraft.textgen.Generator;
 import spiralcraft.textgen.Element;
 
 import spiralcraft.text.ParseException;
 
 import spiralcraft.servlet.HttpFocus;
+
+import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
@@ -60,14 +65,33 @@ public class GeneratorServlet
   private final HashMap<String,ResourceEntry> resourceMap
     =new HashMap<String,ResourceEntry>();
   
-  private final HttpFocus<Void> httpFocus=new HttpFocus<Void>();
+  private HttpFocus<?> httpFocus;
   
+
   @Override
   protected void doGet(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
+    if (httpFocus==null)
+    {
+      // Initialize the local HTTP Focus with its parent that's always passed
+      //   via the request
+      
+      try
+      {
+        HttpFocus<?> focus=new HttpFocus<Void>();
+        focus.init();
+        focus.setParentFocus(FocusFilter.getFocusChain(request));
+        httpFocus=focus;
+      }
+      catch (BindException x)
+      { throw new ServletException(x.toString(),x);
+      }
+    }
+    
     try
     {
+      httpFocus.push(this,request,response);
       ResourceEntry entry=getEntry(request);
       if (entry==null)
       { response.sendError(404,request.getRequestURI()+" not found");
@@ -83,6 +107,10 @@ public class GeneratorServlet
     catch (UnresolvableURIException x)
     { throw new ServletException(x.toString(),x);
     }
+    finally
+    { httpFocus.pop();
+    }
+    
   }
   
   /**
@@ -99,7 +127,7 @@ public class GeneratorServlet
       ,IOException
   {
     String resourcePath=request.getPathInfo();
-    if (resourcePath==null)
+    if (resourcePath==null || resourcePath.length()==0)
     { resourcePath=request.getServletPath();
     }
     
@@ -107,6 +135,7 @@ public class GeneratorServlet
     { return null;
     }
     
+    // System.err.println("GeneratorServlet: resource path="+resourcePath);
     ResourceEntry entry;
     synchronized (resourceMap)
     {
@@ -149,9 +178,8 @@ class ResourceEntry
   private long lastRead;
   private Generator generator;
   
-  @SuppressWarnings("unused") // XXX Incomplete
+
   private Element element;
-  @SuppressWarnings("unused") // XXX Incomplete
   private Exception exception;
   
   public ResourceEntry(Resource resource,HttpFocus<?> focus)
@@ -180,15 +208,22 @@ class ResourceEntry
     { 
       generator=new Generator(resource.getURI());
       element=generator.bind(focus);
+      exception=null;
     }
     catch (IOException x)
-    { exception=x;
+    { 
+      element=null;
+      exception=x;
     }
     catch (ParseException x)
-    { exception=x;
+    { 
+      element=null;
+      exception=x;
     }
     catch (BindException x)
-    { exception=x;
+    { 
+      element=null;
+      exception=x;
     }
   }
   
@@ -200,6 +235,16 @@ class ResourceEntry
     throws ServletException,IOException
   {
     checkState();
+    if (exception!=null)
+    { response.sendError(501,exception.toString());
+    }
+    else
+    { 
+      Writer writer=response.getWriter();
+      GenerationContext context=new GenerationContext(writer);
+      element.write(context);
+      writer.flush();
+    }
   }
   
 }

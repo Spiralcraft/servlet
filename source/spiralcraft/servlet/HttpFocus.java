@@ -15,10 +15,22 @@
 package spiralcraft.servlet;
 
 import spiralcraft.lang.CompoundFocus;
+import spiralcraft.lang.SimpleFocus;
+import spiralcraft.lang.BindException;
+
+import spiralcraft.lang.spi.ThreadLocalBinding;
+import spiralcraft.lang.spi.BeanReflector;
+
+import javax.servlet.ServletContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * <P>Exposes HTTP/Servlet container intrinsics to the spiralcraft.lang 
- *   expression language when used in a Servlet context.
+ *   expression language when used in a Servlet context. 
+ *   
  *   
  * <P>The <CODE>[http:Session]</CODE> Focus has the 
  *   javax.servlet.http.HttpSession object as its subject 
@@ -47,5 +59,91 @@ public class HttpFocus<T>
   extends CompoundFocus<T>
 {
 
+  private ThreadLocalBinding<ServletContext> servletContextBinding;
+  private ThreadLocalBinding<HttpSession> sessionBinding;
+  private ThreadLocalBinding<HttpServletRequest> requestBinding;
+  private ThreadLocalBinding<HttpServletResponse> responseBinding;
+
+  public void init()
+    throws BindException
+  {
+    addNamespaceAlias("http");
+    
+    servletContextBinding=new ThreadLocalBinding<ServletContext>
+      (BeanReflector.<ServletContext>getInstance(ServletContext.class));
+    
+    SimpleFocus<ServletContext> servletContextFocus
+      =new SimpleFocus<ServletContext>(servletContextBinding);
+    bindFocus
+      ("application"
+      ,servletContextFocus
+      );
+    
+    
+    sessionBinding=new ThreadLocalBinding<HttpSession>
+      (BeanReflector.<HttpSession>getInstance(HttpSession.class));
+    SimpleFocus<HttpSession> sessionFocus
+      =new SimpleFocus<HttpSession>(sessionBinding);
+    bindFocus
+      ("session"
+      ,sessionFocus
+      );
+    
+    requestBinding=new ThreadLocalBinding<HttpServletRequest>
+      (BeanReflector.<HttpServletRequest>getInstance(HttpServletRequest.class));
+    SimpleFocus<HttpServletRequest> requestFocus
+      =new SimpleFocus<HttpServletRequest>(requestBinding);
+    bindFocus
+      ("request"
+      ,requestFocus
+      );
+
+    responseBinding=new ThreadLocalBinding<HttpServletResponse>
+      (BeanReflector.<HttpServletResponse>getInstance(HttpServletResponse.class));
+    SimpleFocus<HttpServletResponse> responseFocus
+      =new SimpleFocus<HttpServletResponse>(responseBinding);
+    bindFocus
+      ("response"
+      ,responseFocus
+      );
+  }
+  
+  
+  /**
+   * <P>Put the intrinsics for the specified request/response pair into thread
+   *   local storage for the current thread context for later retrieval via 
+   *   request processing functionality.
+   * 
+   * <P>This method should be called from within a <code>try{}</code> block,
+   *   where <code>pop()</code> is called from within the associated
+   *   <code>finally{}</code> block.
+   * 
+   * @param servlet
+   * @param request
+   * @param response
+   */
+  public void push
+    (HttpServlet servlet
+    ,HttpServletRequest request
+    ,HttpServletResponse response
+    )
+  {
+    servletContextBinding.push(servlet.getServletConfig().getServletContext());
+    sessionBinding.push(request.getSession(false));
+    requestBinding.push(request);
+    responseBinding.push(response);
+  }
+  
+  /**
+   * <P>Remove the intrinsics for the specified request/response pair from thread
+   *   local storage for the current thread context.
+   */
+  public void pop()
+  {
+    servletContextBinding.pop();
+    sessionBinding.pop();
+    requestBinding.pop();
+    responseBinding.pop();
+  }
   
 }
