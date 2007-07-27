@@ -5,16 +5,16 @@
 	<views>
 		<ds:SimpleView>
 		
-			<name>login
+			<name>test
 			</name>
 			
-			<typeURI>java:/spiralcraft/security/Login
+			<typeURI>context://data/test/Test
 			</typeURI>
 			
 			<queryable>
 				<dxml:XmlQueryable xmlns:dxml="java:/spiralcraft/data/xml/">
 					
-					<resourceURI>context://data/security/login.xml
+					<resourceURI>context://data/test/Test.data.xml
 					</resourceURI>
 
 				</dxml:XmlQueryable>

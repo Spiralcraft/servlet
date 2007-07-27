@@ -112,8 +112,8 @@ public class Controller
     catch (MalformedURLException x)
     { x.printStackTrace();
     }
-    System.err.println
-      ("Controller.init(): path="+realPath+" contextURI="+contextURI);
+//    System.err.println
+//      ("Controller.init(): path="+realPath+" contextURI="+contextURI);
     
     // Bind the "context://www","context://data" resources to this thread.
     contextResourceMap.put("war",contextURI);
@@ -154,6 +154,13 @@ public class Controller
       FilterChain chain=resolveChain(pathString,endpoint);
       chain.doFilter(servletRequest,servletResponse);
       
+    }
+    catch (ServletException x)
+    { 
+      if (x.getRootCause()!=null)
+      { x.getRootCause().printStackTrace();
+      }
+      throw x;
     }
     finally
     { contextResourceMap.pop();
@@ -221,7 +228,11 @@ public class Controller
           =resource.asContainer().getChild(controlFileName);
         if (controlResource.exists())
         { 
-          System.err.println("Controller.updateRecursive(): Found "+controlResource.getURI()+"!");
+//          System.err.println
+//            ("Controller.updateRecursive(): Found "
+//            +controlResource.getURI()+"!"
+//            );
+              
           dirty=true;
           filterSet=new FilterSet();
           try
@@ -509,7 +520,7 @@ public class Controller
      */
     public void compute()
     { 
-      System.err.println("Controller.FilterSet.compute()");
+//      System.err.println("Controller.FilterSet.compute()");
       effectiveFilters.clear();
       
       ArrayList<AutoFilter> localExcludes

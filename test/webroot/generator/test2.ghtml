@@ -25,15 +25,15 @@
 		 	</TR>
 
 			<TR>
-				<TD>Iteration: [data:dataSession] view.login</TD>
+				<TD>Iteration: [data:dataSession] view.test</TD>
 				<TD>
-					<%=[data:dataSession] view.login /%>
+					<%=[data:dataSession] view.test /%>
 					<TABLE>
-						<%Iterate x="[data:dataSession] view.login" %>
+						<%Iterate x="[data:dataSession] view.test" %>
 							<TR>
-								<TD><%=.username/%>
+								<TD><%=.id/%>
 								</TD>
-								<TD><%=.clearpass/%>
+								<TD><%=.name/%>
 								</TD>
 							</TR>
 						<%/Iterate%>

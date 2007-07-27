@@ -124,7 +124,7 @@ public abstract class AutoFilter
   
   public void setPath(Path path)
   { 
-    System.err.println("AutoFilter.setPath(): "+path.format("/"));
+//    System.err.println("AutoFilter.setPath(): "+path.format("/"));
     
     this.path=path;
   }
@@ -156,7 +156,7 @@ public abstract class AutoFilter
   public boolean appliesToPath(Path path)
   {
     Path relativePath=path.subPath(getPath().size());
-    System.err.println("AutoFilter.appliesToPath(): "+pattern+"->"+relativePath.format("/"));
+//    System.err.println("AutoFilter.appliesToPath(): "+pattern+"->"+relativePath.format("/"));
     if (this.isGlobal())
     {
       if (pattern.equals("*"))
