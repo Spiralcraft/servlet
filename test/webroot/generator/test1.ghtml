@@ -1,11 +1,124 @@
 <HTML>
 	<BODY>
-		This is a generated page
+		
+		<H1>[http:request]</H1>
 		<TABLE border="1">
 			<TR>
 				<TH>Expression</TH>
 				<TH>Result</TH>
 			</TR>
+
+			<TR>
+				<TD>[http:request] .characterEncoding</TD>
+				<TD><%=[http:request] .characterEncoding /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .contentLength</TD>
+				<TD><%=[http:request] .contentLength /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .contentType</TD>
+				<TD><%=[http:request] .contentType /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .inputStream</TD>
+				<TD><%=[http:request] .inputStream /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .locale</TD>
+				<TD><%=[http:request] .locale /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .locales
+				</TD>
+				<TD>
+					<TABLE>
+						<%Iterate x="[http:request] .locales" %>
+							<TR>
+								<TD><%=./%></TD>
+							</TR>
+						<%/Iterate%>
+					</TABLE>
+				</TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .parameterNames
+						<BR>[http:request] .getParameter(.toString())
+				</TD>
+				<TD>
+					<TABLE>
+						<%Iterate x="[http:request] .parameterNames" %>
+							<TR>
+								<TD><%=./%></TD>
+								<TD>
+									<%Iterate 
+										x="[http:request] .getParameterValues(.toString())"
+										%>
+										[<%=./%>]<BR/>
+									<%/Iterate%>
+								</TD>
+							</TR>
+						<%/Iterate%>
+					</TABLE>
+				</TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .protocol</TD>
+				<TD><%=[http:request] .protocol /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .remoteAddr</TD>
+				<TD><%=[http:request] .remoteAddr /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .remoteHost</TD>
+				<TD><%=[http:request] .remoteHost /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .scheme</TD>
+				<TD><%=[http:request] .scheme /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .serverName</TD>
+				<TD><%=[http:request] .serverName /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .serverPort</TD>
+				<TD><%=[http:request] .serverPort /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .secure</TD>
+				<TD><%=[http:request] .secure /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:request] .attributeNames
+						<BR>[http:request] .getAttribute(.toString())
+				</TD>
+				<TD>
+					<TABLE>
+						<%Iterate x="[http:request] .attributeNames" %>
+							<TR>
+								<TD><%=./%></TD>
+								<TD><%=[http:request] .getAttribute(.toString()) /%></TD>
+							</TR>
+						<%/Iterate%>
+					</TABLE>
+				</TD>
+		 	</TR>
 
 			<TR>
 				<TD>[http:request] .authType</TD>
@@ -20,18 +133,48 @@
 			<TR>
 				<TD>[http:request] .cookies</TD>
 				<TD>
-					<%Iterate x="[http:request] .cookies" %>
-						<%=./%><BR>
-					<%/Iterate%>
+					<TABLE border=1>
+						<TR>
+							<TH>.name</TH>
+							<TH>.value</TH>
+							<TH>.comment</TH>
+							<TH>.domain</TH>
+							<TH>.maxAge</TH>
+							<TH>.path</TH>
+							<TH>.secure</TH>
+							<TH>.version</TH>
+						</TR>
+						
+						<%Iterate x="[http:request] .cookies" %>
+							<TR>
+								<TD><%=.name/%></TD>
+								<TD><%=.value/%></TD>
+								<TD><%=.comment/%></TD>
+								<TD><%=.domain/%></TD>
+								<TD><%=.maxAge/%></TD>
+								<TD><%=.path/%></TD>
+								<TD><%=.secure/%></TD>
+								<TD><%=.version/%></TD>
+							</TR>
+						<%/Iterate%>
+						
+					</TABLE>
 				</TD>
 		 	</TR>
 
 			<TR>
-				<TD>[http:request] .headerNames</TD>
+				<TD>[http:request] .headerNames
+						<BR>[http:request] .getHeader(.)
+				</TD>
 				<TD>
-					<%Iterate x="[http:request] .headerNames" %>
-						<%=./%><BR>
-					<%/Iterate%>
+					<TABLE>
+						<%Iterate x="[http:request] .headerNames" %>
+							<TR>
+								<TD><%=./%></TD>
+								<TD><%=[http:request] .getHeader(.toString()) /%></TD>
+							</TR>
+						<%/Iterate%>
+					</TABLE>
 				</TD>
 		 	</TR>
 
@@ -100,5 +243,95 @@
 				<TD><%=[http:request] .requestedSessionIdValid /%></TD>
 		 	</TR>
 	  </TABLE>
+	  
+	  <H1>[http:session]</H1>
+		<TABLE border="1">
+			<TR>
+				<TH>Expression</TH>
+				<TH>Result</TH>
+			</TR>
+			
+			<TR>
+				<TD>[http:session] .attributeNames
+						<BR>[http:session] .getAttribute(.toString())
+				</TD>
+				<TD>
+					<TABLE>
+						<%Iterate x="[http:session] .attributeNames" %>
+							<TR>
+								<TD><%=./%></TD>
+								<TD><%=[http:session] .getAttribute(.toString()) /%></TD>
+							</TR>
+						<%/Iterate%>
+					</TABLE>
+				</TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:session] .creationTime</TD>
+				<TD><%=[http:session] .creationTime /%></TD>
+		 	</TR>
+		 	
+			<TR>
+				<TD>[http:session] .id</TD>
+				<TD><%=[http:session] .id /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:session] .lastAccessedTime</TD>
+				<TD><%=[http:session] .lastAccessedTime /%></TD>
+		 	</TR>
+		 	
+			<TR>
+				<TD>[http:session] .maxInactiveInterval</TD>
+				<TD><%=[http:session] .maxInactiveInterval /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:session] .new</TD>
+				<TD><%=[http:session] .new /%></TD>
+		 	</TR>
+
+		</TABLE>
+	  
+	  <H1>[http:application]</H1>
+		<TABLE border="1">
+			<TR>
+				<TH>Expression</TH>
+				<TH>Result</TH>
+			</TR>
+			
+			<TR>
+				<TD>[http:application] .attributeNames
+						<BR>[http:application] .getAttribute(.toString())
+				</TD>
+				<TD>
+					<TABLE>
+						<%Iterate x="[http:application] .attributeNames" %>
+							<TR>
+								<TD><%=./%></TD>
+								<TD><%=[http:application] .getAttribute(.toString()) /%></TD>
+							</TR>
+						<%/Iterate%>
+					</TABLE>
+				</TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:application] .majorVersion</TD>
+				<TD><%=[http:application] .majorVersion /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:application] .minorVersion</TD>
+				<TD><%=[http:application] .minorVersion /%></TD>
+		 	</TR>
+
+			<TR>
+				<TD>[http:application] .servletContextName</TD>
+				<TD><%=[http:application] .servletContextName /%></TD>
+		 	</TR>
+
+		</TABLE>
 	</BODY>
 </HTML>  
