@@ -1,0 +1,4 @@
+WebUI default page
+
+
+<%=[webui:session] .class/%>

@@ -28,6 +28,16 @@
 					
 						<phttpd:ServletMapping>
 
+							<servletName>webui
+							</servletName>
+
+							<URLPattern>/webui/*
+							</URLPattern>
+
+						</phttpd:ServletMapping>
+
+						<phttpd:ServletMapping>
+
 							<servletName>file
 							</servletName>
 
@@ -70,6 +80,16 @@
 							
 						</phttpd:ServletHolder>
 						
+						<phttpd:ServletHolder>
+							
+							<servletName>webui
+							</servletName>
+							
+							<servletClass>spiralcraft.servlet.webui.UiServlet
+							</servletClass>
+							
+						</phttpd:ServletHolder>
+
 					</servletHolders>
 					
 				</phttpd:SimpleHttpServiceContext>
