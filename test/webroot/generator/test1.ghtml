@@ -1,5 +1,7 @@
 <HTML>
 	<BODY>
+	
+		<%@include resource="header.ghtml"/%>
 		
 		<H1>[http:request]</H1>
 		<TABLE border="1">

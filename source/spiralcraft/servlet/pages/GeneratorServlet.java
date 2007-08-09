@@ -185,6 +185,7 @@ class ResourceEntry
   private final Resource resource;
   private final Focus<?> focus;
   private long lastRead;
+  private DocletUnit unit;
 
   private Element element;
   private Exception exception;
@@ -202,7 +203,16 @@ class ResourceEntry
   public synchronized void checkState()
     throws IOException
   {
-    long lastModified=resource.getLastModified();
+    long lastModified;
+    if (unit!=null)
+    { 
+      lastModified=unit.getLastModified();
+//      System.err.println("GeneratorServler: lastModifier="+lastModified);
+    }
+    else
+    { lastModified=resource.getLastModified();
+    }
+    
     if (lastModified>lastRead)
     { recompile();
     }
@@ -213,7 +223,7 @@ class ResourceEntry
   {
     try
     { 
-      DocletUnit unit=new TglCompiler().compile(resource.getURI());
+      unit=new TglCompiler().compile(resource.getURI());
       element=unit.bind(focus);
       exception=null;
     }
@@ -228,8 +238,6 @@ class ResourceEntry
       exception=x;
     }
   }
-  
-  
   
   
   public void service

@@ -1,0 +1,4 @@
+<div><h2>This is an included header.....</h2></div>
+<%@comment %>
+	This is a comment and should not be output
+<%/@comment%>
