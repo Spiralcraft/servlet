@@ -14,86 +14,82 @@
 //
 package spiralcraft.servlet.webui;
 
-import spiralcraft.text.markup.MarkupException;
-
-import spiralcraft.textgen.compiler.DocletUnit;
-
-import spiralcraft.servlet.webui.components.UiComponent;
-
-import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.BindException;
-
-import spiralcraft.lang.spi.SimpleBinding;
-
 
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
 /**
- * <P>Contains the state of a UI for a specific user over a period of
+ * <p>Contains the state of a UI (a set of resources in a directory mapped
+ *  to a servlet) for a specific user over a period of
  * interaction.
- * </P>
+ * </p>
  * 
- * <P>The Session class may be extended for enhanced functionality.
- * </P>
+ * <p>The Session class may be extended for enhanced functionality.
+ * </p>
 
- * <P>A Session is stored in the HttpSession.
- * </P>
+ * <p>A Session is stored in the HttpSession.
+ * </p>
  */
 public class Session
 {
   
-  private final HashMap<String,ComponentReference> componentMap
-    =new HashMap<String,ComponentReference>();
+  private final HashMap<String,StateReference> stateMap
+    =new HashMap<String,StateReference>();
   
-  private CompoundFocus<Session> focus;
+
 
 
   public void init(Focus<?> parentFocus)
     throws ServletException
   {
-    try
-    { 
-      focus=new CompoundFocus<Session>();
-      focus.setParentFocus(parentFocus);
-      focus.setName("session");
-      focus.addNamespaceAlias("webui","spiralcraft.servlet.webui");
-      focus.setSubject(new SimpleBinding<Session>(this,true));
-    }
-    catch (BindException x)
-    { throw new ServletException("Error binding Session "+x,x);
-    }
   }
   
   /**
-   * Get the component that is identified by the specified path
+   * Get the ElementState associated with the UiComponent for this session
    * 
-   * @param relativePath
-   * @return
+   * @param component
    */
-  public synchronized UiComponent 
-    getComponent(String relativePath,DocletUnit unit)
-    throws MarkupException
+  public synchronized LocalSession
+    getLocalSession(UIComponent component)
   {
-    ComponentReference ref=componentMap.get(relativePath);
-    if (ref!=null && ref.unit==unit)
-    { return ref.component;
+    StateReference ref=stateMap.get(component.getRelativePath());
+    if (ref!=null && ref.component==component)
+    { return ref.localSession;
     }
-    ref=new ComponentReference();
-    ref.unit=unit;
-    ref.component=new UiComponent(unit.bind(focus));
-    componentMap.put(relativePath,ref);
-    return ref.component;
+    else if (ref==null)
+    {
+      ref=new StateReference();
+      stateMap.put(component.getRelativePath(),ref);
+    }
+    ref.component=component;
+    return ref.localSession;
     
   }
 
+  /**
+   * Set the ElementState associated with the UiComponent for this session
+   * 
+   * @param component
+   */
+  public synchronized void
+    setLocalSession(UIComponent component,LocalSession localSession)
+  {
+    StateReference ref=stateMap.get(component.getRelativePath());
+    if (ref==null)
+    { 
+      ref=new StateReference();
+      stateMap.put(component.getRelativePath(), ref);
+    }
+    ref.component=component;
+    ref.localSession=localSession;
+  }
   
 }
 
-class ComponentReference
+class StateReference
 {
-  public UiComponent component;
-  public DocletUnit unit;
+  public LocalSession localSession;
+  public UIComponent component;
 }

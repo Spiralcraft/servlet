@@ -1,4 +1,17 @@
+<html>
+<body>
+
 WebUI default page
 
 
-<%=[webui:session] .class/%>
+<%=[webui:servlet] .class/%>
+
+<%@namespace html="java:/spiralcraft/servlet/webui/components/html/" %>
+
+	<%html:Link%>This is a link
+	<%/html:Link%>
+
+<%/@namespace%>
+
+</body>
+</html>

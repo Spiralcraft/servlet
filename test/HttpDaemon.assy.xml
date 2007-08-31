@@ -85,7 +85,7 @@
 							<servletName>webui
 							</servletName>
 							
-							<servletClass>spiralcraft.servlet.webui.UiServlet
+							<servletClass>spiralcraft.servlet.webui.UIServlet
 							</servletClass>
 							
 						</phttpd:ServletHolder>

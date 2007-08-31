@@ -169,7 +169,7 @@ public class HttpServlet
    * Return a spiralcraft.vfs.Resource that provides access to a
    *   resource relative to the ServletContext.
    */
-  protected Resource getResource(String contextRelativePath)
+  public Resource getResource(String contextRelativePath)
     throws ServletException
   {
     URL url=null;

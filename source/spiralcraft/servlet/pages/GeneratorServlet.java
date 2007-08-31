@@ -34,7 +34,7 @@ import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
 
-import spiralcraft.textgen.RenderingContext;
+import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.Element;
@@ -103,7 +103,9 @@ public class GeneratorServlet
       httpFocus.push(this,request,response);
       ResourceEntry entry=getEntry(request);
       if (entry==null)
-      { response.sendError(404,request.getRequestURI()+" not found");
+      { 
+        response.sendError(404,request.getRequestURI()+" not found");
+        return;
       }
       entry.service(request,response);
     }
@@ -187,7 +189,7 @@ class ResourceEntry
   private long lastRead;
   private DocletUnit unit;
 
-  private Element element;
+  private Element<?> element;
   private Exception exception;
   
   public ResourceEntry(Resource resource,HttpFocus<?> focus)
@@ -223,7 +225,7 @@ class ResourceEntry
   {
     try
     { 
-      unit=new TglCompiler().compile(resource.getURI());
+      unit=new TglCompiler<DocletUnit>().compile(resource.getURI());
       element=unit.bind(focus);
       exception=null;
     }
@@ -251,8 +253,8 @@ class ResourceEntry
     else
     { 
       Writer writer=response.getWriter();
-      RenderingContext context=new RenderingContext(writer);
-      element.write(context);
+      EventContext context=new EventContext(writer,false);
+      element.render(context);
       writer.flush();
     }
   }

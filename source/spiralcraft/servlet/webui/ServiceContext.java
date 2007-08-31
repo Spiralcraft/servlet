@@ -14,23 +14,59 @@
 //
 package spiralcraft.servlet.webui;
 
-import java.io.IOException;
 import java.io.Writer;
 
+import spiralcraft.textgen.EventContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Provides webui components with the resources they need
+ *   while handling actions and rendering output
+ * 
+ * @author mike
+ *
+ */
 public class ServiceContext
+  extends EventContext
 {
 
-
-  private Writer writer;
+  private LocalSession localSession;
+  private HttpServletRequest request;
+  private HttpServletResponse response;
   
-  public void setWriter(Writer writer)
-  { this.writer=writer;
+  public ServiceContext(Writer writer,boolean stateful)
+  { super(writer,stateful);
+  }
+    
+   void setLocalSession(LocalSession localSession)
+  { this.localSession=localSession;
+  }  
+    
+  public LocalSession getLocalSession()
+  { return localSession;
   }
   
-  public Writer getWriter()
-    throws IOException
-  { return writer;
+  public HttpServletRequest getRequest()
+  { return request;
   }
   
+  void setRequest(HttpServletRequest request)
+  { this.request=request;
+  }
   
+  public HttpServletResponse getResponse()
+  { return response;
+  }
+  
+  void setResponse(HttpServletResponse response)
+  { this.response=response;
+  }
+  
+  public String registerAction(Action action,String preferredName)
+  {
+    String rawUrl=localSession.registerAction(action,preferredName);
+    return response.encodeURL(rawUrl);
+  }
 }

@@ -19,17 +19,19 @@ import spiralcraft.servlet.HttpFocus;
 
 import spiralcraft.lang.BindException;
 
-import spiralcraft.servlet.webui.components.UiComponent;
 
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
 
-import spiralcraft.textgen.ResourceUnit;
-
 import spiralcraft.text.markup.MarkupException;
+
+import spiralcraft.textgen.ElementState;
+import spiralcraft.textgen.InitializeMessage;
 
 import spiralcraft.data.persist.XmlAssembly;
 import spiralcraft.data.persist.PersistenceException;
+
+import spiralcraft.net.http.VariableMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +45,8 @@ import java.io.IOException;
 import java.net.URI;
 
 import java.util.HashMap;
+
+import java.util.LinkedList;
 
 /**
  * <P>A Servlet which serves a WebUI Component tree.
@@ -69,14 +73,14 @@ import java.util.HashMap;
  *
  *
  */
-public class UiServlet
+public class UIServlet
   extends HttpServlet
 {
 
   private String defaultResourceName="default.webui";
-  private HashMap<String,ResourceUnit> textgenCache
-    =new HashMap<String,ResourceUnit>();
-  private int resourceCheckFrequencyMs=5000;
+
+
+  private UICache uiCache;
   
   private URI defaultSessionTypeURI
     =URI.create("java:/spiralcraft/servlet/webui/Session.assy");
@@ -95,6 +99,7 @@ public class UiServlet
     catch (BindException x)
     { throw new ServletException(x.toString(),x);
     }
+    uiCache=new UICache(this,httpFocus);
     
   }
   
@@ -103,7 +108,7 @@ public class UiServlet
     throws ServletException,IOException
   {
     
-    UiComponent component=resolveComponent(request);
+    UIComponent component=resolveComponent(request);
     if (component!=null)
     { service(component,request,response);
     }
@@ -116,7 +121,7 @@ public class UiServlet
   protected void doHead(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
-    UiComponent component=resolveComponent(request);
+    UIComponent component=resolveComponent(request);
     if (component!=null)
     { 
       response.setStatus(200);
@@ -132,7 +137,7 @@ public class UiServlet
   protected void doPost(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
-    UiComponent component=resolveComponent(request);
+    UIComponent component=resolveComponent(request);
     if (component!=null)
     { service(component,request,response);
     }
@@ -142,19 +147,66 @@ public class UiServlet
   } 
   
   private void service
-    (UiComponent component
+    (UIComponent component
     ,HttpServletRequest request
     ,HttpServletResponse response
     )
-    throws IOException
+    throws IOException,ServletException
   {
     
     httpFocus.push(this, request, response);
     try
     {
-      ServiceContext serviceContext=new ServiceContext();
-      serviceContext.setWriter(response.getWriter());
-      component.render(serviceContext);
+      ServiceContext serviceContext
+        =new ServiceContext(response.getWriter(),true);
+      
+      serviceContext.setRequest(request);
+      serviceContext.setResponse(response);
+      
+      Session session=getUiSession(request,true);
+      LocalSession localSession=session.getLocalSession(component);
+      
+      
+      if (localSession==null)
+      { 
+        localSession=new LocalSession();
+        localSession.setLocalURI
+          (request.getRequestURI()
+          );
+        session.setLocalSession(component,localSession);
+      }
+      
+      serviceContext.setLocalSession(localSession);
+      
+      ElementState<?> oldState=localSession.getState();
+      
+      if (oldState==null)
+      { 
+        // Initialize a fresh state
+        component.message(serviceContext,new InitializeMessage(),null);
+      }
+      else
+      { 
+        // Restore state
+        serviceContext.setState(oldState);
+      }
+      
+      
+      handleAction(component,serviceContext);
+      
+      localSession.clearActions();
+      
+      render(component,serviceContext);
+      
+      
+      ElementState<?> newState=serviceContext.getState();
+      if (newState!=oldState)
+      { 
+        // Cache the state for the next iteratio
+        localSession.setState(newState);
+      }
+      
+      response.getWriter().flush();
       response.flushBuffer();
     }
     finally
@@ -162,13 +214,70 @@ public class UiServlet
     }
   }
   
+  private void handleAction
+    (UIComponent component
+    ,ServiceContext context
+    )
+  {
+    long time=System.nanoTime();
+
+    String query=context.getRequest().getQueryString();
+    if (query!=null && query.length()>0)
+    {
+      VariableMap vars=VariableMap.fromUrlEncodedString(query);
+      String actionName=vars.getOne("action");
+      if (actionName!=null)
+      {
+        Action action=context.getLocalSession().getAction(actionName);
+        if (action!=null)
+        {
+          LinkedList<Integer> path=new LinkedList<Integer>();
+        
+          for (int i:action.getTargetPath())
+          { path.add(i);
+          }
+          component.message
+            (context
+            ,new ActionMessage(action)
+            ,path
+            );
+        }
+      }
+    }
+
+
+    System.err.println("UIServler.handleAction: "+(System.nanoTime()-time));
+  }
+  
+  private void render
+    (UIComponent component
+    ,ServiceContext serviceContext
+    )
+    throws IOException,ServletException
+  {
+    long time=System.nanoTime();
+    
+    serviceContext.getResponse().setContentType(component.getContentType());
+    serviceContext.getResponse().setStatus(200);
+    component.render(serviceContext);
+    
+    System.err.println("UIServler.render: "+(System.nanoTime()-time));
+    
+  }
+  
   /**
-   * Resolve the UI component associated with this request
+   * <P>Resolve the UI component associated with this request, using
+   *   the following steps
+   * </P>
+   * 
+   * <UL>
+   *   <LI>Finds the textgen ResourceUnit associated with 
+   * </UL>
    * 
    * @param request
    * @return The UIComponent to handle this request
    */
-  private UiComponent resolveComponent(HttpServletRequest request)
+  private UIComponent resolveComponent(HttpServletRequest request)
     throws ServletException,IOException
   { 
     String relativePath=getContextRelativePath(request);
@@ -176,63 +285,31 @@ public class UiServlet
     { relativePath=relativePath.concat(defaultResourceName);
     }
    
-    ResourceUnit unit=resolveResourceUnit(relativePath);
-    if (unit!=null)
-    {
-      // Only create a session if we have a valid URI
-      Session session=getUiSession(request,true);
-      try
-      { 
-        UiComponent component=session.getComponent(relativePath,unit.getUnit());
-        return component;
-      }
-      catch (MarkupException x)
-      { 
-        throw new ServletException
-          ("Error loading webui Component for ["+relativePath+"]:"+x,x);
-      }
+    try
+    { return uiCache.getUI(relativePath);
     }
-
-    return null;
+    catch (MarkupException x)
+    { 
+      throw new ServletException
+        ("Error loading webui Component for ["+relativePath+"]:"+x,x);
+    }
+    
   }
 
-  /**
-   * Find or create the ResourceUnit that references the compiled textgen 
-   *  doclet.
-   * 
-   * @param relativePath
-   * @return
-   * @throws ServletException
-   * @throws IOException
-   */
-  private synchronized ResourceUnit resolveResourceUnit(String relativePath)
-    throws ServletException,IOException
-  {
-    ResourceUnit resourceUnit=textgenCache.get(relativePath);
-    
-    if (resourceUnit!=null)
-    { return resourceUnit;
-    }
-    
-    Resource resource=getResource(relativePath);
-    if (!resource.exists())
-    { return null;
-    }
-    
-    resourceUnit=new ResourceUnit(resource);
-    resourceUnit.setCheckFrequencyMs(resourceCheckFrequencyMs);
-    textgenCache.put(relativePath,resourceUnit);
-    return resourceUnit;
-  }
+
   
   /**
-   * <P>Return the webui Session associated with this request.
-   * </P>
+   * <p>Return the webui Session associated with this request.
+   * </p>
    * 
-   * <P>The session is scoped to the servletPath of the request, and is
+   * <p>The session is scoped to the servletPath of the request, and is
    *   created from the Session.assy.xml assembly class in the servlet
    *   path.
-   * </P>
+   * </p>
+   * 
+   * <p>It is intended for the servletPath to indicate the request directory
+   *   and the pathInfo to resolve the specific UI resource.
+   * </p>
    * 
    * @param request The current HttpServletRequest
    * @param create Whether to create a new Session if none exists
