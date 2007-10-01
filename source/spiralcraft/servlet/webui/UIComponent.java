@@ -29,7 +29,7 @@ import spiralcraft.lang.Focus;
  *
  */
 public class UIComponent
-  extends Component<Void>
+  extends Component
 {
   
   private final Focus<?> focus;

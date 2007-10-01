@@ -1,0 +1,27 @@
+<%@namespace html="java:/spiralcraft/servlet/webui/components/html/" %>
+	<%html:Form%>
+			
+	  <br>
+		<%html:SubmitButton  label="Submit Form" /%>
+    <br>
+
+		<table>
+			<%Iterate x="[data:dataSession] view.test" %>
+				<tr>
+					<td><%=.id/%>
+					</td>
+					<td><%=.name/%>
+					</td>
+					<td>
+						<%html:TextInput name="textField1" x=".name"/%>
+					</td>
+				</tr>
+			<%/Iterate%>
+		</table>
+    
+	<%/html:Form%>
+
+<%/@namespace%>
+	
+	
+	

@@ -17,27 +17,38 @@ package spiralcraft.servlet.webui;
 import spiralcraft.textgen.Message;
 
 
-public class ActionMessage
+public class ControlMessage
   extends Message
 {
-
+  
+  public enum Op
+  { GATHER
+  , SCATTER
+  };
+  
   public static final MessageType TYPE=new MessageType();
   
-  { multicast=false;
+  public static final ControlMessage GATHER_MESSAGE
+    =new ControlMessage(Op.GATHER);
+  
+  public static final ControlMessage SCATTER_MESSAGE
+    =new ControlMessage(Op.SCATTER);
+
+  { multicast=true;
   }
   
-  private final Action action;
+  private final Op op;
   
   public MessageType getType()
   { return TYPE;
   }
   
-  public ActionMessage(Action action)
-  { this.action=action;
+  public ControlMessage(Op command)
+  { this.op=command;
   }
   
-  public Action getAction()
-  { return action;
+  public Op getOp()
+  { return op;
   }
   
   

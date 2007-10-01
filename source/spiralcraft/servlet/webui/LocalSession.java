@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import spiralcraft.textgen.ElementState;
 
-import spiralcraft.util.RandomUtil;
+//import spiralcraft.util.RandomUtil;
 
 /**
  * Stores persistent info scoped to a single UI resource. 
@@ -15,7 +15,7 @@ public class LocalSession
   private final HashMap<String,Action> actionMap
     =new HashMap<String,Action>();
     
-  private ElementState<?> state;
+  private ElementState state;
   
   private String localURI;
   
@@ -28,11 +28,11 @@ public class LocalSession
   { return actionMap.get(name);
   }
   
-  public ElementState<?> getState()
+  public ElementState getState()
   { return state;
   }
   
-  void setState(ElementState<?> state)
+  void setState(ElementState state)
   { this.state=state;
   }
   
@@ -50,8 +50,9 @@ public class LocalSession
   String registerAction(Action action,String preferredName)
   { 
     if (preferredName==null)
-    { preferredName=RandomUtil.generateString(10);
+    { preferredName=Integer.toString(actionMap.size());
     }
+    
     actionMap.put(preferredName,action);
     return localURI+"?action="+preferredName;
   }

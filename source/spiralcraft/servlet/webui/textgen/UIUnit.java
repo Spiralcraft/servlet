@@ -37,7 +37,6 @@ public class UIUnit
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition());
     }
-    element.setPath(new int[0]);
     return element;    
   }
   

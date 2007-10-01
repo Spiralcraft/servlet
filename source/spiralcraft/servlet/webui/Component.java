@@ -51,22 +51,20 @@ import java.util.LinkedList;
  * @author mike
  *
  */
-public abstract class Component<T>
-  extends Element<T>
+public abstract class Component
+  extends Element
 {
 
-  private Component<?> parentComponent;
-    
+  private Component parentComponent;
 
-
-  public Component<?> getParentComponent()
+  public Component getParentComponent()
   { return parentComponent;
   }
   
 
   @SuppressWarnings("unchecked") // Can't parameterize reflective operation
   @Override
-  public void setParent(Element<?> parentElement)
+  public void setParent(Element parentElement)
     throws MarkupException
   {
     super.setParent(parentElement);
@@ -75,6 +73,7 @@ public abstract class Component<T>
       this.parentComponent
         =parentElement.<Component>findElement(Component.class);
     }
+
   }
 
   public void message
@@ -83,9 +82,12 @@ public abstract class Component<T>
     ,LinkedList<Integer> path
     )
   {
+    
     if (message.getType()==ActionMessage.TYPE)
     {
-      if (((ActionMessage) message).getAction().getTargetPath()==getPath())
+      if (((ActionMessage) message).getAction().getTargetPath()
+           ==context.getState().getPath()
+         )
       { 
         handleAction
           ((ServiceContext) context
@@ -93,17 +95,24 @@ public abstract class Component<T>
           );
       }
     }
+    
     super.message(context,message,path);
+
+   
   }
   
   public void destroy()
   {
   }
 
+
+  
   protected void handleAction(ServiceContext context,Action action)
   {
-    System.err.println
-      (getClass().getName()+": Default handleAction(): "+action);
+    //System.err.println
+    //  ("Component: "+getClass().getName()+": Default handleAction(): "
+    //    +action
+    //    );
     action.invoke(context);
   }
 

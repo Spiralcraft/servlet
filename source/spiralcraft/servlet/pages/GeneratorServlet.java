@@ -189,7 +189,7 @@ class ResourceEntry
   private long lastRead;
   private DocletUnit unit;
 
-  private Element<?> element;
+  private Element element;
   private Exception exception;
   
   public ResourceEntry(Resource resource,HttpFocus<?> focus)

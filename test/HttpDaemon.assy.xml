@@ -31,7 +31,7 @@
 							<servletName>webui
 							</servletName>
 
-							<URLPattern>/webui/*
+							<URLPattern>*.webui
 							</URLPattern>
 
 						</phttpd:ServletMapping>

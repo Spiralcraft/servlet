@@ -63,7 +63,11 @@ public class Session
       ref=new StateReference();
       stateMap.put(component.getRelativePath(),ref);
     }
-    ref.component=component;
+    else
+    {
+      ref.component=component;
+      ref.localSession=null;
+    }
     return ref.localSession;
     
   }

@@ -29,6 +29,8 @@ import spiralcraft.lang.spi.SimpleBinding;
 
 
 import java.io.IOException;
+import java.io.InputStream;
+
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -126,6 +128,10 @@ public class UICache
     if (!resource.exists())
     { return null;
     }
+    
+    // Force check for directory so we can redirect
+    InputStream in=resource.getInputStream();
+    in.close();
     
     resourceUnit=new UIResourceUnit(resource);
     resourceUnit.setCheckFrequencyMs(resourceCheckFrequencyMs);

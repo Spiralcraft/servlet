@@ -15,11 +15,17 @@
 package spiralcraft.servlet.webui;
 
 import java.io.Writer;
+import java.io.IOException;
 
 import spiralcraft.textgen.EventContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+
+import spiralcraft.net.http.VariableMap;
+
+import spiralcraft.vfs.StreamUtil;
 
 /**
  * Provides webui components with the resources they need
@@ -35,15 +41,21 @@ public class ServiceContext
   private LocalSession localSession;
   private HttpServletRequest request;
   private HttpServletResponse response;
+  private VariableMap post;
+  private VariableMap query;
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
   }
     
-   void setLocalSession(LocalSession localSession)
+  void setLocalSession(LocalSession localSession)
   { this.localSession=localSession;
   }  
     
+  void setPost(VariableMap post)
+  { this.post=post;
+  }
+
   public LocalSession getLocalSession()
   { return localSession;
   }
@@ -53,7 +65,31 @@ public class ServiceContext
   }
   
   void setRequest(HttpServletRequest request)
-  { this.request=request;
+    throws IOException,ServletException
+  { 
+    this.request=request;
+    
+    String queryString=request.getQueryString();
+    if (queryString!=null && queryString.length()>0)
+    { this.query=VariableMap.fromUrlEncodedString(queryString);
+    }
+    
+    if (request.getContentLength()>0)
+    {
+      if (request.getContentType().equals("application/x-www-form-urlencoded"))
+      { 
+        String postString
+          =StreamUtil.readAsciiString
+            (request.getInputStream(),request.getContentLength());
+        this.post=VariableMap.fromUrlEncodedString(postString);
+      }
+      else
+      { 
+        throw new ServletException
+          ("Unrecognized content type: "+request.getContentType());
+      }
+    }
+
   }
   
   public HttpServletResponse getResponse()
@@ -69,4 +105,13 @@ public class ServiceContext
     String rawUrl=localSession.registerAction(action,preferredName);
     return response.encodeURL(rawUrl);
   }
+  
+  public VariableMap getPost()
+  { return post;
+  }
+  
+  public VariableMap getQuery()
+  { return query;
+  }
+
 }

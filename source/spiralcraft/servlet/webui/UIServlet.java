@@ -16,12 +16,14 @@ package spiralcraft.servlet.webui;
 
 import spiralcraft.servlet.HttpServlet;
 import spiralcraft.servlet.HttpFocus;
+import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.BindException;
 
 
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
+import spiralcraft.vfs.NotStreamableException;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -86,34 +88,62 @@ public class UIServlet
     =URI.create("java:/spiralcraft/servlet/webui/Session.assy");
   
   @SuppressWarnings("unchecked") // XXX Need to fix this
-  private HttpFocus<?> httpFocus=new HttpFocus();
+  private HttpFocus<?> httpFocus;
   
   @Override
   public void init(ServletConfig config)
     throws ServletException
   { 
     super.init(config);
-    try
-    { httpFocus.init();
-    }
-    catch (BindException x)
-    { throw new ServletException(x.toString(),x);
-    }
-    uiCache=new UICache(this,httpFocus);
     
+  }
+  
+  private void checkInit(HttpServletRequest request)
+    throws ServletException
+  {
+    if (httpFocus==null)
+    {
+      // Initialize the local HTTP Focus with its parent that's always passed
+      //   via the request
+      
+      try
+      {
+        HttpFocus<?> focus=new HttpFocus<Void>();
+        focus.init();
+        focus.setParentFocus(FocusFilter.getFocusChain(request));
+        httpFocus=focus;
+      }
+      catch (BindException x)
+      { throw new ServletException(x.toString(),x);
+      }
+      uiCache=new UICache(this,httpFocus);
+    }
   }
   
   @Override
   protected void doGet(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
+    checkInit(request);
     
-    UIComponent component=resolveComponent(request);
-    if (component!=null)
-    { service(component,request,response);
+
+    try
+    {
+      UIComponent component=resolveComponent(request);
+      if (component!=null)
+      { service(component,request,response);
+      }
+      else
+      { response.sendError(404,"Not Found");
+      }
     }
-    else
-    { response.sendError(404,"Not Found");
+    catch (NotStreamableException x)
+    {
+      if (!request.getRequestURI().endsWith("/"))
+      { 
+        response.sendRedirect
+          (response.encodeRedirectURL(request.getRequestURI()+"/"));
+      }
     }
   }
   
@@ -121,28 +151,56 @@ public class UIServlet
   protected void doHead(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
-    UIComponent component=resolveComponent(request);
-    if (component!=null)
-    { 
-      response.setStatus(200);
-      response.setContentType(component.getContentType());
-      response.flushBuffer();
+    checkInit(request);
+
+    try
+    {
+      UIComponent component=resolveComponent(request);
+      if (component!=null)
+      { 
+        response.setStatus(200);
+        response.setContentType(component.getContentType());
+        response.addHeader("Cache-Control","no-cache");
+        response.flushBuffer();
+      }
+      else
+      { response.sendError(404,"Not Found");
+      }
     }
-    else
-    { response.sendError(404,"Not Found");
+    catch (NotStreamableException x)
+    {
+      if (!request.getRequestURI().endsWith("/"))
+      { 
+        response.sendRedirect
+          (response.encodeRedirectURL(request.getRequestURI()+"/"));
+      }
     }
+      
   }
   
   @Override
   protected void doPost(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
-    UIComponent component=resolveComponent(request);
-    if (component!=null)
-    { service(component,request,response);
+    checkInit(request);
+
+    try
+    {
+      UIComponent component=resolveComponent(request);
+      if (component!=null)
+      { service(component,request,response);
+      }
+      else
+      { response.sendError(404,"Not Found");
+      }
     }
-    else
-    { response.sendError(404,"Not Found");
+    catch (NotStreamableException x)
+    {
+      if (!request.getRequestURI().endsWith("/"))
+      { 
+        response.sendRedirect
+          (response.encodeRedirectURL(request.getRequestURI()+"/"));
+      }
     }
   } 
   
@@ -178,11 +236,13 @@ public class UIServlet
       
       serviceContext.setLocalSession(localSession);
       
-      ElementState<?> oldState=localSession.getState();
+      ElementState oldState=localSession.getState();
       
       if (oldState==null)
       { 
         // Initialize a fresh state
+        serviceContext.setState(component.createState());
+        // Set up state structure and register "initial" events
         component.message(serviceContext,new InitializeMessage(),null);
       }
       else
@@ -191,6 +251,10 @@ public class UIServlet
         serviceContext.setState(oldState);
       }
       
+      if (request.getContentLength()>0)
+      {
+        
+      }
       
       handleAction(component,serviceContext);
       
@@ -199,7 +263,7 @@ public class UIServlet
       render(component,serviceContext);
       
       
-      ElementState<?> newState=serviceContext.getState();
+      ElementState newState=serviceContext.getState();
       if (newState!=oldState)
       { 
         // Cache the state for the next iteratio
@@ -219,12 +283,12 @@ public class UIServlet
     ,ServiceContext context
     )
   {
-    long time=System.nanoTime();
+    // long time=System.nanoTime();
 
-    String query=context.getRequest().getQueryString();
-    if (query!=null && query.length()>0)
+    VariableMap vars=context.getQuery();
+    if (vars!=null)
     {
-      VariableMap vars=VariableMap.fromUrlEncodedString(query);
+
       String actionName=vars.getOne("action");
       if (actionName!=null)
       {
@@ -246,7 +310,7 @@ public class UIServlet
     }
 
 
-    System.err.println("UIServler.handleAction: "+(System.nanoTime()-time));
+    // System.err.println("UIServler.handleAction: "+(System.nanoTime()-time));
   }
   
   private void render
@@ -255,13 +319,14 @@ public class UIServlet
     )
     throws IOException,ServletException
   {
-    long time=System.nanoTime();
+    //long time=System.nanoTime();
     
     serviceContext.getResponse().setContentType(component.getContentType());
     serviceContext.getResponse().setStatus(200);
+    serviceContext.getResponse().addHeader("Cache-Control","no-cache");
     component.render(serviceContext);
     
-    System.err.println("UIServler.render: "+(System.nanoTime()-time));
+    // System.err.println("UIServler.render: "+(System.nanoTime()-time));
     
   }
   
@@ -293,6 +358,7 @@ public class UIServlet
       throw new ServletException
         ("Error loading webui Component for ["+relativePath+"]:"+x,x);
     }
+    
     
   }
 
@@ -362,6 +428,9 @@ public class UIServlet
     throws ServletException,IOException
   {
     Resource containerResource=getResource(resourcePath);
+    if (containerResource.asContainer()==null)
+    { containerResource=containerResource.getParent();
+    }
     Resource sessionResource=null;
     try
     { 

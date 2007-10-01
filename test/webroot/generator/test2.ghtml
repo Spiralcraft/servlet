@@ -42,5 +42,14 @@
 		 	</TR>
 			
 	  </TABLE>
+	  
+	  <%@include resource="boxDivWrapper.ghtml"%>
+	  
+	  	This is some boxed content
+	  	<br>It is automatically placed in a box
+	  	<br>using the include mechanisms
+	  
+	  <%/@include%>
+	  
 	</BODY>
 </HTML>  
