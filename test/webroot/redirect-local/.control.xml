@@ -1,0 +1,14 @@
+<autofilter:AutoFilter.list
+  xmlns:autofilter="java:/spiralcraft/servlet/autofilter"
+  >
+  <autofilter:RedirectFilter>
+    
+    <pattern>/
+    </pattern>
+    
+    <redirectURL>defaultpage.html
+    </redirectURL>
+
+  </autofilter:RedirectFilter>
+</autofilter:AutoFilter.list>
+

@@ -21,16 +21,19 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 public class RedirectFilter
     extends AutoFilter
 {
 
   private String redirectURL;
+  private boolean absolute;
 
   public void setRedirectURL(String url)
   { 
-    URI.create(url);
+    URI uri=URI.create(url);
+    absolute=uri.isAbsolute();
     this.redirectURL=url;
     
   }
@@ -42,8 +45,15 @@ public class RedirectFilter
     )
     throws IOException
   {
+    String url=redirectURL;
+    if (!absolute)
+    { 
+      url
+        =URI.create(((HttpServletRequest) request).getRequestURL().toString())
+          .resolve(redirectURL).toString();
+    }
     HttpServletResponse httpResponse=(HttpServletResponse) response;
-    httpResponse.sendRedirect(httpResponse.encodeRedirectURL(redirectURL));
+    httpResponse.sendRedirect(httpResponse.encodeRedirectURL(url));
   }
 
   public String getFilterType()
