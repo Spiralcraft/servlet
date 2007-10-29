@@ -4,7 +4,7 @@
 	
 	<target name="libs">
 		<copy file="${spiralcraft.build}/lib/spiralcraft-main.jar" todir="lib"/>
-		<copy file="${spiralcraft.build}/lib/spiralcraft-core.jar" todir="lib"/>
+		<copy file="../lib/spiralcraft-core.jar" todir="lib"/>
 	</target>
 		
 	<target name="httpd" depends="libs">
