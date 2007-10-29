@@ -1,0 +1,20 @@
+<project name="spiralcraft-servlet-test" default="httpd" basedir=".">
+
+	<property name="spiralcraft.build" value="../../../build"/>
+	
+	<target name="libs">
+		<copy file="${spiralcraft.build}/lib/spiralcraft-main.jar" todir="lib"/>
+		<copy file="${spiralcraft.build}/lib/spiralcraft-core.jar" todir="lib"/>
+	</target>
+		
+	<target name="httpd" depends="libs">
+    <java
+      jar="lib/spiralcraft-main.jar"
+      failonerror="true"
+      fork="true"
+      >
+      <arg value="httpd"/>
+    </java>
+  </target>
+	
+</project>
