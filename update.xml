@@ -1,0 +1,19 @@
+<project name="spiralcraft-textgen" default="build" basedir=".">
+
+  <target name="build">
+  	<copy 
+  	  file="../core/lib/spiralcraft-core.jar"
+  	  todir="lib"
+  	/>
+  	<copy 
+  	  file="../textgen/lib/spiralcraft-textgen.jar"
+  	  todir="lib"
+  	/>
+  	<copy 
+  	  file="../net/lib/spiralcraft-net.jar"
+  	  todir="lib"
+  	/>
+  	
+  </target>
+  
+</project>
