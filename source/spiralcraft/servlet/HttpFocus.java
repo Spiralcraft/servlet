@@ -67,7 +67,7 @@ public class HttpFocus<T>
   public void init()
     throws BindException
   {
-    addNamespaceAlias("http");
+    // addNamespaceAlias("http");
     
     servletContextBinding=new ThreadLocalBinding<ServletContext>
       (BeanReflector.<ServletContext>getInstance(ServletContext.class));
@@ -75,7 +75,7 @@ public class HttpFocus<T>
     SimpleFocus<ServletContext> servletContextFocus
       =new SimpleFocus<ServletContext>(servletContextBinding);
     bindFocus
-      ("application"
+      (ServletContext.class.getName()
       ,servletContextFocus
       );
     
@@ -85,7 +85,7 @@ public class HttpFocus<T>
     SimpleFocus<HttpSession> sessionFocus
       =new SimpleFocus<HttpSession>(sessionBinding);
     bindFocus
-      ("session"
+      (HttpSession.class.getName()
       ,sessionFocus
       );
     
@@ -94,7 +94,7 @@ public class HttpFocus<T>
     SimpleFocus<HttpServletRequest> requestFocus
       =new SimpleFocus<HttpServletRequest>(requestBinding);
     bindFocus
-      ("request"
+      (HttpServletRequest.class.getName()
       ,requestFocus
       );
 
@@ -103,7 +103,7 @@ public class HttpFocus<T>
     SimpleFocus<HttpServletResponse> responseFocus
       =new SimpleFocus<HttpServletResponse>(responseBinding);
     bindFocus
-      ("response"
+      (HttpServletResponse.class.getName()
       ,responseFocus
       );
   }

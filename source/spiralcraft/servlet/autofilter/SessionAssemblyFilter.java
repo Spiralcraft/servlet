@@ -38,7 +38,6 @@ public class SessionAssemblyFilter<F,C>
 
   private String sessionAttributeName;
   private ThreadLocalBinding<F> subjectBinding;
-  private ThreadLocalBinding<C> contextBinding;
 
   
   public void setSessionAttributeName(String name)
@@ -59,15 +58,8 @@ public class SessionAssemblyFilter<F,C>
       =new ThreadLocalBinding<F>
         (targetFocusHolder.getFocus().getSubject().getReflector());
     
-    if (targetFocusHolder.getFocus().getContext()!=null)
-    {
-      contextBinding
-        =new ThreadLocalBinding
-          (targetFocusHolder.getFocus().getContext().getReflector());
-    }
-    
     return new CompoundFocus<F>
-      (parentFocus,namespace,name,subjectBinding,contextBinding);
+      (parentFocus,subjectBinding);
   }
 
 
@@ -87,9 +79,6 @@ public class SessionAssemblyFilter<F,C>
     }
     subjectBinding.push(targetFocusHolder.getFocus().getSubject().get());
     
-    if (contextBinding!=null)
-    { contextBinding.push((C) targetFocusHolder.getFocus().getContext().get());
-    }
   }
   
   @Override
@@ -97,9 +86,7 @@ public class SessionAssemblyFilter<F,C>
   {
     subjectBinding.pop();
     
-    if (contextBinding!=null)
-    { contextBinding.pop();
-    }
+
 
   }
 

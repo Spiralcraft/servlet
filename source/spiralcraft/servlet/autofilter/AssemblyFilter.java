@@ -36,7 +36,7 @@ public abstract class AssemblyFilter<T>
     // XXX Register as session event listener
     
     private Focus<T> focus;
-    private XmlAssembly<?> assembly;
+    private XmlAssembly<T> assembly;
     
     @SuppressWarnings("unchecked") // Runtime class check for Focus provider
     public FocusHolder()
@@ -56,7 +56,7 @@ public abstract class AssemblyFilter<T>
       { throw new BindException("Error creating XmlAssembly: "+x,x);
       }
       
-      Channel subject=assembly.getAssembly().getSubject();
+      Channel subject=assembly.getAssembly().getFocus().getSubject();
       
       if (FocusProvider.class.isAssignableFrom(subject.getContentType()))
       {
@@ -69,7 +69,9 @@ public abstract class AssemblyFilter<T>
           .createFocus(null,null,null);
       }
       else
-      { focus= (Focus<T>) assembly.getAssembly();
+      { 
+        // Get the spiralcraft.builder related Focus from the Assembly
+        focus= assembly.getAssembly().getFocus();
       }
       
       

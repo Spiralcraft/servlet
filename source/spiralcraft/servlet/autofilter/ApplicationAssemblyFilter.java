@@ -66,11 +66,8 @@ public class ApplicationAssemblyFilter<F,C>
     Channel<F> subjectBinding
       =targetFocusHolder.getFocus().getSubject();
     
-    Channel<C> contextBinding
-      =(Channel<C>) targetFocusHolder.getFocus().getContext();
-    
     return new CompoundFocus<F>
-      (parentFocus,namespace,name,subjectBinding,contextBinding);
+      (parentFocus,subjectBinding);
 
   }
 
