@@ -60,7 +60,19 @@ public abstract class Control<Ttarget>
    * 
    * <p>Implementer should read the value of the control and apply it to
    *   the target Channel. The control value should be buffered in the
-   *   control state.
+   *   control state to prevent input data loss if the target Channel
+   *   rejects the value.
+   * </p>
+   * 
+   * <p>gather() is normally called from message() in post-order, ie.
+   *   after all children have been gather()ed, which ensures that the
+   *   child elements of a composite value have been read so that the
+   *   fully composed value can be applied to the data model.
+   * </p>
+   * 
+   * <p>For example, a date control will have its component month, day and
+   *   year gather()ed via child components before the date value is
+   *   computed and applied to the data model.
    * </p>
    * 
    * @param context
@@ -78,6 +90,17 @@ public abstract class Control<Ttarget>
    *   Channel and buffer it in the control state for later rendering.
    * </p>
    * 
+   * <p>scatter() is normally called from message() in pre-order, ie.
+   *   before children have been scatter()ed, which ensures that a
+   *   composite value has been read from a data model before the
+   *   individual elements of the value are associated with child controls
+   * </p>
+   * 
+   * <p>For example, a date control will read the date from the data model
+   *   in its scatter() method, before the child controls that display or
+   *   allow modification of the month, day and year are associated with
+   *   their values in their own scatter() method.
+   *
    * @param context
    */
   public abstract void scatter(ServiceContext context);
@@ -139,6 +162,12 @@ public abstract class Control<Ttarget>
     } 
   }
   
+  /**
+   * 
+   * @return The number of states between this Control's parent and
+   *   a ControlGroup- for fast reference to this state's containing
+   *   ControlGroup
+   */
   int getControlGroupStateDistance()
   { return controlGroupStateDistance;
   }

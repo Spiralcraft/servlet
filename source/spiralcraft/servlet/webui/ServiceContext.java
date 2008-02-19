@@ -27,9 +27,11 @@ import spiralcraft.net.http.VariableMap;
 
 import spiralcraft.vfs.StreamUtil;
 
+import spiralcraft.command.CommandProcessor;
+
 /**
  * Provides webui components with the resources they need
- *   while handling actions and rendering output
+ *   while handling actions and rendering output.
  * 
  * @author mike
  *
@@ -38,27 +40,41 @@ public class ServiceContext
   extends EventContext
 {
 
-  private LocalSession localSession;
+  private ResourceSession resourceSession;
   private HttpServletRequest request;
   private HttpServletResponse response;
   private VariableMap post;
   private VariableMap query;
+  private CommandProcessor commandProcessor;
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
   }
     
-  void setLocalSession(LocalSession localSession)
-  { this.localSession=localSession;
+  /**
+   * 
+   * @param resourceSession The ResourceSession that stores data and
+   *   objects for a user's session that are associated with the 
+   *   containing WebUI user interface resource
+   */
+  void setResourceSession(ResourceSession resourceSession)
+  { this.resourceSession=resourceSession;
   }  
     
+  /**
+   * 
+   * @return The ResourceSession that stores data and
+   *   objects for a user's session that are associated with the 
+   *   containing WebUI user interface resource
+   */
+  public ResourceSession getResourceSession()
+  { return resourceSession;
+  }
+
   void setPost(VariableMap post)
   { this.post=post;
   }
 
-  public LocalSession getLocalSession()
-  { return localSession;
-  }
   
   public HttpServletRequest getRequest()
   { return request;
@@ -102,8 +118,25 @@ public class ServiceContext
   
   public String registerAction(Action action,String preferredName)
   {
-    String rawUrl=localSession.registerAction(action,preferredName);
+    String rawUrl=resourceSession.registerAction(action,preferredName);
     return response.encodeURL(rawUrl);
+  }
+  
+  /**
+   * @param commandProcessor The CommandProcessor associated with this 
+   *    context- called by components that wish to supply a
+   *    a CommandProcessor.
+   */
+  public void setCommandProcessor(CommandProcessor commandProcessor)
+  { this.commandProcessor=commandProcessor;
+  }
+  
+  /**
+   * 
+   * @return The CommandProcessor associated with this context
+   */
+  public CommandProcessor getCommandProcessor()
+  { return commandProcessor;
   }
   
   public VariableMap getPost()

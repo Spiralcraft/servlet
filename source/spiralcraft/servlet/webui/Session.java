@@ -22,14 +22,18 @@ import javax.servlet.ServletException;
 
 /**
  * <p>Contains the state of a UI (a set of resources in a directory mapped
- *  to a servlet) for a specific user over a period of
- * interaction.
+ *  to a servlet) for a specific user over a period of interaction.
  * </p>
  * 
  * <p>The Session class may be extended for enhanced functionality.
  * </p>
 
  * <p>A Session is stored in the HttpSession.
+ * </p>
+ * 
+ * <p>A Session contains a reference to the ResourceSession for each
+ *   active WebUI resource in the ServletContext, mapped by the path
+ *   of the resource relative to the ServletContext.
  * </p>
  */
 public class Session
@@ -47,21 +51,21 @@ public class Session
   }
   
   /**
-   * Get the ElementState associated with the UiComponent for this session
+   * Get the ResourceSession associated with the UiComponent resource
    * 
    * @param component
    */
-  public synchronized LocalSession
-    getLocalSession(UIComponent component)
+  public synchronized ResourceSession
+    getResourceSession(UIComponent component)
   {
-    StateReference ref=stateMap.get(component.getRelativePath());
+    StateReference ref=stateMap.get(component.getContextRelativePath());
     if (ref!=null && ref.component==component)
     { return ref.localSession;
     }
     else if (ref==null)
     {
       ref=new StateReference();
-      stateMap.put(component.getRelativePath(),ref);
+      stateMap.put(component.getContextRelativePath(),ref);
     }
     else
     {
@@ -73,18 +77,18 @@ public class Session
   }
 
   /**
-   * Set the ElementState associated with the UiComponent for this session
+   * Set the ResourceSession associated with the UiComponent resource
    * 
    * @param component
    */
   public synchronized void
-    setLocalSession(UIComponent component,LocalSession localSession)
+    setResourceSession(UIComponent component,ResourceSession localSession)
   {
-    StateReference ref=stateMap.get(component.getRelativePath());
+    StateReference ref=stateMap.get(component.getContextRelativePath());
     if (ref==null)
     { 
       ref=new StateReference();
-      stateMap.put(component.getRelativePath(), ref);
+      stateMap.put(component.getContextRelativePath(), ref);
     }
     ref.component=component;
     ref.localSession=localSession;
@@ -94,6 +98,6 @@ public class Session
 
 class StateReference
 {
-  public LocalSession localSession;
+  public ResourceSession localSession;
   public UIComponent component;
 }

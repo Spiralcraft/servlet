@@ -18,7 +18,12 @@ import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.MementoState;
 
 /**
- * An ElementState associated with a named Form control
+ * <p>An ElementState associated with a named Form control.
+ * </p>
+ * 
+ * <p>The ControlState encapsulates a "value" of a particular type (Tbuf)
+ *   which hold the internal state of of the Control at its render-point. 
+ * </p> 
  *
  */
 public class ControlState<Tbuf>

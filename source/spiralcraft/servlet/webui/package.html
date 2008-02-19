@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>spiralcraft.servlet.webui package</title>
+<!-- 
+
+   Copyright (c) 1998,2007 Michael Toth
+   Spiralcraft Inc., All Rights Reserved
+  
+   This package is part of the Spiralcraft project and is licensed under
+   a multiple-license framework.
+  
+   You may not use this file except in compliance with the terms found in the 
+   SPIRALCRAFT-LICENSE.txt file at the top of this distribution, or available
+   at http://www.spiralcraft.org/licensing/SPIRALCRAFT-LICENSE.txt.
+  
+   Unless otherwise agreed to in writing, this software is distributed on an
+   "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+  
+-->
+</head>
+<body>
+
+	<p>A high-performance web user interface toolkit based on the 
+		spiralcraft.textgen package, utilizing a Model-View-Controller pattern.
+	</p>
+	
+	<p>Each webui resource (or "page") encapsulates a tree of interconnected 
+	  Components and other TextGen elements that comprise the "View-Controller"
+	  role in the pattern. These UI elements interface with the model via data
+	  Channels implemented by the spiralcraft.lang package and by the Command
+	  pattern provided by the spiralcraft.command package.
+	</p>
+
+	<h3>State Management</h3>
+	
+	<p>The WebUI Components as well as the TextGen Elements they are built on
+	  explicitly separate "state" from "infrastructure". Components manipulate
+	  their state at specific predetermined points in the service process. 
+	</p>
+	   
+	<p>The separation of "state" from "infrastructure" adds design complexity
+	  when compared to a model where Components encapsulate their own state,
+	  for example- a TextControl storing the text it contains. This separation
+	  is necessary to avoid serious functional and performance related 
+	  limitations of the latter simplified model by solving two basic problems
+	  with one mechanism.
+	</p>
+	  
+	<p>To efficiently support a large number of simultaneous users, the
+	  conservation of per-session memory consumption is a primary design goal.
+	  Controls are normally associated with application model bindings and 
+	  configuration metadata. While the state of the control (data contents,
+	  selection position, paging state, etc) will be tracked for each user, the
+	  Control object itself and its associated infrastructure will only be
+	  instantiated once per "declaration", per Servlet context. This reduces
+	  per-user memory consumption to a fraction of the amount that would be
+	  taken up by instantiating the entire UI infrastructure in each WebUI
+	  resource for each concurrent user.
+	</p>
+	
+	<p>To efficiently represent grids, lists, detail panes, and other UI elements
+	  that involve the repeated display of identical controls for a varying
+	  amount of data, "state", which varies with the number of items or rows
+	  presented, must be separated from infrastructure, which ideally does not
+	  change after it is initially loaded or reprogrammed. In these cases, a 
+	  single instance of a Control will render or process a set of states
+	  associated with a multiple-element data structure from the model. A
+	  "state-tree" will be formed as a result of the one-to-many relationship
+	  associated with UI Components of this sort.
+	</p>
+	
+	<p>To summarize, the use of stateless Controls as "infrastructure" in
+	  conjuction with "state trees" that maintain associations with user 
+	  sessions and session specific data instances provides the means to
+	  efficiently represent data-driven multi-element UI components as well
+	  as to efficiently implement multi-session user interfaces.
+	</p>
+	
+	
+</body>
+</html>

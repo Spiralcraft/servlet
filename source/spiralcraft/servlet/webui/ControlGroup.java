@@ -22,7 +22,7 @@ import java.io.IOException;
 import spiralcraft.lang.BindException;
 
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.SimpleFocus;
+import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.WriteException;
 
 import spiralcraft.lang.spi.AbstractBinding;
@@ -49,7 +49,7 @@ public class ControlGroup<Ttarget>
   
   protected AbstractBinding<Ttarget> valueBinding;
   
-  private SimpleFocus<Ttarget> focus;
+  private CompoundFocus<Ttarget> focus;
 
   public ControlGroupState<Ttarget> getState()
   { return threadLocalState.get();
@@ -104,6 +104,7 @@ public class ControlGroup<Ttarget>
     System.err.println("ControlGroup.bind() :expression="+expression);
     Focus<?> parentFocus=getParent().getFocus();
 
+    
     if (expression!=null)
     { 
       target=parentFocus.bind(expression);
@@ -120,16 +121,20 @@ public class ControlGroup<Ttarget>
           return true;
         }
       };
-      
-      focus=new SimpleFocus(valueBinding);
-      focus.setParentFocus(parentFocus);
-      focus.setContext(getAssembly().getSubject());
+
+
+      // Expose the expression target as the new Focus, and add the 
+      //   assembly in as another layer
+      focus=new CompoundFocus(parentFocus,valueBinding);  
+      focus.bindFocus("spiralcraft.servlet.webui",getAssembly().getFocus());
     }
     else 
     {
-      focus=new SimpleFocus(parentFocus.getSubject());
-      focus.setParentFocus(parentFocus);
-      focus.setContext(getAssembly().getSubject());
+      // Expose the expression target as the new Focus, and add the 
+      //   assembly in as another layer
+      focus=new CompoundFocus(parentFocus,null);  
+      focus.bindFocus("spiralcraft.servlet.webui",getAssembly().getFocus());
+
     }
     
     bindChildren(childUnits);

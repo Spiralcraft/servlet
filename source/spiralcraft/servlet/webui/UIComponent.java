@@ -20,10 +20,14 @@ import spiralcraft.lang.Focus;
 
 
 /**
- * The root of a WebUI component tree.
+ * <p>Represents the root of a WebUI component tree
+ * </p>
  * 
- * The UiComponent is the Component which is addressed directly via the HTTP
+ * <p>The UiComponent is the Component which is addressed directly via the HTTP
  *   client and provides the UI with some control over the HTTP interaction.
+ * </p>
+ * 
+ * 
  * 
  * @author mike
  *
@@ -33,18 +37,28 @@ public class UIComponent
 {
   
   private final Focus<?> focus;
-  private String relativePath;
+  private String contextRelativePath;
   
   public UIComponent(Focus<?> focus)
   { this.focus=focus;
   }
   
-  public void setRelativePath(String relativePath)
-  { this.relativePath=relativePath;
+  /**
+   * 
+   * @param contextRelativePath The path of this UIComponent relative
+   *   to the containing ServletContext
+   */
+  void setContextRelativePath(String contextRelativePath)
+  { this.contextRelativePath=contextRelativePath;
   }
   
-  public String getRelativePath()
-  { return relativePath;
+  /**
+   * 
+   * @return The path of this UIComponent relative
+   *   to the containing ServletContext
+   */
+  public String getContextRelativePath()
+  { return contextRelativePath;
   }
   
   @Override

@@ -21,7 +21,7 @@ import spiralcraft.servlet.webui.textgen.UIResourceUnit;
 import spiralcraft.servlet.webui.textgen.UIUnit;
 
 
-import spiralcraft.lang.CompoundFocus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
@@ -52,7 +52,7 @@ public class UICache
   private final HashMap<String,ComponentReference> componentMap
     =new HashMap<String,ComponentReference>();
   
-  private final CompoundFocus<UIServlet> focus;
+  private final SimpleFocus<UIServlet> focus;
   private final UIServlet servlet;
 
   private int resourceCheckFrequencyMs=5000;
@@ -66,10 +66,8 @@ public class UICache
     this.servlet=servlet;
     try
     { 
-      focus=new CompoundFocus<UIServlet>();
+      focus=new SimpleFocus<UIServlet>();
       focus.setParentFocus(parentFocus);
-      focus.setName("servlet");
-      focus.addNamespaceAlias("webui","spiralcraft.servlet.webui");
       focus.setSubject(new SimpleBinding<UIServlet>(servlet,true));
     }
     catch (BindException x)
@@ -77,15 +75,24 @@ public class UICache
     }
   }  
   
-  public synchronized UIComponent getUI(String relativePath)
+  /**
+   * 
+   * @param contextRelativePath The path relative to the ServletContext
+   *   that uniquely identifies the UI component
+   * @return The UIComponent associated with the path
+   * @throws MarkupException
+   * @throws IOException
+   * @throws ServletException
+   */
+  public synchronized UIComponent getUI(String contextRelativePath)
     throws MarkupException,IOException,ServletException
   {
-    UIResourceUnit resourceUnit=resolveResourceUnit(relativePath);
+    UIResourceUnit resourceUnit=resolveResourceUnit(contextRelativePath);
     if (resourceUnit!=null)
     { 
       UIUnit unit=resourceUnit.getUnit();
       if (unit!=null)
-      { return getComponent(relativePath,unit);
+      { return getComponent(contextRelativePath,unit);
       }
       else
       { 
@@ -110,21 +117,22 @@ public class UICache
    * Find or create the ResourceUnit that references the compiled textgen 
    *  doclet.
    * 
-   * @param relativePath
+   * @param contextRelativePath The path relative to the ServletContext
+   *   of the textgen source doclet
    * @return
    * @throws ServletException
    * @throws IOException
    */
-  private UIResourceUnit resolveResourceUnit(String relativePath)
+  private UIResourceUnit resolveResourceUnit(String contextRelativePath)
     throws ServletException,IOException
   {
-    UIResourceUnit resourceUnit=textgenCache.get(relativePath);
+    UIResourceUnit resourceUnit=textgenCache.get(contextRelativePath);
     
     if (resourceUnit!=null)
     { return resourceUnit;
     }
     
-    Resource resource=servlet.getResource(relativePath);
+    Resource resource=servlet.getResource(contextRelativePath);
     if (!resource.exists())
     { return null;
     }
@@ -135,29 +143,30 @@ public class UICache
     
     resourceUnit=new UIResourceUnit(resource);
     resourceUnit.setCheckFrequencyMs(resourceCheckFrequencyMs);
-    textgenCache.put(relativePath,resourceUnit);
+    textgenCache.put(contextRelativePath,resourceUnit);
     return resourceUnit;
   }
   
   /**
    * Get the component that is identified by the specified path
+   *   relative to the ServletContext
    * 
-   * @param relativePath
+   * @param contextRelativePath
    * @return
    */
   private UIComponent 
-    getComponent(String relativePath,UIUnit unit)
+    getComponent(String contextRelativePath,UIUnit unit)
     throws MarkupException
   {
-    ComponentReference ref=componentMap.get(relativePath);
+    ComponentReference ref=componentMap.get(contextRelativePath);
     if (ref!=null && ref.unit==unit)
     { return ref.component;
     }
     ref=new ComponentReference();
     ref.unit=unit;
     ref.component=unit.bind(focus);
-    ref.component.setRelativePath(relativePath);
-    componentMap.put(relativePath,ref);
+    ref.component.setContextRelativePath(contextRelativePath);
+    componentMap.put(contextRelativePath,ref);
     return ref.component;
     
   }

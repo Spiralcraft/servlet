@@ -222,21 +222,21 @@ public class UIServlet
       serviceContext.setResponse(response);
       
       Session session=getUiSession(request,true);
-      LocalSession localSession=session.getLocalSession(component);
+      ResourceSession localSession=session.getResourceSession(component);
       
       
       if (localSession==null)
       { 
-        localSession=new LocalSession();
+        localSession=new ResourceSession();
         localSession.setLocalURI
           (request.getRequestURI()
           );
-        session.setLocalSession(component,localSession);
+        session.setResourceSession(component,localSession);
       }
       
-      serviceContext.setLocalSession(localSession);
+      serviceContext.setResourceSession(localSession);
       
-      ElementState oldState=localSession.getState();
+      ElementState oldState=localSession.getRootState();
       
       if (oldState==null)
       { 
@@ -267,7 +267,7 @@ public class UIServlet
       if (newState!=oldState)
       { 
         // Cache the state for the next iteratio
-        localSession.setState(newState);
+        localSession.setRootState(newState);
       }
       
       response.getWriter().flush();
@@ -292,7 +292,7 @@ public class UIServlet
       String actionName=vars.getOne("action");
       if (actionName!=null)
       {
-        Action action=context.getLocalSession().getAction(actionName);
+        Action action=context.getResourceSession().getAction(actionName);
         if (action!=null)
         {
           LinkedList<Integer> path=new LinkedList<Integer>();
