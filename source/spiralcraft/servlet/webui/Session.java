@@ -39,10 +39,12 @@ import javax.servlet.ServletException;
 public class Session
 {
   
+  // Holds a map from resource paths relative to the ServletContext
+  //   to resource state.  
   private final HashMap<String,StateReference> stateMap
     =new HashMap<String,StateReference>();
   
-
+  
 
 
   public void init(Focus<?> parentFocus)
@@ -69,6 +71,8 @@ public class Session
     }
     else
     {
+      // there's a new component at that path- the old one can't exist
+      // anymore. Components may implement multi-session capability internally.
       ref.component=component;
       ref.localSession=null;
     }

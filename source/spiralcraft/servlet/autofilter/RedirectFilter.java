@@ -60,7 +60,7 @@ public class RedirectFilter
   { return "redirect";
   }
 
-  public void setParentInstance(AutoFilter parentInstance)
+  public void setGeneralInstance(AutoFilter parentInstance)
   {
 
   }

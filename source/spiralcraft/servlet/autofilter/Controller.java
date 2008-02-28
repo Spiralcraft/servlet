@@ -561,7 +561,7 @@ public class Controller
                     }
 
                     // Let the filter and it's parent figure out what to do
-                    localFilter.setParentInstance(parentFilter);
+                    localFilter.setGeneralInstance(parentFilter);
                   }
                   else
                   { 
@@ -573,7 +573,7 @@ public class Controller
                     else
                     { 
                       // Let the filter and it's parent figure out what to do
-                      localFilter.setParentInstance(parentFilter);
+                      localFilter.setGeneralInstance(parentFilter);
                     }
                   }
                 }

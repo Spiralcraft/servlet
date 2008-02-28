@@ -25,7 +25,7 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
-import spiralcraft.lang.spi.SimpleBinding;
+import spiralcraft.lang.spi.SimpleChannel;
 
 
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class UICache
     { 
       focus=new SimpleFocus<UIServlet>();
       focus.setParentFocus(parentFocus);
-      focus.setSubject(new SimpleBinding<UIServlet>(servlet,true));
+      focus.setSubject(new SimpleChannel<UIServlet>(servlet,true));
     }
     catch (BindException x)
     { throw new ServletException("Error binding Session "+x,x);

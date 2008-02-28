@@ -246,7 +246,7 @@ public class TranslationFilter
   }
 
   @Override
-  public void setParentInstance(AutoFilter parentInstance)
+  public void setGeneralInstance(AutoFilter parentInstance)
   {
     // TODO Auto-generated method stub
 

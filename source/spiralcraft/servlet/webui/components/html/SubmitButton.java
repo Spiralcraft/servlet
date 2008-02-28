@@ -10,7 +10,7 @@ import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 
-import spiralcraft.lang.WriteException;
+import spiralcraft.lang.AccessException;
 
 public class SubmitButton
   extends Control<Boolean>
@@ -90,7 +90,7 @@ public class SubmitButton
         try
         { target.set(state.getValue());
         }
-        catch (WriteException x)
+        catch (AccessException x)
         { state.setError(x.getMessage());
         }
       }

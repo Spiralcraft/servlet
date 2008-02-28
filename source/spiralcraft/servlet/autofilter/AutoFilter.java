@@ -50,6 +50,7 @@ public abstract class AutoFilter
   private boolean global;
   private Path path;
   protected String pattern;
+  protected AutoFilter parent;
   
   protected FilterConfig config;
 
@@ -226,9 +227,17 @@ public abstract class AutoFilter
    *   this filter adds to or overrides. If this filter overrides the
    *   parent filter, 
    */
-  public abstract void setParentInstance(AutoFilter parentInstance);
+  public abstract void setGeneralInstance(AutoFilter parentInstance);
   
   public abstract Class<? extends AutoFilter> getCommonType();
+
+  /**
+   * 
+   * @param The parent filter in the chain. 
+   */
+  public void setParent(AutoFilter parent)
+  { this.parent=parent;
+  }
   
   public void init(FilterConfig config)
   { 
@@ -247,5 +256,28 @@ public abstract class AutoFilter
   
   public void destroy()
   { }
+  
+  
+  /**
+   * Find a Filter among this Filters containers
+   * 
+   * @param <X>
+   * @param clazz
+   * @return The Element with the specific class or interface, or null if
+   *   none was found
+   */
+  @SuppressWarnings("unchecked") // Downcast from runtime check
+  public <X extends Filter> X findFilter(Class<X> clazz)
+  {
+    if (clazz.isAssignableFrom(getClass()))
+    { return (X) this;
+    }
+    else if (parent!=null)
+    { return parent.<X>findFilter(clazz);
+    }
+    else
+    { return null;
+    }
+  }
   
 }

@@ -18,7 +18,7 @@ import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.BindException;
 
-import spiralcraft.lang.spi.ThreadLocalBinding;
+import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.lang.spi.BeanReflector;
 
 import javax.servlet.ServletContext;
@@ -59,17 +59,17 @@ public class HttpFocus<T>
   extends CompoundFocus<T>
 {
 
-  private ThreadLocalBinding<ServletContext> servletContextBinding;
-  private ThreadLocalBinding<HttpSession> sessionBinding;
-  private ThreadLocalBinding<HttpServletRequest> requestBinding;
-  private ThreadLocalBinding<HttpServletResponse> responseBinding;
+  private ThreadLocalChannel<ServletContext> servletContextBinding;
+  private ThreadLocalChannel<HttpSession> sessionBinding;
+  private ThreadLocalChannel<HttpServletRequest> requestBinding;
+  private ThreadLocalChannel<HttpServletResponse> responseBinding;
 
   public void init()
     throws BindException
   {
     // addNamespaceAlias("http");
     
-    servletContextBinding=new ThreadLocalBinding<ServletContext>
+    servletContextBinding=new ThreadLocalChannel<ServletContext>
       (BeanReflector.<ServletContext>getInstance(ServletContext.class));
     
     SimpleFocus<ServletContext> servletContextFocus
@@ -80,7 +80,7 @@ public class HttpFocus<T>
       );
     
     
-    sessionBinding=new ThreadLocalBinding<HttpSession>
+    sessionBinding=new ThreadLocalChannel<HttpSession>
       (BeanReflector.<HttpSession>getInstance(HttpSession.class));
     SimpleFocus<HttpSession> sessionFocus
       =new SimpleFocus<HttpSession>(sessionBinding);
@@ -89,7 +89,7 @@ public class HttpFocus<T>
       ,sessionFocus
       );
     
-    requestBinding=new ThreadLocalBinding<HttpServletRequest>
+    requestBinding=new ThreadLocalChannel<HttpServletRequest>
       (BeanReflector.<HttpServletRequest>getInstance(HttpServletRequest.class));
     SimpleFocus<HttpServletRequest> requestFocus
       =new SimpleFocus<HttpServletRequest>(requestBinding);
@@ -98,7 +98,7 @@ public class HttpFocus<T>
       ,requestFocus
       );
 
-    responseBinding=new ThreadLocalBinding<HttpServletResponse>
+    responseBinding=new ThreadLocalChannel<HttpServletResponse>
       (BeanReflector.<HttpServletResponse>getInstance(HttpServletResponse.class));
     SimpleFocus<HttpServletResponse> responseFocus
       =new SimpleFocus<HttpServletResponse>(responseBinding);

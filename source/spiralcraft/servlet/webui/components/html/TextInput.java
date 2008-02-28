@@ -12,7 +12,7 @@ import spiralcraft.textgen.Element;
 import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.WriteException;
+import spiralcraft.lang.AccessException;
 
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
@@ -115,7 +115,7 @@ public class TextInput<Ttarget>
           { target.set((Ttarget) state.getValue());
           }
         }
-        catch (WriteException x)
+        catch (AccessException x)
         {  state.setError(x.getMessage());
         }
       }

@@ -173,7 +173,7 @@ public class AuthenticateFilter
   }
   
   @Override
-  public void setParentInstance(AutoFilter parentInstance)
+  public void setGeneralInstance(AutoFilter parentInstance)
   {
   }
   

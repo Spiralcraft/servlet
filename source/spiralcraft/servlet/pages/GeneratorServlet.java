@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -48,6 +50,7 @@ import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
+import spiralcraft.log.ClassLogger;
 
 
 /**
@@ -70,7 +73,8 @@ import spiralcraft.lang.BindException;
 public class GeneratorServlet
   extends HttpServlet
 {
-
+  private static final ClassLogger log=new ClassLogger(GeneratorServlet.class);
+  
   private final HashMap<String,ResourceEntry> resourceMap
     =new HashMap<String,ResourceEntry>();
   
@@ -78,9 +82,15 @@ public class GeneratorServlet
   
 
   @Override
-  protected void doGet(HttpServletRequest request,HttpServletResponse response)
+  public void service(ServletRequest srequest,ServletResponse sresponse)
     throws ServletException,IOException
   {
+    HttpServletRequest request
+      =(HttpServletRequest) srequest;
+    
+    HttpServletResponse response
+      =(HttpServletResponse) sresponse;
+
     if (httpFocus==null)
     {
       // Initialize the local HTTP Focus with its parent that's always passed
@@ -91,10 +101,18 @@ public class GeneratorServlet
         HttpFocus<?> focus=new HttpFocus<Void>();
         focus.init();
         focus.setParentFocus(FocusFilter.getFocusChain(request));
+        log.fine("HTTPFocus parent="+FocusFilter.getFocusChain(request));
         httpFocus=focus;
       }
       catch (BindException x)
       { throw new ServletException(x.toString(),x);
+      }
+    }
+    else
+    {
+      Focus parentFocus=FocusFilter.getFocusChain(request);
+      if (parentFocus!=null && httpFocus.getParentFocus()==null)
+      { log.fine("HTTPFocus late parent binding to "+parentFocus);
       }
     }
     
@@ -248,7 +266,10 @@ class ResourceEntry
   {
     checkState();
     if (exception!=null)
-    { response.sendError(501,exception.toString());
+    { 
+      response.sendError(501,exception.toString());
+      // XXX Figure out where to log this stuff
+      exception.printStackTrace();
     }
     else
     { 

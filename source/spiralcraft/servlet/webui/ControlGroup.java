@@ -23,9 +23,9 @@ import spiralcraft.lang.BindException;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.CompoundFocus;
-import spiralcraft.lang.WriteException;
+import spiralcraft.lang.AccessException;
 
-import spiralcraft.lang.spi.AbstractBinding;
+import spiralcraft.lang.spi.AbstractChannel;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -47,7 +47,7 @@ public class ControlGroup<Ttarget>
   protected ThreadLocal<ControlGroupState<Ttarget>> threadLocalState
     =new ThreadLocal<ControlGroupState<Ttarget>>();
   
-  protected AbstractBinding<Ttarget> valueBinding;
+  protected AbstractChannel<Ttarget> valueBinding;
   
   private CompoundFocus<Ttarget> focus;
 
@@ -108,7 +108,7 @@ public class ControlGroup<Ttarget>
     if (expression!=null)
     { 
       target=parentFocus.bind(expression);
-      valueBinding=new AbstractBinding<Ttarget>(target.getReflector())
+      valueBinding=new AbstractChannel<Ttarget>(target.getReflector())
       {
         public Ttarget retrieve()
         {
@@ -171,7 +171,7 @@ public class ControlGroup<Ttarget>
       try
       { target.set(state.getValue());
       }
-      catch (WriteException x)
+      catch (AccessException x)
       { state.setError(x.getMessage());
       }
     }
