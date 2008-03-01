@@ -45,6 +45,10 @@ public abstract class FocusFilter<T>
   
   private Focus<T> focus;
   
+  // Default to global, to implement Focus hierarchy
+  { setGlobal(true);
+  }
+  
   /**
    * <p>Obtain the Focus associated with the deepest FocusFilter in the
    *   stack.
@@ -95,6 +99,7 @@ public abstract class FocusFilter<T>
   public void doFilter(ServletRequest request, ServletResponse response,
       FilterChain chain) throws IOException, ServletException
   {
+    log.fine("doFilter()");
     Focus<?> requestFocus=null;
     boolean pushed=false;
     try
@@ -136,6 +141,7 @@ public abstract class FocusFilter<T>
       log.fine("Restoring "+requestFocus);
       request.setAttribute(attributeName,requestFocus);
     }
+    log.fine("/doFilter()");
     
   }
 
