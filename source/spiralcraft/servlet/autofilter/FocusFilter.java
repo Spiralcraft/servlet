@@ -99,20 +99,20 @@ public abstract class FocusFilter<T>
   public void doFilter(ServletRequest request, ServletResponse response,
       FilterChain chain) throws IOException, ServletException
   {
-    log.fine("doFilter()");
+    // log.fine("doFilter()");
     Focus<?> requestFocus=null;
     boolean pushed=false;
     try
     {
       // Grab our 'parent' Focus from the request (which should be stable)
       requestFocus=(Focus<?>) request.getAttribute(attributeName);
-      log.fine("Got "+requestFocus);
+      // log.fine("Got "+requestFocus);
       
       // Create our own Focus, using the 'parent' Focus.
       if (focus==null)
       { 
         focus=createFocus(requestFocus);
-        log.fine("Created "+focus);
+        // log.fine("Created "+focus);
       }
       
       // Make sure the subject of our Focus is appropriate for this
@@ -123,7 +123,7 @@ public abstract class FocusFilter<T>
       
       // Make our Focus the next filter's parent Focus
       request.setAttribute(attributeName,focus);
-      log.fine("Setting "+focus);
+      // log.fine("Setting "+focus);
       
       // System.err.println("FocusFilter.doFilter");
       chain.doFilter(request,response);
@@ -138,10 +138,10 @@ public abstract class FocusFilter<T>
         // If we changed this Thread's Focus subject, put it back
         popSubject((HttpServletRequest) request);
       }
-      log.fine("Restoring "+requestFocus);
+//      log.fine("Restoring "+requestFocus);
       request.setAttribute(attributeName,requestFocus);
     }
-    log.fine("/doFilter()");
+//    log.fine("/doFilter()");
     
   }
 

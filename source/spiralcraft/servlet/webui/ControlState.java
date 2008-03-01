@@ -14,6 +14,7 @@
 //
 package spiralcraft.servlet.webui;
 
+import spiralcraft.log.ClassLogger;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.MementoState;
 
@@ -29,6 +30,8 @@ import spiralcraft.textgen.MementoState;
 public class ControlState<Tbuf>
   extends ElementState
 {
+  @SuppressWarnings("unused")
+  private static final ClassLogger log=new ClassLogger(ControlState.class);
 
   protected ControlGroupState<?> controlGroupState;
   protected final Control<?> control;
@@ -43,6 +46,10 @@ public class ControlState<Tbuf>
     this.control=control;
   }
   
+  public String toString()
+  { return super.toString()+"value="+value;
+  }
+  
   @Override
   public void resolve()
   { 
@@ -51,14 +58,14 @@ public class ControlState<Tbuf>
     int dist=control.getControlGroupStateDistance();
     if (dist>-1)
     { 
-      System.err.println("Distance from "+getClass().getName()+"="+dist);
-      for (int i=0;i<dist;i++)
-      { System.err.println(getParent().getAncestor(i).getClass().getName());
-      }
+//      log.fine("Distance from "+getClass().getName()+"="+dist);
+//      for (int i=0;i<dist;i++)
+//      { log.fine(getParent().getAncestor(i).getClass().getName());
+//      }
       controlGroupState=(ControlGroupState<?>) getParent().getAncestor(dist);
     }
     
-    System.err.println("ControlState: ControlGroupState="+controlGroupState);
+//    log.fine("ControlState: ControlGroupState="+controlGroupState);
     
     // Determine local part of variable name
     String localName=control.getVariableName();

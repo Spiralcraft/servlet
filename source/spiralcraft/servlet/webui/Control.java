@@ -117,10 +117,15 @@ public abstract class Control<Ttarget>
       Focus<?> parentFocus=getParent().getFocus();
       target=parentFocus.bind(expression);
     }
-    controlGroupStateDistance=getParent().getStateDistance(ControlGroup.class);
-    iterationStateDistance=getParent().getStateDistance(Iterate.class);
+    computeDistances();
     bindChildren(childUnits);
     
+  }
+  
+  protected void computeDistances()
+  {
+    controlGroupStateDistance=getParent().getStateDistance(ControlGroup.class);
+    iterationStateDistance=getParent().getStateDistance(Iterate.class);
   }
   
   @Override

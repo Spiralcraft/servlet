@@ -68,6 +68,10 @@ public class Form<T>
     }
   };
   
+  public String getVariableName()
+  { return null;
+  }
+  
   public void setActionName(String actionName)
   { this.actionName=actionName;
   }

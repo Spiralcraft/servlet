@@ -21,11 +21,13 @@ import java.io.IOException;
 
 import spiralcraft.lang.BindException;
 
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.AccessException;
 
 import spiralcraft.lang.spi.AbstractChannel;
+import spiralcraft.log.ClassLogger;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -43,20 +45,29 @@ import spiralcraft.textgen.compiler.TglUnit;
 public class ControlGroup<Ttarget>
   extends Control<Ttarget>
 {
-
+  @SuppressWarnings("unused")
+  private static final ClassLogger log=new ClassLogger(ControlGroup.class);
+  private int nextVariableName=0;
+  
   protected ThreadLocal<ControlGroupState<Ttarget>> threadLocalState
     =new ThreadLocal<ControlGroupState<Ttarget>>();
   
   protected AbstractChannel<Ttarget> valueBinding;
   
   private CompoundFocus<Ttarget> focus;
+  
+  private String variableName;
 
   public ControlGroupState<Ttarget> getState()
   { return threadLocalState.get();
   }
   
   public String getVariableName()
-  { return null;
+  { return variableName;
+  }
+  
+  public String nextVariableName()
+  { return Integer.toString(nextVariableName++);
   }
   
   @SuppressWarnings("unchecked") // Blind cast
@@ -96,6 +107,17 @@ public class ControlGroup<Ttarget>
     }
   }
 
+  protected Channel<?> bind(Focus<?> parentFocus)
+    throws BindException
+  { 
+    if (expression!=null)
+    { return parentFocus.<Ttarget>bind(expression);
+    }
+    else
+    { return null;
+    }
+  }
+  
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
@@ -105,18 +127,20 @@ public class ControlGroup<Ttarget>
     Focus<?> parentFocus=getParent().getFocus();
 
     
-    if (expression!=null)
+    target=(Channel<Ttarget>) bind(parentFocus);
+    if (target!=null)
     { 
-      target=parentFocus.bind(expression);
       valueBinding=new AbstractChannel<Ttarget>(target.getReflector())
       {
         public Ttarget retrieve()
         {
+          // log.fine(threadLocalState.get().toString());
           return threadLocalState.get().getValue();
         }
         
         public boolean store(Ttarget val)
         {
+          // log.fine("Store "+threadLocalState.get()+":"+val);
           threadLocalState.get().setValue(val);
           return true;
         }
@@ -136,7 +160,15 @@ public class ControlGroup<Ttarget>
       focus.bindFocus("spiralcraft.servlet.webui",getAssembly().getFocus());
 
     }
+    if (variableName==null)
+    { 
+      ControlGroup parentGroup=this.findElement(ControlGroup.class);
+      if (parentGroup!=null)
+      { variableName=parentGroup.nextVariableName();
+      }
+    }
     
+    computeDistances();
     bindChildren(childUnits);
   }
   
