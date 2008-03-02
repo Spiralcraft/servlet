@@ -166,7 +166,16 @@ public abstract class Control<Ttarget>
     } 
   }
   
-  
+  public ControlGroup<?> getControlGroup()
+  { 
+    if (getParent()!=null)
+    { return getParent().findElement(ControlGroup.class);
+    }
+    else
+    { return null;
+    } 
+      
+  }
   
   /**
    * 

@@ -40,17 +40,7 @@ public class Editor
     return new CommandAdapter<Buffer,Void>()
     {
       public void run()
-      { 
-        getState().queueCommand
-          (new CommandAdapter<Buffer,Void>()
-              {
-                public void run()
-                {
-                  getState().getValue().revert();
-                }
-              }
-          
-          );
+      { getState().getValue().revert();
       }
     };
   }

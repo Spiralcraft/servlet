@@ -231,9 +231,17 @@ public class ControlGroup<Ttarget>
    */
   public <X> X executeCommand(Command<Ttarget,X> command)
   { 
+    log.fine(command.toString());
     command.setTarget(getState().getValue());
     command.execute();
     return command.getResult();
+  }
+
+  private void handleException(Exception exception)
+  {
+    // Make exception available
+    exception.printStackTrace();
+    getState().setError(exception.toString());
   }
   
   private void executeCommands(ControlGroupState<Ttarget> state)
@@ -242,7 +250,12 @@ public class ControlGroup<Ttarget>
     if (commands!=null)
     {
       for (Command<Ttarget,?> command : commands)
-      { executeCommand(command);
+      { 
+        executeCommand(command);
+        if (command.getException()!=null)
+        { handleException(command.getException());
+        }
+        
       }
     }
   }

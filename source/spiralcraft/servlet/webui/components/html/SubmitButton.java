@@ -93,8 +93,9 @@ public class SubmitButton
           if (command==null)
           { command=target.get();
           }
+          
           if (command!=null)
-          { command.execute();
+          { state.getControlGroupState().queueCommand(command);
           }
         }
         catch (AccessException x)

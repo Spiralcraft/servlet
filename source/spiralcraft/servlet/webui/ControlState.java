@@ -46,6 +46,10 @@ public class ControlState<Tbuf>
     this.control=control;
   }
   
+  public ControlGroupState<?> getControlGroupState()
+  { return controlGroupState;
+  }
+  
   public String toString()
   { return super.toString()+"value="+value;
   }
