@@ -11,7 +11,6 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLogger;
 import spiralcraft.registry.Registry;
-import spiralcraft.registry.RegistryNode;
 
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;

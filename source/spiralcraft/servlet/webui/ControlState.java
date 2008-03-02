@@ -114,8 +114,11 @@ public class ControlState<Tbuf>
   
     
   /**
-   * Update the value, resetting any error and indicating whether the value
-   *   should be propogated.
+   * <p>Update the value, resetting any error and indicating whether the value
+   *   should be propogated. If there is no change to the value (according to
+   *   a comparison using .equals()), this method will return false.
+   * </p>
+   * 
    * 
    * @param value
    * @return true, if the value should be propogated, ie. when the value

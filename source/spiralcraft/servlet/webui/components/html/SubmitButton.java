@@ -10,10 +10,12 @@ import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 
+import spiralcraft.command.Command;
 import spiralcraft.lang.AccessException;
+import spiralcraft.lang.Expression;
 
 public class SubmitButton
-  extends Control<Boolean>
+  extends Control<Command<?,?>>
 {
 
   private String name;
@@ -31,7 +33,7 @@ public class SubmitButton
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
+      ControlState<Command> state=((ControlState<Command>) context.getState());
       renderAttribute(context.getWriter(),"type","submit");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       renderAttribute(context.getWriter(),"value",label);
@@ -42,8 +44,7 @@ public class SubmitButton
     { return false;
     }
   };
-  
-  
+    
   public void setName(String name)
   { this.name=name;
   }
@@ -51,7 +52,6 @@ public class SubmitButton
   public void setLabel(String label)
   { this.label=label;
   }
-
 
   @Override
   public void setParent(Element parentElement)
@@ -80,21 +80,29 @@ public class SubmitButton
   @Override
   public void gather(ServiceContext context)
   {
-    ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
-    if (state.updateValue
-          (context.getPost().getOne(state.getVariableName())!=null)
-       )
+    ControlState<Command> state=((ControlState<Command>) context.getState());
+    boolean gotPost=context.getPost().getOne(state.getVariableName())!=null;
+
+    if (gotPost)
     {
       if (target!=null)
       { 
         try
-        { target.set(state.getValue());
+        { 
+          Command command=state.getValue();
+          if (command==null)
+          { command=target.get();
+          }
+          if (command!=null)
+          { command.execute();
+          }
         }
         catch (AccessException x)
         { state.setError(x.getMessage());
         }
       }
     }
+    
     
 //    System.err.println
 //      ("SubmitButton: readPost- "
@@ -108,6 +116,7 @@ public class SubmitButton
   { 
     ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
     state.setError(null);
+    // At some point we need to read a command
   }
 }
 

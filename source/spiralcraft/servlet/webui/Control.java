@@ -48,7 +48,6 @@ public abstract class Control<Ttarget>
   protected int controlGroupStateDistance=-1;
   protected int iterationStateDistance=-1;
   
-  
   public void setX(Expression<Ttarget> x)
   { this.expression=x;
   }
@@ -166,6 +165,8 @@ public abstract class Control<Ttarget>
       
     } 
   }
+  
+  
   
   /**
    * 

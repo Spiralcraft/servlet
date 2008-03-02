@@ -90,21 +90,25 @@ public class UICache
     UIResourceUnit resourceUnit=resolveResourceUnit(contextRelativePath);
     if (resourceUnit!=null)
     { 
-      UIUnit unit=resourceUnit.getUnit();
-      if (unit!=null)
-      { return getComponent(contextRelativePath,unit);
-      }
-      else
-      { 
-        // XXX Return an 'exception handler' component
-        if (resourceUnit.getException()!=null)
-        { 
-          throw new ServletException
-            ("Error loading WebUI resource "+resourceUnit.getException()
-            ,resourceUnit.getException()
-            );
+      try
+      {
+        UIUnit unit=resourceUnit.getUnit();
+      
+        if (unit!=null)
+        { return getComponent(contextRelativePath,unit);
         }
-        return null;
+        else
+        { 
+          // XXX Return an 'exception handler' component
+          if (resourceUnit.getException()!=null)
+          { return new ExceptionComponent(resourceUnit.getException());
+          }
+          return null;
+        }
+      }
+      catch (MarkupException x)
+      { 
+        return new ExceptionComponent(x);
       }
       
     }

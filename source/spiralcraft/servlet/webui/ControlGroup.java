@@ -14,11 +14,13 @@
 //
 package spiralcraft.servlet.webui;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import java.io.IOException;
 
+import spiralcraft.command.Command;
 import spiralcraft.lang.BindException;
 
 import spiralcraft.lang.Channel;
@@ -58,6 +60,7 @@ public class ControlGroup<Ttarget>
   
   private String variableName;
 
+  
   public ControlGroupState<Ttarget> getState()
   { return threadLocalState.get();
   }
@@ -198,19 +201,49 @@ public class ControlGroup<Ttarget>
     ControlGroupState<Ttarget> state=
       (ControlGroupState<Ttarget>) context.getState();
     
+    
     if (target!=null)
     {
       try
-      { target.set(state.getValue());
+      { 
+        target.set(state.getValue());
+        executeCommands(state);
       }
       catch (AccessException x)
       { state.setError(x.getMessage());
       }
     }
     
+    
+    
   }
 
   public ControlGroupState<Ttarget> createState()
   { return new ControlGroupState<Ttarget>(this);
+  }
+  
+  /**
+   * Execute a command- by callback only in the message and render chain
+   * 
+   * @param <X>
+   * @param command
+   * @return
+   */
+  public <X> X executeCommand(Command<Ttarget,X> command)
+  { 
+    command.setTarget(getState().getValue());
+    command.execute();
+    return command.getResult();
+  }
+  
+  private void executeCommands(ControlGroupState<Ttarget> state)
+  {
+    List<Command<Ttarget,?>> commands=state.dequeueCommands();
+    if (commands!=null)
+    {
+      for (Command<Ttarget,?> command : commands)
+      { executeCommand(command);
+      }
+    }
   }
 }

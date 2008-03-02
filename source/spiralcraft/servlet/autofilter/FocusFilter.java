@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class FocusFilter<T>
   extends AutoFilter
 {
+  @SuppressWarnings("unused")
   private static final ClassLogger log=new ClassLogger(FocusFilter.class);
   
   private static final String attributeName="spiralcraft.lang.focus";

@@ -15,6 +15,8 @@
 package spiralcraft.servlet.webui.components;
 
 
+import spiralcraft.command.Command;
+import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.lang.DataReflector;
 import spiralcraft.data.session.BufferChannel;
@@ -33,6 +35,25 @@ public class Editor
 {
   private static final ClassLogger log=new ClassLogger(Editor.class);
 
+  public Command<Buffer,Void> revertCommand()
+  { 
+    return new CommandAdapter<Buffer,Void>()
+    {
+      public void run()
+      { 
+        getState().queueCommand
+          (new CommandAdapter<Buffer,Void>()
+              {
+                public void run()
+                {
+                  getState().getValue().revert();
+                }
+              }
+          
+          );
+      }
+    };
+  }
 
   @SuppressWarnings("unchecked")
   @Override
