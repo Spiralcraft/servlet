@@ -272,6 +272,7 @@ public class UIServlet
       
       response.getWriter().flush();
       response.flushBuffer();
+      
     }
     finally
     { httpFocus.pop();

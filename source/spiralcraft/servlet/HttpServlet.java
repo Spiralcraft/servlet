@@ -15,6 +15,7 @@
 package spiralcraft.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.net.URI;
 import java.net.URL;
@@ -205,5 +206,19 @@ public class HttpServlet
       return new URLResource(url);
     }
   }
+  
+  public void sendError(ServletResponse servletResponse,Throwable x)
+    throws IOException
+  {
+    HttpServletResponse response=(HttpServletResponse) servletResponse;
+    response.setStatus(501);
+    
+    PrintWriter printWriter=new PrintWriter(response.getWriter());
+    printWriter.write(x.toString());
+
+    x.printStackTrace(printWriter);
+    printWriter.flush();
+  }
+  
   
 }

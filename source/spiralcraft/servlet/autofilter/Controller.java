@@ -18,12 +18,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -36,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.data.persist.PersistenceException;
 import spiralcraft.data.persist.XmlBean;
+import spiralcraft.log.ClassLogger;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.time.Clock;
 import spiralcraft.util.Path;
@@ -65,6 +68,8 @@ import spiralcraft.vfs.file.FileResource;
 public class Controller
   implements Filter
 {
+  private static final ClassLogger log=new ClassLogger(Controller.class);
+  
   private long updateIntervalMs=10000;
   private String controlFileName=".control.xml";
   
@@ -79,6 +84,8 @@ public class Controller
   private long lastUpdate;
   private final ContextResourceMap contextResourceMap
     = new ContextResourceMap();
+  
+  private Throwable throwable;
 
   /**
    * Filter.init()
@@ -143,24 +150,37 @@ public class Controller
     {
     
       updateConfig();
+      
       HttpServletRequest request=(HttpServletRequest) servletRequest;
     
-      String pathString=request.getRequestURI();
-      if (pathString.startsWith("/WEB-INF"))
-      { 
-        ((HttpServletResponse) servletResponse).sendError(403);
-        return;
+      if (throwable==null)
+      {
+        String pathString=request.getRequestURI();
+        if (pathString.startsWith("/WEB-INF"))
+        { 
+          ((HttpServletResponse) servletResponse).sendError(403);
+          return;
+        }
+        FilterChain chain=resolveChain(pathString,endpoint);
+        chain.doFilter(servletRequest,servletResponse);
       }
-      FilterChain chain=resolveChain(pathString,endpoint);
-      chain.doFilter(servletRequest,servletResponse);
+      else
+      { sendError(servletResponse,throwable);
+      }
       
     }
     catch (ServletException x)
     { 
+      sendError(servletResponse,x);
+
       if (x.getRootCause()!=null)
-      { x.getRootCause().printStackTrace();
+      { log.log(Level.WARNING,x.toString(),x);
       }
-      throw x;
+    }
+    catch (RuntimeException x)
+    { 
+      sendError(servletResponse,x);
+      log.log(Level.WARNING,"Exception handling request",x);
     }
     finally
     { contextResourceMap.pop();
@@ -184,12 +204,15 @@ public class Controller
     long time=Clock.instance().approxTimeMillis();
     if (time-lastUpdate>updateIntervalMs)
     { 
+      throwable=null;
       // System.err.println("Controller.updateConfig(): scanning");
       try
       { updateRecursive(pathTree,root,false);
       }
-      catch (IOException x)
-      { x.printStackTrace();
+      catch (Throwable x)
+      { 
+        throwable=x;
+        log.log(Level.WARNING,"Uncaught exception loading AutoFilters",x);
       }
       finally
       { lastUpdate=Clock.instance().approxTimeMillis();
@@ -245,7 +268,18 @@ public class Controller
             try
             {
               OutputStream out=errorResource.getOutputStream();
-              out.write("Successfully processed control file".getBytes());
+              if (filterSet.exception==null)
+              { out.write("Successfully processed control file".getBytes());
+              }
+              else
+              { 
+                PrintStream pout=new PrintStream(out);
+                pout.println("Error processing filter definitions");
+                pout.println(filterSet.exception.toString());
+                pout.println("Stack trace ----------------------------------------");
+                filterSet.exception.printStackTrace(pout);
+                pout.flush();
+              }
               out.flush();
               out.close();
             }
@@ -261,7 +295,7 @@ public class Controller
             try
             {
               PrintStream out=new PrintStream(errorResource.getOutputStream());
-              out.println("Error processing filter definitions");
+              out.println("Uncaught error processing filter definitions");
               out.println(x.toString());
               out.println("Stack trace ----------------------------------------");
               x.printStackTrace(out);
@@ -272,7 +306,8 @@ public class Controller
             { System.err.println("Controller: error writing contol file error: "+y);
             }
             
-            filterSet=null;
+            filterSet.loadError(node.getPath(), x);
+            
           }
         }
 //        else
@@ -288,7 +323,14 @@ public class Controller
       { uriCache.clear();
       }
       
-      // Handle the existing children
+      if (filterSet!=null && filterSet.exception!=null)
+      { 
+        log.fine("Aborting recursion");
+        // Don't bother with sub-filters if there was a problem here
+        return;
+      }
+      
+        // Handle the existing children
       for (PathTree<FilterSet> child
           : node
           )
@@ -299,6 +341,7 @@ public class Controller
           ,dirty
           );
       }
+
       
       // Handle any new children
       for (Resource childResource: resource.asContainer().listChildren())
@@ -421,6 +464,19 @@ public class Controller
     
   }
   
+  public void sendError(ServletResponse servletResponse,Throwable x)
+    throws IOException
+  {
+    HttpServletResponse response=(HttpServletResponse) servletResponse;
+    response.setStatus(501);
+
+    PrintWriter printWriter=new PrintWriter(response.getWriter());
+    printWriter.write(x.toString()+"\r\n");
+
+    x.printStackTrace(printWriter);
+    printWriter.flush();
+  }
+  
   /**
    * 
    * @return An FilterChain from the cache that matches the path and the specified endpoint
@@ -462,12 +518,14 @@ public class Controller
     Resource resource;
     long lastModified;
     PathTree<FilterSet> node;
+    Throwable exception;
     
     /**
      * Check to see if a Resource has been modified
      */
     public boolean checkDirtyResource()
     {
+      
       if (resource!=null)
       {
         try
@@ -486,6 +544,7 @@ public class Controller
       return false;
     }
     
+    
     /**
      * Called when a resource is detected as being removed or changed
      */
@@ -494,7 +553,7 @@ public class Controller
       for (AutoFilter filter: localFilters)
       { filter.destroy();
       }
-
+      exception=null;
       resource=null;
       localFilters.clear();
       effectiveFilters.clear();
@@ -611,28 +670,57 @@ public class Controller
     public void loadResource(Resource resource,Path container)
       throws IOException,PersistenceException
     { 
-      this.resource=resource;
-      this.lastModified=resource.getLastModified();
+      exception=null;
+      try
+      {
+        this.resource=resource;
+        this.lastModified=resource.getLastModified();
       
-      // XXX Set a context so that resources can access the web root
-      //   file system in a context independent manner
+        // XXX Set a context so that resources can access the web root
+        //   file system in a context independent manner
       
-      XmlBean <List<AutoFilter>> bean
-        =new XmlBean<List<AutoFilter>>
-          (URI.create("java:/spiralcraft/servlet/autofilter/AutoFilter.list")
-          ,resource.getURI()
-          );
+        XmlBean <List<AutoFilter>> bean
+          =new XmlBean<List<AutoFilter>>
+            (URI.create("java:/spiralcraft/servlet/autofilter/AutoFilter.list")
+            ,resource.getURI()
+            );
       
-      List<AutoFilter> filters=bean.get();
-      localFilters.addAll(filters);
+        List<AutoFilter> filters=bean.get();
+        localFilters.addAll(filters);
       
-      for (AutoFilter filter: localFilters)
+        for (AutoFilter filter: localFilters)
+        { 
+          filter.setPath(container);
+          filter.init(config);
+        }
+      }
+      catch (PersistenceException x)
       { 
-        filter.setPath(container);
-        filter.init(config);
+        log.warning("Controller.loadResource() failed: "+x.toString());
+        loadError(container,x);
+      }
+      catch (IOException x)
+      { 
+        log.warning("Controller.loadResource() failed: "+x.toString());
+        loadError(container,x);
+      }
+      catch (RuntimeException x)
+      { 
+        log.warning("Controller.loadResource() failed: "+x.toString());
+        throw x;
       }
 
     }
+
+    public void loadError(Path container,Throwable x)
+    {
+      ErrorFilter filter=new ErrorFilter();
+      exception=x;
+      filter.setThrowable(x);
+      filter.setPath(container);
+      filter.init(config);
+      localFilters.add(filter);
+    }
   }
-  
+
 }

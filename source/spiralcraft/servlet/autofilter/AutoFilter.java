@@ -15,6 +15,7 @@
 package spiralcraft.servlet.autofilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -22,6 +23,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.util.Path;
 
@@ -280,4 +282,18 @@ public abstract class AutoFilter
     }
   }
   
+  public void sendError(ServletResponse servletResponse,Throwable x)
+    throws IOException
+  {
+    HttpServletResponse response=(HttpServletResponse) servletResponse;
+    response.setStatus(501);
+  
+    PrintWriter printWriter=new PrintWriter(response.getWriter());
+    printWriter.write(x.toString());
+
+    x.printStackTrace(printWriter);
+    printWriter.flush();
+  }
 }
+  
+
