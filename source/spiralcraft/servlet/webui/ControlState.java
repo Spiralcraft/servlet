@@ -14,6 +14,10 @@
 //
 package spiralcraft.servlet.webui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import spiralcraft.command.Command;
 import spiralcraft.log.ClassLogger;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.MementoState;
@@ -38,6 +42,8 @@ public class ControlState<Tbuf>
   private String variableName;
   private Tbuf value;
   private String error;
+  private Exception exception;
+  private ArrayList<Command<Tbuf,?>> commands;
   
 
   public ControlState(Control<?> control)
@@ -184,4 +190,38 @@ public class ControlState<Tbuf>
     { controlGroupState.setErrorState(true);
     }
   }
+  
+  public Exception getException()
+  { return exception;
+  }
+  
+  public void setException(Exception exception)
+  { 
+    if (error!=null)
+    { setError(exception.getMessage());
+    }
+    this.exception=exception;
+  }
+  
+  /**
+   * Queue a Command for execution after the "gather" phase of
+   *   reading the browser input.
+   * 
+   * @param command
+   */
+  public synchronized void queueCommand(Command<Tbuf,?> command)
+  { 
+    if (commands==null)
+    { commands=new ArrayList<Command<Tbuf,?>>(1);
+    }
+    commands.add(command);
+  }
+  
+  public List<Command<Tbuf,?>> dequeueCommands()
+  { 
+    List<Command<Tbuf,?>> list=commands;
+    commands=null;
+    return list;
+  }
+  
 }

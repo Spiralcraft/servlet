@@ -95,7 +95,13 @@ public class SubmitButton
           }
           
           if (command!=null)
-          { state.getControlGroupState().queueCommand(command);
+          {
+            // Queueing should be decided by the Command, which should
+            //   interact with WebUI api to coordinate- controller role.
+            command.execute();
+            if (command.getException()!=null)
+            { state.setException(command.getException());
+            }
           }
         }
         catch (AccessException x)
@@ -118,6 +124,11 @@ public class SubmitButton
     ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
     state.setError(null);
     // At some point we need to read a command
+  }
+
+  @Override
+  protected void renderError(ServiceContext context) throws IOException
+  { new ErrorTag(tag).render(context);
   }
 }
 

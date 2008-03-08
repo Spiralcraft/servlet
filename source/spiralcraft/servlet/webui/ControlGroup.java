@@ -14,13 +14,11 @@
 //
 package spiralcraft.servlet.webui;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import java.io.IOException;
 
-import spiralcraft.command.Command;
 import spiralcraft.lang.BindException;
 
 import spiralcraft.lang.Channel;
@@ -44,7 +42,7 @@ import spiralcraft.textgen.compiler.TglUnit;
  * @author mike
  *
  */
-public class ControlGroup<Ttarget>
+public abstract class ControlGroup<Ttarget>
   extends Control<Ttarget>
 {
   @SuppressWarnings("unused")
@@ -110,6 +108,16 @@ public class ControlGroup<Ttarget>
     }
   }
 
+  /**
+   * Called once to allow subclass to further extend the binding chain. The
+   *   result of the binding will be cached in ThreadLocalState in-between
+   *   scatter() and gather() operations, and will be referred to in this
+   *   component's Focus as exported to child Elements.
+   * 
+   * @param parentFocus
+   * @return
+   * @throws BindException
+   */
   protected Channel<?> bind(Focus<?> parentFocus)
     throws BindException
   { 
@@ -122,11 +130,17 @@ public class ControlGroup<Ttarget>
   }
   
   @Override
+  
+  /**
+   * Bind is made final here to allow the ControlGroup to maintain its 
+   *   ThreadLocal state for access by child Controls. Override bind(Focus)
+   *   to establish more specific Channels.
+   */
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(List<TglUnit> childUnits)
+  public final void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    System.err.println("ControlGroup.bind() :expression="+expression);
+    log.fine(getClass().getName()+".bind():expression="+expression);
     Focus<?> parentFocus=getParent().getFocus();
 
     
@@ -159,6 +173,7 @@ public class ControlGroup<Ttarget>
     {
       // Expose the expression target as the new Focus, and add the 
       //   assembly in as another layer
+      log.fine("No Channel created, using parent focus: for "+getClass().getName());
       focus=new CompoundFocus(parentFocus,null);  
       focus.bindFocus("spiralcraft.servlet.webui",getAssembly().getFocus());
 
@@ -205,9 +220,7 @@ public class ControlGroup<Ttarget>
     if (target!=null)
     {
       try
-      { 
-        target.set(state.getValue());
-        executeCommands(state);
+      { target.set(state.getValue());
       }
       catch (AccessException x)
       { state.setError(x.getMessage());
@@ -222,41 +235,6 @@ public class ControlGroup<Ttarget>
   { return new ControlGroupState<Ttarget>(this);
   }
   
-  /**
-   * Execute a command- by callback only in the message and render chain
-   * 
-   * @param <X>
-   * @param command
-   * @return
-   */
-  public <X> X executeCommand(Command<Ttarget,X> command)
-  { 
-    log.fine(command.toString());
-    command.setTarget(getState().getValue());
-    command.execute();
-    return command.getResult();
-  }
 
-  private void handleException(Exception exception)
-  {
-    // Make exception available
-    exception.printStackTrace();
-    getState().setError(exception.toString());
-  }
-  
-  private void executeCommands(ControlGroupState<Ttarget> state)
-  {
-    List<Command<Ttarget,?>> commands=state.dequeueCommands();
-    if (commands!=null)
-    {
-      for (Command<Ttarget,?> command : commands)
-      { 
-        executeCommand(command);
-        if (command.getException()!=null)
-        { handleException(command.getException());
-        }
-        
-      }
-    }
-  }
+
 }

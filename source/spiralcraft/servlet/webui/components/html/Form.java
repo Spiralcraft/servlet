@@ -76,6 +76,17 @@ public class Form<T>
   { this.actionName=actionName;
   }
   
+  public void renderError(ServiceContext context)
+    throws IOException
+  { new ErrorTag(tag).render(context);
+  }
+  
+  /**
+   * Create a new Action target for the Form post
+   * 
+   * @param context
+   * @return
+   */
   protected Action createAction(EventContext context)
   {
     return new Action(context.getState().getPath())
@@ -92,6 +103,8 @@ public class Form<T>
           =(FormState<T>) context.getState();
         
         message(context,ControlMessage.GATHER_MESSAGE,null);
+        
+        message(context,ControlMessage.COMMAND_MESSAGE,null);
         
         if ( !formState.isErrorState())
         { 

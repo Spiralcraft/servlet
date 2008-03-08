@@ -66,8 +66,9 @@ public class DataSessionFilter
       =new ThreadLocalChannel<DataSession>
         (BeanReflector.<DataSession>getInstance(DataSession.class));
     
-    return new DataSessionFocus(parentFocus,dataSessionChannel,dataType);
-    
+    DataSessionFocus dataSessionFocus
+      =new DataSessionFocus(parentFocus,dataSessionChannel,dataType);
+    return dataSessionFocus;
   }
   
   @Override
@@ -90,9 +91,7 @@ public class DataSessionFilter
       
     if (dataSession==null)
     { 
-      dataSession=new DataSession();
-      dataSession.setType(dataType);
-         
+      dataSession=((DataSessionFocus) getFocus()).newDataSession();
       session.setAttribute(attributeName,dataSession);
     }
     dataSessionChannel.push(dataSession);      

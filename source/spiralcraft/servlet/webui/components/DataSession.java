@@ -18,11 +18,10 @@ package spiralcraft.servlet.webui.components;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
+import spiralcraft.data.DataException;
 import spiralcraft.data.lang.DataReflector;
-import spiralcraft.data.session.BufferAggregate;
 import spiralcraft.data.session.BufferChannel;
 import spiralcraft.data.session.Buffer;
-import spiralcraft.data.session.BufferTuple;
 import spiralcraft.data.session.BufferType;
 
 import spiralcraft.lang.BindException;
@@ -31,78 +30,30 @@ import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLogger;
 
 import spiralcraft.servlet.webui.ControlGroup;
-import spiralcraft.servlet.webui.QueuedCommand;
 
-public abstract class Editor
-  extends ControlGroup<Buffer>
+public abstract class DataSession
+  extends ControlGroup<spiralcraft.data.session.DataSession>
 {
   private static final ClassLogger log=new ClassLogger(Editor.class);
-  private BufferChannel bufferChannel;
 
-  public Command<Buffer,Void> revertCommand()
+  public Command<spiralcraft.data.session.DataSession,Void> commitCommand()
   { 
-    return new QueuedCommand<Buffer,Void>
-      (getState()
-      ,new CommandAdapter<Buffer,Void>()
-        {
-          public void run()
-          { getState().getValue().revert();
-          }
+    return new CommandAdapter<spiralcraft.data.session.DataSession,Void>()
+    {
+      public void run()
+      { 
+        try
+        { getState().getValue().save();
         }
-      );
+        catch (DataException x)
+        { 
+          x.printStackTrace();
+          getState().setException(x);
+        }
+      } 
+    };
   }
 
-  public Command<Buffer,Void> saveCommand()
-  { 
-    return new QueuedCommand<Buffer,Void>
-      (getState()
-      ,new CommandAdapter<Buffer,Void>()
-        {
-          public void run()
-          { 
-            try
-            { getState().getValue().save();
-            }
-            catch (Exception x)
-            { 
-              x.printStackTrace();
-              getState().setError("Error saving");
-              getState().setException(x);
-            }
-          }
-        }
-      );
-  }
-
-//  XXX belongs in TupleEditor
-//  
-//  public Command<Buffer,Void> deleteCommand()
-//  { 
-//    return new QueuedCommand<Buffer,Void>
-//      (getState()
-//      ,new CommandAdapter<BufferTuple,Void>()
-//        {
-//          @SuppressWarnings("unchecked")
-//          public void run()
-//          { 
-//            try
-//            { 
-//              getState().getValue().delete();
-//            }
-//            catch (Exception x)
-//            { 
-//              getState().setError("Error queuing command");
-//              getState().setException(x);
-//            }
-//          }
-//        }
-//      );
-//  }
-
-  /**
-   * Wraps default behavior and provides a BufferChannel that buffers what
-   *   comes from the target expression.
-   */
   @SuppressWarnings("unchecked")
   @Override
   protected Channel<Buffer> bind
@@ -115,13 +66,16 @@ public abstract class Editor
     
     
     if (source==null)
+    { source=(Channel<DataComposite>) parentFocus.getSubject();
+    }
+
+    if (((DataReflector) source.getReflector()).getType()
+        instanceof BufferType
+       )
     { 
-      source=(Channel<DataComposite>) parentFocus.getSubject();
-      if (source==null)
-      {
-        log.fine
-          ("No source specified, and parent Focus has no subject: "+parentFocus);
-      }
+      log.fine("Already buffering "+source.getReflector());
+      // Can't buffer more than once
+      return (Channel<Buffer>) source;
     }
     
     

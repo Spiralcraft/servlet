@@ -25,7 +25,8 @@ public class TextInput<Ttarget>
   private String name;
   private StringConverter<Ttarget> converter;
   
-  private AbstractTag tag=new AbstractTag()
+  private AbstractTag tag
+    =new ErrorTag(new AbstractTag()
   {
     @Override
     protected String getTagName(EventContext context)
@@ -41,6 +42,7 @@ public class TextInput<Ttarget>
       renderAttribute(context.getWriter(),"type","text");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       renderAttribute(context.getWriter(),"value",state.getValue());
+      
     }
     
     @Override
@@ -48,7 +50,7 @@ public class TextInput<Ttarget>
     { return false;
     }
     
-  };
+  });
   
   public void setName(String name)
   { this.name=name;
@@ -116,7 +118,9 @@ public class TextInput<Ttarget>
           }
         }
         catch (AccessException x)
-        {  state.setError(x.getMessage());
+        { 
+          state.setError(x.getMessage());
+          state.setException(x);
         }
       }
     }
@@ -131,13 +135,27 @@ public class TextInput<Ttarget>
     ControlState<String> state=((ControlState<String>) context.getState());
     if (target!=null)
     {
-      if (converter!=null)
-      { state.setValue(converter.toString(target.get()));
+      try
+      {
+        if (converter!=null)
+        { state.setValue(converter.toString(target.get()));
+        }
+        else
+        { state.setValue(target.get().toString());
+        }
       }
-      else
-      { state.setValue(target.get().toString());
+      catch (AccessException x)
+      { 
+        state.setError(x.getMessage());
+        state.setException(x);
       }
+      
     }
+  }
+  
+  @Override
+  protected void renderError(ServiceContext context) throws IOException
+  { new ErrorTag(tag).render(context);
   }
 }
 

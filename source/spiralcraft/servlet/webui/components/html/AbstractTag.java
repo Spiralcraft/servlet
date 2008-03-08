@@ -55,6 +55,14 @@ public abstract class AbstractTag
   { 
   }
 
+  
+  /**
+   * Render the Tag, and all its contents.
+   * 
+   * 
+   * @param context
+   * @throws IOException
+   */
   public final void render(EventContext context)
     throws IOException
   { 

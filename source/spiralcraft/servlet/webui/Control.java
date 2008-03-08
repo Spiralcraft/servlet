@@ -23,13 +23,16 @@ import spiralcraft.textgen.Message;
 import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.textgen.elements.Iterate;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import spiralcraft.command.Command;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Expression;
+import spiralcraft.log.ClassLogger;
 
 /**
  * <p>An element which accepts user input.
@@ -43,6 +46,8 @@ import spiralcraft.lang.Expression;
 public abstract class Control<Ttarget>
   extends Component
 {
+  private static final ClassLogger log=new ClassLogger(Control.class);
+  
   protected Channel<Ttarget> target;
   protected Expression<Ttarget> expression;
   protected int controlGroupStateDistance=-1;
@@ -76,7 +81,8 @@ public abstract class Control<Ttarget>
    * 
    * @param context
    */
-  public abstract void gather(ServiceContext context);
+  protected abstract void gather(ServiceContext context);
+
   
   public abstract String getVariableName();
   
@@ -102,8 +108,17 @@ public abstract class Control<Ttarget>
    *
    * @param context
    */
-  public abstract void scatter(ServiceContext context);
+  protected abstract void scatter(ServiceContext context);
   
+  /**
+   * Components for a specific content type must implement this method to
+   *   render any error state.
+   *   
+   * @param context
+   * @throws IOException
+   */
+  protected abstract void renderError(ServiceContext context)
+    throws IOException;
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
@@ -143,6 +158,9 @@ public abstract class Control<Ttarget>
       { scatter((ServiceContext) context); 
       }
       
+      if (((ControlMessage) message).getOp()==ControlMessage.Op.COMMAND)
+      { command((ServiceContext) context); 
+      }
     } 
     else if (message.getType()==InitializeMessage.TYPE)
     {
@@ -150,7 +168,6 @@ public abstract class Control<Ttarget>
       //   data for children to reference
       scatter((ServiceContext) context); 
     } 
-    
     
     super.message(context,message,path);
 
@@ -190,5 +207,51 @@ public abstract class Control<Ttarget>
   int getIterationStateDistance()
   { return iterationStateDistance;
   }
+
+  @SuppressWarnings("unchecked")
+  public void render(EventContext context)
+    throws IOException
+  {
+    ControlState<Ttarget> state=(ControlState<Ttarget>) context.getState();
+    if (state.getError()!=null || state.getException()!=null)
+    { renderError((ServiceContext) context);
+    }
+    super.render(context);
+    
+  }
+
+  /**
+   * Execute any commands that have been queued. 
+   * 
+   * Commands provide an opportunity to implement application behaviors once
+   *   all data in the state tree has been gathered.   
+   * 
+   * @param context
+   */
+  @SuppressWarnings("unchecked")
+  private void command(ServiceContext context)
+  {
+    ControlState<Ttarget> state=((ControlState<Ttarget>) context.getState());
+    
+    List<Command<Ttarget,?>> commands
+      =state.dequeueCommands();
+    
+    if (commands!=null)
+    {
+      for (Command<Ttarget,?> command : commands)
+      { 
+        log.fine(command.toString());
+        command.setTarget(state.getValue());
+        command.execute();
+        
+        if (command.getException()!=null)
+        { state.setException(command.getException());
+        }
+          
+      }
+    }
+  }
+  
+
 }
 
