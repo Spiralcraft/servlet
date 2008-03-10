@@ -136,10 +136,11 @@ public class ControlState<Tbuf>
    */
   public boolean updateValue(Tbuf value)
   { 
-    if (error!=null)
+    if (error!=null || exception!=null)
     { 
       this.value=value;
       error=null;
+      exception=null;
       return true;
     }
     else

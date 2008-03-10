@@ -19,6 +19,8 @@ import java.util.List;
 
 import java.io.IOException;
 
+import spiralcraft.data.transaction.Transaction;
+import spiralcraft.data.transaction.TransactionException;
 import spiralcraft.lang.BindException;
 
 import spiralcraft.lang.Channel;
@@ -40,121 +42,183 @@ import spiralcraft.textgen.compiler.TglUnit;
  * Groups a number of related Controls to create a single complex target value
  * 
  * @author mike
- *
+ * 
  */
 public abstract class ControlGroup<Ttarget>
-  extends Control<Ttarget>
+    extends Control<Ttarget>
 {
   @SuppressWarnings("unused")
-  private static final ClassLogger log=new ClassLogger(ControlGroup.class);
-  private int nextVariableName=0;
-  
-  protected ThreadLocal<ControlGroupState<Ttarget>> threadLocalState
-    =new ThreadLocal<ControlGroupState<Ttarget>>();
-  
+  private static final ClassLogger log = new ClassLogger(ControlGroup.class);
+
+  private int nextVariableName = 0;
+
+  protected ThreadLocal<ControlGroupState<Ttarget>> threadLocalState = new ThreadLocal<ControlGroupState<Ttarget>>();
+
   protected AbstractChannel<Ttarget> valueBinding;
-  
+
   private CompoundFocus<Ttarget> focus;
-  
+
   private String variableName;
 
-  
   public ControlGroupState<Ttarget> getState()
-  { return threadLocalState.get();
+  {
+    return threadLocalState.get();
   }
-  
+
   public String getVariableName()
-  { return variableName;
+  {
+    return variableName;
   }
-  
+
   public String nextVariableName()
-  { return Integer.toString(nextVariableName++);
+  {
+    return Integer.toString(nextVariableName++);
   }
-  
-  @SuppressWarnings("unchecked") // Blind cast
+
+  @SuppressWarnings("unchecked")
+  // Blind cast
   @Override
-  public void message
-    (EventContext context
-    ,Message message
-    ,LinkedList<Integer> path
-    )
+  public void message(EventContext context, Message message,
+      LinkedList<Integer> path)
   {
 
+    // Put our state into ThreadLocal storage so subcontrols can bind to
+    // our value pinned to the Thread.
+    
+    boolean transactional=false;
+    boolean newTransaction=false;
+    if (message instanceof UIMessage)
+    { transactional=((UIMessage) message).isTransactional();
+    }
+    
+    Transaction transaction=null;
+      
+    if (transactional)
+    {
+      transaction
+        =Transaction.getContextTransaction();
+  
+      if (transaction==null)
+      { 
+        transaction=
+          Transaction.startContextTransaction(Transaction.Nesting.ISOLATE);
+        newTransaction=true;
+      }
+    }
+    
     try
     {
-      threadLocalState.set((ControlGroupState<Ttarget>) context.getState());
-      super.message(context,message,path);
+      
+      ControlGroupState<Ttarget> state 
+        = (ControlGroupState<Ttarget>) context.getState();
+      if (threadLocalState.get() != state)
+      {
+
+        try
+        {
+          threadLocalState.set(state);
+          super.message(context, message, path);
+        } 
+        finally
+        {
+          threadLocalState.remove();
+        }
+      }
+      else
+      {
+        // re-entrant mode
+        super.message(context, message, path);
+      }
+      
+      if (newTransaction)
+      { transaction.commit();
+      }
+    }
+    catch (TransactionException x)
+    { getState().setException(x);
     }
     finally
-    { threadLocalState.remove();
+    { 
+      if (newTransaction)
+      { transaction.complete();
+      }
     }
+      
   }
+
   
-  @SuppressWarnings("unchecked") // Blind cast
+  @SuppressWarnings("unchecked")
+  // Blind cast
   @Override
-  public void render
-    (EventContext context
-    )
-    throws IOException
+  public void render(EventContext context) throws IOException
   {
 
     try
     {
       threadLocalState.set((ControlGroupState<Ttarget>) context.getState());
       super.render(context);
-    }
-    finally
-    { threadLocalState.remove();
+    } finally
+    {
+      threadLocalState.remove();
     }
   }
 
   /**
    * Called once to allow subclass to further extend the binding chain. The
-   *   result of the binding will be cached in ThreadLocalState in-between
-   *   scatter() and gather() operations, and will be referred to in this
-   *   component's Focus as exported to child Elements.
+   * result of the binding will be cached in ThreadLocalState in-between
+   * scatter() and gather() operations, and will be referred to in this
+   * component's Focus as exported to child Elements.
    * 
    * @param parentFocus
    * @return
    * @throws BindException
    */
-  protected Channel<?> bind(Focus<?> parentFocus)
-    throws BindException
-  { 
-    if (expression!=null)
-    { return parentFocus.<Ttarget>bind(expression);
-    }
-    else
-    { return null;
+  protected Channel<?> extend(Focus<?> parentFocus) throws BindException
+  {
+    if (expression != null)
+    {
+      return parentFocus.<Ttarget> bind(expression);
+    } else
+    {
+      return null;
     }
   }
-  
-  @Override
-  
-  /**
-   * Bind is made final here to allow the ControlGroup to maintain its 
-   *   ThreadLocal state for access by child Controls. Override bind(Focus)
-   *   to establish more specific Channels.
-   */
-  @SuppressWarnings("unchecked") // Not using generic versions
-  public final void bind(List<TglUnit> childUnits)
-    throws BindException,MarkupException
-  { 
-    log.fine(getClass().getName()+".bind():expression="+expression);
-    Focus<?> parentFocus=getParent().getFocus();
 
-    
-    target=(Channel<Ttarget>) bind(parentFocus);
-    if (target!=null)
-    { 
-      valueBinding=new AbstractChannel<Ttarget>(target.getReflector())
+  /**
+   * Called after the local focus has been create to allow other expressions to
+   * be bound
+   * 
+   * @param thisFocus
+   */
+  protected void bindSelf() throws BindException
+  {
+  }
+
+  @Override
+  /**
+   * Bind is made final here to allow the ControlGroup to maintain its
+   * ThreadLocal state for access by child Controls. Override bind(Focus) to
+   * establish more specific Channels.
+   */
+  @SuppressWarnings("unchecked")
+  // Not using generic versions
+  public final void bind(List<TglUnit> childUnits) throws BindException,
+      MarkupException
+  {
+    log.fine(getClass().getName() + ".bind():expression=" + expression);
+    Focus<?> parentFocus = getParent().getFocus();
+
+    target = (Channel<Ttarget>) extend(parentFocus);
+    if (target != null)
+    {
+      valueBinding = new AbstractChannel<Ttarget>(target.getReflector())
       {
         public Ttarget retrieve()
         {
           // log.fine(threadLocalState.get().toString());
           return threadLocalState.get().getValue();
         }
-        
+
         public boolean store(Ttarget val)
         {
           // log.fine("Store "+threadLocalState.get()+":"+val);
@@ -163,78 +227,109 @@ public abstract class ControlGroup<Ttarget>
         }
       };
 
-
-      // Expose the expression target as the new Focus, and add the 
-      //   assembly in as another layer
-      focus=new CompoundFocus(parentFocus,valueBinding);  
-      focus.bindFocus("spiralcraft.servlet.webui",getAssembly().getFocus());
-    }
-    else 
+      // Expose the expression target as the new Focus, and add the
+      // assembly in as another layer
+      focus = new CompoundFocus(parentFocus, valueBinding);
+      focus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
+    } else
     {
-      // Expose the expression target as the new Focus, and add the 
-      //   assembly in as another layer
-      log.fine("No Channel created, using parent focus: for "+getClass().getName());
-      focus=new CompoundFocus(parentFocus,null);  
-      focus.bindFocus("spiralcraft.servlet.webui",getAssembly().getFocus());
+      // Expose the expression target as the new Focus, and add the
+      // assembly in as another layer
+      log.fine("No Channel created, using parent focus: for "
+          + getClass().getName());
+      focus = new CompoundFocus(parentFocus, null);
+      focus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
 
     }
-    if (variableName==null)
-    { 
-      ControlGroup parentGroup=this.findElement(ControlGroup.class);
-      if (parentGroup!=null)
-      { variableName=parentGroup.nextVariableName();
+    if (variableName == null)
+    {
+      ControlGroup parentGroup = this.findElement(ControlGroup.class);
+      if (parentGroup != null)
+      {
+        variableName = parentGroup.nextVariableName();
       }
     }
-    
     computeDistances();
+    bindSelf();
     bindChildren(childUnits);
   }
-  
+
   public Focus<Ttarget> getFocus()
-  { return focus;
+  {
+    return focus;
   }
 
-  @SuppressWarnings("unchecked") // Blind cast
+  @SuppressWarnings("unchecked")
+  // Blind cast
   @Override
   public void scatter(ServiceContext context)
-  { 
-    ControlGroupState<Ttarget> state=
-      (ControlGroupState<Ttarget>) context.getState();
-    
-    if (target!=null)
-    { state.setValue(target.get());
+  {
+    ControlGroupState<Ttarget> state = (ControlGroupState<Ttarget>) context
+        .getState();
+
+    if (target != null)
+    {
+      state.setValue(target.get());
     }
     state.setError(null);
     state.setErrorState(false);
-    
+
   }
 
-  @SuppressWarnings("unchecked") // Blind cast
+  @SuppressWarnings("unchecked")
+  // Blind cast
   @Override
   public void gather(ServiceContext context)
-  { 
-    ControlGroupState<Ttarget> state=
-      (ControlGroupState<Ttarget>) context.getState();
-    
-    
-    if (target!=null)
+  {
+    ControlGroupState<Ttarget> state = (ControlGroupState<Ttarget>) context
+        .getState();
+
+    if (target != null)
     {
       try
-      { target.set(state.getValue());
-      }
+      {
+        if (target.isWritable())
+        { target.set(state.getValue());
+        }
+      } 
       catch (AccessException x)
-      { state.setError(x.getMessage());
+      {
+        state.setError(x.getMessage());
       }
     }
-    
-    
-    
+
   }
 
   public ControlGroupState<Ttarget> createState()
-  { return new ControlGroupState<Ttarget>(this);
+  {
+    return new ControlGroupState<Ttarget>(this);
   }
+
+  @SuppressWarnings("unchecked")
+  public void command(ServiceContext context)
+  {
+    while (true)
+    {
+      super.command(context);
+
+      // Propogate messages sent by any executed Commands.
+      //   We get our own message first.
+      ControlGroupState<Ttarget> state 
+        = (ControlGroupState<Ttarget>) context.getState();
   
-
-
+      List<Message> messageList = state.dequeueMessages();
+      if (messageList != null)
+      {
+        for (Message newMessage : messageList)
+        {
+          message(context, newMessage, null);
+        }
+      }
+      else
+      { 
+        // End of queued messages
+        break;
+      }
+    }
+  }
 }

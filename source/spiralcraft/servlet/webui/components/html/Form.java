@@ -102,14 +102,14 @@ public class Form<T>
         FormState<T> formState
           =(FormState<T>) context.getState();
         
-        message(context,ControlMessage.GATHER_MESSAGE,null);
+        relayMessage(context,ControlMessage.GATHER_MESSAGE,null);
         
-        message(context,ControlMessage.COMMAND_MESSAGE,null);
+        relayMessage(context,ControlMessage.COMMAND_MESSAGE,null);
         
         if ( !formState.isErrorState())
         { 
           // XXX Provide more control over rescatter
-          message(context,ControlMessage.SCATTER_MESSAGE,null);
+          relayMessage(context,ControlMessage.SCATTER_MESSAGE,null);
         }
       }
     };

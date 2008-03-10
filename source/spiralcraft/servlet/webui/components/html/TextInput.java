@@ -122,6 +122,12 @@ public class TextInput<Ttarget>
           state.setError(x.getMessage());
           state.setException(x);
         }
+        catch (NumberFormatException x)
+        { 
+          state.setError(x.getMessage());
+          state.setException(x);
+        }
+
       }
     }
 
@@ -149,6 +155,12 @@ public class TextInput<Ttarget>
         state.setError(x.getMessage());
         state.setException(x);
       }
+      catch (NumberFormatException x)
+      { 
+        state.setError(x.getMessage());
+        state.setException(x);
+      }
+
       
     }
   }

@@ -96,6 +96,7 @@ public abstract class Component
       }
     }
     
+    
     super.message(context,message,path);
 
    

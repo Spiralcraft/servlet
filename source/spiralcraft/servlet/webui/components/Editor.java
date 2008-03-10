@@ -15,30 +15,111 @@
 package spiralcraft.servlet.webui.components;
 
 
+
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
+import spiralcraft.data.DataException;
 import spiralcraft.data.lang.DataReflector;
-import spiralcraft.data.session.BufferAggregate;
 import spiralcraft.data.session.BufferChannel;
 import spiralcraft.data.session.Buffer;
-import spiralcraft.data.session.BufferTuple;
-import spiralcraft.data.session.BufferType;
 
+import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.Setter;
 import spiralcraft.log.ClassLogger;
 
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.QueuedCommand;
+import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.servlet.webui.UIMessage;
+import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.Message;
+import spiralcraft.textgen.MessageHandler;
+
 
 public abstract class Editor
   extends ControlGroup<Buffer>
 {
   private static final ClassLogger log=new ClassLogger(Editor.class);
-  private BufferChannel bufferChannel;
 
+  private static final SaveMessage SAVE_MESSAGE=new SaveMessage();
+  
+  private Assignment<?>[] fixedAssignments;
+  private Assignment<?>[] initialAssignments;
+  private Assignment<?>[] defaultAssignments;
+  private Assignment<?>[] newAssignments;
+  
+  private Setter<?>[] fixedSetters;
+  private Setter<?>[] initialSetters;
+  private Setter<?>[] defaultSetters;
+  private Setter<?>[] newSetters;
+  
+  {
+    addHandler
+      (new MessageHandler()
+      {
+
+        @Override
+        public void handleMessage(EventContext context, Message message,
+            boolean postOrder)
+        { 
+          if (!postOrder && message.getType()==SaveMessage.TYPE)
+          {
+            try
+            { save();
+            }
+            catch (DataException x)
+            { Editor.this.getState().setException(x);
+            }
+          }
+        }
+      });
+  }
+  
+  /**
+   * New Assignments get executed when a buffer is new (ie. has no original) 
+   *   and is not yet dirty.
+   * 
+   * @param assignments
+   */
+  public void setNewAssignments(Assignment<?>[] assignments)
+  { newAssignments=assignments;
+  }
+  
+  /**
+   * Initial Assignments get executed when a buffer is not yet dirty.
+   * 
+   * @param assignments
+   */
+  public void setInitialAssignments(Assignment<?>[] assignments)
+  { initialAssignments=assignments;
+  }
+
+  /**
+   * <p>Default Assignments get executed immediately before storing, if
+   *   the Tuple is dirty already, and the existing field data is null.
+   *   
+   * @param assignments
+   */
+  public void setDefaultAssignments(Assignment<?>[] assignments)
+  { defaultAssignments=assignments;
+  }
+
+  /**
+   * <p>Fixed Assignments get executed immediately before storing, if the
+   *   Tuple is dirty already, overwriting any existing field data.
+   * </p>
+   * 
+   * @param assignments
+   */
+  public void setFixedAssignments(Assignment<?>[] assignments)
+  { fixedAssignments=assignments;
+  }
+  
+                     
   public Command<Buffer,Void> revertCommand()
   { 
     return new QueuedCommand<Buffer,Void>
@@ -57,23 +138,43 @@ public abstract class Editor
     return new QueuedCommand<Buffer,Void>
       (getState()
       ,new CommandAdapter<Buffer,Void>()
-        {
+        { 
           public void run()
-          { 
-            try
-            { getState().getValue().save();
-            }
-            catch (Exception x)
-            { 
-              x.printStackTrace();
-              getState().setError("Error saving");
-              getState().setException(x);
-            }
+          { getState().queueMessage(SAVE_MESSAGE);
           }
         }
       );
   }
 
+  protected void save()
+    throws DataException
+  {
+    Buffer buffer=getState().getValue();
+    if (buffer.isTuple() && buffer.isDirty())
+    {
+      if (defaultSetters!=null)
+      { 
+        for (Setter<?> setter: defaultSetters)
+        { 
+          if (setter.getTarget().get()==null)
+          { setter.set();
+          }
+        }
+      
+      }
+
+      if (fixedSetters!=null)
+      {
+        for (Setter<?> setter: fixedSetters)
+        { setter.set();
+        }
+      }
+      buffer.save();
+    }
+  }
+  
+   
+  
 //  XXX belongs in TupleEditor
 //  
 //  public Command<Buffer,Void> deleteCommand()
@@ -99,19 +200,45 @@ public abstract class Editor
 //      );
 //  }
 
+  @Override
+  public void scatter(ServiceContext context)
+  { 
+    super.scatter(context);
+    Buffer buffer=getState().getValue();
+    if (buffer!=null)
+    {
+      if (!buffer.isDirty())
+      {
+        if (newSetters!=null && buffer.getOriginal()==null)
+        { 
+          for (Setter<?> setter : newSetters)
+          { setter.set();
+          }
+        }
+        
+        if (initialSetters!=null)
+        {
+          for (Setter<?> setter : initialSetters)
+          { setter.set();
+          }
+        }
+      }
+    }
+  }
+  
   /**
    * Wraps default behavior and provides a BufferChannel that buffers what
    *   comes from the target expression.
    */
   @SuppressWarnings("unchecked")
   @Override
-  protected Channel<Buffer> bind
+  protected Channel<Buffer> extend
     (Focus<?> parentFocus)
       throws BindException
   { 
     log.fine("Editor.bind() "+parentFocus);
     Channel<?> source=(Channel<DataComposite>) 
-      super.bind(parentFocus);
+      super.extend(parentFocus);
     
     
     if (source==null)
@@ -144,6 +271,45 @@ public abstract class Editor
     }
     
   }
- 
   
+  protected void bindSelf()
+    throws BindException
+  {
+    fixedSetters=bindAssignments(fixedAssignments);
+    defaultSetters=bindAssignments(defaultAssignments);
+    newSetters=bindAssignments(newAssignments);
+    initialSetters=bindAssignments(initialAssignments);
+    
+  }
+  
+  private Setter<?>[] bindAssignments(Assignment<?>[] assignments)
+    throws BindException
+  {
+    if (assignments!=null)
+    {
+      Setter<?>[] setters=new Setter<?>[assignments.length];
+      int i=0;
+      for (Assignment<?> assignment: assignments)
+      { setters[i++]=assignment.bind(getFocus());
+      }
+      return setters;
+    }
+    return null;
+  }
+ 
+ 
 }
+
+class SaveMessage
+  extends UIMessage
+{
+  public static final MessageType TYPE=new MessageType();
+
+  public SaveMessage()
+  { 
+    super(TYPE);
+    transactional=true;
+    multicast=true;
+  }
+}
+

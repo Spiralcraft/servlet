@@ -14,6 +14,11 @@
 //
 package spiralcraft.servlet.webui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import spiralcraft.textgen.Message;
+
 
 /**
  * Represents the state of ControlGroup, which associates a single value
@@ -26,6 +31,7 @@ public class ControlGroupState<Tbuf>
 {
   private int localName=0;
   private boolean errorState=false;
+  private ArrayList<Message> messages;
 
   
   
@@ -52,7 +58,21 @@ public class ControlGroupState<Tbuf>
     { controlGroupState.setErrorState(true);
     }
   }
+  
+  public synchronized void queueMessage(Message message)
+  { 
+    if (messages==null)
+    { messages=new ArrayList<Message>();
+    }
+    messages.add(message);
+  }
  
+  public synchronized List<Message> dequeueMessages()
+  {
+    List<Message> ret=messages;
+    messages=null;
+    return ret;
+  }
 
 
 }

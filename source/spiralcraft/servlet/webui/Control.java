@@ -158,6 +158,8 @@ public abstract class Control<Ttarget>
       { scatter((ServiceContext) context); 
       }
       
+      // Controls execute their queued commands in pre-order, to provide
+      //   data for children to reference
       if (((ControlMessage) message).getOp()==ControlMessage.Op.COMMAND)
       { command((ServiceContext) context); 
       }
@@ -229,7 +231,7 @@ public abstract class Control<Ttarget>
    * @param context
    */
   @SuppressWarnings("unchecked")
-  private void command(ServiceContext context)
+  protected void command(ServiceContext context)
   {
     ControlState<Ttarget> state=((ControlState<Ttarget>) context.getState());
     

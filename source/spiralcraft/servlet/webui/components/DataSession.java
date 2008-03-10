@@ -56,13 +56,13 @@ public abstract class DataSession
 
   @SuppressWarnings("unchecked")
   @Override
-  protected Channel<Buffer> bind
+  protected Channel<Buffer> extend
     (Focus<?> parentFocus)
       throws BindException
   { 
     log.fine("Editor.bind() "+parentFocus);
     Channel<?> source=(Channel<DataComposite>) 
-      super.bind(parentFocus);
+      super.extend(parentFocus);
     
     
     if (source==null)
