@@ -1,11 +1,9 @@
 package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.Writer;
 
 import spiralcraft.servlet.webui.ControlState;
-import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.EventContext;
 
 public class ErrorTag
@@ -39,12 +37,19 @@ public class ErrorTag
     }
     if (state.getException()!=null)
     { 
-      out.write(state.getException().toString());
       out.write("<!--\r\n");
-      for (StackTraceElement element : state.getException().getStackTrace())
+
+      Throwable exception=state.getException();
+      while (exception!=null)
       {
-        out.write(element.toString());
-        out.write("\r\n");
+        out.write(exception.toString());
+
+        for (StackTraceElement element : exception.getStackTrace())
+        {
+          out.write(element.toString());
+          out.write("\r\n");
+        }
+        exception=exception.getCause();
       }
       out.write("-->\r\n");
       

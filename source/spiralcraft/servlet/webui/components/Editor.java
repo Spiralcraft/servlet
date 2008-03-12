@@ -20,6 +20,8 @@ import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
+import spiralcraft.data.Field;
+import spiralcraft.data.Type;
 import spiralcraft.data.lang.DataReflector;
 import spiralcraft.data.session.BufferChannel;
 import spiralcraft.data.session.Buffer;
@@ -27,6 +29,7 @@ import spiralcraft.data.session.Buffer;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.log.ClassLogger;
@@ -38,6 +41,7 @@ import spiralcraft.servlet.webui.UIMessage;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
 import spiralcraft.textgen.MessageHandler;
+import spiralcraft.util.ArrayUtil;
 
 
 public abstract class Editor
@@ -169,6 +173,8 @@ public abstract class Editor
         { setter.set();
         }
       }
+      
+      
       buffer.save();
     }
   }
@@ -257,6 +263,7 @@ public abstract class Editor
         )
     { 
       log.fine("Buffering "+source.getReflector());
+      
       return new BufferChannel
         ((Focus<DataComposite>) parentFocus
         ,(Channel<DataComposite>) source
@@ -275,10 +282,33 @@ public abstract class Editor
   protected void bindSelf()
     throws BindException
   {
+    DataReflector<Buffer> reflector
+    =(DataReflector<Buffer>) getFocus().getSubject().getReflector();
+  
+    Type<?> type=reflector.getType();
+
+    if (!type.isAggregate() && type.getScheme()!=null)
+    { 
+      for (Field field: type.getScheme().fieldIterable())
+      {
+        Expression<?> expression=field.getDefaultExpression();
+        if (expression!=null)
+        { 
+          Assignment<?> assignment
+            =new Assignment(Expression.create(field.getName()),expression);
+          defaultAssignments
+            =(Assignment[]) ArrayUtil.append(defaultAssignments,assignment);
+        }
+      }
+      
+    }
+    
     fixedSetters=bindAssignments(fixedAssignments);
     defaultSetters=bindAssignments(defaultAssignments);
     newSetters=bindAssignments(newAssignments);
     initialSetters=bindAssignments(initialAssignments);
+    
+    
     
   }
   
