@@ -23,8 +23,12 @@ import spiralcraft.data.DataException;
 import spiralcraft.data.Field;
 import spiralcraft.data.Type;
 import spiralcraft.data.lang.DataReflector;
+
+import spiralcraft.data.session.BufferAggregate;
+import spiralcraft.data.session.DataSession;
 import spiralcraft.data.session.BufferChannel;
 import spiralcraft.data.session.Buffer;
+import spiralcraft.data.session.BufferType;
 
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
@@ -51,6 +55,10 @@ public abstract class Editor
 
   private static final SaveMessage SAVE_MESSAGE=new SaveMessage();
   
+  private Channel<Buffer> bufferChannel;
+  private Type<?> type;
+  private Channel<DataSession> sessionChannel;
+
   private Assignment<?>[] fixedAssignments;
   private Assignment<?>[] initialAssignments;
   private Assignment<?>[] defaultAssignments;
@@ -149,7 +157,58 @@ public abstract class Editor
         }
       );
   }
+  
+  public Command<Buffer,Void> newCommand()
+  {
+    return new QueuedCommand<Buffer,Void>
+      (getState()
+      ,new CommandAdapter<Buffer,Void>()
+        { 
+          public void run()
+          { newBuffer();
+          }
+        }
+      );
+  }
 
+  protected void newBuffer()
+  {
+    try
+    {
+      if (!type.isAggregate())
+      {
+        getState().setValue
+        (sessionChannel.get().newBuffer(type)
+        );
+        bufferChannel.set(getState().getValue());
+      }
+      else
+      {
+
+        if (getState().getValue()==null)
+        {
+          // Create the aggregate buffer if none
+          getState().setValue
+          (sessionChannel.get().newBuffer(type)
+          );
+          bufferChannel.set(getState().getValue());
+
+        }
+
+        // Add a Tuple to the list
+        ((BufferAggregate<?>) getState().getValue())
+          .add(sessionChannel.get().newBuffer(type.getContentType()));
+      }
+
+    }
+    catch (DataException x)
+    { 
+      x.printStackTrace();
+      getState().setException(x);
+    }
+  }
+  
+  
   protected void save()
     throws DataException
   {
@@ -263,23 +322,42 @@ public abstract class Editor
         )
     { 
       log.fine("Buffering "+source.getReflector());
+      DataReflector dataReflector=(DataReflector) source.getReflector();
       
-      return new BufferChannel
-        ((Focus<DataComposite>) parentFocus
-        ,(Channel<DataComposite>) source
-        );
+      if ( dataReflector.getType() 
+            instanceof BufferType
+         ) 
+      { bufferChannel=(Channel<Buffer>) source;
+      }
+      else
+      {
+        bufferChannel=new BufferChannel
+          ((Focus<DataComposite>) parentFocus
+          ,(Channel<DataComposite>) source
+          );
+      }
+      type=((DataReflector) bufferChannel.getReflector()).getType();
     }
-    else
-    { throw new BindException
+    
+    if (bufferChannel==null)
+    { 
+      throw new BindException
         ("Not a DataReflector "
           +parentFocus.getSubject().getReflector()
         );
           
     }
     
+    Focus sessionFocus=parentFocus.findFocus(DataSession.FOCUS_URI);
+    if (sessionFocus!=null)
+    { sessionChannel=sessionFocus.getSubject();
+    }
+    
+    return bufferChannel;
   }
   
-  protected void bindSelf()
+  @SuppressWarnings("unchecked")
+  protected Focus<Buffer> bindSelf()
     throws BindException
   {
     DataReflector<Buffer> reflector
@@ -308,7 +386,7 @@ public abstract class Editor
     newSetters=bindAssignments(newAssignments);
     initialSetters=bindAssignments(initialAssignments);
     
-    
+    return null;
     
   }
   

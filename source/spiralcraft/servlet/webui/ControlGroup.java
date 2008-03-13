@@ -56,7 +56,7 @@ public abstract class ControlGroup<Ttarget>
 
   protected AbstractChannel<Ttarget> valueBinding;
 
-  private CompoundFocus<Ttarget> focus;
+  private Focus<Ttarget> focus;
 
   private String variableName;
 
@@ -190,8 +190,9 @@ public abstract class ControlGroup<Ttarget>
    * 
    * @param thisFocus
    */
-  protected void bindSelf() throws BindException
-  {
+  protected Focus<Ttarget> bindSelf()
+    throws BindException
+  { return null;
   }
 
   @Override
@@ -229,17 +230,19 @@ public abstract class ControlGroup<Ttarget>
 
       // Expose the expression target as the new Focus, and add the
       // assembly in as another layer
-      focus = new CompoundFocus(parentFocus, valueBinding);
-      focus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
-    } else
+      CompoundFocus myFocus = new CompoundFocus(parentFocus, valueBinding);
+      myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
+      focus=myFocus;
+    } 
+    else
     {
       // Expose the expression target as the new Focus, and add the
       // assembly in as another layer
       log.fine("No Channel created, using parent focus: for "
           + getClass().getName());
-      focus = new CompoundFocus(parentFocus, null);
-      focus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
-
+      CompoundFocus myFocus = new CompoundFocus(parentFocus, null);
+      myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
+      focus=myFocus;
     }
     if (variableName == null)
     {
@@ -250,7 +253,10 @@ public abstract class ControlGroup<Ttarget>
       }
     }
     computeDistances();
-    bindSelf();
+    Focus<Ttarget> newFocus=bindSelf();
+    if (newFocus!=null)
+    { focus=newFocus;
+    }
     bindChildren(childUnits);
   }
 
