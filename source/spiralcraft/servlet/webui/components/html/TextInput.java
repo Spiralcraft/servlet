@@ -124,6 +124,7 @@ public class TextInput<Ttarget>
           else
           { target.set((Ttarget) state.getValue());
           }
+         
         }
         catch (AccessException x)
         { 
@@ -131,6 +132,11 @@ public class TextInput<Ttarget>
           state.setException(x);
         }
         catch (NumberFormatException x)
+        { 
+          state.setError(x.getMessage());
+          state.setException(x);
+        }
+        catch (IllegalArgumentException x)
         { 
           state.setError(x.getMessage());
           state.setException(x);

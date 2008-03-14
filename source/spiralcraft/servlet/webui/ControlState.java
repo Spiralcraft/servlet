@@ -122,7 +122,13 @@ public class ControlState<Tbuf>
   { return variableName;
   }
   
-    
+
+  public void resetError()
+  { 
+    this.error=null;
+    this.exception=null;
+  }
+  
   /**
    * <p>Update the value, resetting any error and indicating whether the value
    *   should be propogated. If there is no change to the value (according to
@@ -139,8 +145,7 @@ public class ControlState<Tbuf>
     if (error!=null || exception!=null)
     { 
       this.value=value;
-      error=null;
-      exception=null;
+      resetError();
       return true;
     }
     else
