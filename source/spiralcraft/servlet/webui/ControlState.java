@@ -35,7 +35,7 @@ public class ControlState<Tbuf>
   extends ElementState
 {
   @SuppressWarnings("unused")
-  private static final ClassLogger log=new ClassLogger(ControlState.class);
+  private static final ClassLogger log=ClassLogger.getInstance(ControlState.class);
 
   protected ControlGroupState<?> controlGroupState;
   protected final Control<?> control;

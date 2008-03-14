@@ -30,7 +30,7 @@ import spiralcraft.builder.LifecycleException;
 public class ReferenceFocusFilter<Treferent,Tfocus>
     extends FocusFilter<Tfocus>
 {
-  private final ClassLogger log=new ClassLogger(ReferenceFocusFilter.class);
+  private final ClassLogger log=ClassLogger.getInstance(ReferenceFocusFilter.class);
   
   public enum Scope
   { 

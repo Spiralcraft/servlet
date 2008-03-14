@@ -13,6 +13,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
+import spiralcraft.log.ClassLogger;
 
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
@@ -21,7 +22,9 @@ import spiralcraft.servlet.webui.ServiceContext;
 public class TextInput<Ttarget>
   extends Control<Ttarget>
 {
-
+  private static final ClassLogger log
+    =ClassLogger.getInstance(TextInput.class);
+  
   private String name;
   private StringConverter<Ttarget> converter;
   
@@ -79,6 +82,9 @@ public class TextInput<Ttarget>
         (StringConverter<Ttarget>) 
         StringConverter.getInstance(target.getContentType());
     }
+    if (target==null)
+    { log.fine("Not bound to anything (formvar name="+name+")");
+    }
   }
   
   public String getVariableName()
@@ -108,8 +114,10 @@ public class TextInput<Ttarget>
     
       if (target!=null)
       {
+        
         try
         {
+          
           if (converter!=null)
           { target.set(converter.fromString(state.getValue()));
           }

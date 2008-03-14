@@ -44,7 +44,7 @@ public class DataSessionComponent
   extends Component
 {
   private static final ClassLogger log
-    =new ClassLogger(DataSessionComponent.class);
+    =ClassLogger.getInstance(DataSessionComponent.class);
 
   private DataSessionFocus dataSessionFocus;
   private Type<DataComposite> type;

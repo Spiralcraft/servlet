@@ -51,7 +51,7 @@ import spiralcraft.util.ArrayUtil;
 public abstract class Editor
   extends ControlGroup<Buffer>
 {
-  private static final ClassLogger log=new ClassLogger(Editor.class);
+  private static final ClassLogger log=ClassLogger.getInstance(Editor.class);
 
   private static final SaveMessage SAVE_MESSAGE=new SaveMessage();
   

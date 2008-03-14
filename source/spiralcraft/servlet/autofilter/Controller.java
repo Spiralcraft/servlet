@@ -68,7 +68,7 @@ import spiralcraft.vfs.file.FileResource;
 public class Controller
   implements Filter
 {
-  private static final ClassLogger log=new ClassLogger(Controller.class);
+  private static final ClassLogger log=ClassLogger.getInstance(Controller.class);
   
   private long updateIntervalMs=10000;
   private String controlFileName=".control.xml";

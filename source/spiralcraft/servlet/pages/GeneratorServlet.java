@@ -73,7 +73,7 @@ import spiralcraft.log.ClassLogger;
 public class GeneratorServlet
   extends HttpServlet
 {
-  private static final ClassLogger log=new ClassLogger(GeneratorServlet.class);
+  private static final ClassLogger log=ClassLogger.getInstance(GeneratorServlet.class);
   
   private final HashMap<String,ResourceEntry> resourceMap
     =new HashMap<String,ResourceEntry>();

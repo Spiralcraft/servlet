@@ -46,7 +46,7 @@ import spiralcraft.log.ClassLogger;
 public abstract class Control<Ttarget>
   extends Component
 {
-  private static final ClassLogger log=new ClassLogger(Control.class);
+  private static final ClassLogger log=ClassLogger.getInstance(Control.class);
   
   protected Channel<Ttarget> target;
   protected Expression<Ttarget> expression;

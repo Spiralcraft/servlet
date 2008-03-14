@@ -48,7 +48,7 @@ public abstract class ControlGroup<Ttarget>
     extends Control<Ttarget>
 {
   @SuppressWarnings("unused")
-  private static final ClassLogger log = new ClassLogger(ControlGroup.class);
+  private static final ClassLogger log = ClassLogger.getInstance(ControlGroup.class);
 
   private int nextVariableName = 0;
 
