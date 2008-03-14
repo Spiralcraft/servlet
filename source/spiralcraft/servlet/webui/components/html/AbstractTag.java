@@ -32,9 +32,15 @@ public abstract class AbstractTag
     throws IOException
   {
     writer.write(name);
-    writer.write("=\"");
-    attributeEncoder.encode(value,writer);
-    writer.write("\" ");
+    if (value!=null)
+    {
+      writer.write("=\"");
+      attributeEncoder.encode(value,writer);
+      writer.write("\" ");
+    }
+    else
+    { writer.write(" ");
+    }
   }
   
   protected void renderAttributes(EventContext context)

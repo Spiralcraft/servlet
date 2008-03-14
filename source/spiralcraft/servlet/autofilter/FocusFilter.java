@@ -130,7 +130,10 @@ public abstract class FocusFilter<T>
       chain.doFilter(request,response);
     }
     catch (BindException x)
-    { throw new ServletException(x.toString(),x);
+    { 
+      ServletException sx=new ServletException(x.toString());
+      sx.initCause(x);
+      throw sx;
     }
     finally
     { 

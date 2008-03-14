@@ -126,10 +126,17 @@ public abstract class Control<Ttarget>
     throws BindException,MarkupException
   { 
     
+    Focus<?> parentFocus=getParent().getFocus();
     if (expression!=null)
     { 
-      Focus<?> parentFocus=getParent().getFocus();
       target=parentFocus.bind(expression);
+    }
+    else
+    { 
+      target=(Channel<Ttarget>) parentFocus.getSubject();
+      if (target==null)
+      { target=(Channel<Ttarget>) parentFocus.getContext();
+      }
     }
     computeDistances();
     bindChildren(childUnits);

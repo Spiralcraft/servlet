@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.data.DataComposite;
+import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
-import spiralcraft.data.TypeNotFoundException;
 import spiralcraft.data.session.DataSession;
 
 import spiralcraft.data.session.DataSessionFocus;
@@ -81,7 +81,7 @@ public class DataSessionComponent
     try
     { this.type=(Type<DataComposite>) Type.resolve(typeURI);
     }
-    catch (TypeNotFoundException x)
+    catch (DataException x)
     { throw new IllegalArgumentException(x);
     }
     

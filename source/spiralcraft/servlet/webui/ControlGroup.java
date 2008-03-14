@@ -56,7 +56,7 @@ public abstract class ControlGroup<Ttarget>
 
   protected AbstractChannel<Ttarget> valueBinding;
 
-  private Focus<Ttarget> focus;
+  private Focus<?> focus;
 
   private String variableName;
 
@@ -190,7 +190,7 @@ public abstract class ControlGroup<Ttarget>
    * 
    * @param thisFocus
    */
-  protected Focus<Ttarget> bindSelf()
+  protected Focus<?> bindSelf()
     throws BindException
   { return null;
   }
@@ -253,14 +253,14 @@ public abstract class ControlGroup<Ttarget>
       }
     }
     computeDistances();
-    Focus<Ttarget> newFocus=bindSelf();
+    Focus<?> newFocus=bindSelf();
     if (newFocus!=null)
     { focus=newFocus;
     }
     bindChildren(childUnits);
   }
 
-  public Focus<Ttarget> getFocus()
+  public Focus<?> getFocus()
   {
     return focus;
   }
