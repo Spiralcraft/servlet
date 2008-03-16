@@ -29,7 +29,7 @@ public class TextInput<Ttarget>
   private StringConverter<Ttarget> converter;
   
   private AbstractTag tag
-    =new ErrorTag(new AbstractTag()
+    =new AbstractTag()
   {
     @Override
     protected String getTagName(EventContext context)
@@ -45,7 +45,7 @@ public class TextInput<Ttarget>
       renderAttribute(context.getWriter(),"type","text");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       renderAttribute(context.getWriter(),"value",state.getValue());
-      
+      super.renderAttributes(context);
     }
     
     @Override
@@ -53,12 +53,17 @@ public class TextInput<Ttarget>
     { return false;
     }
     
-  });
+  };
+  
+  private ErrorTag errorTag=new ErrorTag(tag);
   
   public void setName(String name)
   { this.name=name;
   }
   
+  public AbstractTag getTag()
+  { return tag;
+  }
 
 
   @Override
@@ -98,7 +103,13 @@ public class TextInput<Ttarget>
   
   public void render(EventContext context)
     throws IOException
-  { tag.render(context);
+  { 
+    if ( ((ControlState) context.getState()).isErrorState())
+    { errorTag.render(context);
+    }
+    else
+    { tag.render(context);
+    }
   }
   
   @SuppressWarnings("unchecked") // Generic cast
@@ -178,10 +189,6 @@ public class TextInput<Ttarget>
       
     }
   }
-  
-  @Override
-  protected void renderError(ServiceContext context) throws IOException
-  { new ErrorTag(tag).render(context);
-  }
+
 }
 

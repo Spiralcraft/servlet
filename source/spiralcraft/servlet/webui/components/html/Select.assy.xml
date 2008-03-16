@@ -1,0 +1,7 @@
+<html:Select
+  xmlns:html="java:/spiralcraft/servlet/webui/components/html"
+  >
+  <tag>
+    <html:AbstractTag/>
+  </tag>
+</html:Select>

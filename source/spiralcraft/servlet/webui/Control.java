@@ -110,16 +110,7 @@ public abstract class Control<Ttarget>
    */
   protected abstract void scatter(ServiceContext context);
   
-  /**
-   * Components for a specific content type must implement this method to
-   *   render any error state.
-   *   
-   * @param context
-   * @throws IOException
-   */
-  protected abstract void renderError(ServiceContext context)
-    throws IOException;
-  
+
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
@@ -217,17 +208,7 @@ public abstract class Control<Ttarget>
   { return iterationStateDistance;
   }
 
-  @SuppressWarnings("unchecked")
-  public void render(EventContext context)
-    throws IOException
-  {
-    ControlState<Ttarget> state=(ControlState<Ttarget>) context.getState();
-    if (state.getError()!=null || state.getException()!=null)
-    { renderError((ServiceContext) context);
-    }
-    super.render(context);
-    
-  }
+
 
   /**
    * Execute any commands that have been queued. 

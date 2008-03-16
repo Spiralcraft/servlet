@@ -56,6 +56,10 @@ public class ControlState<Tbuf>
   { return controlGroupState;
   }
   
+  public boolean isErrorState()
+  { return error!=null || exception!=null;
+  }
+  
   public String toString()
   { return super.toString()+"value="+value;
   }

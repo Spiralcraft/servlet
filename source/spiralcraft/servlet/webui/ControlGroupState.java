@@ -48,7 +48,7 @@ public class ControlGroupState<Tbuf>
   }
   
   public boolean isErrorState()
-  { return errorState;
+  { return super.isErrorState() || errorState;
   }
   
   public void setErrorState(boolean errorState)

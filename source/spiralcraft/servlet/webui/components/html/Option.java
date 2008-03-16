@@ -84,6 +84,8 @@ public class Option<Ttarget,Tvalue>
     
   };
   
+  private ErrorTag errorTag=new ErrorTag(tag);
+  
   public void setValue(Expression<Tvalue> valueExpression)
   { this.valueExpression=valueExpression;
   }
@@ -128,7 +130,13 @@ public class Option<Ttarget,Tvalue>
   
   public void render(EventContext context)
     throws IOException
-  { tag.render(context);
+  { 
+    if (((OptionState<Tvalue>) context.getState()).isErrorState())
+    { errorTag.render(context);
+    }
+    else
+    { tag.render(context);
+    }
   }
   
   @SuppressWarnings("unchecked") // Generic cast
@@ -209,10 +217,7 @@ public class Option<Ttarget,Tvalue>
     
   }
   
-  @Override
-  protected void renderError(ServiceContext context) throws IOException
-  { new ErrorTag(tag).render(context);
-  }
+
   
 }
 

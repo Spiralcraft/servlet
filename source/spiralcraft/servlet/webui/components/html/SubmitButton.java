@@ -45,6 +45,8 @@ public class SubmitButton
     }
   };
     
+  private ErrorTag errorTag=new ErrorTag(tag);
+  
   public void setName(String name)
   { this.name=name;
   }
@@ -73,7 +75,13 @@ public class SubmitButton
 
   public void render(EventContext context)
     throws IOException
-  { tag.render(context);
+  { 
+    if (((ControlState<?>) context.getState()).isErrorState())
+    { errorTag.render(context);
+    }
+    else
+    { tag.render(context);
+    }
   }
   
   @SuppressWarnings("unchecked") // Generic cast
@@ -126,9 +134,6 @@ public class SubmitButton
     // At some point we need to read a command
   }
 
-  @Override
-  protected void renderError(ServiceContext context) throws IOException
-  { new ErrorTag(tag).render(context);
-  }
+
 }
 

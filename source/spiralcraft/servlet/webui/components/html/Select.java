@@ -38,8 +38,9 @@ public class Select<Ttarget,Tvalue>
   private Expression<?> sourceExpression;
   private boolean multi=false;
   
+  
   private AbstractTag tag
-    =new ErrorTag(new AbstractTag()
+    =new AbstractTag()
   {
     @Override
     protected String getTagName(EventContext context)
@@ -56,6 +57,7 @@ public class Select<Ttarget,Tvalue>
       if (multi)
       { renderAttribute(context.getWriter(),"multiple",null);
       }
+      super.renderAttributes(context);
     }
     
     @Override
@@ -68,7 +70,14 @@ public class Select<Ttarget,Tvalue>
     { Select.super.render(context);
     }    
     
-  });
+  };
+
+  private ErrorTag errorTag
+    =new ErrorTag(tag);
+  
+  public AbstractTag getTag()
+  { return tag;
+  }
   
   public void setName(String name)
   { this.name=name;
@@ -117,9 +126,16 @@ public class Select<Ttarget,Tvalue>
   { return name;
   }
   
+  @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
-  { tag.render(context);
+  {
+    if (((ControlState<Ttarget>) context.getState()).isErrorState())
+    { errorTag.render(context);
+    }
+    else
+    { tag.render(context);
+    }
   }
   
   void setValueConverter(StringConverter<Tvalue> converter)
@@ -133,24 +149,41 @@ public class Select<Ttarget,Tvalue>
     SelectState<Ttarget,Tvalue> state
       =((SelectState<Ttarget,Tvalue>) context.getState());
     
-    List<String> strings=context.getPost().get(state.getVariableName());
-    if (strings==null || strings.size()==0)
+    if (multi)
     {
-      state.setValue(null);
+      log.fine("Multiselect not implemented");
     }
     else
     {
-      if (multi)
+      Ttarget val;
+      try
       {
-        log.fine("Multiselect not implemented");
-      }
-      else
-      {
-        Ttarget val=converter.fromString(strings.get(0));
+        List<String> strings=context.getPost().get(state.getVariableName());
+        if (strings==null || strings.size()==0)
+        { val=null;
+        }
+        else if (strings.get(0)!=null && !(strings.get(0).length()==0))
+        { val=converter.fromString(strings.get(0));
+        }
+        else
+        { val=null;
+        }
+        log.fine("Got selection ["+val+"] for "+getVariableName());
+
         state.setValue(val);
         if (target!=null)
         { target.set(val);
         }
+      }
+      catch (AccessException x)
+      { 
+        state.setError(x.getMessage());
+        state.setException(x);
+      }
+      catch (NumberFormatException x)
+      { 
+        state.setError(x.getMessage());
+        state.setException(x);
       }
     }
 
@@ -219,10 +252,6 @@ public class Select<Ttarget,Tvalue>
     }
   }
   
-  @Override
-  protected void renderError(ServiceContext context) throws IOException
-  { new ErrorTag(tag).render(context);
-  }
   
   
   @Override

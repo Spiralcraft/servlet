@@ -25,8 +25,15 @@ public abstract class AbstractTag
 {
   private static final AttributeEncoder attributeEncoder
     =new AttributeEncoder();
+  
+  private String attributes;
     
   protected abstract String getTagName(EventContext context);
+  
+  public void setAttributes(String attributes)
+  { 
+    this.attributes=attributes;
+  }
   
   protected void renderAttribute(Writer writer,String name,String value)
     throws IOException
@@ -45,7 +52,10 @@ public abstract class AbstractTag
   
   protected void renderAttributes(EventContext context)
     throws IOException
-  {
+  { 
+    if (attributes!=null)
+    { context.getWriter().write(attributes+" ");
+    }
   }
   
   /**
