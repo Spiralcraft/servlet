@@ -128,6 +128,7 @@ public class Option<Ttarget,Tvalue>
   { return new OptionState<Tvalue>(this);
   }
   
+  @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
   { 
@@ -143,48 +144,7 @@ public class Option<Ttarget,Tvalue>
   @Override
   public void gather(ServiceContext context)
   {
-
-    // Parent does all the gather work for the select list
-
-//    
-//    This is the template from TextInput.
-//
-//    OptionState<String> state=((OptionState<String>) context.getState());
-//    
-//    //System.err.println("TextInput: readPost");
-//    
-//    // Only update if changed
-//    
-//    if (state.updateValue(context.getPost().getOne(state.getVariableName())))
-//    {
-//      
-//      if (target!=null)
-//      {
-//        
-//        try
-//        {
-//          
-//          if (converter!=null)
-//          { target.set(converter.fromString(state.getValue()));
-//          }
-//          else
-//          { target.set((Ttarget) state.getValue());
-//          }
-//        }
-//        catch (AccessException x)
-//        { 
-//          state.setError(x.getMessage());
-//          state.setException(x);
-//        }
-//        catch (NumberFormatException x)
-//        { 
-//          state.setError(x.getMessage());
-//          state.setException(x);
-//        }
-//
-//      }
-//    }
-
+    // SelectList does all the gathering here.
   }
   
   

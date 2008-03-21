@@ -15,9 +15,14 @@
 package spiralcraft.servlet.webui;
 
 
+import spiralcraft.log.ClassLogger;
 import spiralcraft.text.markup.MarkupException;
+
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.InitializeMessage;
+import spiralcraft.textgen.PrepareMessage;
+
 import spiralcraft.textgen.Message;
 
 
@@ -54,6 +59,7 @@ import java.util.LinkedList;
 public abstract class Component
   extends Element
 {
+  private static final ClassLogger log=ClassLogger.getInstance(Component.class);
 
   private Component parentComponent;
 
@@ -82,6 +88,10 @@ public abstract class Component
     ,LinkedList<Integer> path
     )
   {
+//    // Copious
+    if (debug)
+    { log.fine(this.toString()+" message "+message);
+    }
     
     if (message.getType()==ActionMessage.TYPE)
     {
@@ -94,6 +104,13 @@ public abstract class Component
           ,((ActionMessage) message).getAction()
           );
       }
+    }
+    else if (message.getType()==PrepareMessage.TYPE)
+    { 
+      handlePrepare((ServiceContext) context);
+    }
+    else if (message.getType()==InitializeMessage.TYPE)
+    { handleInitialize((ServiceContext) context);
     }
     
     
@@ -116,6 +133,24 @@ public abstract class Component
     //    );
     action.invoke(context);
   }
+  
+  /**
+   * Override to initialize before rendering
+   * 
+   * @param context
+   */
+  protected void handlePrepare(ServiceContext context)
+  { 
+    
+  }
+
+  /**
+   * Override to initialize for a new session
+   * 
+   * @param context
+   */
+  protected void handleInitialize(ServiceContext context)
+  { }
 
   @Override
   public void render(EventContext context)

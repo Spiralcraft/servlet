@@ -15,49 +15,40 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Expression;
 import spiralcraft.net.http.VariableMap;
 
-public class SubmitButton
+public class ImageButton
   extends Control<Command<?,?>>
 {
 
   private String name;
-  private String label;
+  private String src;
+  private String alt;
   
-  private AbstractTag tag=new AbstractTag()
-  {
-    @Override
-    protected String getTagName(EventContext context)
-    { return "INPUT";
-    }
-
-    @SuppressWarnings("unchecked") // Generic cast
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    {   
-      ControlState<Command> state=((ControlState<Command>) context.getState());
-      renderAttribute(context.getWriter(),"type","submit");
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
-      
-      // Yes, we are renaming it
-      renderAttribute(context.getWriter(),"value",label);
-    }
-
-    @Override
-    protected boolean hasContent()
-    { return false;
-    }
-  };
-    
+  private Tag tag
+    =new Tag();
   private ErrorTag errorTag=new ErrorTag(tag);
+
+  
+  
+  public Tag getTag()
+  { return tag;
+  }
+
+  public ErrorTag getErrorTag()
+  { return errorTag;
+  }
   
   public void setName(String name)
   { this.name=name;
   }
   
-  public void setLabel(String label)
-  { this.label=label;
+  public void setSrc(String src)
+  { this.src=src;
   }
-
+  
+  public void setAlt(String alt)
+  { this.alt=alt;
+  }
+  
   @Override
   public void setParent(Element parentElement)
     throws MarkupException
@@ -96,7 +87,11 @@ public class SubmitButton
     VariableMap post=context.getPost();
     boolean gotPost=false;
     if (post!=null)
-    { gotPost=post.getOne(state.getVariableName())!=null;
+    { 
+      gotPost=post.getOne(state.getVariableName()+".x")!=null;
+      if (debug)
+      { log.fine(toString()+(gotPost?": got pressed":": didn't get pressed")); 
+      }
     }
 
     if (gotPost)
@@ -148,6 +143,31 @@ public class SubmitButton
     // At some point we need to read a command
   }
 
+  public class Tag
+    extends AbstractTag
+  {
+    @Override
+    protected String getTagName(EventContext context)
+    { return "INPUT";
+    }
 
+    @SuppressWarnings("unchecked") // Generic cast
+    @Override
+    protected void renderAttributes(EventContext context)
+      throws IOException
+    {   
+      ControlState<Command> state=((ControlState<Command>) context.getState());
+      renderAttribute(context.getWriter(),"type","image");
+      renderAttribute(context.getWriter(),"src",src);
+      renderAttribute(context.getWriter(),"alt",alt);
+      renderAttribute(context.getWriter(),"name",state.getVariableName());
+    }
+
+    @Override
+    protected boolean hasContent()
+    { return false;
+    }
+  }
+  
 }
 

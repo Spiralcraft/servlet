@@ -14,6 +14,7 @@
 //
 package spiralcraft.servlet.webui;
 
+import spiralcraft.servlet.webui.ControlState.DataState;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
@@ -26,6 +27,7 @@ import spiralcraft.textgen.elements.Iterate;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 
 import spiralcraft.command.Command;
 import spiralcraft.lang.BindException;
@@ -46,7 +48,7 @@ import spiralcraft.log.ClassLogger;
 public abstract class Control<Ttarget>
   extends Component
 {
-  private static final ClassLogger log=ClassLogger.getInstance(Control.class);
+  protected static final ClassLogger log=ClassLogger.getInstance(Control.class);
   
   protected Channel<Ttarget> target;
   protected Expression<Ttarget> expression;
@@ -91,6 +93,10 @@ public abstract class Control<Ttarget>
    *   it to the UI state.
    * </p> 
    * 
+   * <p>This method is called from the default implementation of handleRequest()
+   *   if there the state is not in an error state
+   * </p>
+   * 
    * <p>Implementer should read the value of the control from the target
    *   Channel and buffer it in the control state for later rendering.
    * </p>
@@ -110,7 +116,31 @@ public abstract class Control<Ttarget>
    */
   protected abstract void scatter(ServiceContext context);
   
+  @SuppressWarnings("unchecked")
+  protected void handlePrepare(ServiceContext context)
+  { 
+    ControlState<Ttarget> state = (ControlState) context.getState();
+    if (!state.isErrorState())
+    { 
+      if (debug)
+      { log.fine("Calling SCATTER: "+this+" state="+state);
+      }
+      scatter(context);
+    }
+    else
+    { 
+      if (debug)
+      {
+        log.fine("NOT Calling SCATTER bc error state: "
+          +this+" state="+state
+          +" error="+state.getError()
+        );
+      }
 
+    }
+    
+  }
+  
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
@@ -147,39 +177,27 @@ public abstract class Control<Ttarget>
     ,LinkedList<Integer> path
     )
   {
-    if (message.getType()==ControlMessage.TYPE)
+    if (message.getType()==CommandMessage.TYPE)
     {
-      // Scatter controls in pre-order, so containing elements can provide
-      //   data for children to reference
-      
-      if (((ControlMessage) message).getOp()==ControlMessage.Op.SCATTER)
-      { scatter((ServiceContext) context); 
-      }
-      
       // Controls execute their queued commands in pre-order, to provide
       //   data for children to reference
-      if (((ControlMessage) message).getOp()==ControlMessage.Op.COMMAND)
-      { command((ServiceContext) context); 
-      }
-    } 
-    else if (message.getType()==InitializeMessage.TYPE)
-    {
-      // Pre-scatter controls in pre-order, so containing elements can provide
-      //   data for children to reference
-      scatter((ServiceContext) context); 
+      command((ServiceContext) context); 
     } 
     
-    super.message(context,message,path);
+    try
+    { super.message(context,message,path);
+    }
+    catch (RuntimeException x)
+    { 
+      ((ControlState<?>) context.getState()).setException(x);
+      throw x;
+    }
 
-    if (message.getType()==ControlMessage.TYPE)
+    if (message.getType()==GatherMessage.TYPE)
     {
       // Read controls in post-order, so containing elements can process
       //   data children have gathered
-      
-      if (((ControlMessage) message).getOp()==ControlMessage.Op.GATHER)
-      { gather((ServiceContext) context); 
-      }
-      
+      gather((ServiceContext) context); 
     } 
   }
   
@@ -230,18 +248,44 @@ public abstract class Control<Ttarget>
     {
       for (Command<Ttarget,?> command : commands)
       { 
-        log.fine(command.toString());
+        if (debug)
+        { log.fine("Executing "+command.toString());
+        }
         command.setTarget(state.getValue());
         command.execute();
         
         if (command.getException()!=null)
-        { state.setException(command.getException());
+        { 
+          state.setException(command.getException());
+          log.log
+            (Level.FINE,"Command threw exception "+command.toString()
+            ,command.getException()
+            );
         }
           
       }
     }
+    
   }
   
+  @SuppressWarnings("unchecked")
+  public void render(EventContext context)
+    throws IOException
+  {    
+    
+
+    ControlState<Ttarget> state=(ControlState<Ttarget>) context.getState();
+    if (state.getControl()!=this)
+    { throw new RuntimeException("State tree out of sync "+state+" "+this);
+    }
+    if (debug)
+    { log.fine("Control.render() "+this+" state="+state);
+    }
+    
+    super.render(context);
+    state.setDataState(DataState.RENDERED);
+    state.resetError();
+  }
 
 }
 

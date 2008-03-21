@@ -1,0 +1,7 @@
+<html:TextArea
+  xmlns:html="java:/spiralcraft/servlet/webui/components/html"
+  >
+  <tag>
+    <html:TextArea-Tag/>
+  </tag>
+</html:TextArea>

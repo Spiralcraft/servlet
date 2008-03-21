@@ -58,7 +58,7 @@ public class Link
     protected void renderContent(EventContext context)
       throws IOException
     { 
-      renderChildren(context);
+      Link.super.render(context);
     }
     
   };

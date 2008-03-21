@@ -16,6 +16,7 @@ package spiralcraft.servlet.webui;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 
 import java.io.IOException;
 
@@ -31,6 +32,8 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.log.ClassLogger;
 
+
+import spiralcraft.servlet.webui.ControlState.DataState;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
@@ -126,6 +129,9 @@ public abstract class ControlGroup<Ttarget>
       }
       else
       {
+        if (debug)
+        { log.fine("Re-entering message()");
+        }
         // re-entrant mode
         super.message(context, message, path);
       }
@@ -135,7 +141,9 @@ public abstract class ControlGroup<Ttarget>
       }
     }
     catch (TransactionException x)
-    { getState().setException(x);
+    { 
+      getState().setException(x);
+      log.log(Level.FINE,"Caught exception in transaction message ",x);
     }
     finally
     { 
@@ -152,12 +160,16 @@ public abstract class ControlGroup<Ttarget>
   @Override
   public void render(EventContext context) throws IOException
   {
-
+    if (debug)
+    { log.fine(toString()+": render");
+    }
+    
     try
     {
       threadLocalState.set((ControlGroupState<Ttarget>) context.getState());
       super.render(context);
-    } finally
+    } 
+    finally
     {
       threadLocalState.remove();
     }
@@ -206,7 +218,9 @@ public abstract class ControlGroup<Ttarget>
   public final void bind(List<TglUnit> childUnits) throws BindException,
       MarkupException
   {
-    log.fine(getClass().getName() + ".bind():expression=" + expression);
+    if (debug)
+    { log.fine(getClass().getName() + ".bind():expression=" + expression);
+    }
     Focus<?> parentFocus = getParent().getFocus();
 
     target = (Channel<Ttarget>) extend(parentFocus);
@@ -238,8 +252,12 @@ public abstract class ControlGroup<Ttarget>
     {
       // Expose the expression target as the new Focus, and add the
       // assembly in as another layer
-      log.fine("No Channel created, using parent focus: for "
-          + getClass().getName());
+      if (debug)
+      {
+        log.fine("No Channel created, using parent focus: for "
+          + getClass().getName()
+        );
+      }
       CompoundFocus myFocus = new CompoundFocus(parentFocus, null);
       myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
       focus=myFocus;
@@ -268,24 +286,47 @@ public abstract class ControlGroup<Ttarget>
   @SuppressWarnings("unchecked")
   // Blind cast
   @Override
-  public void scatter(ServiceContext context)
+  /**
+   * Implements "scatter" by reading the value of the the bound channel
+   *   into the state. Replaces any intermediate value with the bound
+   *   value.
+   */
+  protected void scatter(ServiceContext context)
   {
     ControlGroupState<Ttarget> state = (ControlGroupState<Ttarget>) context
         .getState();
 
-    if (target != null)
+    try
     {
-      state.setValue(target.get());
+      if (target != null)
+      {
+        state.setValue(target.get());
+        if (debug)
+        { log.fine("Read value from target into state "+state.getValue());
+        }
+      }
+      else
+      {
+        if (debug)
+        { log.fine("No target for editor, so not resetting state value");
+        }
+      }
+      state.setError(null);
+      state.setErrorState(false);
+      state.setDataState(DataState.SCATTERED);
     }
-    state.setError(null);
-    state.setErrorState(false);
-
+    catch (AccessException x)
+    {
+      state.setException(x);
+      log.fine(toString()+": Caught "+x);
+    }
+    
   }
 
   @SuppressWarnings("unchecked")
   // Blind cast
   @Override
-  public void gather(ServiceContext context)
+  protected void gather(ServiceContext context)
   {
     ControlGroupState<Ttarget> state = (ControlGroupState<Ttarget>) context
         .getState();
@@ -297,10 +338,12 @@ public abstract class ControlGroup<Ttarget>
         if (target.isWritable())
         { target.set(state.getValue());
         }
+        state.setDataState(DataState.GATHERED);
       } 
       catch (AccessException x)
       {
-        state.setError(x.getMessage());
+        state.setException(x);
+        log.fine(toString()+": Caught "+x);
       }
     }
 
@@ -328,6 +371,7 @@ public abstract class ControlGroup<Ttarget>
       {
         for (Message newMessage : messageList)
         {
+          // Reentrant 
           message(context, newMessage, null);
         }
       }

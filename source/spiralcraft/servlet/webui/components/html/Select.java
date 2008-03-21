@@ -33,7 +33,7 @@ public class Select<Ttarget,Tvalue>
   
   private String name;
   private StringConverter<Ttarget> converter;
-  private StringConverter<Tvalue> valueConverter;
+//  private StringConverter<Tvalue> valueConverter;
   private Channel<?> source;
   private Expression<?> sourceExpression;
   private boolean multi=false;
@@ -138,9 +138,9 @@ public class Select<Ttarget,Tvalue>
     }
   }
   
-  void setValueConverter(StringConverter<Tvalue> converter)
-  { this.valueConverter=converter;
-  }
+//  void setValueConverter(StringConverter<Tvalue> converter)
+//  { this.valueConverter=converter;
+//  }
   
   @SuppressWarnings("unchecked") // Generic cast
   @Override
@@ -159,6 +159,9 @@ public class Select<Ttarget,Tvalue>
       try
       {
         List<String> strings=context.getPost().get(state.getVariableName());
+        if (debug)
+        { log.fine("Read ["+strings+"] from posted formvar "+state.getVariableName());
+        }
         if (strings==null || strings.size()==0)
         { val=null;
         }
@@ -168,7 +171,9 @@ public class Select<Ttarget,Tvalue>
         else
         { val=null;
         }
-        log.fine("Got selection ["+val+"] for "+getVariableName());
+        if (debug)
+        { log.fine("Got selection ["+val+"] for "+getVariableName());
+        }
 
         state.setValue(val);
         if (target!=null)
@@ -187,40 +192,11 @@ public class Select<Ttarget,Tvalue>
       }
     }
 
-//    //System.err.println("TextInput: readPost");
-//    
-//    
-//    // Only update if changed
-//    if (state.updateValue(context.getPost().getOne(state.getVariableName())))
-//    {
-//    
-//      if (target!=null)
-//      {
-//        
-//        try
-//        {
-//          
-//          if (converter!=null)
-//          { target.set(converter.fromString(state.getValue()));
-//          }
-//          else
-//          { target.set((Ttarget) state.getValue());
-//          }
-//        }
-//        catch (AccessException x)
-//        { 
-//          state.setError(x.getMessage());
-//          state.setException(x);
-//        }
-//        catch (NumberFormatException x)
-//        { 
-//          state.setError(x.getMessage());
-//          state.setException(x);
-//        }
-//
-//      }
-//    }
 
+  }
+  
+  public String toString()
+  { return super.toString()+": name="+name;
   }
   
   
@@ -301,13 +277,18 @@ class SelectState<Ttarget,Tvalue>
   
   public boolean isSelected(Tvalue value)
   { 
-    log.fine("value="+value+" selected="+selected);
+    boolean ret;
     if (selected==null)
-    { return false;
+    { ret=false;
     }
     else
-    { return selected.contains(value);
+    { ret=selected.contains(value);
     }
+    
+    if (control.isDebug())
+    { log.fine(control.toString()+": "+(ret?"SELECTED":"not selected")+" value="+value+" selected="+selected);
+    }
+    return ret;
   }
   
   

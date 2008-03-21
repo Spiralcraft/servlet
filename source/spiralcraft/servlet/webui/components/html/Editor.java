@@ -4,6 +4,10 @@ import java.io.IOException;
 
 
 
+
+import spiralcraft.data.session.Buffer;
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
@@ -11,18 +15,40 @@ public class Editor
     extends spiralcraft.servlet.webui.components.Editor
 {
 
-  private ErrorTag errorTag
-    =new ErrorTag(null)
+  private final AbstractTag tag=new AbstractTag()
   {
     @Override
+    protected String getTagName(EventContext context)
+    { return "div";
+    }
+    
+    protected boolean hasContent()
+    { return true;
+    }
+    
     protected void renderContent(EventContext context)
       throws IOException
-    { 
-      super.renderContent(context);
-      Editor.super.render(context);
+    { Editor.super.render(context);
+    }
+
+    @Override
+    protected void renderAttributes(EventContext context)
+      throws IOException
+    { super.renderAttributes(context);
     }
   };
   
+  private ErrorTag errorTag
+    =new ErrorTag(tag);
+
+  public AbstractTag getTag()
+  { return tag;
+  }
+  
+  public AbstractTag getErrorTag()
+  { return errorTag;
+  }
+
   public void render(EventContext context)
     throws IOException
   { 
@@ -30,10 +56,18 @@ public class Editor
     { errorTag.render(context);
     }
     else
-    { super.render(context);
+    { tag.render(context);
     }
   }
 
+  protected Focus<Buffer> bindSelf()
+    throws BindException
+  {
+    if (findElement(Form.class)==null)
+    { throw new BindException("Editor must be contained in a Form");
+    }
+    return super.bindSelf();
+  }
   
 
 }

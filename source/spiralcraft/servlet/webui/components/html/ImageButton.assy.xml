@@ -1,0 +1,7 @@
+<html:ImageButton
+  xmlns:html="java:/spiralcraft/servlet/webui/components/html"
+  >
+  <tag>
+    <html:ImageButton-Tag/>
+  </tag>
+</html:ImageButton>

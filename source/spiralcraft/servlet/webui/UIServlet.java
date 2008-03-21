@@ -29,6 +29,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.InitializeMessage;
+import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.data.persist.XmlAssembly;
 import spiralcraft.data.persist.PersistenceException;
@@ -255,10 +256,14 @@ public class UIServlet
       {
         
       }
+
       
       handleAction(component,serviceContext);
-      
+
       localSession.clearActions();
+
+      component.message(serviceContext,new PrepareMessage(),null);
+      
       
       render(component,serviceContext);
       

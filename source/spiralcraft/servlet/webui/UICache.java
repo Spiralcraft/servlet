@@ -101,14 +101,32 @@ public class UICache
         { 
           // XXX Return an 'exception handler' component
           if (resourceUnit.getException()!=null)
-          { return new ExceptionComponent(resourceUnit.getException());
+          { 
+            ExceptionComponent component
+              =new ExceptionComponent(resourceUnit.getException());
+            try
+            { component.bind(null);
+            }
+            catch (BindException x)
+            { throw new ServletException(x);
+            }
+            return component;
+            
           }
           return null;
         }
       }
       catch (MarkupException x)
       { 
-        return new ExceptionComponent(x);
+        ExceptionComponent component
+          =new ExceptionComponent(x);
+        try
+        { component.bind(null);
+        }
+        catch (BindException y)
+        { throw new ServletException(y);
+        }
+        return component;
       }
       
     }

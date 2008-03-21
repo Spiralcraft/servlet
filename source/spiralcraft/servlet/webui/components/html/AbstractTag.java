@@ -27,6 +27,7 @@ public abstract class AbstractTag
     =new AttributeEncoder();
   
   private String attributes;
+  
     
   protected abstract String getTagName(EventContext context);
   
@@ -34,6 +35,48 @@ public abstract class AbstractTag
   { 
     this.attributes=attributes;
   }
+
+  protected void appendAttribute(String name,String value)
+  {
+    if (attributes==null)
+    { attributes="";
+    }
+    attributes=attributes+name+"=\""+value+"\" ";
+    
+  }
+
+  public void setId(String val)
+  { appendAttribute("id",val);
+  }
+
+  public void setClazz(String val)
+  { appendAttribute("class",val);
+  }
+
+  public void setStyle(String val)
+  { appendAttribute("style",val);
+  }
+  
+  public void setTitle(String val)
+  { appendAttribute("title",val);
+  }
+  
+  public void setDir(String val)
+  { appendAttribute("dir",val);
+  }
+  
+  public void setLang(String val)
+  { appendAttribute("lang",val);
+  }
+  
+  public void setTabindex(String val)
+  { appendAttribute("tabindex",val);
+  }
+  
+  public void setAccesskey(String val)
+  { appendAttribute("accesskey",val);
+  }
+
   
   protected void renderAttribute(Writer writer,String name,String value)
     throws IOException
@@ -103,4 +146,6 @@ public abstract class AbstractTag
     { writer.write("/>");
     }
   }
+  
+
 }

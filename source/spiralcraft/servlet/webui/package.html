@@ -77,6 +77,49 @@
 	  as to efficiently implement multi-session user interfaces.
 	</p>
 	
+	<h3>Sequence</h3>
+	
+	<h4>Request Processing</h4>
+	
+	<ul>
+	   <li>UIServlet: Finds the UIComponent associated with the requested
+	     resource URI, or creates it by compiling the resource and instantiating
+	     one.
+	   </li>
+	   
+     <li>UIServlet: Resolves the Session-scoped state of the UIComponent or
+       creates a clean state for the UIComponent. 
+     </li>
+     
+     <li>UIServlet: Prepares a ServiceContext that exposes state and output
+       methods to Components.
+     </li>
+     
+     <li>If a new Session-scoped state is created for this request, the
+       "initialize" message is sent to all components.
+     </li>
+     
+     <li>Any actions are handled by sending ActionMessages to the components
+       that added them. This may result in other messages and behavior,
+       including the processing of form data, etc.
+     </li>
+     
+     <li>All one-time actions are cleared
+     </li>
+     
+     <li>A RequestMessage is sent to all components to allow them to prepare
+       for rendering
+     </li>
+     
+     <li>HTTP Request headers are set up
+     </li>
+     
+     <li>The Component is rendered
+     </li>
+     
+     <li>The new UIComponent state is preserved in the session.
+     </li>
+	</ul>
 	
 </body>
 </html>

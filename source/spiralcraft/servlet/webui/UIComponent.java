@@ -14,9 +14,22 @@
 //
 package spiralcraft.servlet.webui;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import spiralcraft.text.markup.MarkupException;
+import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.Message;
+import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.time.Clock;
 
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.spi.BeanReflector;
+import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.log.ClassLogger;
 
 
 /**
@@ -35,14 +48,34 @@ import spiralcraft.lang.Focus;
 public class UIComponent
   extends Component
 {
+  private static final ClassLogger log 
+    = ClassLogger.getInstance(UIComponent.class);
   
-  private final Focus<?> focus;
+  private Focus<?> focus;
   private String contextRelativePath;
+  protected ThreadLocalChannel<ServiceContext> threadLocal;
   
   public UIComponent(Focus<?> focus)
-  { this.focus=focus;
+  { 
+    this.focus=focus;
+    
+    
+    
+
   }
   
+  @SuppressWarnings("unchecked")
+  // Not using generic versions
+  public final void bind(List<TglUnit> childUnits) 
+    throws BindException,MarkupException
+  {
+    log.fine("bind");
+    threadLocal 
+      = new ThreadLocalChannel<ServiceContext>
+        (BeanReflector.<ServiceContext>getInstance(ServiceContext.class));
+    focus=new CompoundFocus(focus,threadLocal);
+    super.bind(childUnits);
+  }
   /**
    * 
    * @param contextRelativePath The path of this UIComponent relative
@@ -86,6 +119,34 @@ public class UIComponent
   { return Clock.instance().approxTimeMillis();
   }
 
+  public void message
+    (EventContext context,Message message,LinkedList<Integer> path)
+  {
+    if (threadLocal==null)
+    { throw new RuntimeException("UIComponent "+this+" never bound");
+    }
+    
+    threadLocal.push((ServiceContext) context);
+    try
+    { super.message(context,message,path);
+    }
+    finally
+    { threadLocal.pop();
+    }
+    
+  }
+  
+  public void render(EventContext context)
+    throws IOException
+  { 
+    threadLocal.push((ServiceContext) context);
+    try
+    { super.render(context);
+    }
+    finally
+    { threadLocal.pop();
+    }
+  }
 
 }
 

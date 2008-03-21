@@ -15,7 +15,6 @@
 package spiralcraft.servlet.webui.components;
 
 
-
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
@@ -38,10 +37,14 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.log.ClassLogger;
 
+import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
+import spiralcraft.servlet.webui.ControlGroupState;
+import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.UIMessage;
+import spiralcraft.servlet.webui.VariableMapBinding;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
 import spiralcraft.textgen.MessageHandler;
@@ -63,11 +66,18 @@ public abstract class Editor
   private Assignment<?>[] initialAssignments;
   private Assignment<?>[] defaultAssignments;
   private Assignment<?>[] newAssignments;
+  private Assignment<?>[] publishedAssignments;
+  
   
   private Setter<?>[] fixedSetters;
   private Setter<?>[] initialSetters;
   private Setter<?>[] defaultSetters;
   private Setter<?>[] newSetters;
+  private Setter<?>[] publishedSetters;
+
+  private RequestBinding<?>[] requestBindings;
+  
+  private boolean autoCreate;
   
   {
     addHandler
@@ -89,6 +99,11 @@ public abstract class Editor
           }
         }
       });
+  }
+  
+  public void setAutoCreate(boolean val)
+  { autoCreate=val;
+    
   }
   
   /**
@@ -130,6 +145,30 @@ public abstract class Editor
   public void setFixedAssignments(Assignment<?>[] assignments)
   { fixedAssignments=assignments;
   }
+
+  /**
+   * <p>Published assignments get executed on the Prepare message, which 
+   *   occurs before rendering. This permits publishing of data to
+   *   containing contexts. 
+   * </p>
+   * 
+   * @param assignments
+   */
+  public void setPublishedAssignments(Assignment<?>[] assignments)
+  { publishedAssignments=assignments;
+  }
+
+  /**
+   * <p>RequestBindings are applied to the buffer on every request, as
+   *   long as the value is not null
+   * </p>
+   * 
+   * @param assignments
+   */
+  public void setRequestBindings(RequestBinding[] bindings)
+  { requestBindings=bindings;
+  }
+  
   
                      
   public Command<Buffer,Void> revertCommand()
@@ -171,20 +210,25 @@ public abstract class Editor
       );
   }
 
-  protected void newBuffer()
+  public Command<Buffer,Void> addNewCommand()
+  {
+    return new QueuedCommand<Buffer,Void>
+      (getState()
+      ,new CommandAdapter<Buffer,Void>()
+        { 
+          public void run()
+          { addNewBuffer();
+          }
+        }
+      );
+  }
+
+  protected void addNewBuffer()
   {
     try
     {
-      if (!type.isAggregate())
+      if (type.isAggregate())
       {
-        getState().setValue
-        (sessionChannel.get().newBuffer(type)
-        );
-        bufferChannel.set(getState().getValue());
-      }
-      else
-      {
-
         if (getState().getValue()==null)
         {
           // Create the aggregate buffer if none
@@ -197,9 +241,22 @@ public abstract class Editor
 
         // Add a Tuple to the list
         ((BufferAggregate<?>) getState().getValue())
-          .add(sessionChannel.get().newBuffer(type.getContentType()));
+        .add(sessionChannel.get().newBuffer(type.getContentType()));
       }
-
+    }
+    catch (DataException x)
+    { getState().setException(x);
+    }
+  }
+  
+  protected void newBuffer()
+  {
+    try
+    {
+      getState().setValue
+      (sessionChannel.get().newBuffer(type)
+      );
+      bufferChannel.set(getState().getValue());
     }
     catch (DataException x)
     { 
@@ -213,10 +270,14 @@ public abstract class Editor
     throws DataException
   {
     Buffer buffer=getState().getValue();
-    if (buffer.isTuple() && buffer.isDirty())
+    
+    if (buffer!=null && buffer.isTuple() && buffer.isDirty())
     {
       if (defaultSetters!=null)
       { 
+        if (debug)
+        { log.fine(toString()+": applying default values");
+        }
         for (Setter<?> setter: defaultSetters)
         { 
           if (setter.getTarget().get()==null)
@@ -228,6 +289,9 @@ public abstract class Editor
 
       if (fixedSetters!=null)
       {
+        if (debug)
+        { log.fine(toString()+": applying fixed values");
+        }
         for (Setter<?> setter: fixedSetters)
         { setter.set();
         }
@@ -235,9 +299,40 @@ public abstract class Editor
       
       
       buffer.save();
+      
+      if (publishedAssignments!=null)
+      {
+        if (debug)
+        { log.fine(toString()+": applying published assignments post-save");
+        }
+        for (Setter<?> setter: publishedSetters)
+        { setter.set();
+        }
+      }
+      
     }
+    else
+    { 
+      log.warning
+        ("No buffer exists to save- no data read- try Editor.autoCreate");
+    }
+    
   }
   
+  protected void handlePrepare(ServiceContext context)
+  { 
+    super.handlePrepare(context);
+    if (publishedSetters!=null)
+    {
+      if (debug)
+      { log.fine(toString()+": applying published assignments on prepare");
+      }
+      for (Setter<?> setter: publishedSetters)
+      { setter.set();
+      }
+    }
+ 
+  }
    
   
 //  XXX belongs in TupleEditor
@@ -265,17 +360,93 @@ public abstract class Editor
 //      );
 //  }
 
+    
+  private void applyRequestBindings(ServiceContext context)
+  {
+    if (requestBindings!=null)
+    {
+      for (RequestBinding<?> binding: requestBindings)
+      { 
+        if (debug)
+        { log.fine("Applying requestBinding "+binding.getName());
+        }
+        binding.getBinding().read(context.getQuery());
+        binding.publish(context);
+      }
+    }
+  }
+    
   @Override
   public void scatter(ServiceContext context)
   { 
+    Buffer lastBuffer=getState().getValue();
     super.scatter(context);
+    if (getState().getValue()==null)
+    { 
+      // Deal with new value being null
+      if (lastBuffer==null)
+      { 
+        if (autoCreate)
+        {
+          // Current value was null, and newly scattered value was null
+          newBuffer();
+          if (debug)
+          { log.fine("Created new buffer "+getState().getValue());
+          }
+        }
+        else
+        {
+          if (debug)
+          { log.fine("Buffer remains null (autoCreate==false)");
+          }
+        }
+      }
+      else if (lastBuffer.getOriginal()==null)
+      { 
+        if (debug)
+        { log.fine("New buffer is sticky "+lastBuffer);
+        }
+        getState().setValue(lastBuffer);
+      }
+      else
+      {
+        if (autoCreate)
+        {
+          newBuffer();
+          if (debug)
+          { 
+            log.fine
+              ("Created new buffer to replace last buffer: new="
+              +getState().getValue()
+              );
+          }
+        }
+        else
+        {
+          if (debug)
+          { log.fine("Replacing last buffer with null (autoCreate==false)");
+          }
+        }
+        
+      }
+    }
+    
     Buffer buffer=getState().getValue();
+    
     if (buffer!=null)
     {
+      if (debug)
+      { log.fine("Scattering buffer "+buffer);
+      }
+      applyRequestBindings(context);
       if (!buffer.isDirty())
       {
         if (newSetters!=null && buffer.getOriginal()==null)
         { 
+          if (debug)
+          { log.fine(toString()+": applying new values");
+          }
+          
           for (Setter<?> setter : newSetters)
           { setter.set();
           }
@@ -283,6 +454,10 @@ public abstract class Editor
         
         if (initialSetters!=null)
         {
+          if (debug)
+          { log.fine(toString()+": applying initial values");
+          }
+
           for (Setter<?> setter : initialSetters)
           { setter.set();
           }
@@ -321,16 +496,18 @@ public abstract class Editor
           instanceof DataReflector
         )
     { 
-      log.fine("Buffering "+source.getReflector());
       DataReflector dataReflector=(DataReflector) source.getReflector();
       
       if ( dataReflector.getType() 
             instanceof BufferType
          ) 
-      { bufferChannel=(Channel<Buffer>) source;
+      { 
+        log.fine("Using existing BufferChannel for "+source.getReflector());
+        bufferChannel=(Channel<Buffer>) source;
       }
       else
       {
+        log.fine("Creating BufferChannel for "+source.getReflector());
         bufferChannel=new BufferChannel
           ((Focus<DataComposite>) parentFocus
           ,(Channel<DataComposite>) source
@@ -385,6 +562,9 @@ public abstract class Editor
     defaultSetters=bindAssignments(defaultAssignments);
     newSetters=bindAssignments(newAssignments);
     initialSetters=bindAssignments(initialAssignments);
+    publishedSetters=bindAssignments(publishedAssignments);
+    bindRequestAssignments();
+    
     
     return null;
     
@@ -405,7 +585,23 @@ public abstract class Editor
     return null;
   }
  
- 
+  @SuppressWarnings("unchecked")
+  private void bindRequestAssignments()
+    throws BindException
+  {
+    if (requestBindings==null)
+    { return;
+    }
+
+    for (RequestBinding binding:requestBindings)
+    { 
+      if (debug)
+      { binding.setDebug(true);
+      }
+      binding.bind(getFocus());
+    }
+  }
+
 }
 
 class SaveMessage

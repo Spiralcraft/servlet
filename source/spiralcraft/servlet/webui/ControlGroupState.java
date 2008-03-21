@@ -59,8 +59,18 @@ public class ControlGroupState<Tbuf>
     }
   }
   
+  public void resetError()
+  { 
+    super.resetError();
+    this.errorState=false;
+  }
+  
   public synchronized void queueMessage(Message message)
   { 
+    if (control.isDebug())
+    { log.fine("Queueing message "+message);
+    }
+    
     if (messages==null)
     { messages=new ArrayList<Message>();
     }

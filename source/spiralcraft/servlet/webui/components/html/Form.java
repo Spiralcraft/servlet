@@ -18,11 +18,14 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
 import spiralcraft.textgen.InitializeMessage;
 
+import spiralcraft.log.ClassLogger;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
-import spiralcraft.servlet.webui.ControlMessage;
+import spiralcraft.servlet.webui.CommandMessage;
+import spiralcraft.servlet.webui.GatherMessage;
+import spiralcraft.servlet.webui.ControlState.DataState;
 
 import spiralcraft.util.ArrayUtil;
 
@@ -34,8 +37,13 @@ import java.util.LinkedList;
 public class Form<T>
   extends ControlGroup<T>
 {
-
+  private static final ClassLogger log=ClassLogger.getInstance(Form.class);
+  
+  private static final GatherMessage GATHER_MESSAGE=new GatherMessage();
+  private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();
+  
   private String actionName;
+  
   
   private final AbstractTag tag=new AbstractTag()
   {
@@ -68,6 +76,8 @@ public class Form<T>
     }
   };
   
+  private final ErrorTag errorTag=new ErrorTag(tag);
+  
   public String getVariableName()
   { return null;
   }
@@ -80,7 +90,7 @@ public class Form<T>
     throws IOException
   { new ErrorTag(tag).render(context);
   }
-  
+    
   /**
    * Create a new Action target for the Form post
    * 
@@ -94,23 +104,21 @@ public class Form<T>
       @SuppressWarnings("unchecked") // Blind cast
       public void invoke(ServiceContext context)
       { 
-//        System.err.println
-//          ("Form: Generic action invoked: "
-//          +ArrayUtil.format(getTargetPath(),"/",null)
-//          );
+        if (debug)
+        {
+          log.fine
+            ("Form: Generic action invoked: "
+            +ArrayUtil.format(getTargetPath(),"/",null)
+            );
+        }
 
         FormState<T> formState
           =(FormState<T>) context.getState();
         
-        relayMessage(context,ControlMessage.GATHER_MESSAGE,null);
+        relayMessage(context,GATHER_MESSAGE,null);
         
-        relayMessage(context,ControlMessage.COMMAND_MESSAGE,null);
+        relayMessage(context,COMMAND_MESSAGE,null);
         
-        if ( !formState.isErrorState())
-        { 
-          // XXX Provide more control over rescatter
-          relayMessage(context,ControlMessage.SCATTER_MESSAGE,null);
-        }
       }
     };
   }
@@ -118,7 +126,14 @@ public class Form<T>
   @Override
   public void render(EventContext context)
     throws IOException
-  { tag.render(context);
+  { 
+    FormState state=((FormState) context.getState());
+    if (state.isErrorState())
+    { errorTag.render(context);
+    }
+    else
+    { tag.render(context);
+    }
   }
   
   @Override
@@ -133,5 +148,6 @@ public class Form<T>
     public FormState(Form<X> form)
     { super(form);
     }
+
   }
 }

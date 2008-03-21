@@ -28,12 +28,15 @@ import spiralcraft.data.session.DataSession;
 import spiralcraft.data.session.DataSessionFocus;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLogger;
+import spiralcraft.net.http.VariableMap;
 
 import spiralcraft.servlet.webui.Component;
+import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
@@ -48,8 +51,10 @@ public class DataSessionComponent
 
   private DataSessionFocus dataSessionFocus;
   private Type<DataComposite> type;
+  private RequestBinding<?>[] requestBindings;
   
   private ThreadLocalChannel<DataSession> dataSessionChannel;
+  private CompoundFocus<DataComposite> dataFocus;
 
   @SuppressWarnings("unchecked")
   @Override
@@ -66,13 +71,16 @@ public class DataSessionComponent
         );
     dataSessionFocus
       =new DataSessionFocus(parentFocus,dataSessionChannel,type);
-    
+    dataFocus=new CompoundFocus
+      (dataSessionFocus,dataSessionFocus.findFocus(type.getURI()).getSubject());
+    dataFocus.bindFocus("spiralcraft.data",dataSessionFocus);
+    bindRequestAssignments();
     bindChildren(childUnits);
   }
   
   @Override
   public Focus<?> getFocus()
-  { return dataSessionFocus;
+  { return dataFocus;
   }
  
   @SuppressWarnings("unchecked")
@@ -84,7 +92,7 @@ public class DataSessionComponent
     catch (DataException x)
     { throw new IllegalArgumentException(x);
     }
-    
+     
   }
 
   @SuppressWarnings("unchecked")
@@ -130,6 +138,45 @@ public class DataSessionComponent
       (dataSessionFocus.newDataSession(),getChildCount());
   }
   
+  @Override
+  public void handlePrepare(ServiceContext context)
+  { 
+    applyRequestBindings(context);
+  }
+  
+  @SuppressWarnings("unchecked")
+  private void bindRequestAssignments()
+    throws BindException
+  {
+    if (requestBindings==null)
+    { return;
+    }
+
+    for (RequestBinding binding:requestBindings)
+    { 
+      binding.bind(getFocus());
+      if (debug)
+      { binding.setDebug(true);
+      }
+    }
+  }
+  
+  private void applyRequestBindings(ServiceContext context)
+  {
+    if (requestBindings!=null)
+    {
+      VariableMap query=context.getQuery();
+      for (RequestBinding<?> binding: requestBindings)
+      { 
+        binding.getBinding().read(query);
+        binding.publish(context);
+      }
+    }
+  }
+  
+  public void setRequestBindings(RequestBinding<?>[] bindings)
+  { requestBindings=bindings;
+  }
   
 }
 

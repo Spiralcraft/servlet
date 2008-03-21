@@ -34,9 +34,18 @@ import spiralcraft.textgen.MementoState;
 public class ControlState<Tbuf>
   extends ElementState
 {
+  public enum DataState
+  {INIT
+  ,GATHERED
+  ,PROCESSED
+  ,SCATTERED
+  ,RENDERED
+  };
+  
   @SuppressWarnings("unused")
   protected static final ClassLogger log=ClassLogger.getInstance(ControlState.class);
 
+  
   protected ControlGroupState<?> controlGroupState;
   protected final Control<?> control;
   private String variableName;
@@ -44,6 +53,7 @@ public class ControlState<Tbuf>
   private String error;
   private Exception exception;
   private ArrayList<Command<Tbuf,?>> commands;
+  private DataState dataState=DataState.INIT;
   
 
   public ControlState(Control<?> control)
@@ -221,6 +231,9 @@ public class ControlState<Tbuf>
    */
   public synchronized void queueCommand(Command<Tbuf,?> command)
   { 
+    if (control.isDebug())
+    { log.fine(control+"Queued command "+command);
+    }
     if (commands==null)
     { commands=new ArrayList<Command<Tbuf,?>>(1);
     }
@@ -233,5 +246,22 @@ public class ControlState<Tbuf>
     commands=null;
     return list;
   }
+
   
+  public DataState getDataState()
+  { return dataState;
+  }
+    
+  public void setDataState(DataState state)
+  { 
+    if (control.isDebug())
+    { log.fine(control.toString()+" state="+state);
+    }
+    this.dataState=state;
+  }
+  
+  public Control<?> getControl()
+  { return control;
+  }
+
 }

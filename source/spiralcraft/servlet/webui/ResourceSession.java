@@ -1,7 +1,10 @@
 package spiralcraft.servlet.webui;
 
 import java.util.HashMap;
+import java.util.List;
 
+import spiralcraft.log.ClassLogger;
+import spiralcraft.net.http.VariableMap;
 import spiralcraft.textgen.ElementState;
 
 
@@ -14,15 +17,23 @@ import spiralcraft.textgen.ElementState;
  */
 public class ResourceSession
 {
+  private static final ClassLogger log
+    =ClassLogger.getInstance(ResourceSession.class);
+  
   private final HashMap<String,Action> actionMap
     =new HashMap<String,Action>();
+    
+  private final VariableMap parameterMap
+    =new VariableMap();
     
   private ElementState state;
   
   private String localURI;
   
   void clearActions()
-  { actionMap.clear();
+  { 
+    actionMap.clear();
+    parameterMap.clear();
   }
   
   
@@ -55,8 +66,30 @@ public class ResourceSession
     { preferredName=Integer.toString(actionMap.size());
     }
     
+    log.fine
+      ("Registering action "+preferredName+"="+action
+      +"  parameters="+parameterMap
+      );
     actionMap.put(preferredName,action);
-    return localURI+"?action="+preferredName;
+    String encodedParameters=parameterMap.generateEncodedForm();
+    return localURI
+      +"?action="+preferredName
+      +(encodedParameters!=null?"&"+encodedParameters:"")
+      ;
+    
+  }
+
+
+  public void setActionParameter(String name, List<String> values)
+  { 
+    if (values!=null)
+    { 
+      parameterMap.put(name,values);
+      log.fine("Added actionParameter "+name+"="+values+" to map "+parameterMap);
+    }
+    else
+    { parameterMap.remove(name);
+    }
   }
   
 }

@@ -19,7 +19,7 @@ import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 
-public class TextInput<Ttarget>
+public class TextArea<Ttarget>
   extends Control<Ttarget>
 {
   private static final ClassLogger log
@@ -28,32 +28,7 @@ public class TextInput<Ttarget>
   private String name;
   private StringConverter<Ttarget> converter;
   
-  private AbstractTag tag
-    =new AbstractTag()
-  {
-    @Override
-    protected String getTagName(EventContext context)
-    { return "input";
-    }
-
-    @SuppressWarnings("unchecked") // Generic cast
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    {   
-      ControlState<String> state=((ControlState<String>) context.getState());
-      renderAttribute(context.getWriter(),"type","text");
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
-      renderAttribute(context.getWriter(),"value",state.getValue());
-      super.renderAttributes(context);
-    }
-    
-    @Override
-    protected boolean hasContent()
-    { return false;
-    }
-    
-  };
+  private Tag tag=new Tag();
   
   private ErrorTag errorTag=new ErrorTag(tag);
   
@@ -61,10 +36,11 @@ public class TextInput<Ttarget>
   { this.name=name;
   }
   
-  public AbstractTag getTag()
+  public Tag getTag()
   { return tag;
   }
 
+  
 
   @Override
   public void setParent(Element parentElement)
@@ -110,7 +86,6 @@ public class TextInput<Ttarget>
     else
     { tag.render(context);
     }
-    super.render(context);
   }
   
   @SuppressWarnings("unchecked") // Generic cast
@@ -202,5 +177,70 @@ public class TextInput<Ttarget>
     }
   }
 
+  public class Tag
+    extends AbstractTag
+  {
+    @Override
+    protected String getTagName(EventContext context)
+    { return "TEXTAREA";
+    }
+
+    @SuppressWarnings("unchecked") // Generic cast
+    @Override
+    protected void renderAttributes(EventContext context)
+      throws IOException
+    {   
+      ControlState<String> state=((ControlState<String>) context.getState());
+      renderAttribute(context.getWriter(),"type","text");
+      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      renderAttribute(context.getWriter(),"value",state.getValue());
+      super.renderAttributes(context);
+    }
+    
+    @Override
+    protected boolean hasContent()
+    { return true;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void renderContent(EventContext context)
+      throws IOException
+    { 
+      Ttarget value=((ControlState<Ttarget>) context.getState()).getValue();
+      if (value!=null)
+      { 
+        if (converter!=null)
+        { context.getWriter().write(converter.toString(value));
+        }
+        else
+        { context.getWriter().write(value.toString());
+        }
+      }
+    }
+
+    public void setRows(String val)
+    { appendAttribute("rows",val);
+    }
+  
+    public void setCols(String val)
+    { appendAttribute("cols",val);
+    }
+  
+    public void setDisabled(String val)
+    { appendAttribute("disabled",val);
+    }
+  
+    public void setName(String val)
+    { appendAttribute("name",val);
+    }
+  
+    public void setReadOnly(String val)
+    { appendAttribute("readonly",val);
+    }
+    
+    
+  }
+  
 }
 

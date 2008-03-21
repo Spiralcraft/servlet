@@ -10,7 +10,7 @@ public class ErrorTag
     extends AbstractTag
 {
   private AbstractTag controlTag;
-  private String tagName="div";
+  private String tagName="box";
   
   public ErrorTag(AbstractTag controlTag)
   { this.controlTag=controlTag;
@@ -61,6 +61,12 @@ public class ErrorTag
   }
 
 
+  protected void renderAttributes(EventContext context)
+    throws IOException
+  { 
+    context.getWriter().write(" color=\"red\"");
+    super.renderAttributes(context);
+  }
   
 
 }

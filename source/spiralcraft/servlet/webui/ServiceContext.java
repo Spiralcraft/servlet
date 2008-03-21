@@ -16,6 +16,7 @@ package spiralcraft.servlet.webui;
 
 import java.io.Writer;
 import java.io.IOException;
+import java.util.List;
 
 import spiralcraft.textgen.EventContext;
 
@@ -122,6 +123,18 @@ public class ServiceContext
     return response.encodeURL(rawUrl);
   }
   
+  /**
+   * Provide a value for a request query variable. The variable is made part
+   *   of all links generated for actions. 
+   * 
+   * @param name
+   * @param values
+   */
+  public void setActionParameter(String name,List<String> values)
+  { resourceSession.setActionParameter(name,values);
+  }
+  
+      
   /**
    * @param commandProcessor The CommandProcessor associated with this 
    *    context- called by components that wish to supply a

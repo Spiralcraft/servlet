@@ -17,53 +17,18 @@ package spiralcraft.servlet.webui;
 import spiralcraft.textgen.Message;
 
 
-public class ControlMessage
+public class CommandMessage
   extends Message
 {
   
-  public enum Op
-  { GATHER
-  , SCATTER
-  , COMMAND
-  };
-  
+
   public static final MessageType TYPE=new MessageType();
   
-  /**
-   * Instructs components to gather their input from the EventContext.
-   */
-  public static final ControlMessage GATHER_MESSAGE
-    =new ControlMessage(Op.GATHER);
-  
-  /**
-   * Instructs components to execute any queued commands
-   */
-  public static final ControlMessage COMMAND_MESSAGE
-    =new ControlMessage(Op.COMMAND);
-
-  /**
-   * Instructs components to refresh any data before rendering output
-   */
-  public static final ControlMessage SCATTER_MESSAGE
-    =new ControlMessage(Op.SCATTER);
-
   { multicast=true;
   }
   
-  private final Op op;
   
   public MessageType getType()
   { return TYPE;
-  }
-  
-  public ControlMessage(Op command)
-  { this.op=command;
-  }
-  
-  public Op getOp()
-  { return op;
-  }
-  
-  
-  
+  }      
 }
