@@ -89,13 +89,15 @@ public class DataSessionFilter
     DataSession dataSession
       =(DataSession) session.getAttribute(attributeName);
       
+    boolean newDataSession=false;
     if (dataSession==null)
     { 
+      newDataSession=true;
       dataSession=((DataSessionFocus) getFocus()).newDataSession();
       session.setAttribute(attributeName,dataSession);
     }
     dataSessionChannel.push(dataSession);      
-    
+    ((DataSessionFocus) getFocus()).initializeDataSession();
   }
 
 }

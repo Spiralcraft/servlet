@@ -15,12 +15,18 @@
 package spiralcraft.servlet.webui.components;
 
 
+import java.net.URI;
+import java.util.logging.Level;
+
+import javax.servlet.ServletException;
+
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Field;
 import spiralcraft.data.Type;
+import spiralcraft.data.lang.AggregateIndexTranslator;
 import spiralcraft.data.lang.DataReflector;
 
 import spiralcraft.data.session.BufferAggregate;
@@ -35,16 +41,17 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
+import spiralcraft.lang.spi.TranslatorChannel;
 import spiralcraft.log.ClassLogger;
 
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
-import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.servlet.webui.UIMessage;
-import spiralcraft.servlet.webui.VariableMapBinding;
+import spiralcraft.servlet.webui.SaveMessage;
+
+
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
 import spiralcraft.textgen.MessageHandler;
@@ -59,9 +66,13 @@ public abstract class Editor
   private static final SaveMessage SAVE_MESSAGE=new SaveMessage();
   
   private Channel<Buffer> bufferChannel;
+  private Channel<BufferAggregate<Buffer,?>> aggregateChannel;
+  
   private Type<?> type;
   private Channel<DataSession> sessionChannel;
 
+  private String newActionName;
+  
   private Assignment<?>[] fixedAssignments;
   private Assignment<?>[] initialAssignments;
   private Assignment<?>[] defaultAssignments;
@@ -77,7 +88,12 @@ public abstract class Editor
 
   private RequestBinding<?>[] requestBindings;
   
+  private URI redirectOnSaveURI;
+  
   private boolean autoCreate;
+  private boolean detail;
+  private boolean phantom;
+  private boolean retain;
   
   {
     addHandler
@@ -88,7 +104,7 @@ public abstract class Editor
         public void handleMessage(EventContext context, Message message,
             boolean postOrder)
         { 
-          if (!postOrder && message.getType()==SaveMessage.TYPE)
+          if (!phantom && !postOrder && message.getType()==SaveMessage.TYPE)
           {
             try
             { save();
@@ -97,13 +113,77 @@ public abstract class Editor
             { Editor.this.getState().setException(x);
             }
           }
+          
+          if (!phantom && postOrder && message.getType()==SaveMessage.TYPE)
+          {
+            if (redirectOnSaveURI!=null
+                && !Editor.this.getState().isErrorState()
+                )
+            { 
+              if (debug)
+              { log.fine("Redirecting to "+redirectOnSaveURI);
+              }
+              try
+              { ((ServiceContext) context).redirect(redirectOnSaveURI);
+              }
+              catch (ServletException x)
+              { Editor.this.getState().setException(x);
+              }
+            }
+          }
         }
       });
   }
   
+  public void setRedirectOnSaveURI(URI uri)
+  { this.redirectOnSaveURI=uri;
+  }
+  
+  /**
+   * The action name to use for the "new" action, which creates a new
+   *   buffer.
+   * 
+   * @param name
+   */
+  public void setNewActionName(String name)
+  { newActionName=name;
+  }
+  
+  /**
+   * The Editor will create a new Buffer if the source provides a null
+   *   original value and buffers are not being retained
+   */
   public void setAutoCreate(boolean val)
   { autoCreate=val;
     
+  }
+  
+  /**
+   * Retain any original value if the source provides a null value
+   */
+  public void setRetain(boolean val)
+  { retain=val;
+  }
+  
+  /**
+   * The Editor will edit the content type of a parent BufferAggregate 
+   * 
+   * @param val
+   */
+  public void setDetail(boolean val)
+  { detail=val;
+  }
+  
+  
+  /**
+   * The contained buffer will not be saved by this editor. Usually used in
+   *   conjunction with setDetail(true) to create an Editor that adds a new
+   *   value to a parent BufferAggregate. 
+   * 
+   * @param val
+   */
+  public void setPhantom(boolean val)
+  { phantom=val;
   }
   
   /**
@@ -165,11 +245,15 @@ public abstract class Editor
    * 
    * @param assignments
    */
-  public void setRequestBindings(RequestBinding[] bindings)
+  public void setRequestBindings(RequestBinding<?>[] bindings)
   { requestBindings=bindings;
   }
   
-  
+  public boolean isDirty()
+  { 
+    ControlGroupState<Buffer> state=getState();
+    return state.getValue()!=null && state.getValue().isDirty();
+  }
                      
   public Command<Buffer,Void> revertCommand()
   { 
@@ -186,17 +270,82 @@ public abstract class Editor
 
   public Command<Buffer,Void> saveCommand()
   { 
+    if (phantom)
+    { throw new IllegalStateException("Cannot save a phantom Editor");
+    }
+    
     return new QueuedCommand<Buffer,Void>
       (getState()
       ,new CommandAdapter<Buffer,Void>()
         { 
           public void run()
-          { getState().queueMessage(SAVE_MESSAGE);
+          { 
+            getState().queueMessage(SAVE_MESSAGE);
           }
         }
       );
   }
   
+  /**
+   * <p>Saves the referenced Buffer and 
+   * </p>  clears the Editor to accomodate a new Tuple
+   * 
+   * @return
+   */
+  public Command<Buffer,Void> saveAndClearCommand()
+  { 
+    if (phantom)
+    { throw new IllegalStateException("Cannot save a phantom Editor");
+    }
+
+    return new QueuedCommand<Buffer,Void>
+      (getState()
+      ,new CommandAdapter<Buffer,Void>()
+        { 
+          public void run()
+          { 
+            getState().queueMessage(SAVE_MESSAGE);
+            
+            // Executes after the message is processed down the chain.
+            getState().queueCommand
+              (new CommandAdapter<Buffer,Void>()
+              {
+                public void run()
+                { 
+                  if (!getState().isErrorState())
+                  { getState().setValue(null);
+                  }
+                }
+              }
+              );
+          }
+        }
+      );
+  }
+
+  /**
+   * <p>Adds the referenced Buffer to the parent BufferAggregate and
+   *   clears the Editor to accommodate a new Tuple
+   * </p>
+   * 
+   * @return
+   */
+  public Command<Buffer,Void> addAndClearCommand()
+  { 
+    return new QueuedCommand<Buffer,Void>
+      (getState()
+      ,new CommandAdapter<Buffer,Void>()
+        { 
+          public void run()
+          { 
+            addToParent();
+            // XXX Should validate here
+            getState().setValue(null);
+          }
+        }
+      );
+  }
+
   public Command<Buffer,Void> newCommand()
   {
     return new QueuedCommand<Buffer,Void>
@@ -223,6 +372,50 @@ public abstract class Editor
       );
   }
 
+
+  /**
+   * Adds a buffer to a parent AggregateBuffer
+   * 
+   * @param clear
+   */
+  protected void addToParent()
+  {
+    if (aggregateChannel!=null)
+    {
+      BufferAggregate<Buffer,?> aggregate=aggregateChannel.get();
+      Buffer buffer=getState().getValue();
+
+      if (aggregate!=null && buffer!=null)
+      { 
+        if (debug)
+        { log.fine("Adding buffer to parent "+aggregate+": buffer="+buffer);
+        }
+        aggregate.add(buffer);
+      }
+      else
+      {
+        if (aggregate==null)
+        {
+          if (debug)
+          { log.fine("Not adding buffer to null parent: buffer="+buffer);
+          }
+        }
+        else
+        {
+          if (debug)
+          { log.fine("Not adding null buffer to parent "+aggregate);
+          }
+        }
+      }
+      
+    }
+  }
+  
+  /**
+   * If an aggregate, add a new empty buffer, otherwise
+   *   add a new empty buffer to the parent 
+   */
+  @SuppressWarnings("unchecked")
   protected void addNewBuffer()
   {
     try
@@ -240,15 +433,25 @@ public abstract class Editor
         }
 
         // Add a Tuple to the list
-        ((BufferAggregate<?>) getState().getValue())
+        ((BufferAggregate<Buffer,?>) getState().getValue())
         .add(sessionChannel.get().newBuffer(type.getContentType()));
+      }
+      else if (aggregateChannel!=null)
+      {
+        aggregateChannel.get()
+          .add(sessionChannel.get().newBuffer(type.getContentType()));
       }
     }
     catch (DataException x)
-    { getState().setException(x);
+    { 
+      log.log(Level.WARNING,"Error adding new buffer",x);
+      getState().setException(x);
     }
   }
   
+  /**
+   * Create a new buffer
+   */
   protected void newBuffer()
   {
     try
@@ -308,19 +511,40 @@ public abstract class Editor
         for (Setter<?> setter: publishedSetters)
         { setter.set();
         }
-      }
-      
+      }      
     }
     else
     { 
-      log.warning
-        ("No buffer exists to save- no data read- try Editor.autoCreate");
+      if (buffer==null)
+      {
+        log.warning
+          ("No buffer exists to save- no data read- try Editor.autoCreate");
+      }
+      else
+      {
+        if (debug)
+        { log.fine("Not dirty "+buffer.toString());
+        }
+      }
+    }
+    
+  }
+ 
+  protected void handleInitialize(ServiceContext context)
+  {
+    super.handleInitialize(context);
+    if (newActionName!=null)
+    { context.registerAction(createNewAction(context), newActionName);
     }
     
   }
   
   protected void handlePrepare(ServiceContext context)
   { 
+    if (newActionName!=null)
+    { context.registerAction(createNewAction(context), newActionName);
+    }
+
     super.handlePrepare(context);
     if (publishedSetters!=null)
     {
@@ -380,6 +604,7 @@ public abstract class Editor
   public void scatter(ServiceContext context)
   { 
     Buffer lastBuffer=getState().getValue();
+   
     super.scatter(context);
     if (getState().getValue()==null)
     { 
@@ -410,7 +635,14 @@ public abstract class Editor
       }
       else
       {
-        if (autoCreate)
+        if (retain)
+        {
+          if (debug)
+          { log.fine("Retaining buffer "+lastBuffer);
+          }
+          getState().setValue(lastBuffer);
+        }
+        else if (autoCreate)
         {
           newBuffer();
           if (debug)
@@ -424,7 +656,11 @@ public abstract class Editor
         else
         {
           if (debug)
-          { log.fine("Replacing last buffer with null (autoCreate==false)");
+          { 
+            log.fine
+              ("Replacing last buffer with null " 
+              +"(autoCreate==false && retain==false)"
+              );
           }
         }
         
@@ -467,6 +703,33 @@ public abstract class Editor
   }
   
   /**
+   * Create a new Action target for the Form post
+   * 
+   * @param context
+   * @return
+   */
+  protected Action createNewAction(EventContext context)
+  {
+    return new Action(context.getState().getPath())
+    {
+
+      
+      @SuppressWarnings("unchecked") // Blind cast
+      public void invoke(ServiceContext context)
+      { 
+        if (debug)
+        {
+          log.fine
+            ("Editor: Action invoked: "
+            +ArrayUtil.format(getTargetPath(),"/",null)
+            );
+        }
+        newBuffer();
+        
+      }
+    };
+  }  
+  /**
    * Wraps default behavior and provides a BufferChannel that buffers what
    *   comes from the target expression.
    */
@@ -476,7 +739,9 @@ public abstract class Editor
     (Focus<?> parentFocus)
       throws BindException
   { 
-    log.fine("Editor.bind() "+parentFocus);
+    if (debug)
+    { log.fine("Editor.bind() "+parentFocus);
+    }
     Channel<?> source=(Channel<DataComposite>) 
       super.extend(parentFocus);
     
@@ -502,12 +767,33 @@ public abstract class Editor
             instanceof BufferType
          ) 
       { 
-        log.fine("Using existing BufferChannel for "+source.getReflector());
-        bufferChannel=(Channel<Buffer>) source;
+        if (dataReflector.getType().isAggregate() && detail)
+        {          
+          bufferChannel
+            =new TranslatorChannel
+              (source
+              ,new AggregateIndexTranslator(dataReflector)
+              ,null // parentFocus.bind(indexExpression);
+              );
+          if (debug)
+          { log.fine("Buffering indexed detail "+bufferChannel.getReflector());
+          }
+          aggregateChannel=(Channel<BufferAggregate<Buffer,?>>) source;
+          
+        }
+        else
+        {
+          if (debug)
+          { log.fine("Using existing BufferChannel for "+source.getReflector());
+          }
+          bufferChannel=(Channel<Buffer>) source;
+        }
       }
       else
       {
-        log.fine("Creating BufferChannel for "+source.getReflector());
+        if (debug)
+        { log.fine("Creating BufferChannel for "+source.getReflector());
+        }
         bufferChannel=new BufferChannel
           ((Focus<DataComposite>) parentFocus
           ,(Channel<DataComposite>) source
@@ -544,17 +830,7 @@ public abstract class Editor
 
     if (!type.isAggregate() && type.getScheme()!=null)
     { 
-      for (Field field: type.getScheme().fieldIterable())
-      {
-        Expression<?> expression=field.getDefaultExpression();
-        if (expression!=null)
-        { 
-          Assignment<?> assignment
-            =new Assignment(Expression.create(field.getName()),expression);
-          defaultAssignments
-            =(Assignment[]) ArrayUtil.append(defaultAssignments,assignment);
-        }
-      }
+      // Used to go through fields here
       
     }
     
@@ -570,20 +846,7 @@ public abstract class Editor
     
   }
   
-  private Setter<?>[] bindAssignments(Assignment<?>[] assignments)
-    throws BindException
-  {
-    if (assignments!=null)
-    {
-      Setter<?>[] setters=new Setter<?>[assignments.length];
-      int i=0;
-      for (Assignment<?> assignment: assignments)
-      { setters[i++]=assignment.bind(getFocus());
-      }
-      return setters;
-    }
-    return null;
-  }
+
  
   @SuppressWarnings("unchecked")
   private void bindRequestAssignments()
@@ -604,16 +867,5 @@ public abstract class Editor
 
 }
 
-class SaveMessage
-  extends UIMessage
-{
-  public static final MessageType TYPE=new MessageType();
 
-  public SaveMessage()
-  { 
-    super(TYPE);
-    transactional=true;
-    multicast=true;
-  }
-}
 

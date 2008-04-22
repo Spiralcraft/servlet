@@ -5,6 +5,8 @@ import java.util.List;
 
 import spiralcraft.text.markup.MarkupException;
 
+import spiralcraft.util.ArrayToString;
+import spiralcraft.util.StringArrayToString;
 import spiralcraft.util.StringConverter;
 
 import spiralcraft.textgen.EventContext;
@@ -27,6 +29,16 @@ public class TextInput<Ttarget>
   
   private String name;
   private StringConverter<Ttarget> converter;
+  private boolean password;
+  
+  /**
+   * Whether the control is in password mode
+   * 
+   * @param password
+   */
+  public void setPassword(boolean password)
+  { this.password=password;
+  }
   
   private AbstractTag tag
     =new AbstractTag()
@@ -42,7 +54,12 @@ public class TextInput<Ttarget>
       throws IOException
     {   
       ControlState<String> state=((ControlState<String>) context.getState());
-      renderAttribute(context.getWriter(),"type","text");
+      if (password)
+      { renderAttribute(context.getWriter(),"type","password");
+      }
+      else
+      { renderAttribute(context.getWriter(),"type","text");
+      }
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       renderAttribute(context.getWriter(),"value",state.getValue());
       super.renderAttributes(context);
@@ -83,9 +100,25 @@ public class TextInput<Ttarget>
     super.bind(childUnits);
     if (converter==null && target!=null)
     { 
-      converter=
-        (StringConverter<Ttarget>) 
-        StringConverter.getInstance(target.getContentType());
+      Class targetClass=target.getContentType();
+      if (targetClass.isArray())
+      { 
+        if (targetClass.getComponentType().equals(String.class))
+        { 
+          converter=(StringConverter<Ttarget>) new StringArrayToString();
+          ((StringArrayToString) converter).setTrim(true);
+        }
+        else
+        { 
+          converter=new ArrayToString(targetClass.getComponentType());
+        }
+      }
+      else
+      {
+        converter=
+          (StringConverter<Ttarget>) 
+          StringConverter.getInstance(target.getContentType());
+      }
     }
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
@@ -173,9 +206,12 @@ public class TextInput<Ttarget>
       try
       {
         Ttarget val=target.get();
-        
+        if (debug)
+        { log.fine(toString()+" scattering "+val);
+        }
         if (val!=null)
         {
+          
           if (converter!=null)
           { state.setValue(converter.toString(val));
           }

@@ -69,7 +69,9 @@ public class UIComponent
   public final void bind(List<TglUnit> childUnits) 
     throws BindException,MarkupException
   {
-    log.fine("bind");
+    if (debug)
+    { log.fine("bind");
+    }
     threadLocal 
       = new ThreadLocalChannel<ServiceContext>
         (BeanReflector.<ServiceContext>getInstance(ServiceContext.class));

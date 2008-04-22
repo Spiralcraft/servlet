@@ -22,7 +22,10 @@ public class SubmitButton
   private String name;
   private String label;
   
-  private AbstractTag tag=new AbstractTag()
+  private Tag tag=new Tag();
+  
+  public class Tag
+    extends AbstractTag
   {
     @Override
     protected String getTagName(EventContext context)
@@ -40,6 +43,7 @@ public class SubmitButton
       
       // Yes, we are renaming it
       renderAttribute(context.getWriter(),"value",label);
+      super.renderAttributes(context);
     }
 
     @Override
@@ -49,6 +53,14 @@ public class SubmitButton
   };
     
   private ErrorTag errorTag=new ErrorTag(tag);
+  
+  public AbstractTag getTag()
+  { return tag;
+  }
+  
+  public ErrorTag getErrorTag()
+  { return errorTag;
+  }
   
   public void setName(String name)
   { this.name=name;

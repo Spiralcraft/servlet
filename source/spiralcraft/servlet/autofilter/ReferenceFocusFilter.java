@@ -25,7 +25,8 @@ import spiralcraft.builder.LifecycleException;
 
 
 /**
- * Creates a Focus from an Assembly via an spiralcraft.data.persist.XmlAssembly
+ * Creates a Focus from an Assembly via an 
+ *   spiralcraft.data.persist.XmlAssembly
  */
 public class ReferenceFocusFilter<Treferent,Tfocus>
     extends FocusFilter<Tfocus>
@@ -144,7 +145,9 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     stableFocusHolder
       =new FocusHolder(parentFocus);
     
-    log.fine(stableFocusHolder.getFocus().toString());
+    if (debug)
+    { log.fine(stableFocusHolder.getFocus().toString());
+    }
     return stableFocusHolder.getFocus();
 
   

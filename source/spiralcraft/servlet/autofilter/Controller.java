@@ -699,6 +699,11 @@ public class Controller
         log.warning("Controller.loadResource() failed: "+x.toString());
         loadError(container,x);
       }
+      catch (ServletException x)
+      { 
+        log.warning("Controller.loadResource() failed: "+x.toString());
+        loadError(container,x);
+      }
       catch (IOException x)
       { 
         log.warning("Controller.loadResource() failed: "+x.toString());
@@ -718,7 +723,15 @@ public class Controller
       exception=x;
       filter.setThrowable(x);
       filter.setPath(container);
-      filter.init(config);
+      try
+      { filter.init(config);
+      }
+      catch (ServletException y)
+      { 
+        // Never happens
+        y.printStackTrace();
+        x.printStackTrace();
+      }
       localFilters.add(filter);
     }
   }

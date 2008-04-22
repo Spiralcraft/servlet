@@ -15,8 +15,6 @@
 package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
-import spiralcraft.textgen.InitializeMessage;
 
 import spiralcraft.log.ClassLogger;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -25,14 +23,12 @@ import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.CommandMessage;
 import spiralcraft.servlet.webui.GatherMessage;
-import spiralcraft.servlet.webui.ControlState.DataState;
 
 import spiralcraft.util.ArrayUtil;
 
 
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 public class Form<T>
   extends ControlGroup<T>
@@ -115,19 +111,30 @@ public class Form<T>
         FormState<T> formState
           =(FormState<T>) context.getState();
         
-        relayMessage(context,GATHER_MESSAGE,null);
+        if (context.getPost()!=null)
+        {
+          // Only gather if there was a POST (as opposed to a GET,
+          //   which would delete data or throw NPEs if we make the
+          //   controls gather.
+          relayMessage(context,GATHER_MESSAGE,null);
         
-        relayMessage(context,COMMAND_MESSAGE,null);
+          if (!formState.isErrorState())
+          { 
+            // Don't run commands if any vars have errors
+            relayMessage(context,COMMAND_MESSAGE,null);
+          }
+        }
         
       }
     };
   }
   
+  @SuppressWarnings("unchecked")
   @Override
   public void render(EventContext context)
     throws IOException
   { 
-    FormState state=((FormState) context.getState());
+    FormState<T> state=((FormState<T>) context.getState());
     if (state.isErrorState())
     { errorTag.render(context);
     }

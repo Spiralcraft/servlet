@@ -18,7 +18,7 @@ import spiralcraft.servlet.webui.ControlState.DataState;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.InitializeMessage;
+
 import spiralcraft.textgen.Message;
 
 import spiralcraft.textgen.compiler.TglUnit;
@@ -29,11 +29,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.servlet.ServletException;
+
 import spiralcraft.command.Command;
+import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Expression;
+import spiralcraft.lang.Setter;
 import spiralcraft.log.ClassLogger;
 
 /**
@@ -268,6 +272,14 @@ public abstract class Control<Ttarget>
     
   }
   
+  /**
+   * <p>Default implementation of render() for Controls.
+   * </p>
+   * 
+   * <p>Performs pre-order internal state check, debug trap, 
+   *   and post-order ControlState error state reset.
+   * </p>
+   */
   @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
@@ -285,6 +297,21 @@ public abstract class Control<Ttarget>
     super.render(context);
     state.setDataState(DataState.RENDERED);
     state.resetError();
+  }
+  
+  protected Setter<?>[] bindAssignments(Assignment<?>[] assignments)
+    throws BindException
+  {
+    if (assignments!=null)
+    {
+      Setter<?>[] setters=new Setter<?>[assignments.length];
+      int i=0;
+      for (Assignment<?> assignment: assignments)
+      { setters[i++]=assignment.bind(getFocus());
+      }
+      return setters;
+    }
+    return null;
   }
 
 }

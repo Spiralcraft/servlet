@@ -30,6 +30,7 @@ public class QueuedCommand<Ttarget,Tresult>
 {
   private static final ClassLogger log
     =ClassLogger.getInstance(QueuedCommand.class);
+  private static boolean debug;
   
   private ControlGroupState<Ttarget> state;
   private Command<Ttarget,Tresult> command;
@@ -45,7 +46,9 @@ public class QueuedCommand<Ttarget,Tresult>
   
   public void run()
   { 
-    log.fine("Queueing "+command);
+    if (debug)
+    { log.fine("Queueing "+command);
+    }
     state.queueCommand(command);
   }
   

@@ -27,9 +27,11 @@ import spiralcraft.data.session.DataSession;
 
 import spiralcraft.data.session.DataSessionFocus;
 
+import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLogger;
@@ -55,6 +57,8 @@ public class DataSessionComponent
   
   private ThreadLocalChannel<DataSession> dataSessionChannel;
   private CompoundFocus<DataComposite> dataFocus;
+  private Assignment<?>[] defaultAssignments;
+  private Setter<?>[] defaultSetters;
 
   @SuppressWarnings("unchecked")
   @Override
@@ -63,7 +67,9 @@ public class DataSessionComponent
   { 
     
     Focus<?> parentFocus=getParent().getFocus();
-    log.fine("DataSession.bind() "+parentFocus);
+    if (debug)
+    { log.fine("DataSession.bind() "+parentFocus);
+    }
     dataSessionChannel
       =new ThreadLocalChannel<DataSession>
         (BeanReflector.<DataSession>getInstance
@@ -71,9 +77,13 @@ public class DataSessionComponent
         );
     dataSessionFocus
       =new DataSessionFocus(parentFocus,dataSessionChannel,type);
+    
+    // Pull the data from the dataSession focus
     dataFocus=new CompoundFocus
       (dataSessionFocus,dataSessionFocus.findFocus(type.getURI()).getSubject());
+    
     dataFocus.bindFocus("spiralcraft.data",dataSessionFocus);
+    defaultSetters=bindAssignments(defaultAssignments);
     bindRequestAssignments();
     bindChildren(childUnits);
   }
@@ -83,6 +93,17 @@ public class DataSessionComponent
   { return dataFocus;
   }
  
+  /**
+   * <p>Default Assignments get executed when the target value is null
+   *   in the "prepare" stage of request processing
+   * </p>
+   *   
+   * @param assignments
+   */
+  public void setDefaultAssignments(Assignment<?>[] assignments)
+  { defaultAssignments=assignments;
+  }
+  
   @SuppressWarnings("unchecked")
   public void setTypeURI(URI typeURI)
   { 
@@ -103,8 +124,15 @@ public class DataSessionComponent
 
     try
     {
-      dataSessionChannel.push
-        ( ((DataSessionState) context.getState()).get() );
+      DataSessionState state=(DataSessionState) context.getState();
+      
+      dataSessionChannel.push(state.get());
+      if (!state.isInitialized())
+      { 
+        dataSessionFocus.initializeDataSession();
+        state.setInitialized(true);
+      }
+      
       super.render(context);
     } 
     finally
@@ -122,8 +150,14 @@ public class DataSessionComponent
 
     try
     {
-      dataSessionChannel.push
-        ( ((DataSessionState) context.getState()).get() );
+      DataSessionState state=(DataSessionState) context.getState();
+      dataSessionChannel.push(state.get());
+      if (!state.isInitialized())
+      { 
+        dataSessionFocus.initializeDataSession();
+        state.setInitialized(true);
+      }
+    
       super.message(context,message,path);
     } 
     finally
@@ -132,17 +166,31 @@ public class DataSessionComponent
     }
   }
 
+  
   @Override
   public ElementState createState()
-  { return new DataSessionState
+  { 
+    return new DataSessionState
       (dataSessionFocus.newDataSession(),getChildCount());
   }
   
   @Override
   public void handlePrepare(ServiceContext context)
   { 
+    if (defaultSetters!=null)
+    { 
+      if (debug)
+      { log.fine(toString()+": applying default values");
+      }
+      for (Setter<?> setter: defaultSetters)
+      { 
+        if (setter.getTarget().get()==null)
+        { setter.set(); 
+        }  
+      }
+    }  
     applyRequestBindings(context);
-  }
+  } 
   
   @SuppressWarnings("unchecked")
   private void bindRequestAssignments()
@@ -178,6 +226,22 @@ public class DataSessionComponent
   { requestBindings=bindings;
   }
   
+  private Setter<?>[] bindAssignments(Assignment<?>[] assignments)
+    throws BindException
+  {
+    if (assignments!=null)
+    {
+      Setter<?>[] setters=new Setter<?>[assignments.length];
+      int i=0;
+      for (Assignment<?> assignment: assignments)
+      { setters[i++]=assignment.bind(getFocus());
+      }
+      return setters;
+    }
+    return null;
+  }
+
+  
 }
 
 class DataSessionState
@@ -185,11 +249,21 @@ class DataSessionState
 {
 
   private DataSession session;
+  private boolean initialized;
   
   public DataSessionState(DataSession session,int childCount)
   { 
     super(childCount);
     this.session=session;
+    
+  }
+  
+  public boolean isInitialized()
+  { return initialized;
+  }
+  
+  public void setInitialized(boolean initialized)
+  { this.initialized=initialized;
   }
   
   public DataSession get()

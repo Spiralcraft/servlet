@@ -190,7 +190,7 @@ public class VariableMapBinding<Tvar>
   {
     List<String> vals=map!=null?map.get(name):null;
     if (debug)
-    { log.fine("Reading "+vals);
+    { log.fine("Reading "+vals+" for "+name);
     }
     
     if (vals!=null && vals.size()>0)
@@ -247,7 +247,7 @@ public class VariableMapBinding<Tvar>
     else if (passNull)
     { 
       if (debug)
-      { log.fine("Setting target to null");
+      { log.fine("Setting target to null for "+name);
       }
       target.set(null);
     }

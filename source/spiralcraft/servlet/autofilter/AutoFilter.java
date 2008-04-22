@@ -25,6 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import spiralcraft.log.ClassLogger;
 import spiralcraft.util.Path;
 
 
@@ -45,17 +46,20 @@ import spiralcraft.util.Path;
 public abstract class AutoFilter
   implements Filter
 {
-
+  protected static final ClassLogger log
+    =ClassLogger.getInstance(AutoFilter.class);
   
   private boolean additive=true;
   private boolean overridable=true;
   private boolean global;
   private Path path;
+  protected boolean debug;
   protected String pattern;
   protected AutoFilter parent;
   
   protected FilterConfig config;
 
+  
   /**
    * @return whether this Filter augments a more general Filter instance
    *   for an enclosing scope. If false, this Filter will override
@@ -242,6 +246,7 @@ public abstract class AutoFilter
   }
   
   public void init(FilterConfig config)
+    throws ServletException
   { 
     this.config=config;
     if (pattern==null)
@@ -294,6 +299,15 @@ public abstract class AutoFilter
     x.printStackTrace(printWriter);
     printWriter.flush();
   }
+  
+  /**
+   * Turn on debugging output
+   * @param debug
+   */
+  public void setDebug(boolean debug)
+  { this.debug=debug;
+  }
+  
 }
   
 

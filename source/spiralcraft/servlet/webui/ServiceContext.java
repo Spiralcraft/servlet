@@ -16,6 +16,9 @@ package spiralcraft.servlet.webui;
 
 import java.io.Writer;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import java.util.List;
 
 import spiralcraft.textgen.EventContext;
@@ -24,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+import spiralcraft.log.ClassLogger;
 import spiralcraft.net.http.VariableMap;
 
 import spiralcraft.vfs.StreamUtil;
@@ -40,18 +44,25 @@ import spiralcraft.command.CommandProcessor;
 public class ServiceContext
   extends EventContext
 {
-
+  private static final ClassLogger log
+    =ClassLogger.getInstance(ServiceContext.class);
+  
   private ResourceSession resourceSession;
   private HttpServletRequest request;
   private HttpServletResponse response;
   private VariableMap post;
   private VariableMap query;
   private CommandProcessor commandProcessor;
+  private URI redirectURI;
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
   }
     
+  URI getRedirectURI()
+  { return redirectURI;
+  }
+  
   /**
    * 
    * @param resourceSession The ResourceSession that stores data and
@@ -122,6 +133,99 @@ public class ServiceContext
     String rawUrl=resourceSession.registerAction(action,preferredName);
     return response.encodeURL(rawUrl);
   }
+  
+
+  /**
+   * Directs that a redirect should occur at the next possible opportunity
+   *   before rendering.
+   * 
+   * @param rawUrl
+   */
+  public void redirect(URI rawURI)
+    throws ServletException
+  {
+    // XXX Clean up URI reconstruction code
+    if (redirectURI!=null)
+    { 
+      throw new ServletException
+        ("Duplicate redirect "+rawURI+": Already redirecting to "+redirectURI);
+    }
+    
+    URI requestURL=URI.create(request.getRequestURL().toString());
+    
+    String query=rawURI.getQuery();
+    
+    String encodedParameters=resourceSession.getEncodedParameters();
+    
+    if (encodedParameters!=null)
+    { 
+      if (query==null)
+      { query="?"+encodedParameters;
+      }
+      else
+      { query="?"+query+"&"+encodedParameters;
+      }
+    }
+    else
+    {
+      if (query!=null)
+      { query="?"+query;
+      }
+      
+    }
+    
+    log.fine
+      ("Encoding redirect to "+rawURI
+      +"  parameters="+encodedParameters
+      +"  query="+query
+      );
+    
+    
+    try
+    {
+      if (rawURI.isAbsolute())
+      {
+        redirectURI= new URI
+          (rawURI.getScheme()
+          ,rawURI.getUserInfo()
+          ,rawURI.getHost()
+          ,rawURI.getPort()
+          ,rawURI.getPath()
+          ,query
+          ,rawURI.getFragment()
+          );
+      }
+      else
+      {
+        redirectURI = new URI
+          (requestURL.getScheme()
+            ,requestURL.getUserInfo()
+            ,requestURL.getHost()
+            ,requestURL.getPort()
+            ,requestURL.getPath()
+            ,""
+            ,""
+          )
+          .resolve
+          ( rawURI
+          );
+
+        log.fine(redirectURI.toString());
+        if (query!=null && encodedParameters!=null)
+        { redirectURI=URI.create(redirectURI.toString()+"&"+encodedParameters);
+        }
+        log.fine(redirectURI.toString());
+      }
+    }
+    catch (URISyntaxException x)
+    { throw new ServletException("Error encoding redirect to "+rawURI,x);
+    }
+    
+   
+
+  
+  }
+  
   
   /**
    * Provide a value for a request query variable. The variable is made part

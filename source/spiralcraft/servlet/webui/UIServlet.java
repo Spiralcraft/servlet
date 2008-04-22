@@ -214,6 +214,9 @@ public class UIServlet
   {
     
     httpFocus.push(this, request, response);
+
+    // Move to UIServlet from parameter in this page 
+    response.setBufferSize(16384);
     try
     {
       ServiceContext serviceContext
@@ -261,11 +264,32 @@ public class UIServlet
       handleAction(component,serviceContext);
 
       localSession.clearActions();
+      
+      if (serviceContext.getRedirectURI()!=null)
+      {
+        // Redirect after action
+        response.sendRedirect
+          (response.encodeRedirectURL
+            (serviceContext.getRedirectURI().toString())
+          );
+      }
+      else
+      {
 
-      component.message(serviceContext,new PrepareMessage(),null);
+        component.message(serviceContext,new PrepareMessage(),null);
       
-      
-      render(component,serviceContext);
+        if (serviceContext.getRedirectURI()!=null)
+        {
+          // Redirect after prepare
+          response.sendRedirect
+            (response.encodeRedirectURL
+              (serviceContext.getRedirectURI().toString())
+            );
+        }
+        else
+        { render(component,serviceContext);
+        }
+      }
       
       
       ElementState newState=serviceContext.getState();

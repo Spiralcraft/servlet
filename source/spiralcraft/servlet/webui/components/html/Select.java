@@ -158,6 +158,10 @@ public class Select<Ttarget,Tvalue>
       Ttarget val;
       try
       {
+        if (context.getPost()==null)
+        { return;
+        }
+        
         List<String> strings=context.getPost().get(state.getVariableName());
         if (debug)
         { log.fine("Read ["+strings+"] from posted formvar "+state.getVariableName());

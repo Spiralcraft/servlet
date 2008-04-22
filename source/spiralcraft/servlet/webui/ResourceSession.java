@@ -29,6 +29,7 @@ public class ResourceSession
   private ElementState state;
   
   private String localURI;
+  private boolean debug;
   
   void clearActions()
   { 
@@ -36,6 +37,9 @@ public class ResourceSession
     parameterMap.clear();
   }
   
+  public void setDebug(boolean debug)
+  { this.debug=debug;
+  }
   
   public Action getAction(String name)
   { return actionMap.get(name);
@@ -66,10 +70,13 @@ public class ResourceSession
     { preferredName=Integer.toString(actionMap.size());
     }
     
-    log.fine
-      ("Registering action "+preferredName+"="+action
-      +"  parameters="+parameterMap
-      );
+    if (debug)
+    {
+      log.fine
+        ("Registering action "+preferredName+"="+action
+        +"  parameters="+parameterMap
+        );
+    }
     actionMap.put(preferredName,action);
     String encodedParameters=parameterMap.generateEncodedForm();
     return localURI
@@ -78,14 +85,23 @@ public class ResourceSession
       ;
     
   }
+  
+  String getEncodedParameters()
+  { return parameterMap.generateEncodedForm();
+  }
 
 
+  
   public void setActionParameter(String name, List<String> values)
   { 
     if (values!=null)
     { 
       parameterMap.put(name,values);
-      log.fine("Added actionParameter "+name+"="+values+" to map "+parameterMap);
+      if (debug)
+      { 
+        log.fine
+          ("Added actionParameter "+name+"="+values+" to map "+parameterMap);
+      }
     }
     else
     { parameterMap.remove(name);

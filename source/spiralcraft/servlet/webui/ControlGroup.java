@@ -155,6 +155,14 @@ public abstract class ControlGroup<Ttarget>
   }
 
   
+  /**
+   * <p>Default implementation of render() for ControlGroup.
+   * </p>
+   * 
+   * <p>Performs pre-order ThreadLocal state push, 
+   *   and post-order ThreadLocal state pop()
+   * </p>
+   */
   @SuppressWarnings("unchecked")
   // Blind cast
   @Override
@@ -188,11 +196,10 @@ public abstract class ControlGroup<Ttarget>
   protected Channel<?> extend(Focus<?> parentFocus) throws BindException
   {
     if (expression != null)
-    {
-      return parentFocus.<Ttarget> bind(expression);
-    } else
-    {
-      return null;
+    { return parentFocus.<Ttarget> bind(expression);
+    } 
+    else
+    { return null;
     }
   }
 
@@ -209,8 +216,24 @@ public abstract class ControlGroup<Ttarget>
 
   @Override
   /**
-   * Bind is made final here to allow the ControlGroup to maintain its
-   * ThreadLocal state for access by child Controls. Override bind(Focus) to
+   * <p>Bind is made final here to allow the ControlGroup to maintain its
+   * ThreadLocal state for access by child Controls.
+   * </p>
+   * 
+   * <p>This method provides the value contained in the State as the default
+   *   Focus available to child controls for binding expressions to.
+   * </p>
+   * 
+   * <p>Override extend() to provide a source for the State value. This value
+   *   will be pinned in the State from the "prepare" stage of one request
+   *   up until the "prepare" stage of the next request, to ensure that any
+   *   state sent to the browser can be modified and retrieved reliably. 
+   * </p>
+   * 
+   * <p>Override bindSelf() to provide additional/different Channels to child
+   *   components than the value stored in the State.
+   * </p>
+   * 
    * establish more specific Channels.
    */
   @SuppressWarnings("unchecked")

@@ -25,6 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
+import spiralcraft.lang.spi.BeanReflector;
+import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Authenticator;
 import spiralcraft.security.auth.Credential;
@@ -53,6 +57,7 @@ public class AuthenticateFilter
   private HttpAdapter httpAdapter;
   private String sessionName;
   private boolean useSession;
+    
   
   { 
     setOverridable(true);
@@ -66,6 +71,7 @@ public class AuthenticateFilter
   }
   
   public void init(FilterConfig config)
+    throws ServletException
   { 
     super.init(config);
     
@@ -80,6 +86,7 @@ public class AuthenticateFilter
     realm=authenticator.getRealmName();
     httpAdapter.setRealm(realm);
     sessionName="spiralcraft.security.auth."+realm;
+
   }
   
   /**
@@ -100,6 +107,15 @@ public class AuthenticateFilter
     HttpServletRequest httpRequest=(HttpServletRequest) request;
     HttpServletResponse httpResponse=(HttpServletResponse) response;
 
+    try
+    {
+      Focus<?> focus=FocusFilter.getFocusChain(httpRequest);
+      authenticator.bind(focus);
+    }
+    catch (BindException x)
+    { throw new ServletException("Error binding uthenticator",x);
+    }
+        
     if (isAuthenticated(httpRequest,httpResponse))
     { chain.doFilter(request,response);
     }
@@ -151,12 +167,9 @@ public class AuthenticateFilter
       }
       
       session.addCredentials(credentials);
-      
       if (session.isAuthenticated())
       { return true;
-        
-        // We should register the principal as a context item somehow
-        // Wait until we have a use case
+       
       }
       else
       { 
@@ -164,11 +177,6 @@ public class AuthenticateFilter
         return false;
       }
         
-      // Now put together a data authenticator
-      // 1. Load XML
-      // 2. Poll for changes on-demand
-      // 3. Query- map credentials by equijoin? Add realm
-      // 4. Map a field or expression to the Principal
     }
   }
   
