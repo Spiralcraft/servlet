@@ -1,5 +1,6 @@
 package spiralcraft.servlet.webui;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,6 +36,10 @@ public class ResourceSession
   { 
     actionMap.clear();
     parameterMap.clear();
+  }
+  
+  void clearParameters()
+  { parameterMap.clear();
   }
   
   public void setDebug(boolean debug)
@@ -90,7 +95,9 @@ public class ResourceSession
   { return parameterMap.generateEncodedForm();
   }
 
-
+  public void setActionParameter(String name,String[] values)
+  { setActionParameter(name,Arrays.asList(values));
+  }
   
   public void setActionParameter(String name, List<String> values)
   { 

@@ -77,6 +77,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
   
   private URI redirectOnSaveURI;
+  private String redirectOnSaveParameter;
   
   protected boolean autoCreate;
   protected boolean retain;
@@ -101,31 +102,65 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           }
           
           if (postOrder && message.getType()==SaveMessage.TYPE)
-          {
-            
-            // Handle redirect once the save tree has completed with no
-            //   errors
-            if (redirectOnSaveURI!=null
-                && !EditorBase.this.getState().isErrorState()
-                )
-            { 
-              if (debug)
-              { log.fine("Redirecting to "+redirectOnSaveURI);
-              }
-              try
-              { ((ServiceContext) context).redirect(redirectOnSaveURI);
-              }
-              catch (ServletException x)
-              { EditorBase.this.getState().setException(x);
-              }
-            }
+          { handleRedirectOnSave((ServiceContext) context);
           }          
         }
       });
   }  
 
+  private void handleRedirectOnSave(ServiceContext context)
+  {
+    URI redirectURI=redirectOnSaveURI;
+            
+    if (redirectOnSaveParameter!=null)
+    {
+      String value
+        =context.getQuery()
+          .getOne(redirectOnSaveParameter);
+      if (value!=null)
+      { redirectURI=URI.create(value);
+      }
+    }
+            
+    // Handle redirect once the save tree has completed with no
+    //   errors
+    if (redirectURI!=null
+        && !EditorBase.this.getState().isErrorState()
+       )
+    { 
+      if (debug)
+      { log.fine("Redirecting to "+redirectURI);
+      }
+
+      // Don't mix up parameters intended for the current page. 
+      context.clearParameters();
+      
+      try
+      { context.redirect(redirectURI);
+      }
+      catch (ServletException x)
+      { EditorBase.this.getState().setException(x);
+      }
+    }
+  }
+  
+  
+  /**
+   * 
+   * @param uri A static URI to redirect to when a save has been
+   *   performed without error.
+   */
   public void setRedirectOnSaveURI(URI uri)
   { this.redirectOnSaveURI=uri;
+  }
+  
+  
+  /**
+   * @param uri The query string parameter which holds the URI to
+   *   redirect to when the Editor saves successfully.
+   */
+  public void setRedirectOnSaveParameter(String param)
+  { this.redirectOnSaveParameter=param;
   }
   
   protected abstract void save()
@@ -397,6 +432,15 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     { context.registerAction(createNewAction(context), newActionName);
     }
 
+    if (redirectOnSaveParameter!=null)
+    {
+      String redirectURI=context.getQuery().getOne(redirectOnSaveParameter);
+      if (redirectURI!=null)
+      { context.setActionParameter(redirectOnSaveParameter,redirectURI);
+      }
+      
+    }
+    
     super.handlePrepare(context);
   }
    
@@ -499,7 +543,22 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }  
   
 
+//  public EditorState<Tbuffer> createState()
+//  {
+//    return new EditorState<Tbuffer>(this);
+//  }  
+  
+  
 }
 
+//class EditorState<T extends Buffer>
+//  extends ControlGroupState<T>
+//{
+//  
+//  public EditorState(EditorBase<T> editor)
+//  { super(editor);
+//  }
+//  
+//}
 
 

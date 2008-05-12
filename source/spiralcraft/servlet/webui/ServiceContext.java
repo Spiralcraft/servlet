@@ -238,7 +238,25 @@ public class ServiceContext
   { resourceSession.setActionParameter(name,values);
   }
   
+  /**
+   * Provide a value for a request query variable. The variable is made part
+   *   of all links generated for actions. 
+   * 
+   * @param name
+   * @param values
+   */
+  public void setActionParameter(String name,String ... values)
+  { resourceSession.setActionParameter(name,values);
+  }
       
+  /**
+   * Clear any parameters that will be added to the URL query string 
+   *   when an action URI is rendered or a redirect is sent 
+   */
+  public void clearParameters()
+  { resourceSession.clearParameters();
+  }
+  
   /**
    * @param commandProcessor The CommandProcessor associated with this 
    *    context- called by components that wish to supply a
