@@ -21,7 +21,6 @@ import java.util.List;
 import spiralcraft.lang.Channel;
 import spiralcraft.log.ClassLogger;
 import spiralcraft.net.http.VariableMap;
-import spiralcraft.servlet.webui.components.Editor;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.StringConverter;
 
@@ -31,6 +30,7 @@ import spiralcraft.util.StringConverter;
  * @author mike
  *
  */
+@SuppressWarnings("unchecked") // Casts related to StringConverter and arrays
 public class VariableMapBinding<Tvar>
 {
   private static final ClassLogger log

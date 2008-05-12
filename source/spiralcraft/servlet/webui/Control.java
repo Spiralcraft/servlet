@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
-import javax.servlet.ServletException;
 
 import spiralcraft.command.Command;
 import spiralcraft.lang.Assignment;
@@ -203,6 +202,7 @@ public abstract class Control<Ttarget>
       //   data children have gathered
       gather((ServiceContext) context); 
     } 
+
   }
   
   public ControlGroup<?> getControlGroup()
@@ -271,6 +271,7 @@ public abstract class Control<Ttarget>
     }
     
   }
+  
   
   /**
    * <p>Default implementation of render() for Controls.

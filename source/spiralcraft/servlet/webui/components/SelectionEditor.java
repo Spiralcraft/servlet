@@ -33,10 +33,11 @@ import spiralcraft.lang.spi.BeanReflector;
 import spiralcraft.util.ArrayUtil;
 
 /**
- * Manages the contents of an Aggregate that represents a
+ * <p>Manages the contents of an Aggregate that represents a
  *  one-to-many relationship, or a "relationized" list of
  *  primitives, which is modified by a selection provided
- *  by in incoming control.
+ *  by in incoming control (eg. a SelectList in multiselect mode)
+ * </p>
  * 
  * @author mike
  *

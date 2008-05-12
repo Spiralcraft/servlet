@@ -116,7 +116,7 @@ public abstract class Component
     
     super.message(context,message,path);
 
-   
+
   }
   
   public void destroy()
@@ -152,6 +152,8 @@ public abstract class Component
   protected void handleInitialize(ServiceContext context)
   { }
 
+
+  
   @Override
   public void render(EventContext context)
     throws IOException

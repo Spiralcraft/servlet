@@ -20,9 +20,6 @@ import javax.servlet.ServletException;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
-import spiralcraft.data.Type;
-import spiralcraft.data.lang.DataReflector;
-import spiralcraft.data.session.Buffer;
 
 
 import spiralcraft.lang.AccessException;
@@ -33,7 +30,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.spi.BeanReflector;
-import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.log.ClassLogger;
 
 import spiralcraft.security.auth.AuthSession;

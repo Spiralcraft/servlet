@@ -79,6 +79,7 @@ public class UICache
    * 
    * @param contextRelativePath The path relative to the ServletContext
    *   that uniquely identifies the UI component
+   *   
    * @return The UIComponent associated with the path
    * @throws MarkupException
    * @throws IOException
