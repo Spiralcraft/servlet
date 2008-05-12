@@ -81,8 +81,6 @@ public class UIServlet
 {
 
   private String defaultResourceName="default.webui";
-
-
   private UICache uiCache;
   
   private URI defaultSessionTypeURI
@@ -361,13 +359,10 @@ public class UIServlet
   }
   
   /**
-   * <P>Resolve the UI component associated with this request, using
-   *   the following steps
+   * <P>Resolve the UI component associated with this request, applying any
+   *   applicable resource mappings
    * </P>
    * 
-   * <UL>
-   *   <LI>Finds the textgen ResourceUnit associated with 
-   * </UL>
    * 
    * @param request
    * @return The UIComponent to handle this request
@@ -380,8 +375,16 @@ public class UIServlet
     { relativePath=relativePath.concat(defaultResourceName);
     }
    
+    String resourcePath=relativePath;
+    
     try
-    { return uiCache.getUI(relativePath);
+    { 
+      UIComponent component=uiCache.getUI(resourcePath);
+      if (component==null)
+      {
+        // Look in the fallback dir?
+      }
+      return component;
     }
     catch (MarkupException x)
     { 
