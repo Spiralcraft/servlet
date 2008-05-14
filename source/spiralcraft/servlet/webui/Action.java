@@ -25,11 +25,30 @@ public abstract class Action
 {
   
   private final int[] targetPath;
+  protected boolean clearable=true;
 
   public Action(int[] targetPath)
   { this.targetPath=targetPath;
   }
   
+  /**
+   * <P>Indicates that an Action should be cleared after handling user input.
+   * </P>
+   * 
+   * <P>An action that is always clearable is effectively a single-use action,
+   *   one that would normally be generated from a specific rendering.
+   * </P>
+   * 
+   * <P>An action that is not clearable would typically be used to handle
+   *   explicit invocation of functionality via the URL.
+   * </P>
+   *   
+   * 
+   * @return Whether the Action will be cleared after handling user input.
+   */
+  public boolean isClearable()
+  { return clearable;
+  }
   
   /**
    * 

@@ -428,9 +428,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   
   protected void handlePrepare(ServiceContext context)
   { 
-    if (newActionName!=null)
-    { context.registerAction(createNewAction(context), newActionName);
-    }
+// non-clearable action in init is all we need    
+//    if (newActionName!=null)
+//    { context.registerAction(createNewAction(context), newActionName);
+//    }
 
     if (redirectOnSaveParameter!=null)
     {
@@ -525,6 +526,8 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     return new Action(context.getState().getPath())
     {
 
+      { clearable=false;
+      }
       
       @SuppressWarnings("unchecked") // Blind cast
       public void invoke(ServiceContext context)

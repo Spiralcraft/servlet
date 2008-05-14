@@ -2,7 +2,9 @@ package spiralcraft.servlet.webui;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import spiralcraft.log.ClassLogger;
 import spiralcraft.net.http.VariableMap;
@@ -32,9 +34,18 @@ public class ResourceSession
   private String localURI;
   private boolean debug;
   
-  void clearActions()
+  synchronized void clearActions()
   { 
-    actionMap.clear();
+    // Remove clearable Actions only
+    Iterator<Map.Entry<String,Action>> iterator
+      =actionMap.entrySet().iterator();
+    while (iterator.hasNext())
+    {
+      if (iterator.next().getValue().isClearable())
+      { iterator.remove();
+      }
+    }
+
     parameterMap.clear();
   }
   

@@ -40,8 +40,8 @@ import spiralcraft.lang.Setter;
 import spiralcraft.log.ClassLogger;
 
 /**
- * <p>An element which accepts user input.
- * <p>
+ * <P>An Component that coordinates or provides a means of user input.
+ * </P>
  * 
  * 
  * 

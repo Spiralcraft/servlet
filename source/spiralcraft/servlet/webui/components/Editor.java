@@ -541,9 +541,11 @@ public abstract class Editor
   
   protected void handlePrepare(ServiceContext context)
   { 
-    if (newActionName!=null)
-    { context.registerAction(createNewAction(context), newActionName);
-    }
+
+// non-clearable action in init is all we need    
+//    if (newActionName!=null)
+//    { context.registerAction(createNewAction(context), newActionName);
+//    }
 
     super.handlePrepare(context);
     if (publishedSetters!=null)
@@ -712,7 +714,8 @@ public abstract class Editor
   {
     return new Action(context.getState().getPath())
     {
-
+      { clearable=false;
+      }
       
       @SuppressWarnings("unchecked") // Blind cast
       public void invoke(ServiceContext context)

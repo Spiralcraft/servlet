@@ -135,7 +135,8 @@ public abstract class Component
   }
   
   /**
-   * Override to initialize before rendering
+   * Override to initialize before rendering. Subclasses should always call
+   *   this superclass method to process URL commands
    * 
    * @param context
    */
