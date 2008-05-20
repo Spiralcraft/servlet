@@ -119,8 +119,23 @@ public class Login
         && state.getReferer()==null
         )
     { 
+      String refererParam=context.getQuery().getOne("referer");
+      
       // Initial request- get referer for redirect
-      URI refererURI=URI.create(context.getQuery().getOne("referer"));
+      URI refererURI;
+      if (refererParam!=null)
+      { refererURI=URI.create(refererParam);
+      }
+      else
+      { 
+        if (defaultURI!=null)
+        { refererURI=defaultURI;
+        }
+        else
+        { refererURI=URI.create("/");
+        }
+      }
+      
       if (!refererURI.getPath().equals(context.getRequest().getRequestURI()))
       {
         state.setReferer

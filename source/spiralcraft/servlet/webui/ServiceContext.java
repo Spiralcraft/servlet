@@ -28,7 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import spiralcraft.log.ClassLogger;
+
 import spiralcraft.net.http.VariableMap;
+import spiralcraft.net.http.MultipartVariableMap;
 
 import spiralcraft.vfs.StreamUtil;
 
@@ -59,6 +61,29 @@ public class ServiceContext
   { super(writer,stateful);
   }
     
+  /**
+   * Release all resources
+   */
+  void release()
+  {
+    resourceSession=null;
+    request=null;
+    response=null;
+    if (post!=null)
+    { 
+      post.clear();
+      post=null;
+    }
+    if (query!=null)
+    { 
+      query.clear();
+      query=null;
+    }
+    commandProcessor=null;
+    redirectURI=null;
+    
+  }
+  
   URI getRedirectURI()
   { return redirectURI;
   }
@@ -83,10 +108,6 @@ public class ServiceContext
   { return resourceSession;
   }
 
-  void setPost(VariableMap post)
-  { this.post=post;
-  }
-
   
   public HttpServletRequest getRequest()
   { return request;
@@ -104,12 +125,24 @@ public class ServiceContext
     
     if (request.getContentLength()>0)
     {
-      if (request.getContentType().equals("application/x-www-form-urlencoded"))
+      String contentType=request.getContentType();
+      if (contentType.equals("application/x-www-form-urlencoded"))
       { 
         String postString
           =StreamUtil.readAsciiString
             (request.getInputStream(),request.getContentLength());
         this.post=VariableMap.fromUrlEncodedString(postString);
+      }
+      else if (contentType.startsWith("multipart/form-data"))
+      {
+        MultipartVariableMap map=new MultipartVariableMap();
+        map.read
+          (request.getInputStream()
+          ,contentType
+          ,request.getContentLength()
+          );
+        this.post=map;
+        
       }
       else
       { 
@@ -282,4 +315,5 @@ public class ServiceContext
   { return query;
   }
 
+  
 }

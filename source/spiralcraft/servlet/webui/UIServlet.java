@@ -215,10 +215,13 @@ public class UIServlet
 
     // Move to UIServlet from parameter in this page 
     response.setBufferSize(16384);
+    
+    ServiceContext serviceContext=null;
+    
     try
     {
-      ServiceContext serviceContext
-        =new ServiceContext(response.getWriter(),true);
+      
+      serviceContext=new ServiceContext(response.getWriter(),true);
       
       serviceContext.setRequest(request);
       serviceContext.setResponse(response);
@@ -302,7 +305,13 @@ public class UIServlet
       
     }
     finally
-    { httpFocus.pop();
+    { 
+      httpFocus.pop();
+      if (serviceContext!=null)
+      {
+        serviceContext.release();
+        serviceContext=null;
+      }
     }
   }
   
