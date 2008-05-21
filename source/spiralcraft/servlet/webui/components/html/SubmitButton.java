@@ -12,7 +12,6 @@ import spiralcraft.servlet.webui.ServiceContext;
 
 import spiralcraft.command.Command;
 import spiralcraft.lang.AccessException;
-import spiralcraft.lang.Expression;
 import spiralcraft.net.http.VariableMap;
 
 public class SubmitButton

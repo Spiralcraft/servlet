@@ -374,7 +374,9 @@ public abstract class TupleEditor
         }
         else
         {
-          log.fine("Using existing BufferChannel for "+source.getReflector());
+          if (debug)
+          { log.fine("Using existing BufferChannel for "+source.getReflector());
+          }
           bufferChannel=(Channel<Buffer>) source;
         }
       }

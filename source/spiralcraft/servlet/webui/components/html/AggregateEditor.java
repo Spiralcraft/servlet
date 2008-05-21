@@ -5,14 +5,14 @@ import java.io.IOException;
 
 
 
-import spiralcraft.data.session.Buffer;
+import spiralcraft.data.DataComposite;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
-public class AggregateEditor
-    extends spiralcraft.servlet.webui.components.AggregateEditor
+public class AggregateEditor<T extends DataComposite>
+    extends spiralcraft.servlet.webui.components.AggregateEditor<T>
 {
 
   private final AbstractTag tag=new AbstractTag()
@@ -60,7 +60,7 @@ public class AggregateEditor
     }
   }
 
-  protected Focus<Buffer> bindSelf()
+  protected Focus<?> bindSelf()
     throws BindException
   {
     if (findElement(Form.class)==null)

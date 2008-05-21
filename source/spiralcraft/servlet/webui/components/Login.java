@@ -57,7 +57,7 @@ public class Login
   private URI defaultURI;
 
   private Assignment<?>[] assignments;
-  private Setter[] setters;
+  private Setter<?>[] setters;
 
 
   public void setDefaultURI(URI defaultURI)

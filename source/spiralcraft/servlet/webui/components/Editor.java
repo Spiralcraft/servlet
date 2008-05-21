@@ -24,7 +24,7 @@ import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
-import spiralcraft.data.Field;
+
 import spiralcraft.data.Type;
 import spiralcraft.data.lang.AggregateIndexTranslator;
 import spiralcraft.data.lang.DataReflector;
@@ -38,8 +38,8 @@ import spiralcraft.data.session.BufferType;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
-import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.TranslatorChannel;
 import spiralcraft.log.ClassLogger;

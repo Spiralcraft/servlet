@@ -5,14 +5,14 @@ import java.io.IOException;
 
 
 
-import spiralcraft.data.session.Buffer;
+import spiralcraft.data.DataComposite;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
-public class SelectionEditor
-    extends spiralcraft.servlet.webui.components.SelectionEditor
+public class SelectionEditor<TorigContent extends DataComposite,TselectItem>
+    extends spiralcraft.servlet.webui.components.SelectionEditor<TorigContent,TselectItem>
 {
 
   private final AbstractTag tag=new AbstractTag()

@@ -96,8 +96,10 @@ public class DataSessionFilter
       dataSession=((DataSessionFocus) getFocus()).newDataSession();
       session.setAttribute(attributeName,dataSession);
     }
-    dataSessionChannel.push(dataSession);      
-    ((DataSessionFocus) getFocus()).initializeDataSession();
+    dataSessionChannel.push(dataSession);  
+    if (newDataSession)
+    { ((DataSessionFocus) getFocus()).initializeDataSession();
+    }
   }
 
 }

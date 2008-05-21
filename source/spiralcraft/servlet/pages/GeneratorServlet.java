@@ -110,7 +110,7 @@ public class GeneratorServlet
     }
     else
     {
-      Focus parentFocus=FocusFilter.getFocusChain(request);
+      Focus<?> parentFocus=FocusFilter.getFocusChain(request);
       if (parentFocus!=null && httpFocus.getParentFocus()==null)
       { log.fine("HTTPFocus late parent binding to "+parentFocus);
       }
