@@ -56,11 +56,16 @@ public class ServiceContext
   private VariableMap query;
   private CommandProcessor commandProcessor;
   private URI redirectURI;
+  private boolean debug;
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
   }
     
+  public void setDebug(boolean debug)
+  { this.debug=debug;
+  }
+  
   /**
    * Release all resources
    */
@@ -207,11 +212,14 @@ public class ServiceContext
       
     }
     
-    log.fine
-      ("Encoding redirect to "+rawURI
-      +"  parameters="+encodedParameters
-      +"  query="+query
-      );
+    if (debug)
+    {
+      log.fine
+        ("Encoding redirect to "+rawURI
+        +"  parameters="+encodedParameters
+        +"  query="+query
+        );
+    }
     
     
     try
@@ -243,11 +251,15 @@ public class ServiceContext
           ( rawURI
           );
 
-        log.fine(redirectURI.toString());
+        if (debug)
+        { log.fine(redirectURI.toString());
+        }
         if (query!=null && encodedParameters!=null)
         { redirectURI=URI.create(redirectURI.toString()+"&"+encodedParameters);
         }
-        log.fine(redirectURI.toString());
+        if (debug)
+        { log.fine(redirectURI.toString());
+        }
       }
     }
     catch (URISyntaxException x)

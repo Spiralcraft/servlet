@@ -332,7 +332,9 @@ public abstract class TupleEditor
     (Focus<?> parentFocus)
       throws BindException
   { 
-    log.fine("Editor.bind() "+parentFocus);
+    if (debug)
+    { log.fine("Editor.bind() "+parentFocus);
+    }
     Channel<?> source=(Channel<DataComposite>) 
       super.extend(parentFocus);
     
@@ -382,7 +384,9 @@ public abstract class TupleEditor
       }
       else
       {
-        log.fine("Creating BufferChannel for "+source.getReflector());
+        if (debug)
+        { log.fine("Creating BufferChannel for "+source.getReflector());
+        }
         bufferChannel=new BufferChannel
           ((Focus<DataComposite>) parentFocus
           ,(Channel<DataComposite>) source

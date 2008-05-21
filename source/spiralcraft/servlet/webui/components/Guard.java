@@ -83,8 +83,12 @@ public class Guard
     throws ServletException
   {
     String referer=context.getRequest().getRequestURL().toString();
-    URI redirect=URI.create(loginURI.getPath()+"?referer="+URLDataEncoder.encode(referer));
-    log.fine("Setting up redirect to "+redirect);
+    URI redirect
+      =URI.create
+        (loginURI.getPath()+"?referer="+URLDataEncoder.encode(referer));
+    if (debug)
+    { log.fine("Setting up redirect to "+redirect);
+    }
     context.redirect(redirect);
   }
   
