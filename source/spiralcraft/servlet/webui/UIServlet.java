@@ -84,7 +84,7 @@ public class UIServlet
   private UICache uiCache;
   
   private URI defaultSessionTypeURI
-    =URI.create("java:/spiralcraft/servlet/webui/Session.assy");
+    =URI.create("class:/spiralcraft/servlet/webui/Session.assy");
   
   @SuppressWarnings("unchecked") // XXX Need to fix this
   private HttpFocus<?> httpFocus;

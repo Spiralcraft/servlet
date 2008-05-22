@@ -681,7 +681,7 @@ public class Controller
       
         XmlBean <List<AutoFilter>> bean
           =new XmlBean<List<AutoFilter>>
-            (URI.create("java:/spiralcraft/servlet/autofilter/AutoFilter.list")
+            (URI.create("class:/spiralcraft/servlet/autofilter/AutoFilter.list")
             ,resource.getURI()
             );
       

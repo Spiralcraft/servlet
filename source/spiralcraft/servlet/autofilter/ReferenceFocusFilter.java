@@ -25,7 +25,7 @@ import spiralcraft.builder.LifecycleException;
 
 
 /**
- * Creates a Focus from an Assembly via an 
+ * Creates a Focus from an persistent reference Assembly via a 
  *   spiralcraft.data.persist.XmlAssembly
  */
 public class ReferenceFocusFilter<Treferent,Tfocus>
