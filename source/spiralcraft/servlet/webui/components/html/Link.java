@@ -33,7 +33,7 @@ public class Link
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "a";
+    { return "A";
     }
 
     @Override

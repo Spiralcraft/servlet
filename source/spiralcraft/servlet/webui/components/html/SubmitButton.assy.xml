@@ -1,7 +1,0 @@
-<html:SubmitButton
-  xmlns:html="class:/spiralcraft/servlet/webui/components/html"
-  >
-  <tag>
-    <html:SubmitButton-Tag/>
-  </tag>
-</html:SubmitButton>

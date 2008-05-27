@@ -8,7 +8,6 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.util.StringConverter;
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Element;
 import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.lang.BindException;
@@ -40,16 +39,7 @@ public class TextArea<Ttarget>
   { return tag;
   }
 
-  
-
-  @Override
-  public void setParent(Element parentElement)
-    throws MarkupException
-  { 
-    super.setParent(parentElement);
-    // controlGroup=parentElement.findElement(ControlGroup.class);
-    // controlGroup.registerControl(getPath(),this);
-  }
+ 
 
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions

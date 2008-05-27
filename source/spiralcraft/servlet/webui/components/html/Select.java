@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.StringConverter;
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Element;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
@@ -87,13 +85,6 @@ public class Select<Ttarget,Tvalue>
   { this.sourceExpression=sourceExpression;
   }
 
-
-  @Override
-  public void setParent(Element parentElement)
-    throws MarkupException
-  { 
-    super.setParent(parentElement);
-  }
 
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions

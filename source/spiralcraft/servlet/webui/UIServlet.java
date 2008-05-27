@@ -225,6 +225,7 @@ public class UIServlet
       
       serviceContext.setRequest(request);
       serviceContext.setResponse(response);
+      serviceContext.setServlet(this);
       
       Session session=getUiSession(request,true);
       ResourceSession localSession=session.getResourceSession(component);

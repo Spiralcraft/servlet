@@ -87,6 +87,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (new MessageHandler()
       {
 
+        @SuppressWarnings("unchecked")
         @Override
         public void handleMessage(EventContext context, Message message,
             boolean postOrder)
@@ -101,7 +102,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
             }
           }
           
-          if (postOrder && message.getType()==SaveMessage.TYPE)
+          if (postOrder 
+              && message.getType()==SaveMessage.TYPE
+              && !((ControlGroupState<Tbuffer>) context.getState()).isErrorState()
+              )
           { handleRedirectOnSave((ServiceContext) context);
           }          
         }

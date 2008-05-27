@@ -15,7 +15,7 @@ public class Login
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "span";
+    { return "SPAN";
     }
     
     protected boolean hasContent()

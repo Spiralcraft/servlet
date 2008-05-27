@@ -19,7 +19,7 @@ public class AggregateEditor<T extends DataComposite>
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "div";
+    { return "DIV";
     }
     
     protected boolean hasContent()

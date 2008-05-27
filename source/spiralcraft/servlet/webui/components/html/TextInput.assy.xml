@@ -1,7 +1,0 @@
-<html:TextInput
-  xmlns:html="class:/spiralcraft/servlet/webui/components/html"
-  >
-  <tag>
-    <html:AbstractTag/>
-  </tag>
-</html:TextInput>

@@ -57,6 +57,7 @@ public class ServiceContext
   private CommandProcessor commandProcessor;
   private URI redirectURI;
   private boolean debug;
+  private UIServlet servlet;
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
@@ -64,6 +65,14 @@ public class ServiceContext
     
   public void setDebug(boolean debug)
   { this.debug=debug;
+  }
+  
+  public UIServlet getServlet()
+  { return servlet;
+  }
+  
+  void setServlet(UIServlet servlet)
+  { this.servlet=servlet;
   }
   
   /**

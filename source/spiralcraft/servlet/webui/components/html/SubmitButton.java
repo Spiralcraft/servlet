@@ -2,9 +2,7 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Element;
 
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
@@ -53,7 +51,7 @@ public class SubmitButton
     
   private ErrorTag errorTag=new ErrorTag(tag);
   
-  public AbstractTag getTag()
+  public Tag getTag()
   { return tag;
   }
   
@@ -69,14 +67,6 @@ public class SubmitButton
   { this.label=label;
   }
 
-  @Override
-  public void setParent(Element parentElement)
-    throws MarkupException
-  { 
-    super.setParent(parentElement);
-    // controlGroup=parentElement.findElement(ControlGroup.class);
-    // controlGroup.registerControl(getPath(),this);
-  }
 
   public String getVariableName()
   { return name;

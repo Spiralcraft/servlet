@@ -39,13 +39,13 @@ public class Form<T>
   private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();
   
   private String actionName;
-  
+  private boolean mimeEncoded;
   
   private final AbstractTag tag=new AbstractTag()
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "form";
+    { return "FORM";
     }
     
     protected boolean hasContent()
@@ -69,10 +69,17 @@ public class Form<T>
       
       renderAttribute(context.getWriter(),"action",actionURI);
       renderAttribute(context.getWriter(),"method","POST");
+      if (mimeEncoded)
+      { renderAttribute(context.getWriter(),"enctype","multipart/form-data");
+      }
     }
   };
   
   private final ErrorTag errorTag=new ErrorTag(tag);
+  
+  public void setMimeEncoded(boolean mimeEncoded)
+  { this.mimeEncoded=mimeEncoded;
+  }
   
   public String getVariableName()
   { return null;
