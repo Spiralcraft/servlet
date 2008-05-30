@@ -42,7 +42,16 @@ import spiralcraft.textgen.Message;
 import spiralcraft.textgen.compiler.TglUnit;
 
 /**
- * Groups a number of related Controls to create a single complex target value
+ * <p>Groups a number of related Controls to create a single complex target
+ *   value.
+ * </p>
+ * 
+ * <p>A ControlGroup will pin a value and its state via a ThreadLocal, so that
+ *   all of the ControlGroup's children have access to the same object
+ *   via "callback" method calls or expressions.
+ * </p>
+ * 
+ * 
  * 
  * @author mike
  * 
@@ -55,7 +64,8 @@ public abstract class ControlGroup<Ttarget>
 
   private int nextVariableName = 0;
 
-  protected ThreadLocal<ControlGroupState<Ttarget>> threadLocalState = new ThreadLocal<ControlGroupState<Ttarget>>();
+  protected ThreadLocal<ControlGroupState<Ttarget>> threadLocalState 
+    = new ThreadLocal<ControlGroupState<Ttarget>>();
 
   protected AbstractChannel<Ttarget> valueBinding;
 
@@ -184,32 +194,47 @@ public abstract class ControlGroup<Ttarget>
   }
 
   /**
-   * Called once to allow subclass to further extend the binding chain. The
-   * result of the binding will be cached in ThreadLocalState in-between
-   * scatter() and gather() operations, and will be referred to in this
-   * component's Focus as exported to child Elements.
+   * <p>Called once to allow a subclass to further extend the binding chain.
+   *   The result of the binding will be pinned in ThreadLocalState in-between
+   *   scatter() and gather() operations, and will be referred to in this
+   *   component's Focus as exported to child Elements.
+   * </p>
+   * 
+   * <p>This method is supports an extension mechanism by which subclasses
+   *   may override this method to chain additional Channels to the one 
+   *   returned by this default method implementation (the result of the "x" 
+   *   expression or, if none is provided, the subject of the parent component's
+   *   Focus).
+   * </p>
+   * 
    * 
    * @param parentFocus
-   * @return
+   * @return The Channel that provides the target value to be stored in the
+   *   state.
    * @throws BindException
    */
-  protected Channel<?> extend(Focus<?> parentFocus) throws BindException
+  protected Channel<?> bindTarget(Focus<?> parentFocus) throws BindException
   {
     if (expression != null)
-    { return parentFocus.<Ttarget> bind(expression);
+    { return parentFocus.bind(expression);
     } 
     else
-    { return null;
+    { return parentFocus.getSubject();
     }
   }
 
   /**
-   * Called after the local focus has been create to allow other expressions to
-   * be bound
+   * <p>Called once after the target has been bound and the local focus
+   *   has been created to allow a subclass to create a new Focus to export
+   *   to child Elements and to set up expressions based on the state-pinned
+   *   value.
+   * </p>
    * 
    * @param thisFocus
+   * @return The new Focus to export, or null if the current Focus will be
+   *   exported
    */
-  protected Focus<?> bindSelf()
+  protected Focus<?> bindExports()
     throws BindException
   { return null;
   }
@@ -246,7 +271,7 @@ public abstract class ControlGroup<Ttarget>
     }
     Focus<?> parentFocus = getParent().getFocus();
 
-    target = (Channel<Ttarget>) extend(parentFocus);
+    target = (Channel<Ttarget>) bindTarget(parentFocus);
     if (target != null)
     {
       valueBinding = new AbstractChannel<Ttarget>(target.getReflector())
@@ -294,7 +319,7 @@ public abstract class ControlGroup<Ttarget>
       }
     }
     computeDistances();
-    Focus<?> newFocus=bindSelf();
+    Focus<?> newFocus=bindExports();
     if (newFocus!=null)
     { focus=newFocus;
     }

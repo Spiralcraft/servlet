@@ -738,15 +738,14 @@ public abstract class Editor
    */
   @SuppressWarnings("unchecked")
   @Override
-  protected Channel<Buffer> extend
+  protected Channel<Buffer> bindTarget
     (Focus<?> parentFocus)
       throws BindException
   { 
     if (debug)
     { log.fine("Editor.bind() "+parentFocus);
     }
-    Channel<?> source=(Channel<DataComposite>) 
-      super.extend(parentFocus);
+    Channel<?> source=super.bindTarget(parentFocus);
     
     
     if (source==null)
@@ -823,7 +822,7 @@ public abstract class Editor
   }
   
   @SuppressWarnings("unchecked")
-  protected Focus<Buffer> bindSelf()
+  protected Focus<Buffer> bindExports()
     throws BindException
   {
     DataReflector<Buffer> reflector

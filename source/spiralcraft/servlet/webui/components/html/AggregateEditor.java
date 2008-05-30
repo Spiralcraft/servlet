@@ -60,13 +60,13 @@ public class AggregateEditor<T extends DataComposite>
     }
   }
 
-  protected Focus<?> bindSelf()
+  protected Focus<?> bindExports()
     throws BindException
   {
     if (findElement(Form.class)==null)
     { throw new BindException("Editor must be contained in a Form");
     }
-    return super.bindSelf();
+    return super.bindExports();
   }
   
 

@@ -88,10 +88,10 @@ public class Select<Ttarget,Tvalue>
 
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public Channel<Ttarget> extend(Focus<?> parentFocus)
+  public Channel<Ttarget> bindTarget(Focus<?> parentFocus)
     throws BindException
   { 
-    Channel<Ttarget> target=(Channel<Ttarget>) super.extend(parentFocus);
+    Channel<Ttarget> target=(Channel<Ttarget>) super.bindTarget(parentFocus);
     if (converter==null && target!=null)
     { 
       converter=
@@ -106,7 +106,7 @@ public class Select<Ttarget,Tvalue>
   }
   
   @SuppressWarnings("unchecked")
-  public Focus<?> bindSelf()
+  public Focus<?> bindExports()
   { 
     Focus<?> focus=new CompoundFocus(getFocus(),source);
     return focus; 

@@ -195,7 +195,7 @@ public class Login
   }
    
 
-  protected Channel<?> extend(Focus<?> parentFocus)
+  protected Channel<?> bindTarget(Focus<?> parentFocus)
     throws BindException
   {
     // Only used to provide a reflector to ControlGroup, so it can make
@@ -219,11 +219,11 @@ public class Login
   }
   
   @SuppressWarnings("unchecked")
-  protected Focus<?> bindSelf()
+  protected Focus<?> bindExports()
     throws BindException
   {
     setters=bindAssignments(assignments);
-    return super.bindSelf();
+    return super.bindExports();
     
   }
   

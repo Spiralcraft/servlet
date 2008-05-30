@@ -328,7 +328,7 @@ public abstract class TupleEditor
    */
   @SuppressWarnings("unchecked")
   @Override
-  protected Channel<Buffer> extend
+  protected Channel<Buffer> bindTarget
     (Focus<?> parentFocus)
       throws BindException
   { 
@@ -336,7 +336,7 @@ public abstract class TupleEditor
     { log.fine("Editor.bind() "+parentFocus);
     }
     Channel<?> source=(Channel<DataComposite>) 
-      super.extend(parentFocus);
+      super.bindTarget(parentFocus);
     
     
     if (source==null)
@@ -411,7 +411,7 @@ public abstract class TupleEditor
   }
   
   @SuppressWarnings("unchecked")
-  protected Focus<Buffer> bindSelf()
+  protected Focus<Buffer> bindExports()
     throws BindException
   {
     DataReflector<Buffer> reflector

@@ -56,13 +56,13 @@ public class Login
     }
   }
 
-  protected Focus<?> bindSelf()
+  protected Focus<?> bindExports()
     throws BindException
   {
     if (findElement(Form.class)==null)
     { throw new BindException("Login must be contained in a Form");
     }
-    return super.bindSelf();
+    return super.bindExports();
   }
   
 

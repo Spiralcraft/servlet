@@ -208,7 +208,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
    */
   @SuppressWarnings("unchecked")
   @Override
-  protected Channel<Buffer> extend
+  protected Channel<Buffer> bindTarget
     (Focus<?> parentFocus)
       throws BindException
   { 
@@ -216,7 +216,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     { log.fine("Editor.bind() "+parentFocus);
     }
     Channel<?> source=(Channel<DataComposite>) 
-      super.extend(parentFocus);
+      super.bindTarget(parentFocus);
     
     
     if (source==null)
@@ -274,7 +274,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   
   
   @SuppressWarnings("unchecked")
-  protected Focus<?> bindSelf()
+  protected Focus<?> bindExports()
     throws BindException
   {
     DataReflector<Buffer> reflector

@@ -206,10 +206,10 @@ public class SelectionEditor
   }
   
   @SuppressWarnings("unchecked")
-  protected Focus<?> bindSelf()
+  protected Focus<?> bindExports()
     throws BindException
   {
-    Focus<?> ret=super.bindSelf();
+    Focus<?> ret=super.bindExports();
     if (key==null)
     { 
       throw new BindException

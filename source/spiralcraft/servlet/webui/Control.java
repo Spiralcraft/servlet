@@ -144,6 +144,10 @@ public abstract class Control<Ttarget>
     
   }
   
+  public ControlState<?> createState()
+  { return new ControlState<Ttarget>(this);
+  }
+  
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
