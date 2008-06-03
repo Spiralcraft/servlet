@@ -237,6 +237,9 @@ public class ControlState<Tbuf>
     if (commands==null)
     { commands=new ArrayList<Command<Tbuf,?>>(1);
     }
+    if (command instanceof QueuedCommand)
+    { command=((QueuedCommand<Tbuf,?>) command).getCommand();
+    }
     commands.add(command);
   }
   
