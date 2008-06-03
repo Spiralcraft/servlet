@@ -92,45 +92,61 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         public void handleMessage(EventContext context, Message message,
             boolean postOrder)
         { 
+          EditorState state=(EditorState) context.getState();
           if (!postOrder && message.getType()==SaveMessage.TYPE)
           {
             try
-            { save();
+            { 
+              save();
+              if (state.getPostSaveCommand()!=null)
+              { 
+                if (!state.isErrorState())
+                { state.getPostSaveCommand().execute();
+                }
+                state.setPostSaveCommand(null);
+              }
             }
             catch (DataException x)
-            { EditorBase.this.getState().setException(x);
+            { state.setException(x);
             }
           }
           
           if (postOrder 
-              && message.getType()==SaveMessage.TYPE
-              && !((ControlGroupState<Tbuffer>) context.getState()).isErrorState()
+              && state.isRedirect()
               )
-          { handleRedirectOnSave((ServiceContext) context);
+          { 
+            URI uri=state.getRedirectURI();
+            state.setRedirect(false);
+            state.setRedirectURI(null);
+            handleRedirect((ServiceContext) context,uri);
           }          
         }
       });
   }  
 
-  private void handleRedirectOnSave(ServiceContext context)
+  private void handleRedirect(ServiceContext context,URI specificRedirectURI)
   {
     URI redirectURI=redirectOnSaveURI;
             
-    if (redirectOnSaveParameter!=null)
+    if (specificRedirectURI==null)
     {
-      String value
-        =context.getQuery()
-          .getOne(redirectOnSaveParameter);
-      if (value!=null)
-      { redirectURI=URI.create(value);
+      if (redirectOnSaveParameter!=null)
+      {
+        String value
+          =context.getQuery()
+            .getOne(redirectOnSaveParameter);
+        if (value!=null)
+        { redirectURI=URI.create(value);
+        }
       }
+    }
+    else
+    { redirectURI=specificRedirectURI;
     }
             
     // Handle redirect once the save tree has completed with no
     //   errors
-    if (redirectURI!=null
-        && !EditorBase.this.getState().isErrorState()
-       )
+    if (redirectURI!=null)
     { 
       if (debug)
       { log.fine("Redirecting to "+redirectURI);
@@ -316,6 +332,34 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     return state.getValue()!=null && state.getValue().isDirty();
   }
                      
+  public Command<Tbuffer,Void> redirectCommand(final String redirectURI)
+  {
+    return new QueuedCommand<Tbuffer,Void>
+      (getState()
+      ,new CommandAdapter<Tbuffer,Void>()
+        {
+          public void run()
+          { 
+            getState().setRedirect(true);
+            getState().setRedirectURI(URI.create(redirectURI));
+          }
+        }
+      );
+  }
+  
+  public Command<Tbuffer,Void> redirectCommand()
+  {
+    return new QueuedCommand<Tbuffer,Void>
+      (getState()
+      ,new CommandAdapter<Tbuffer,Void>()
+        {
+          public void run()
+          { getState().setRedirect(true);
+          }
+        }
+      );
+  }
+  
   public Command<Tbuffer,Void> revertCommand()
   { 
     return new QueuedCommand<Tbuffer,Void>
@@ -329,6 +373,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       );
   }
 
+
   public Command<Tbuffer,Void> saveCommand()
   {     
     return new QueuedCommand<Tbuffer,Void>
@@ -338,6 +383,22 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           public void run()
           { 
             getState().queueMessage(SAVE_MESSAGE);
+            
+          }
+        }
+      );
+  }
+  
+  public Command<Tbuffer,Void> saveCommand(final Command<?,?> postSaveCommand)
+  { 
+    return new QueuedCommand<Tbuffer,Void>
+      (getState()
+      ,new CommandAdapter<Tbuffer,Void>()
+        { 
+          public void run()
+          { 
+            getState().queueMessage(SAVE_MESSAGE);
+            getState().setPostSaveCommand(postSaveCommand);
           }
         }
       );
@@ -349,7 +410,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    * 
    * @return
    */
-  public Command<Tbuffer,Void> saveAndClearCommand()
+  public Command<Tbuffer,Void> clearCommand()
   { 
 
     return new QueuedCommand<Tbuffer,Void>
@@ -357,21 +418,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       ,new CommandAdapter<Tbuffer,Void>()
         { 
           public void run()
-          { 
-            getState().queueMessage(SAVE_MESSAGE);
-            
-            // Executes after the message is processed down the chain.
-            getState().queueCommand
-              (new CommandAdapter<Tbuffer,Void>()
-              {
-                public void run()
-                { 
-                  if (!getState().isErrorState())
-                  { getState().setValue(null);
-                  }
-                }
-              }
-              );
+          { getState().setValue(null);
           }
         }
       );
@@ -550,22 +597,50 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }  
   
 
-//  public EditorState<Tbuffer> createState()
-//  {
-//    return new EditorState<Tbuffer>(this);
-//  }  
+  public EditorState<Tbuffer> createState()
+  {
+    return new EditorState<Tbuffer>(this);
+  }  
   
-  
+  public EditorState<Tbuffer> getState()
+  { return (EditorState<Tbuffer>) super.getState();
+  }
 }
 
-//class EditorState<T extends Buffer>
-//  extends ControlGroupState<T>
-//{
-//  
-//  public EditorState(EditorBase<T> editor)
-//  { super(editor);
-//  }
-//  
-//}
+class EditorState<T extends Buffer>
+  extends ControlGroupState<T>
+{
+  
+  private boolean redirect;
+  private URI redirectURI;
+  private Command<?,?> postSaveCommand;
+  
+  public EditorState(EditorBase<T> editor)
+  { super(editor);
+  }
+  
+  public void setRedirect(boolean redirect)
+  { this.redirect=redirect;
+  }
+    
+  public boolean isRedirect()
+  { return redirect;
+  }
+  
+  public void setRedirectURI(URI redirectURI)
+  { this.redirectURI=redirectURI;
+  }
+  
+  public URI getRedirectURI()
+  { return redirectURI;
+  }
+  
+  public Command<?,?> getPostSaveCommand()
+  { return postSaveCommand;
+  }
+  
+  public void setPostSaveCommand(Command<?,?> postSaveCommand)
+  { this.postSaveCommand=postSaveCommand;
+  }
 
-
+}
