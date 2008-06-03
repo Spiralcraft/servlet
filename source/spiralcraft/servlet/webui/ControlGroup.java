@@ -405,16 +405,18 @@ public abstract class ControlGroup<Ttarget>
   @SuppressWarnings("unchecked")
   public void command(ServiceContext context)
   {
+    ControlGroupState<Ttarget> state 
+      = (ControlGroupState<Ttarget>) context.getState();
+      
     while (true)
     {
       super.command(context);
 
       // Propogate messages sent by any executed Commands.
       //   We get our own message first.
-      ControlGroupState<Ttarget> state 
-        = (ControlGroupState<Ttarget>) context.getState();
   
       List<Message> messageList = state.dequeueMessages();
+
       if (messageList != null)
       {
         for (Message newMessage : messageList)
@@ -422,6 +424,7 @@ public abstract class ControlGroup<Ttarget>
           // Reentrant 
           message(context, newMessage, null);
         }
+        continue;
       }
       else
       { 
