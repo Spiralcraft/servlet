@@ -32,8 +32,8 @@ public class QueuedCommand<Ttarget,Tresult>
     =ClassLogger.getInstance(QueuedCommand.class);
   private static boolean debug;
   
-  private ControlGroupState<Ttarget> state;
-  private Command<Ttarget,Tresult> command;
+  private final ControlGroupState<Ttarget> state;
+  private final Command<Ttarget,Tresult> command;
   
   public QueuedCommand
     (ControlGroupState<Ttarget> state
@@ -44,7 +44,11 @@ public class QueuedCommand<Ttarget,Tresult>
     this.command=command;
   }
   
-  public void run()
+  public Command <Ttarget,Tresult> getCommand()
+  { return command;
+  }
+  
+  public final void run()
   { 
     if (debug)
     { log.fine("Queueing "+command);
