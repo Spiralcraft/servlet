@@ -252,7 +252,7 @@ public abstract class Control<Ttarget>
     List<Command<Ttarget,?>> commands
       =state.dequeueCommands();
     
-    if (commands!=null)
+    while (commands!=null)
     {
       for (Command<Ttarget,?> command : commands)
       { 
@@ -272,6 +272,7 @@ public abstract class Control<Ttarget>
         }
           
       }
+      commands=state.dequeueCommands();
     }
     
   }
