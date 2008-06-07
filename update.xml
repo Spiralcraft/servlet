@@ -13,7 +13,10 @@
   	  file="../net/lib/spiralcraft-net.jar"
   	  todir="lib"
   	/>
-  	
+    <copy 
+      file="../../build/resources/ant/build-common.xml"
+      todir="."
+    />  	
   </target>
   
 </project>

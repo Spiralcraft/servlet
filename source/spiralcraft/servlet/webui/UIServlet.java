@@ -19,6 +19,7 @@ import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.log.ClassLogger;
 
 
 import spiralcraft.vfs.Resource;
@@ -48,6 +49,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import java.util.HashMap;
+import java.util.List;
 
 import java.util.LinkedList;
 
@@ -79,6 +81,7 @@ import java.util.LinkedList;
 public class UIServlet
   extends HttpServlet
 {
+  private static final ClassLogger log=ClassLogger.getInstance(UIServlet.class);
 
   private String defaultResourceName="default.webui";
   private UICache uiCache;
@@ -327,30 +330,55 @@ public class UIServlet
     if (vars!=null)
     {
 
-      String actionName=vars.getOne("action");
-      if (actionName!=null)
+      List<String> actionNames=vars.get("action");
+      if (actionNames!=null)
       {
-        Action action=context.getResourceSession().getAction(actionName);
-        if (action!=null)
-        {
-          LinkedList<Integer> path=new LinkedList<Integer>();
-        
-          for (int i:action.getTargetPath())
-          { path.add(i);
-          }
-          component.message
-            (context
-            ,new ActionMessage(action)
-            ,path
-            );
+        for (String actionName:actionNames)
+        { fireAction(component,context,actionName);
         }
       }
+    }
+    
+    List<String> actionNames=context.dequeueActions();
+    while (actionNames!=null)
+    {
+      for (String actionName:actionNames)
+      { fireAction(component,context,actionName);
+      }
+      actionNames=context.dequeueActions();
     }
 
 
     // System.err.println("UIServler.handleAction: "+(System.nanoTime()-time));
   }
   
+  private void fireAction
+    (UIComponent component,ServiceContext context,String actionName)
+  {
+    List<Action> actions
+      =context.getResourceSession().getActions(actionName);
+    if (actions!=null && !actions.isEmpty())
+    {
+      for (Action action:actions)
+      {
+        LinkedList<Integer> path=new LinkedList<Integer>();
+
+        for (int i:action.getTargetPath())
+        { path.add(i);
+        }
+        component.message
+        (context
+            ,new ActionMessage(action)
+        ,path
+        );
+      }
+    }
+    else
+    { log.warning("Unknown action "+actionName);
+    }
+    
+  }
+      
   private void render
     (UIComponent component
     ,ServiceContext serviceContext

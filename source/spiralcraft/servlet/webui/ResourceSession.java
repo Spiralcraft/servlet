@@ -1,14 +1,13 @@
 package spiralcraft.servlet.webui;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import spiralcraft.log.ClassLogger;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.textgen.ElementState;
+import spiralcraft.util.ListMap;
 
 
 //import spiralcraft.util.RandomUtil;
@@ -23,8 +22,11 @@ public class ResourceSession
   private static final ClassLogger log
     =ClassLogger.getInstance(ResourceSession.class);
   
-  private final HashMap<String,Action> actionMap
-    =new HashMap<String,Action>();
+//  private final HashMap<String,Action> actionMap
+//    =new HashMap<String,Action>();
+  
+  private final ListMap<String,Action> actionMap
+    =new ListMap<String,Action>();
     
   private final VariableMap parameterMap
     =new VariableMap();
@@ -36,13 +38,14 @@ public class ResourceSession
   
   synchronized void clearActions()
   { 
+    LinkedList<Action> actions=new LinkedList<Action>();
+    actionMap.toValueList(actions);
+
     // Remove clearable Actions only
-    Iterator<Map.Entry<String,Action>> iterator
-      =actionMap.entrySet().iterator();
-    while (iterator.hasNext())
+    for (Action action:actions)
     {
-      if (iterator.next().getValue().isClearable())
-      { iterator.remove();
+      if (action.isClearable())
+      { actionMap.remove(action.getName(),action);
       }
     }
 
@@ -57,7 +60,7 @@ public class ResourceSession
   { this.debug=debug;
   }
   
-  public Action getAction(String name)
+  public List<Action> getActions(String name)
   { return actionMap.get(name);
   }
   
@@ -80,23 +83,19 @@ public class ResourceSession
    *    parameter, otherwise a random string is generated
    * @return A URI that invokes the specified action
    */
-  String registerAction(Action action,String preferredName)
-  { 
-    if (preferredName==null)
-    { preferredName=Integer.toString(actionMap.size());
-    }
-    
+  String registerAction(Action action)
+  {     
     if (debug)
     {
       log.fine
-        ("Registering action "+preferredName+"="+action
+        ("Registering action "+action.getName()+"="+action
         +"  parameters="+parameterMap
         );
     }
-    actionMap.put(preferredName,action);
+    actionMap.add(action.getName(),action);
     String encodedParameters=parameterMap.generateEncodedForm();
     return localURI
-      +"?action="+preferredName
+      +"?action="+action.getName()
       +(encodedParameters!=null?"&"+encodedParameters:"")
       ;
     

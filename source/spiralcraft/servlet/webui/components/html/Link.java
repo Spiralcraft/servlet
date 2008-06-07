@@ -35,8 +35,6 @@ import java.util.List;
 public class Link
   extends Component
 {
-
-  private String actionName;
   
   private Expression<Command<?,?>> commandExpression;
   private Channel<Command<?,?>> commandChannel;
@@ -56,19 +54,10 @@ public class Link
     protected void renderAttributes(EventContext context)
       throws IOException
     { 
-      String effectiveActionName=null;
-      if (actionName!=null)
-      { effectiveActionName=actionName;
-      }
-      else
-      { 
-        effectiveActionName
-          =ArrayUtil.format(context.getState().getPath(),".","");
-      }
       
       String actionURI
         =((ServiceContext) context)
-          .registerAction(createAction(context),effectiveActionName);
+          .registerAction(createAction(context));
       
       
       renderAttribute(context.getWriter(),"href",actionURI);
@@ -108,10 +97,6 @@ public class Link
   { return tag;
   }
   
-  public void setActionName(String actionName)
-  { this.actionName=actionName;
-  }
-  
   @Override
   public void render(EventContext context)
     throws IOException
@@ -123,8 +108,11 @@ public class Link
   
   protected Action createAction(EventContext context)
   {
+    int[] path=context.getState().getPath();
+    
+    String pathString=ArrayUtil.format(path,".",null);
 
-    return new Action(context.getState().getPath())
+    return new Action(pathString,path)
     {
       Command<?,?> command=commandChannel!=null?commandChannel.get():null;
       

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.textgen.EventContext;
@@ -58,6 +59,7 @@ public class ServiceContext
   private URI redirectURI;
   private boolean debug;
   private UIServlet servlet;
+  private List<String> queuedActions;
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
@@ -175,9 +177,9 @@ public class ServiceContext
   { this.response=response;
   }
   
-  public String registerAction(Action action,String preferredName)
+  public String registerAction(Action action)
   {
-    String rawUrl=resourceSession.registerAction(action,preferredName);
+    String rawUrl=resourceSession.registerAction(action);
     return response.encodeURL(rawUrl);
   }
   
@@ -336,5 +338,28 @@ public class ServiceContext
   { return query;
   }
 
+  /**
+   * Queue a Command for execution after the "gather" phase of
+   *   reading the browser input.
+   * 
+   * @param command
+   */
+  public synchronized void queueAction(String actionName)
+  { 
+    if (debug)
+    { log.fine("Queued action "+actionName);
+    }
+    if (queuedActions==null)
+    { queuedActions=new LinkedList<String>();
+    }
+    queuedActions.add(actionName);
+  }
   
+  public List<String> dequeueActions()
+  { 
+    List<String> list=queuedActions;
+    queuedActions=null;
+    return list;
+  }
+
 }

@@ -33,8 +33,11 @@ import spiralcraft.lang.spi.ArrayReflector;
 import spiralcraft.log.ClassLogger;
 
 
+import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.textgen.EventContext;
+import spiralcraft.util.ArrayUtil;
 
 
 /**
@@ -64,6 +67,48 @@ public class Paginate<Ttarget,Titem>
   { return pageSize;
   }
   
+  protected void handleInitialize(ServiceContext context)
+  {
+    super.handleInitialize(context);
+    context.registerAction(createResetAction(context));    
+  }
+  
+  /**
+   * Create a new Action target for the Form post
+   * 
+   * @param context
+   * @return
+   */
+  protected Action createResetAction(EventContext context)
+  {
+    String actionName
+      =getClass().getName()+(getId()!=null?"."+getId():"")+".reset";
+    if (debug)
+    { log.fine("Creating action "+actionName);
+    }
+    return new Action(actionName,context.getState().getPath())
+    {
+
+      { clearable=false;
+      }
+      
+      @SuppressWarnings("unchecked") // Blind cast
+      public void invoke(ServiceContext context)
+      { 
+        if (debug)
+        {
+          log.fine
+            ("Paginate: Action invoked: "+getName()+"@"
+            +ArrayUtil.format(getTargetPath(),".",null)
+            );
+        }
+        getState().setCurrentPage(0);
+        
+      }
+    };
+  }  
+    
+  
   @SuppressWarnings("unchecked") // PageState cast
   protected void handlePrepare(ServiceContext context)
   { 
@@ -74,9 +119,6 @@ public class Paginate<Ttarget,Titem>
     PageState<Ttarget,Titem> state
       =(PageState<Ttarget,Titem>) context.getState();
    
-    if (debug)
-    { log.fine("state value="+state.getValue());
-    }
       
     int start=state.getCurrentPage()*state.getPageSize();
 
@@ -104,7 +146,11 @@ public class Paginate<Ttarget,Titem>
     state.setPageData(pageData);
     
     if (debug)
-    { log.fine("Page="+state.getCurrentPage()+" pitems="+pageData.length+" items="+count);
+    { 
+      log.fine
+        ("Page="+state.getCurrentPage()+" pitems="
+        +pageData.length+" items="+count
+        );
     }
   }  
    
@@ -179,6 +225,19 @@ public class Paginate<Ttarget,Titem>
       
       public void run()
       { this.getTarget().setCurrentPage(num);
+      }
+    };
+  }
+  
+  public Command<?,?> resetCommand()
+  {
+    return new CommandAdapter<PageState<Ttarget,Titem>,Object>()
+    {
+      { setTarget(getState());
+      }
+      
+      public void run()
+      { this.getTarget().setCurrentPage(0);
       }
     };
   }

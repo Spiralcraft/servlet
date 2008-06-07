@@ -24,11 +24,14 @@ package spiralcraft.servlet.webui;
 public abstract class Action
 {
   
+  private final String name;
   private final int[] targetPath;
   protected boolean clearable=true;
 
-  public Action(int[] targetPath)
-  { this.targetPath=targetPath;
+  public Action(String name,int[] targetPath)
+  { 
+    this.name=name;
+    this.targetPath=targetPath;
   }
   
   /**
@@ -57,6 +60,10 @@ public abstract class Action
    */
   public int[] getTargetPath()
   { return targetPath;
+  }
+  
+  public String getName()
+  { return name;
   }
   
   public abstract void invoke(ServiceContext context);

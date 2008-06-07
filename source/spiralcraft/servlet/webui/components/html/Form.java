@@ -16,6 +16,10 @@ package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.textgen.EventContext;
 
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
+import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLogger;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
@@ -26,6 +30,7 @@ import spiralcraft.servlet.webui.GatherMessage;
 
 import spiralcraft.util.ArrayUtil;
 
+import spiralcraft.command.Command;
 
 
 import java.io.IOException;
@@ -38,8 +43,10 @@ public class Form<T>
   private static final GatherMessage GATHER_MESSAGE=new GatherMessage();
   private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();
   
-  private String actionName;
   private boolean mimeEncoded;
+  
+  private Expression<Command<?,?>> onPost;
+  private Channel<Command<?,?>> onPostChannel;
   
   private final AbstractTag tag=new AbstractTag()
   {
@@ -64,7 +71,7 @@ public class Form<T>
       
       String actionURI
         =((ServiceContext) context)
-          .registerAction(createAction(context),actionName);
+          .registerAction(createAction(context));
       
       
       renderAttribute(context.getWriter(),"action",actionURI);
@@ -77,16 +84,16 @@ public class Form<T>
   
   private final ErrorTag errorTag=new ErrorTag(tag);
   
+  public void setOnPost(Expression<Command<?,?>> onPost)
+  { this.onPost=onPost;
+  }
+  
   public void setMimeEncoded(boolean mimeEncoded)
   { this.mimeEncoded=mimeEncoded;
   }
   
   public String getVariableName()
   { return null;
-  }
-  
-  public void setActionName(String actionName)
-  { this.actionName=actionName;
   }
   
   public void renderError(ServiceContext context)
@@ -102,7 +109,14 @@ public class Form<T>
    */
   protected Action createAction(EventContext context)
   {
-    return new Action(context.getState().getPath())
+    int[] path=context.getState().getPath();
+    
+    String pathString=ArrayUtil.format(path,".",null);
+    
+    return new Action
+      (pathString
+      ,path
+      )
     {
       
       @SuppressWarnings("unchecked") // Blind cast
@@ -131,6 +145,11 @@ public class Form<T>
             // Don't run commands if any vars have errors
             relayMessage(context,COMMAND_MESSAGE,null);
           }
+          
+          if (onPostChannel!=null && !formState.isErrorState())
+          { onPostChannel.get().execute();
+          }
+          
         }
         
       }
@@ -156,6 +175,15 @@ public class Form<T>
   { return new FormState<T>(this);
   }
   
+  public Focus<?> bindExports()
+    throws BindException
+  {
+    if (onPost!=null)
+    { onPostChannel=getFocus().bind(onPost);
+    }
+    return null;
+    
+  }
   
   public class FormState<X>
     extends ControlGroupState<X>

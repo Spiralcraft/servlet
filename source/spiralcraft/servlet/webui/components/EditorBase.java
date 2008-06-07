@@ -472,7 +472,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   {
     super.handleInitialize(context);
     if (newActionName!=null)
-    { context.registerAction(createNewAction(context), newActionName);
+    { context.registerAction(createNewAction(context));
     }
     
   }
@@ -574,7 +574,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    */
   protected Action createNewAction(EventContext context)
   {
-    return new Action(context.getState().getPath())
+    return new Action(newActionName,context.getState().getPath())
     {
 
       { clearable=false;
@@ -586,8 +586,8 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         if (debug)
         {
           log.fine
-            ("Editor: Action invoked: "
-            +ArrayUtil.format(getTargetPath(),"/",null)
+            ("Editor: Action invoked: "+getName()+"@"
+            +ArrayUtil.format(getTargetPath(),".",null)
             );
         }
         newBuffer();

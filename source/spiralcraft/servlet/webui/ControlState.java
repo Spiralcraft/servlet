@@ -71,7 +71,12 @@ public class ControlState<Tbuf>
   }
   
   public String toString()
-  { return super.toString()+"value="+value;
+  { 
+    String stringValue=value!=null?value.toString():"(null)";
+    if (stringValue.length()>256)
+    { stringValue=stringValue.substring(0,256)+"...";
+    }
+    return super.toString()+"value="+stringValue;
   }
   
   @Override

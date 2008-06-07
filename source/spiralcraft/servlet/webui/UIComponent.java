@@ -24,6 +24,9 @@ import spiralcraft.textgen.Message;
 import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.time.Clock;
 
+import spiralcraft.command.Command;
+import spiralcraft.command.CommandAdapter;
+import spiralcraft.lang.BeanFocus;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
@@ -54,7 +57,7 @@ public class UIComponent
   private Focus<?> focus;
   private String contextRelativePath;
   protected ThreadLocalChannel<ServiceContext> threadLocal;
-  
+    
   public UIComponent(Focus<?> focus)
   { 
     this.focus=focus;
@@ -75,7 +78,9 @@ public class UIComponent
     threadLocal 
       = new ThreadLocalChannel<ServiceContext>
         (BeanReflector.<ServiceContext>getInstance(ServiceContext.class));
-    focus=new CompoundFocus(focus,threadLocal);
+    CompoundFocus compoundFocus=new CompoundFocus(focus,threadLocal);
+    focus=compoundFocus;
+    compoundFocus.bindFocus("spiralcraft.servlet.webui", new BeanFocus(this));
     super.bind(childUnits);
   }
   /**
@@ -149,6 +154,21 @@ public class UIComponent
     { threadLocal.pop();
     }
   }
+  
+  public Command<?,?> actionCommand(final String actionName)
+  {
+    Command<ServiceContext,Void> ret
+      =new CommandAdapter<ServiceContext,Void>()
+      { 
+        public void run()
+        { getTarget().queueAction(actionName);
+        }
+      };
+    ret.setTarget(threadLocal.get());
+    return ret;
+  }
+  
+  
 
 }
 

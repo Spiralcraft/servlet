@@ -48,7 +48,7 @@ public class PageState<Ttarget,Titem>
   }
   
   public int getPageCount()
-  { return (int) Math.ceil(itemCount/pageSize);
+  { return (int) Math.ceil((float) itemCount/ (float) pageSize);
   }
   
   public int getItemCount()

@@ -534,7 +534,7 @@ public abstract class Editor
   {
     super.handleInitialize(context);
     if (newActionName!=null)
-    { context.registerAction(createNewAction(context), newActionName);
+    { context.registerAction(createNewAction(context));
     }
     
   }
@@ -712,7 +712,7 @@ public abstract class Editor
    */
   protected Action createNewAction(EventContext context)
   {
-    return new Action(context.getState().getPath())
+    return new Action(newActionName,context.getState().getPath())
     {
       { clearable=false;
       }

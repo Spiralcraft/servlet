@@ -350,7 +350,13 @@ public abstract class ControlGroup<Ttarget>
       {
         state.setValue(target.get());
         if (debug)
-        { log.fine("Read value from target into state "+state.getValue());
+        { 
+          String valueString
+            =(state.getValue()!=null?state.getValue().toString():"null");
+          if (valueString.length()>256)
+          { valueString=valueString.substring(0,256)+"...";
+          }
+          log.fine("Read value from target into state "+valueString);
         }
       }
       else
