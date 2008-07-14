@@ -1,4 +1,4 @@
-<project name="spiralcraft-textgen" default="build" basedir=".">
+<project name="spiralcraft-servlet" default="build" basedir=".">
 
   <target name="build">
   	<copy 

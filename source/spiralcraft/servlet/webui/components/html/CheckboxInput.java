@@ -19,10 +19,6 @@ import java.util.List;
 
 import spiralcraft.text.markup.MarkupException;
 
-import spiralcraft.util.ArrayToString;
-import spiralcraft.util.StringArrayToString;
-import spiralcraft.util.StringConverter;
-
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.compiler.TglUnit;
 
@@ -34,24 +30,23 @@ import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 
-public class TextInput<Ttarget>
-  extends Control<Ttarget>
+/**
+ * <P>A Checkbox used to represent a boolean value, bindable to boolean Channel
+ * </P>
+ * 
+ * <P>&lt;INPUT type="checkbox"&gt;
+ * </P>
+ * 
+ * @author mike
+ *
+ */
+public class CheckboxInput
+  extends Control<Boolean>
 {
   private static final ClassLogger log
     =ClassLogger.getInstance(TextInput.class);
   
   private String name;
-  private StringConverter<Ttarget> converter;
-  private boolean password;
-  
-  /**
-   * Whether the control is in password mode
-   * 
-   * @param password
-   */
-  public void setPassword(boolean password)
-  { this.password=password;
-  }
   
   private AbstractTag tag
     =new AbstractTag()
@@ -66,15 +61,14 @@ public class TextInput<Ttarget>
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<String> state=((ControlState<String>) context.getState());
-      if (password)
-      { renderAttribute(context.getWriter(),"type","password");
-      }
-      else
-      { renderAttribute(context.getWriter(),"type","text");
-      }
+      ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
+      renderAttribute(context.getWriter(),"type","checkbox");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
-      renderAttribute(context.getWriter(),"value",state.getValue());
+      renderAttribute(context.getWriter(),"value","on");
+      Boolean val=state.getValue();
+      if (val!=null && val)
+      { renderAttribute(context.getWriter(),"CHECKED",null);
+      }
       super.renderAttributes(context);
     }
     
@@ -102,31 +96,19 @@ public class TextInput<Ttarget>
     throws BindException,MarkupException
   { 
     super.bind(childUnits);
-    if (converter==null && target!=null)
-    { 
-      Class targetClass=target.getContentType();
-      if (targetClass.isArray())
-      { 
-        if (targetClass.getComponentType().equals(String.class))
-        { 
-          converter=(StringConverter<Ttarget>) new StringArrayToString();
-          ((StringArrayToString) converter).setTrim(true);
-        }
-        else
-        { 
-          converter=new ArrayToString(targetClass.getComponentType());
-        }
-      }
-      else
-      {
-        converter=
-          (StringConverter<Ttarget>) 
-          StringConverter.getInstance(target.getContentType());
-      }
-    }
+    
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
     }
+    else if 
+      (!Boolean.TYPE.isAssignableFrom(target.getContentType())
+       && !Boolean.class.isAssignableFrom(target.getContentType())
+       )
+    { 
+      throw new BindException
+        ("CheckboxInput can only be bound to a boolean target");
+    }
+        
   }
   
   public String getVariableName()
@@ -134,8 +116,8 @@ public class TextInput<Ttarget>
   }
   
   @Override
-  public ControlState<String> createState()
-  { return new ControlState<String>(this);
+  public ControlState<Boolean> createState()
+  { return new ControlState<Boolean>(this);
   }
   
   public void render(EventContext context)
@@ -154,44 +136,28 @@ public class TextInput<Ttarget>
   @Override
   public void gather(ServiceContext context)
   {
-    ControlState<String> state=((ControlState<String>) context.getState());
-    //System.err.println("TextInput: readPost");
+    ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
     
     // Only update if changed
-    if (context.getPost()!=null
-        && state.updateValue(context.getPost().getOne(state.getVariableName()))
-       )
+    if (context.getPost()!=null)
     {
-    
-      if (target!=null)
+      String post=context.getPost().getOne(state.getVariableName());
+      boolean value=post!=null && post.equals("on");
+      
+      if (state.updateValue(value))
       {
-        
-        try
+    
+        if (target!=null)
         {
-          
-          String val=state.getValue();
-          if (converter!=null && val!=null)
-          { target.set(converter.fromString(state.getValue()));
+        
+          try
+          { target.set(value);
           }
-          else
-          { target.set((Ttarget) val);
+          catch (AccessException x)
+          { 
+            state.setError(x.getMessage());
+            state.setException(x);
           }
-          
-        }
-        catch (AccessException x)
-        { 
-          state.setError(x.getMessage());
-          state.setException(x);
-        }
-        catch (NumberFormatException x)
-        { 
-          state.setError(x.getMessage());
-          state.setException(x);
-        }
-        catch (IllegalArgumentException x)
-        { 
-          state.setError(x.getMessage());
-          state.setException(x);
         }
 
       }
@@ -204,28 +170,16 @@ public class TextInput<Ttarget>
   @Override
   public void scatter(ServiceContext context)
   {
-    ControlState<String> state=((ControlState<String>) context.getState());
+    ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
     if (target!=null)
     {
       try
       {
-        Ttarget val=target.get();
+        Boolean val=target.get();
         if (debug)
         { log.fine(toString()+" scattering "+val);
         }
-        if (val!=null)
-        {
-          
-          if (converter!=null)
-          { state.setValue(converter.toString(val));
-          }
-          else
-          { state.setValue(val.toString());
-          }
-        }
-        else
-        { state.setValue(null);
-        }
+        state.setValue(val);
       }
       catch (AccessException x)
       { 

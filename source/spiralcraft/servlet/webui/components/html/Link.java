@@ -32,6 +32,18 @@ import spiralcraft.util.ArrayUtil;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * <P>A Link, bound to a Command. The "x" (binding target) property contains an
+ *   expression that resolves an instance of a Command to execute.
+ * </P>
+ * 
+ * <P>&lt;INPUT type="<i>image</i>" alt="<i>sometext</i>" 
+ *  src="<i>imageURI</i>"&gt;
+ * </P>
+ *  
+ * @author mike
+ *
+ */
 public class Link
   extends Component
 {

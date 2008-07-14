@@ -1,0 +1,6 @@
+<project name="spiralcraft-servlet-doc" default="doc" basedir=".">
+
+  <import file="build.xml"/>
+	
+</project>
+

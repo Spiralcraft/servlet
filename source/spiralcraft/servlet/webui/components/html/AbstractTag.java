@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 1998,2008 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -21,6 +21,23 @@ import java.io.Writer;
 
 import spiralcraft.text.html.AttributeEncoder;
 
+/**
+ * <p>A representation of an HTML 4.0 tag for use by components that render
+ *   HTML tags.
+ * </p>
+ * 
+ * <p>Renders a set of HTML 4.0 standard attributes that can be supplied as 
+ *   bean properties in configuration/UI code and passed through.
+ * </p>
+ * 
+ * <p>Typically incorporated as an inner subclass into components and 
+ *   delegated to for tag rendering, where the methods renderAttributes(), 
+ *   hasContent() and renderContent() are overridden to complete the use case.
+ * </p> 
+ * 
+ * @author mike
+ *
+ */
 public abstract class AbstractTag
 {
   private static final AttributeEncoder attributeEncoder
