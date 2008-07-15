@@ -26,6 +26,18 @@ import spiralcraft.command.Command;
 import spiralcraft.lang.AccessException;
 import spiralcraft.net.http.VariableMap;
 
+/**
+ * <P>A standard Submit button, bound to a Command. The "x" (binding target)
+ *   property contains an expression that resolves an instance of a Command to 
+ *   execute.
+ * </P>
+ * 
+ * <P>&lt;INPUT type="<i>submit</i>"&gt;
+ * </P>
+ *  
+ * @author mike
+ *
+ */
 public class SubmitButton
   extends Control<Command<?,?>>
 {
@@ -87,8 +99,8 @@ public class SubmitButton
   }
   
   @Override
-  public ControlState<Boolean> createState()
-  { return new ControlState<Boolean>(this);
+  public ControlState<Command<?,?>> createState()
+  { return new ControlState<Command<?,?>>(this);
   }
 
   public void render(EventContext context)
@@ -148,10 +160,13 @@ public class SubmitButton
     }
     
     
-//    System.err.println
-//      ("SubmitButton: readPost- "
-//      +context.getPost().getOne(state.getVariableName())
-//      );
+    if (debug)
+    { 
+      log.fine
+        ("SubmitButton: readPost- "+state.getVariableName()+"="
+            +context.getPost().getOne(state.getVariableName())
+        );
+    }
   }
   
   @SuppressWarnings("unchecked") // Generic cast

@@ -23,8 +23,11 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 
+import spiralcraft.command.Command;
+import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLogger;
 
@@ -39,7 +42,17 @@ import spiralcraft.textgen.compiler.TglUnit;
 
 
 /**
- * Provides common functionality for Editors
+ * <P>Secures a block of content by redirecting to another page if the user
+ *   is not authenticated.
+ * </P>
+ * 
+ * <P>Requires that a spiralcraft.security.auth.AuthSession be published
+ *   in the Focus chain.
+ * </P>
+ *
+ * <P>Sets the focus to the AuthSession, and publishes a self reference
+ *   to provide access to the logoutCommand().
+ * </P>
  * 
  * @author mike
  *
@@ -52,7 +65,11 @@ public class Guard
 
   private Channel<AuthSession> sessionChannel;
   private URI loginURI;
+  private CompoundFocus<?> focus;
 
+  public Focus<?> getFocus()
+  { return focus;
+  }
 
   public void setLoginURI(URI uri)
   { loginURI=uri;
@@ -75,6 +92,8 @@ public class Guard
   { 
     Focus<?> parentFocus=getParent().getFocus();
     setupSession(parentFocus);
+    focus=new CompoundFocus(parentFocus,sessionChannel);
+    focus.bindFocus("spiralcraft.builder", getAssembly().getFocus());
     super.bind(childUnits);
   }  
   
@@ -90,6 +109,21 @@ public class Guard
     { log.fine("Setting up redirect to "+redirect);
     }
     context.redirect(redirect);
+  }
+  
+  public Command<Void,Void> logoutCommand()
+  {     
+    return new CommandAdapter<Void,Void>()
+      { 
+        public void run()
+        { logout();
+        }
+      };
+  }
+    
+  private void logout()
+  {
+    sessionChannel.get().logout();
   }
   
   protected void handlePrepare(ServiceContext context)

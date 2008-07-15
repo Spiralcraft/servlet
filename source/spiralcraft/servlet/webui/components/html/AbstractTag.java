@@ -26,8 +26,9 @@ import spiralcraft.text.html.AttributeEncoder;
  *   HTML tags.
  * </p>
  * 
- * <p>Renders a set of HTML 4.0 standard attributes that can be supplied as 
- *   bean properties in configuration/UI code and passed through.
+ * <p>Renders a set of HTML 4.0 standard attributes and script hook attributes
+ *   (intrinsic events) that can be supplied as bean properties in
+ *   configuration/UI code and passed through.
  * </p>
  * 
  * <p>Typically incorporated as an inner subclass into components and 
@@ -94,7 +95,78 @@ public abstract class AbstractTag
   { appendAttribute("accesskey",val);
   }
 
+  public void setOnload(String val)
+  { appendAttribute("onload",val);
+  }
   
+  public void setOnunload(String val)
+  { appendAttribute("onunload",val);
+  }
+
+  public void setOnclick(String val)
+  { appendAttribute("onclick",val);
+  }
+
+  public void setOndblclick(String val)
+  { appendAttribute("ondblclick",val);
+  }
+
+  public void setOnmousedown(String val)
+  { appendAttribute("onmousedown",val);
+  }
+
+  public void setOnmouseup(String val)
+  { appendAttribute("onmouseup",val);
+  }
+
+  public void setOnmouseover(String val)
+  { appendAttribute("onmouseover",val);
+  }
+  
+  public void setOnmousemove(String val)
+  { appendAttribute("onmousemove",val);
+  }
+
+  public void setOnmouseout(String val)
+  { appendAttribute("onmouseout",val);
+  }
+
+  public void setOnfocus(String val)
+  { appendAttribute("onfocus",val);
+  }
+  
+  public void setOnblur(String val)
+  { appendAttribute("onblur",val);
+  }
+  
+  public void setOnkeypress(String val)
+  { appendAttribute("onkeypress",val);
+  }
+
+  public void setOnkeydown(String val)
+  { appendAttribute("onkeydown",val);
+  }
+
+  public void setOnkeyup(String val)
+  { appendAttribute("onkeyup",val);
+  }
+
+  public void setOnsubmit(String val)
+  { appendAttribute("onsubmit",val);
+  }
+  
+  public void setOnreset(String val)
+  { appendAttribute("onreset",val);
+  }
+  
+  public void setOnselect(String val)
+  { appendAttribute("onselect",val);
+  }
+
+  public void setOnchange(String val)
+  { appendAttribute("onchange",val);
+  }
+
   protected void renderAttribute(Writer writer,String name,String value)
     throws IOException
   {

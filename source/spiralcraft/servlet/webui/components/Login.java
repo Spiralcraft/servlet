@@ -42,7 +42,9 @@ import spiralcraft.servlet.webui.ServiceContext;
 
 
 /**
- * Provides common functionality for Editors
+ * <P>Implements a Login control group- ie. a credential entry and login
+ *   action which uses the spiralcraft.security.auth infrastructure.
+ * </P>
  * 
  * @author mike
  *
@@ -59,9 +61,46 @@ public class Login
   private Assignment<?>[] assignments;
   private Setter<?>[] setters;
 
+  private boolean inPlace;
+  private String failureMessage
+    ="Login failed, username/password combination not recognized";
 
+  /**
+   * <P>Specify the URI to redirect to on successful login when no "referer" 
+   *   parameter is provided,
+   *   or when the "referer" parameter is invalid (ie. the login page itself,
+   *   causing an redirect loop)
+   * </P>
+   * 
+   * <P>If the defaultURI is not specified, it will be assumed to be the
+   *   root of current web site- ie. "/"
+   * </P>
+   *   
+   * @param defaultURI
+   */
   public void setDefaultURI(URI defaultURI)
   { this.defaultURI=defaultURI;
+  }
+  
+  /**
+   * <P>Specify that the login form is an in-place login, and that no redirect
+   *   should occur on success or failure.
+   * </P>
+   * 
+   * @param inPlace
+   */
+  public void setInPlace(boolean inPlace)
+  { this.inPlace=inPlace;
+  }
+  
+  /**
+   * <P>Specify the message that will be displayed when a login attempt fails
+   * </P>
+   * 
+   * @param inPlace
+   */
+  public void setFailureMessage(String failureMessage)
+  { this.failureMessage=failureMessage;
   }
   
   @SuppressWarnings("unchecked")
@@ -97,7 +136,7 @@ public class Login
     if (!sessionChannel.get().isAuthenticated())
     { 
       getState().setError
-        ("Login failed, username/password combination not recognized");
+        (failureMessage);
     }
     else
     { getState().setValue(null);
@@ -119,7 +158,9 @@ public class Login
         && state.getReferer()==null
         )
     { 
-      String refererParam=context.getQuery().getOne("referer");
+      
+      String refererParam
+        =context.getQuery()!=null?context.getQuery().getOne("referer"):null;
       
       // Initial request- get referer for redirect
       URI refererURI;
@@ -169,11 +210,15 @@ public class Login
         {  setter.set();
         }
       }      
-      try
-      { context.redirect(URI.create(state.getReferer()));
-      }
-      catch (ServletException x)
-      { state.setException(x);
+      
+      if (!inPlace)
+      {
+        try
+        { context.redirect(URI.create(state.getReferer()));
+        }
+        catch (ServletException x)
+        { state.setException(x);
+        }
       }
     }
     

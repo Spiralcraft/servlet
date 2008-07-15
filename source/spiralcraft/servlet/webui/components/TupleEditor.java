@@ -131,7 +131,7 @@ public abstract class TupleEditor
             }
             catch (Exception x)
             { 
-              getState().setError("Error queuing command");
+              getState().setError("Error deleting");
               getState().setException(x);
             }
           }
@@ -139,6 +139,33 @@ public abstract class TupleEditor
       );
   }
   
+  public Command<BufferTuple,Void> deleteCommand
+    (final Command<?,?> chainedCommand)
+  { 
+    return new QueuedCommand<BufferTuple,Void>
+      (getState()
+      ,new CommandAdapter<BufferTuple,Void>()
+        {
+          @SuppressWarnings("unchecked")
+          public void run()
+          { 
+            try
+            { 
+              getState().getValue().delete();
+              if (chainedCommand!=null)
+              { chainedCommand.execute();
+              }
+            }
+            catch (Exception x)
+            { 
+              getState().setError("Error queuing command");
+              getState().setException(x);
+            }
+          }
+        }
+      );
+  }
+
   protected void scatter(ServiceContext context)
   {
     super.scatter(context);

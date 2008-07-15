@@ -27,36 +27,66 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.net.http.VariableMap;
 
 /**
- * <P>An Image based submit button, bound to a Command. The "x" (binding target)
- *   property contains an
- *   expression that resolves an instance of a Command to execute.
+ * <P>A Button control, bound to a Command. The "x" (binding target)
+ *   property contains an expression that resolves an instance of a Command to 
+ *   execute. Note that if the "type" property is not set to "submit" (the
+ *   default value), the Button will not trigger a post to the server, and
+ *   the command will not execute.
  * </P>
  * 
- * <P>&lt;INPUT type="<i>image</i>" alt="<i>sometext</i>" 
- *  src="<i>imageURI</i>"&gt;
+ * <P>&lt;INPUT type="<i>submit</i>"&gt;
  * </P>
  *  
  * @author mike
  *
  */
-public class ImageButton
+public class Button
   extends Control<Command<?,?>>
 {
 
   private String name;
-  private String src;
-  private String alt;
+  private String value="submit";
+  private String type="submit";
   
-  private Tag tag
-    =new Tag();
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private Tag tag=new Tag();
+  
+  public class Tag
+    extends AbstractTag
+  {
+    @Override
+    protected String getTagName(EventContext context)
+    { return "BUTTON";
+    }
 
-  
+    @SuppressWarnings("unchecked") // Generic cast
+    @Override
+    protected void renderAttributes(EventContext context)
+      throws IOException
+    {   
+      ControlState<Command> state=((ControlState<Command>) context.getState());
+      renderAttribute(context.getWriter(),"type",type);
+      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      renderAttribute(context.getWriter(),"value",value);
+      super.renderAttributes(context);
+    }
+
+    @Override
+    protected boolean hasContent()
+    { return true;
+    }
+    
+    protected void renderContent(EventContext context)
+      throws IOException
+    { Button.super.render(context);
+    }
+  };
+    
+  private ErrorTag errorTag=new ErrorTag(tag);
   
   public Tag getTag()
   { return tag;
   }
-
+  
   public ErrorTag getErrorTag()
   { return errorTag;
   }
@@ -65,14 +95,14 @@ public class ImageButton
   { this.name=name;
   }
   
-  public void setSrc(String src)
-  { this.src=src;
+  public void setValue(String value)
+  { this.value=value;
   }
   
-  public void setAlt(String alt)
-  { this.alt=alt;
+  public void setType(String type)
+  { this.type=type;
   }
-  
+
 
   public String getVariableName()
   { return name;
@@ -92,7 +122,6 @@ public class ImageButton
     else
     { tag.render(context);
     }
-    super.render(context);
   }
   
   @SuppressWarnings("unchecked") // Generic cast
@@ -103,11 +132,7 @@ public class ImageButton
     VariableMap post=context.getPost();
     boolean gotPost=false;
     if (post!=null)
-    { 
-      gotPost=post.getOne(state.getVariableName()+".x")!=null;
-      if (debug)
-      { log.fine(toString()+(gotPost?": got pressed":": didn't get pressed")); 
-      }
+    { gotPost=post.getOne(state.getVariableName())!=null;
     }
 
     if (gotPost)
@@ -143,11 +168,10 @@ public class ImageButton
       }
     }
     
-    
     if (debug)
     { 
       log.fine
-        ("ImageButton: readPost- "+state.getVariableName()+"="
+        ("Button: readPost- "+state.getVariableName()+"="
             +context.getPost().getOne(state.getVariableName())
         );
     }
@@ -159,34 +183,8 @@ public class ImageButton
   { 
     ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
     state.setError(null);
-    // At some point we need to read a command
   }
 
-  public class Tag
-    extends AbstractTag
-  {
-    @Override
-    protected String getTagName(EventContext context)
-    { return "INPUT";
-    }
 
-    @SuppressWarnings("unchecked") // Generic cast
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    {   
-      ControlState<Command> state=((ControlState<Command>) context.getState());
-      renderAttribute(context.getWriter(),"type","image");
-      renderAttribute(context.getWriter(),"src",src);
-      renderAttribute(context.getWriter(),"alt",alt);
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
-    }
-
-    @Override
-    protected boolean hasContent()
-    { return false;
-    }
-  }
-  
 }
 

@@ -22,15 +22,24 @@ import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Authenticator;
 import spiralcraft.security.auth.TestAuthenticator;
 
+import spiralcraft.command.Command;
+import spiralcraft.command.CommandAdapter;
+import spiralcraft.lang.BeanFocus;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 
 
 /**
- * Provides an application with access to stateful security components
+ * <P>Provides an application with access to stateful security components
+ *   which provide user authentication services and login/id state.
+ * </P>
+ * 
+ * <P>Publishes the spiralcraft.security.auth.AuthSession reference into the
+ *   Focus chain, along with a self reference to provide access to 
+ * </P>
  * 
  * @author mike
  *
@@ -48,7 +57,8 @@ public class SecurityFilter
    *    userId and password
    */
   public void setAuthenticator(Authenticator authenticator)
-  { this.authenticator=authenticator;
+  { 
+    this.authenticator=authenticator;
   }
   
   /**
@@ -69,8 +79,10 @@ public class SecurityFilter
       =new ThreadLocalChannel<AuthSession>
         (BeanReflector.<AuthSession>getInstance(AuthSession.class));
     
-    Focus<AuthSession> authSessionFocus
-      =new SimpleFocus<AuthSession>(parentFocus,authSessionChannel);
+    CompoundFocus<AuthSession> authSessionFocus
+      =new CompoundFocus<AuthSession>(parentFocus,authSessionChannel);
+    authSessionFocus.bindFocus
+      ("spiralcraft.servlet",new BeanFocus<SecurityFilter>(this));
     authenticator.bind(authSessionFocus);
     return authSessionFocus;
   }
@@ -100,5 +112,23 @@ public class SecurityFilter
     }
     authSessionChannel.push(authSession);      
   }
+  
+  /**
+   * Logs out the user by calling logout() on the referenced AuthSession.
+   * @return
+   */
+  public Command<Void,Void> logoutCommand()
+  {     
+    return new CommandAdapter<Void,Void>()
+      { 
+        public void run()
+        { logout();
+        }
+      };
+  }
+    
+  private void logout()
+  { authSessionChannel.get().logout();
+  }  
 
 }
