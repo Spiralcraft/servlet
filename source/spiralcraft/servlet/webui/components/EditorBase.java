@@ -373,7 +373,26 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       );
   }
 
+  public Command<Tbuffer,Void> revertCommand(final Command<?,?> chainedCommand)
+  { 
+    return new QueuedCommand<Tbuffer,Void>
+      (getState()
+      ,new CommandAdapter<Tbuffer,Void>()
+        {
+          public void run()
+          { 
+            getState().getValue().revert();
+            chainedCommand.execute();
+          }
+        }
+      );
+  }
 
+  /**
+   * A Command that saves the buffer tree starting with this buffer.
+   * 
+   * @return the Save command
+   */
   public Command<Tbuffer,Void> saveCommand()
   {     
     return new QueuedCommand<Tbuffer,Void>
