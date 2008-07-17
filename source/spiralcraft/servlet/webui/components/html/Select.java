@@ -37,6 +37,21 @@ import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 
+/**
+ * <P>A standard HTML SELECT list, bound to a target and a source.
+ * </P>
+ * 
+ * <P>The "x" (binding target) property contains an expression that references
+ *   the currently selected item(s). The optional "source" property contains an 
+ *   expression that provides a list of candidate values, used for generating 
+ *   the set of options (see the Option class).
+ * </P>
+ *  
+ * @author mike
+ *
+ * @param <Ttarget>
+ * @param <Tvalue>
+ */
 public class Select<Ttarget,Tvalue>
   extends ControlGroup<Ttarget>
 {
@@ -115,7 +130,10 @@ public class Select<Ttarget,Tvalue>
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
     }
-    source=parentFocus.bind(sourceExpression);
+    
+    if (sourceExpression!=null)
+    { source=parentFocus.bind(sourceExpression);
+    }
     return target;
   }
   

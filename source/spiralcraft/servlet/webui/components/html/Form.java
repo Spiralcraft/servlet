@@ -79,6 +79,7 @@ public class Form<T>
       if (mimeEncoded)
       { renderAttribute(context.getWriter(),"enctype","multipart/form-data");
       }
+      super.renderAttributes(context);
     }
   };
   

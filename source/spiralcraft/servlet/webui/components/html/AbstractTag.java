@@ -166,6 +166,10 @@ public abstract class AbstractTag
   public void setOnchange(String val)
   { appendAttribute("onchange",val);
   }
+  
+  public void setAutocomplete(String val)
+  { appendAttribute("autocomplete",val);
+  }
 
   protected void renderAttribute(Writer writer,String name,String value)
     throws IOException

@@ -34,6 +34,26 @@ import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 
+/**
+ * <P>Manages an OPTION as part of a SELECT list.
+ * </P>
+ * 
+ * <P>Specify an expression for "value" property to define the "key" that
+ *   gets sent back to the target of the SELECT list. This OPTION will
+ *   render as selected when appropriate.
+ * </P>
+ * 
+ * <P>The entry presented to
+ *   the user is defined within the content of this Control. 
+ *   Specify the optional "x" target property to provide a specific Focus
+ *   in the chain for the display content of the option.
+ * </P>
+ * 
+ * @author mike
+ *
+ * @param <Ttarget>
+ * @param <Tvalue>
+ */
 public class Option<Ttarget,Tvalue>
   extends Control<Ttarget>
 {
@@ -81,6 +101,7 @@ public class Option<Ttarget,Tvalue>
             );
         }
       }
+      super.renderAttributes(context);
       
     }
     
@@ -110,6 +131,9 @@ public class Option<Ttarget,Tvalue>
     throws BindException,MarkupException
   { 
     super.bind(childUnits);
+    if (valueExpression==null)
+    { throw new BindException("Option must have an associated value expression");
+    }
     value=getFocus().bind(valueExpression);
     if (converter==null && value!=null)
     { 
@@ -117,8 +141,8 @@ public class Option<Ttarget,Tvalue>
         (StringConverter) 
         StringConverter.getInstance(value.getContentType());
     }
-    if (target==null)
-    { log.fine("Not bound to anything (Option)");
+    if (debug && target==null)
+    { log.fine("Not bound to anything");
     }
   }
   

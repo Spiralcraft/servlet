@@ -49,6 +49,7 @@ public class ImageButton
   
   private Tag tag
     =new Tag();
+  
   private ErrorTag errorTag=new ErrorTag(tag);
 
   
@@ -180,6 +181,7 @@ public class ImageButton
       renderAttribute(context.getWriter(),"src",src);
       renderAttribute(context.getWriter(),"alt",alt);
       renderAttribute(context.getWriter(),"name",state.getVariableName());
+      super.renderAttributes(context);
     }
 
     @Override
