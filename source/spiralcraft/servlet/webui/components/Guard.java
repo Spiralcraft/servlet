@@ -67,6 +67,7 @@ public class Guard
   private URI loginURI;
   private CompoundFocus<?> focus;
 
+  @Override
   public Focus<?> getFocus()
   { return focus;
   }
@@ -115,6 +116,7 @@ public class Guard
   {     
     return new CommandAdapter<Void,Void>()
       { 
+        @Override
         public void run()
         { logout();
         }
@@ -126,6 +128,7 @@ public class Guard
     sessionChannel.get().logout();
   }
   
+  @Override
   protected void handlePrepare(ServiceContext context)
   { 
     super.handlePrepare(context);
@@ -141,6 +144,7 @@ public class Guard
     
   }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   {

@@ -52,7 +52,7 @@ public class SubmitButton
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "INPUT";
+    { return "input";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -94,6 +94,7 @@ public class SubmitButton
   }
 
 
+  @Override
   public String getVariableName()
   { return name;
   }
@@ -103,6 +104,7 @@ public class SubmitButton
   { return new ControlState<Command<?,?>>(this);
   }
 
+  @Override
   public void render(EventContext context)
     throws IOException
   { 

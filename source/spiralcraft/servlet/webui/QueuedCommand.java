@@ -48,6 +48,7 @@ public class QueuedCommand<Ttarget,Tresult>
   { return command;
   }
   
+  @Override
   public final void run()
   { 
     if (debug)

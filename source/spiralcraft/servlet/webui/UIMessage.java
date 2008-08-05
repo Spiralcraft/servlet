@@ -28,6 +28,7 @@ public class UIMessage
   { this.type=type;
   }
   
+  @Override
   public MessageType getType()
   { return type;
   }

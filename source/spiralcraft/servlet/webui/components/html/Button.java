@@ -55,7 +55,7 @@ public class Button
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "BUTTON";
+    { return "button";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -75,6 +75,7 @@ public class Button
     { return true;
     }
     
+    @Override
     protected void renderContent(EventContext context)
       throws IOException
     { Button.super.render(context);
@@ -104,6 +105,7 @@ public class Button
   }
 
 
+  @Override
   public String getVariableName()
   { return name;
   }
@@ -113,6 +115,7 @@ public class Button
   { return new ControlState<Command<?,?>>(this);
   }
 
+  @Override
   public void render(EventContext context)
     throws IOException
   { 

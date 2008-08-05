@@ -17,11 +17,13 @@ package spiralcraft.servlet.webui.components;
 
 
 import java.net.URI;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.command.CommandBlock;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
 import spiralcraft.data.lang.DataReflector;
@@ -98,10 +100,19 @@ public abstract class EditorBase<Tbuffer extends Buffer>
             try
             { 
               save();
-              if (state.getPostSaveCommand()!=null)
+              Command<?,?> postSaveCommand=state.getPostSaveCommand();
+              if (postSaveCommand!=null)
               { 
                 if (!state.isErrorState())
-                { state.getPostSaveCommand().execute();
+                { 
+                  if (debug)
+                  { log.fine("Executing "+postSaveCommand);
+                  }
+                  postSaveCommand.execute();
+                  if (postSaveCommand.getException()!=null)
+                  { state.setException(postSaveCommand.getException());
+                  }
+                  
                 }
                 state.setPostSaveCommand(null);
               }
@@ -176,7 +187,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   
   
   /**
-   * @param uri The query string parameter which holds the URI to
+   * @param param The query string parameter which holds the URI to
    *   redirect to when the Editor saves successfully.
    */
   public void setRedirectOnSaveParameter(String param)
@@ -320,7 +331,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    *   long as the value is not null
    * </p>
    * 
-   * @param assignments
+   * @param bindings
    */
   public void setRequestBindings(RequestBinding<?>[] bindings)
   { requestBindings=bindings;
@@ -338,6 +349,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         {
+          @Override
           public void run()
           { 
             getState().setRedirect(true);
@@ -353,6 +365,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         {
+          @Override
           public void run()
           { getState().setRedirect(true);
           }
@@ -366,6 +379,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         {
+          @Override
           public void run()
           { getState().getValue().revert();
           }
@@ -379,6 +393,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         {
+          @Override
           public void run()
           { 
             getState().getValue().revert();
@@ -399,6 +414,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         { 
+          @Override
           public void run()
           { 
             getState().queueMessage(SAVE_MESSAGE);
@@ -408,12 +424,21 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       );
   }
   
+  @SuppressWarnings("unchecked") // Command block doesn't care about types
+  public Command<Tbuffer,Void> saveCommand
+    (final List<Command> postSaveCommandList)
+  {
+    
+    return saveCommand(new CommandBlock(postSaveCommandList));
+  }
+      
   public Command<Tbuffer,Void> saveCommand(final Command<?,?> postSaveCommand)
   { 
     return new QueuedCommand<Tbuffer,Void>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         { 
+          @Override
           public void run()
           { 
             getState().queueMessage(SAVE_MESSAGE);
@@ -424,10 +449,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
   
   /**
-   * <p>Saves the referenced Buffer and 
-   * </p>  clears the Editor to accomodate a new Tuple
+   * <p>Clears the Editor to accomodate a new Tuple
+   * </p>
    * 
-   * @return
+   * @return A new Command
    */
   public Command<Tbuffer,Void> clearCommand()
   { 
@@ -436,6 +461,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         { 
+          @Override
           public void run()
           { getState().setValue(null);
           }
@@ -451,6 +477,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         { 
+          @Override
           public void run()
           { newBuffer();
           }
@@ -487,6 +514,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   
 
  
+  @Override
   protected void handleInitialize(ServiceContext context)
   {
     super.handleInitialize(context);
@@ -496,6 +524,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     
   }
   
+  @Override
   protected void handlePrepare(ServiceContext context)
   { 
 // non-clearable action in init is all we need    
@@ -503,7 +532,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 //    { context.registerAction(createNewAction(context), newActionName);
 //    }
 
-    if (redirectOnSaveParameter!=null)
+    if (redirectOnSaveParameter!=null && context.getQuery()!=null)
     {
       String redirectURI=context.getQuery().getOne(redirectOnSaveParameter);
       if (redirectURI!=null)
@@ -586,10 +615,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
   
   /**
-   * Create a new Action target for the Form post
+   * <p>Create a new Action target for the Form post
+   * </p>
    * 
    * @param context
-   * @return
+   * @return A new Action
    */
   protected Action createNewAction(EventContext context)
   {
@@ -599,7 +629,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       { clearable=false;
       }
       
-      @SuppressWarnings("unchecked") // Blind cast
+      @Override
       public void invoke(ServiceContext context)
       { 
         if (debug)
@@ -616,11 +646,13 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }  
   
 
+  @Override
   public EditorState<Tbuffer> createState()
   {
     return new EditorState<Tbuffer>(this);
   }  
   
+  @Override
   public EditorState<Tbuffer> getState()
   { return (EditorState<Tbuffer>) super.getState();
   }

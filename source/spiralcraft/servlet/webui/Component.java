@@ -68,7 +68,6 @@ public abstract class Component
   }
   
 
-  @SuppressWarnings("unchecked") // Can't parameterize reflective operation
   @Override
   public void setParent(Element parentElement)
     throws MarkupException
@@ -82,6 +81,7 @@ public abstract class Component
 
   }
 
+  @Override
   public void message
     (EventContext context
     ,Message message

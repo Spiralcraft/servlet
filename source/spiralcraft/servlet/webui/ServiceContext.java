@@ -185,10 +185,11 @@ public class ServiceContext
   
 
   /**
-   * Directs that a redirect should occur at the next possible opportunity
-   *   before rendering.
+   * <p>Directs that a redirect should occur before rendering (the page will
+   *   still finish processing actions, or if preparing, will finish preparing)
+   * </p>
    * 
-   * @param rawUrl
+   * @param rawURI 
    */
   public void redirect(URI rawURI)
     throws ServletException
@@ -339,10 +340,12 @@ public class ServiceContext
   }
 
   /**
-   * Queue a Command for execution after the "gather" phase of
-   *   reading the browser input.
+   * <p>Queue an Action for execution during this request processing
+   *   cycle. This only has an effect when called during the action 
+   *   handling phase of request processing.
+   * </p>
    * 
-   * @param command
+   * @param actionName
    */
   public synchronized void queueAction(String actionName)
   { 
@@ -355,7 +358,15 @@ public class ServiceContext
     queuedActions.add(actionName);
   }
   
-  public List<String> dequeueActions()
+  /**
+   * <p>Called by the UIServlet repeatedly during the action handling
+   *   phase of request processing to complete the handling of all 
+   *   indirectly triggered actions. 
+   * </p>
+   * 
+   * @param actionName
+   */
+  List<String> dequeueActions()
   { 
     List<String> list=queuedActions;
     queuedActions=null;

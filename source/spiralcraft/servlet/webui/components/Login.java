@@ -42,10 +42,20 @@ import spiralcraft.servlet.webui.ServiceContext;
 
 
 /**
- * <P>Implements a Login control group- ie. a credential entry and login
+ * <p>Implements a Login control group- ie. a credential entry and login
  *   action which uses the spiralcraft.security.auth infrastructure.
- * </P>
+ * </p>
  * 
+ * <p>As a ControlGroup, exposes as its Focus subject a
+ *   spiralcraft.security.auth.LoginEntry, which holds credential data.
+ * </p>
+ * 
+ * <p>If not an 'in-place' login, will redirect back to a referring URI
+ *   on success which may be passed in the request query. 
+ * </p> 
+ * 
+ * 
+ *
  * @author mike
  *
  */
@@ -58,23 +68,27 @@ public class Login
   private Channel<AuthSession> sessionChannel;
   private URI defaultURI;
 
-  private Assignment<?>[] assignments;
-  private Setter<?>[] setters;
+  private Assignment<?>[] postAssignments;
+  private Setter<?>[] postSetters;
+
+  private Assignment<?>[] preAssignments;
+  private Setter<?>[] preSetters;
 
   private boolean inPlace;
   private String failureMessage
     ="Login failed, username/password combination not recognized";
+//  private boolean silent;
 
   /**
-   * <P>Specify the URI to redirect to on successful login when no "referer" 
+   * <p>Specify the URI to redirect to on successful login when no "referer" 
    *   parameter is provided,
    *   or when the "referer" parameter is invalid (ie. the login page itself,
    *   causing an redirect loop)
-   * </P>
+   * </p>
    * 
-   * <P>If the defaultURI is not specified, it will be assumed to be the
+   * <p>If the defaultURI is not specified, it will be assumed to be the
    *   root of current web site- ie. "/"
-   * </P>
+   * </p>
    *   
    * @param defaultURI
    */
@@ -83,9 +97,9 @@ public class Login
   }
   
   /**
-   * <P>Specify that the login form is an in-place login, and that no redirect
+   * <p>Specify that the login form is an in-place login, and that no redirect
    *   should occur on success or failure.
-   * </P>
+   * </p>
    * 
    * @param inPlace
    */
@@ -94,10 +108,10 @@ public class Login
   }
   
   /**
-   * <P>Specify the message that will be displayed when a login attempt fails
-   * </P>
+   * <p>Specify the message that will be displayed when a login attempt fails
+   * </p>
    * 
-   * @param inPlace
+   * @param failureMessage
    */
   public void setFailureMessage(String failureMessage)
   { this.failureMessage=failureMessage;
@@ -119,6 +133,7 @@ public class Login
       (getState()
       ,new CommandAdapter<LoginEntry,Void>()
         { 
+          @Override
           public void run()
           { login();
           }
@@ -126,6 +141,7 @@ public class Login
       );
   }
   
+  @Override
   public LoginState createState()
   {
     return new LoginState(this);
@@ -133,6 +149,15 @@ public class Login
 
   private void login()
   {
+    if (preSetters!=null)
+    {  
+      if (debug)
+      { log.fine(toString()+": applying pre-assignments before login");
+      }
+      for (Setter<?> setter: preSetters)
+      {  setter.set();
+      }
+    }
     if (!sessionChannel.get().isAuthenticated())
     { 
       getState().setError
@@ -144,12 +169,14 @@ public class Login
       
   }
  
+  @Override
   protected void handleInitialize(ServiceContext context)
   {
     super.handleInitialize(context);
     // Set up a LoginEntry?
   }
   
+  @Override
   protected void handlePrepare(ServiceContext context)
   { 
     
@@ -201,12 +228,12 @@ public class Login
     super.handlePrepare(context);
     if (sessionChannel.get().isAuthenticated())
     { 
-      if (setters!=null)
+      if (postSetters!=null)
       {
         if (debug)
-        { log.fine(toString()+": applying assignments on login");
+        { log.fine(toString()+": applying post assignments on login");
         }
-        for (Setter<?> setter: setters)
+        for (Setter<?> setter: postSetters)
         {  setter.set();
         }
       }      
@@ -225,13 +252,27 @@ public class Login
   }
   
   /**
-   * <p>Assignments get executed immediately after successful login
+   * <p>Assignments which get executed prior to a login attempt (eg. to resolve
+   *   credentials)
+   * </p>
+   * 
+   * @param assignments
+   */
+  public void setPreAssignments(Assignment<?>[] assignments)
+  { this.preAssignments=assignments;
+  }  
+
+  /**
+   * <p>Assignments which get executed immediately after a successful login
+   * </p>
+   * 
+   * <p>XXX refactor to setPostAssignments()
    * </p>
    * 
    * @param assignments
    */
   public void setAssignments(Assignment<?>[] assignments)
-  { this.assignments=assignments;
+  { this.postAssignments=assignments;
   }  
   
   protected void newEntry()
@@ -240,6 +281,7 @@ public class Login
   }
    
 
+  @Override
   protected Channel<?> bindTarget(Focus<?> parentFocus)
     throws BindException
   {
@@ -263,11 +305,12 @@ public class Login
 
   }
   
-  @SuppressWarnings("unchecked")
+  @Override
   protected Focus<?> bindExports()
     throws BindException
   {
-    setters=bindAssignments(assignments);
+    postSetters=bindAssignments(postAssignments);
+    preSetters=bindAssignments(preAssignments);
     return super.bindExports();
     
   }

@@ -45,7 +45,6 @@ public class VariableMapBinding<Tvar>
   private boolean debug;
   
 
-  @SuppressWarnings("unchecked")
   public VariableMapBinding(Channel<Tvar> target,String name)
   {
     this.target=target;
@@ -55,14 +54,12 @@ public class VariableMapBinding<Tvar>
     { 
       array=true;
       converter
-        =(StringConverter<Tvar>)
-          StringConverter.getInstance(clazz.getComponentType());
+        =StringConverter.getInstance(clazz.getComponentType());
     }
     else
     {
       converter
-        =(StringConverter<Tvar>)
-          StringConverter.getInstance(clazz);
+        =StringConverter.getInstance(clazz);
     }
   }
 
@@ -75,9 +72,19 @@ public class VariableMapBinding<Tvar>
   }
   
   /**
-   * Translate the value from the target into a List<String> for publishing
+   * <p>Translate the value from the target into a List<String> for publishing
+   *   to the URI query string.
+   * </p>
    * 
-   * @return
+   * <p>Since URL-encoded variables can have multiple values, a List<String>
+   *   is always used, even if the variable has a single value.
+   * </p>
+   * 
+   * <p>The String values returned from this method must be further encoded
+   *   for inclusion in the URL.
+   * </p>
+   * 
+   * @return A List of String-encoded values associated with the variable.
    */
   public List<String> translate()
   {
@@ -185,7 +192,6 @@ public class VariableMapBinding<Tvar>
     }
   }
   
-  @SuppressWarnings("unchecked")
   public void read(VariableMap map)
   {
     List<String> vals=map!=null?map.get(name):null;

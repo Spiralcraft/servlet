@@ -195,10 +195,11 @@ public abstract class AbstractTag
   }
   
   /**
-   * Override to indicate whether this tag should render itself as an open
+   * <p> Override to indicate whether this tag should render itself as an open
    *   tag and call renderContent(), or whether this tag should close itself
-   *   
-   * @return
+   * </p>
+   * 
+   * @return Whether the tag has content.
    */
   protected abstract boolean hasContent();
   
@@ -218,25 +219,36 @@ public abstract class AbstractTag
   public final void render(EventContext context)
     throws IOException
   { 
-    Writer writer=context.getWriter();
-    writer.write("<");
-    writer.write(getTagName(context));
-    writer.write(" ");
-    
-    renderAttributes(context);
-    
-    if (hasContent())
-    { 
-      writer.write(">");
-   
-      renderContent(context);
-    
-      writer.write("</");
+    String name=getTagName(context);
+    if (name!=null && name.length()>0)
+    {
+      Writer writer=context.getWriter();
+      writer.write("<");
       writer.write(getTagName(context));
-      writer.write(">");
+      writer.write(" ");
+    
+      renderAttributes(context);
+    
+      if (hasContent())
+      { 
+        writer.write(">");
+   
+        renderContent(context);
+    
+        writer.write("</");
+        writer.write(getTagName(context));
+        writer.write(">");
+      }
+      else
+      { writer.write("/>");
+      }
     }
     else
-    { writer.write("/>");
+    {
+      // Empty tag name suppresses tag and attributes
+      if (hasContent())
+      { renderContent(context);
+      }
     }
   }
   

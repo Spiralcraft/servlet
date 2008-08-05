@@ -137,9 +137,9 @@ public abstract class AutoFilter
   }
   
   /**
-   * 
-   * @return The pattern which determines whether this Filter applies to a 
+   * <p>The pattern which determines whether this Filter applies to a 
    *   given path. The pattern will be matched against the path.
+   * </p>
    */
   public void setPattern(String pattern)
   { this.pattern=pattern;
@@ -239,7 +239,7 @@ public abstract class AutoFilter
 
   /**
    * 
-   * @param The parent filter in the chain. 
+   * @param parent The parent filter in the chain. 
    */
   public void setParent(AutoFilter parent)
   { this.parent=parent;

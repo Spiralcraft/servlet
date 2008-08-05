@@ -64,6 +64,7 @@ public class SecurityFilter
   /**
    * Called -once- to create the Focus
    */
+  @Override
   protected Focus<AuthSession> createFocus
     (Focus<?> parentFocus)
     throws BindException
@@ -114,13 +115,16 @@ public class SecurityFilter
   }
   
   /**
-   * Logs out the user by calling logout() on the referenced AuthSession.
-   * @return
+   * <p>A command which logs out the user by calling logout() on the referenced
+   *   AuthSession.
+   * </p>
+   * @return The command
    */
   public Command<Void,Void> logoutCommand()
   {     
     return new CommandAdapter<Void,Void>()
       { 
+        @Override
         public void run()
         { logout();
         }

@@ -53,7 +53,7 @@ public class CheckboxInput
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "INPUT";
+    { return "input";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -91,7 +91,6 @@ public class CheckboxInput
 
 
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
@@ -111,6 +110,7 @@ public class CheckboxInput
         
   }
   
+  @Override
   public String getVariableName()
   { return name;
   }
@@ -120,6 +120,7 @@ public class CheckboxInput
   { return new ControlState<Boolean>(this);
   }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   { 

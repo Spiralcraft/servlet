@@ -59,7 +59,7 @@ public class Link
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "A";
+    { return "a";
     }
 
     @Override
@@ -90,8 +90,7 @@ public class Link
     
   };
   
-    @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
+  @Override
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
@@ -128,6 +127,7 @@ public class Link
     {
       Command<?,?> command=commandChannel!=null?commandChannel.get():null;
       
+      @Override
       public void invoke(ServiceContext context)
       { command.execute();
       }

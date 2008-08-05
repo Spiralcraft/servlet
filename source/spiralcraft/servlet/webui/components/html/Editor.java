@@ -33,13 +33,15 @@ public class Editor
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "DIV";
+    { return "div";
     }
     
+    @Override
     protected boolean hasContent()
     { return true;
     }
     
+    @Override
     protected void renderContent(EventContext context)
       throws IOException
     { Editor.super.render(context);
@@ -63,6 +65,7 @@ public class Editor
   { return errorTag;
   }
 
+  @Override
   public void render(EventContext context)
     throws IOException
   { 
@@ -74,6 +77,7 @@ public class Editor
     }
   }
 
+  @Override
   protected Focus<Buffer> bindExports()
     throws BindException
   {

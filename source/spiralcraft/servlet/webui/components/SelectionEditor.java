@@ -205,6 +205,7 @@ public class SelectionEditor
     
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   protected Focus<?> bindExports()
     throws BindException

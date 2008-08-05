@@ -29,6 +29,7 @@ public class ExceptionComponent
     this.exception=exception;
   }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   { 

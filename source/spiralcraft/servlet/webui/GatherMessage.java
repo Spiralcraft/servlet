@@ -28,6 +28,7 @@ public class GatherMessage
   }
   
   
+  @Override
   public MessageType getType()
   { return TYPE;
   }    

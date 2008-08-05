@@ -28,6 +28,7 @@ public class CommandMessage
   }
   
   
+  @Override
   public MessageType getType()
   { return TYPE;
   }      

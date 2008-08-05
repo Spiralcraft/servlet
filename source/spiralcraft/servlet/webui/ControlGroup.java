@@ -59,7 +59,6 @@ import spiralcraft.textgen.compiler.TglUnit;
 public abstract class ControlGroup<Ttarget>
     extends Control<Ttarget>
 {
-  @SuppressWarnings("unused")
   private static final ClassLogger log = ClassLogger.getInstance(ControlGroup.class);
 
   private int nextVariableName = 0;
@@ -78,6 +77,7 @@ public abstract class ControlGroup<Ttarget>
     return threadLocalState.get();
   }
 
+  @Override
   public String getVariableName()
   {
     return variableName;
@@ -230,7 +230,7 @@ public abstract class ControlGroup<Ttarget>
    *   value.
    * </p>
    * 
-   * @param thisFocus
+   * 
    * @return The new Focus to export, or null if the current Focus will be
    *   exported
    */
@@ -276,12 +276,14 @@ public abstract class ControlGroup<Ttarget>
     {
       valueBinding = new AbstractChannel<Ttarget>(target.getReflector())
       {
+        @Override
         public Ttarget retrieve()
         {
           // log.fine(threadLocalState.get().toString());
           return threadLocalState.get().getValue();
         }
 
+        @Override
         public boolean store(Ttarget val)
         {
           // log.fine("Store "+threadLocalState.get()+":"+val);
@@ -326,6 +328,7 @@ public abstract class ControlGroup<Ttarget>
     bindChildren(childUnits);
   }
 
+  @Override
   public Focus<?> getFocus()
   {
     return focus;
@@ -403,11 +406,13 @@ public abstract class ControlGroup<Ttarget>
 
   }
 
+  @Override
   public ControlGroupState<Ttarget> createState()
   {
     return new ControlGroupState<Ttarget>(this);
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public void command(ServiceContext context)
   {

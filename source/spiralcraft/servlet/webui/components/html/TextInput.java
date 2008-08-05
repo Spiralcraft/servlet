@@ -58,7 +58,7 @@ public class TextInput<Ttarget>
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "INPUT";
+    { return "input";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -74,7 +74,9 @@ public class TextInput<Ttarget>
       { renderAttribute(context.getWriter(),"type","text");
       }
       renderAttribute(context.getWriter(),"name",state.getVariableName());
-      renderAttribute(context.getWriter(),"value",state.getValue());
+      if (state.getValue()!=null)
+      { renderAttribute(context.getWriter(),"value",state.getValue());
+      }
       super.renderAttributes(context);
     }
     
@@ -129,6 +131,7 @@ public class TextInput<Ttarget>
     }
   }
   
+  @Override
   public String getVariableName()
   { return name;
   }
@@ -138,6 +141,7 @@ public class TextInput<Ttarget>
   { return new ControlState<String>(this);
   }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   { 

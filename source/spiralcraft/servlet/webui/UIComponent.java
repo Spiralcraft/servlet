@@ -67,6 +67,7 @@ public class UIComponent
 
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   // Not using generic versions
   public final void bind(List<TglUnit> childUnits) 
@@ -126,6 +127,7 @@ public class UIComponent
   { return Clock.instance().approxTimeMillis();
   }
 
+  @Override
   public void message
     (EventContext context,Message message,LinkedList<Integer> path)
   {
@@ -143,6 +145,7 @@ public class UIComponent
     
   }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   { 
@@ -160,6 +163,7 @@ public class UIComponent
     Command<ServiceContext,Void> ret
       =new CommandAdapter<ServiceContext,Void>()
       { 
+        @Override
         public void run()
         { getTarget().queueAction(actionName);
         }

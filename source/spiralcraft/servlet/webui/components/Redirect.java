@@ -68,7 +68,6 @@ public class Redirect
   }
 
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
@@ -97,6 +96,7 @@ public class Redirect
     context.redirect(redirect);
   }
   
+  @Override
   protected void handlePrepare(ServiceContext context)
   { 
     super.handlePrepare(context);
@@ -112,6 +112,7 @@ public class Redirect
     
   }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   {

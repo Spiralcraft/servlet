@@ -71,7 +71,7 @@ public class Select<Ttarget,Tvalue>
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "SELECT";
+    { return "select";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -92,6 +92,7 @@ public class Select<Ttarget,Tvalue>
     { return true;
     }
     
+    @Override
     protected void renderContent(EventContext context)
       throws IOException
     { Select.super.render(context);
@@ -137,6 +138,7 @@ public class Select<Ttarget,Tvalue>
     return target;
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   public Focus<?> bindExports()
   { 
@@ -145,10 +147,12 @@ public class Select<Ttarget,Tvalue>
   }
   
   
+  @Override
   public String getVariableName()
   { return name;
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
@@ -222,6 +226,7 @@ public class Select<Ttarget,Tvalue>
 
   }
   
+  @Override
   public String toString()
   { return super.toString()+": name="+name;
   }
@@ -273,6 +278,7 @@ class SelectState<Ttarget,Tvalue>
   { super(control);
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   public void setValue(Ttarget targetVal)
   {

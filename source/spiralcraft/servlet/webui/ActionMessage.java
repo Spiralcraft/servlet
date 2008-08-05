@@ -28,6 +28,7 @@ public class ActionMessage
   
   private final Action action;
   
+  @Override
   public MessageType getType()
   { return TYPE;
   }

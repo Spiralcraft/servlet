@@ -47,6 +47,7 @@ public class ControlGroupState<Tbuf>
   { return Integer.toString(localName++);
   }
   
+  @Override
   public boolean isErrorState()
   { return super.isErrorState() || errorState;
   }
@@ -59,6 +60,7 @@ public class ControlGroupState<Tbuf>
     }
   }
   
+  @Override
   public void resetError()
   { 
     super.resetError();

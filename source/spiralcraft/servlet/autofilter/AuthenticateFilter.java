@@ -68,6 +68,7 @@ public class AuthenticateFilter
   { this.useSession=val;
   }
   
+  @Override
   public void init(FilterConfig config)
     throws ServletException
   { 
@@ -95,6 +96,7 @@ public class AuthenticateFilter
   { this.authenticator=authenticator;
   }
   
+  @Override
   public void doFilter
     (ServletRequest request
     ,ServletResponse response

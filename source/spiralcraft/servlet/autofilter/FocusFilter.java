@@ -55,12 +55,13 @@ public abstract class FocusFilter<T>
    *   stack.
    * </p>
    * 
-   * XXX If we are building context duration, this should always return the
+   * <p>XXX If we are building context duration, this should always return the
    *   same Focus, because the Filter object is also context duration. Perhaps
    *   the filter should just get the Focus from its parent.
+   * </p>
    * 
    * @param request 
-   * @return
+   * @return The Focus
    */
   public static Focus<?> getFocusChain(HttpServletRequest request)
   { return (Focus<?>) request.getAttribute(attributeName);

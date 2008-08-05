@@ -72,6 +72,7 @@ public class TextArea<Ttarget>
     }
   }
   
+  @Override
   public String getVariableName()
   { return name;
   }
@@ -81,6 +82,7 @@ public class TextArea<Ttarget>
   { return new ControlState<String>(this);
   }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   { 
@@ -186,7 +188,7 @@ public class TextArea<Ttarget>
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "TEXTAREA";
+    { return "textarea";
     }
 
     @SuppressWarnings("unchecked") // Generic cast

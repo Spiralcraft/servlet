@@ -24,7 +24,7 @@ public class ErrorTag
     extends AbstractTag
 {
   private AbstractTag controlTag;
-  private String tagName="span";
+  private String tagName=null;
   
   public ErrorTag(AbstractTag controlTag)
   { this.controlTag=controlTag;
@@ -34,12 +34,28 @@ public class ErrorTag
   protected String getTagName(EventContext context)
   { return tagName;
   }
+
+  /**
+   * <p>Specify the tag name that will be output when there is an error.
+   * </p>
+   * 
+   * <p>If left unset (default), no tag will be rendered, but any 
+   *   content will still be rendered.
+   * </p>
+   * 
+   * @param tagName
+   */
+  public void setTagName(String tagName)
+  { this.tagName=tagName;
+  }
     
+  @Override
   protected boolean hasContent()
   { return true;
   }
     
 
+  @Override
   protected void renderContent(EventContext context)
     throws IOException
   { 
@@ -75,6 +91,7 @@ public class ErrorTag
   }
 
 
+  @Override
   protected void renderAttributes(EventContext context)
     throws IOException
   { 

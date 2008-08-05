@@ -89,7 +89,6 @@ public class UIServlet
   private URI defaultSessionTypeURI
     =URI.create("class:/spiralcraft/servlet/webui/Session.assy");
   
-  @SuppressWarnings("unchecked") // XXX Need to fix this
   private HttpFocus<?> httpFocus;
   
   @Override
@@ -319,6 +318,13 @@ public class UIServlet
     }
   }
   
+  /**
+   * <p>Handle any actions invoked by this request.
+   * </p>
+   * 
+   * @param component
+   * @param context
+   */
   private void handleAction
     (UIComponent component
     ,ServiceContext context
@@ -326,6 +332,7 @@ public class UIServlet
   {
     // long time=System.nanoTime();
 
+    // Fire any actions referenced in the URI "action" parameter
     VariableMap vars=context.getQuery();
     if (vars!=null)
     {
@@ -339,6 +346,7 @@ public class UIServlet
       }
     }
     
+    // Dequeue and fire any actions that have been subsequently queued
     List<String> actionNames=context.dequeueActions();
     while (actionNames!=null)
     {
@@ -352,6 +360,18 @@ public class UIServlet
     // System.err.println("UIServler.handleAction: "+(System.nanoTime()-time));
   }
   
+  /**
+   * <p>Fire an individual action by name.
+   * </p>
+   * 
+   * <p>Firing an action may indirectly result in other actions being
+   *   queued.
+   * </p>
+   * 
+   * @param component
+   * @param context
+   * @param actionName
+   */
   private void fireAction
     (UIComponent component,ServiceContext context,String actionName)
   {

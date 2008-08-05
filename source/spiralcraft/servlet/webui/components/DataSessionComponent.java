@@ -116,8 +116,6 @@ public class DataSessionComponent
      
   }
 
-  @SuppressWarnings("unchecked")
-  // Blind cast
   @Override
   public void render(EventContext context) throws IOException
   {
@@ -141,6 +139,7 @@ public class DataSessionComponent
     }
   }
     
+  @Override
   public void message
     (EventContext context
     ,Message message

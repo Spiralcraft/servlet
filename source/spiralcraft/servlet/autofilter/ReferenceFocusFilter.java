@@ -122,6 +122,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   /**
    * Called -once- to create the Focus
    */
+  @Override
   protected Focus<Tfocus> createFocus
     (Focus<?> parentFocus)
     throws BindException
@@ -178,7 +179,6 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     private Focus<Tfocus> referencedFocus;
     private PersistentFocusProvider<Treferent,Tfocus> focusProvider;
     
-    @SuppressWarnings("unchecked") // Runtime class check for Focus provider
     public FocusHolder(Focus<?> parentFocus)
       throws BindException
     { 

@@ -36,17 +36,26 @@ public class AggregateEditor<T extends DataComposite>
     extends spiralcraft.servlet.webui.components.AggregateEditor<T>
 {
 
-  private final AbstractTag tag=new AbstractTag()
+  public class Tag
+    extends AbstractTag
   {
-    @Override
-    protected String getTagName(EventContext context)
-    { return "DIV";
+    private String tagName;
+    
+    public void setTagName(String tagName)
+    { this.tagName=tagName;
     }
     
+    @Override
+    protected String getTagName(EventContext context)
+    { return tagName;
+    }
+    
+    @Override
     protected boolean hasContent()
     { return true;
     }
     
+    @Override
     protected void renderContent(EventContext context)
       throws IOException
     { AggregateEditor.super.render(context);
@@ -59,17 +68,20 @@ public class AggregateEditor<T extends DataComposite>
     }
   };
   
+  private Tag tag=new Tag();
+  
   private ErrorTag errorTag
     =new ErrorTag(tag);
 
-  public AbstractTag getTag()
+  public Tag getTag()
   { return tag;
   }
   
-  public AbstractTag getErrorTag()
+  public ErrorTag getErrorTag()
   { return errorTag;
   }
 
+  @Override
   public void render(EventContext context)
     throws IOException
   { 
@@ -81,6 +93,7 @@ public class AggregateEditor<T extends DataComposite>
     }
   }
 
+  @Override
   protected Focus<?> bindExports()
     throws BindException
   {

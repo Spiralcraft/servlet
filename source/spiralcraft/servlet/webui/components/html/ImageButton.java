@@ -75,6 +75,7 @@ public class ImageButton
   }
   
 
+  @Override
   public String getVariableName()
   { return name;
   }
@@ -84,6 +85,7 @@ public class ImageButton
   { return new ControlState<Command<?,?>>(this);
   }
 
+  @Override
   public void render(EventContext context)
     throws IOException
   { 
@@ -168,7 +170,7 @@ public class ImageButton
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "INPUT";
+    { return "input";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -179,7 +181,9 @@ public class ImageButton
       ControlState<Command> state=((ControlState<Command>) context.getState());
       renderAttribute(context.getWriter(),"type","image");
       renderAttribute(context.getWriter(),"src",src);
-      renderAttribute(context.getWriter(),"alt",alt);
+      if (alt!=null)
+      { renderAttribute(context.getWriter(),"alt",alt);
+      }
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       super.renderAttributes(context);
     }

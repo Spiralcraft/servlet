@@ -52,13 +52,15 @@ public class Form<T>
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "FORM";
+    { return "form";
     }
     
+    @Override
     protected boolean hasContent()
     { return true;
     }
     
+    @Override
     protected void renderContent(EventContext context)
       throws IOException
     { Form.super.render(context);
@@ -93,6 +95,7 @@ public class Form<T>
   { this.mimeEncoded=mimeEncoded;
   }
   
+  @Override
   public String getVariableName()
   { return null;
   }
@@ -103,10 +106,11 @@ public class Form<T>
   }
     
   /**
-   * Create a new Action target for the Form post
+   * <p>Create a new Action target for the Form post
+   * </p>
    * 
    * @param context
-   * @return
+   * @return A new Action
    */
   protected Action createAction(EventContext context)
   {
@@ -120,6 +124,7 @@ public class Form<T>
       )
     {
       
+      @Override
       @SuppressWarnings("unchecked") // Blind cast
       public void invoke(ServiceContext context)
       { 
@@ -176,6 +181,7 @@ public class Form<T>
   { return new FormState<T>(this);
   }
   
+  @Override
   public Focus<?> bindExports()
     throws BindException
   {

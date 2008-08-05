@@ -38,6 +38,7 @@ public class RedirectFilter
     
   }
   
+  @Override
   public void doFilter
     (ServletRequest request
     , ServletResponse response
@@ -60,11 +61,13 @@ public class RedirectFilter
   { return "redirect";
   }
 
+  @Override
   public void setGeneralInstance(AutoFilter parentInstance)
   {
 
   }
 
+  @Override
   public Class<? extends AutoFilter> getCommonType()
   { return RedirectFilter.class;
   }

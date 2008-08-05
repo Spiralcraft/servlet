@@ -74,6 +74,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       (getState()
       ,new CommandAdapter<BufferAggregate<BufferTuple,Tcontent>,Void>()
         { 
+          @Override
           public void run()
           { addNewBuffer();
           }
@@ -81,6 +82,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       );
   }
   
+  @Override
   protected void scatter(ServiceContext context)
   {
     super.scatter(context);
@@ -137,6 +139,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   }
   
       
+  @Override
   protected void save()
     throws DataException
   {
@@ -215,13 +218,12 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     if (debug)
     { log.fine("Editor.bind() "+parentFocus);
     }
-    Channel<?> source=(Channel<DataComposite>) 
-      super.bindTarget(parentFocus);
+    Channel<?> source=super.bindTarget(parentFocus);
     
     
     if (source==null)
     { 
-      source=(Channel<DataComposite>) parentFocus.getSubject();
+      source=parentFocus.getSubject();
       if (source==null)
       {
         log.fine
@@ -273,6 +275,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   }
   
   
+  @Override
   @SuppressWarnings("unchecked")
   protected Focus<?> bindExports()
     throws BindException
@@ -318,6 +321,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   }
   
     
+  @Override
   protected Setter<?>[] bindAssignments(Assignment<?>[] assignments)
     throws BindException
   {

@@ -55,6 +55,8 @@ public class Paginate<Ttarget,Titem>
   private IterationDecorator<Ttarget,Titem> decorator;
   private int pageSize=10;
   
+  @Override
+  @SuppressWarnings("unchecked")
   public PageState<Ttarget,Titem> getState()
   { return (PageState<Ttarget,Titem>) super.getState();
   }
@@ -67,6 +69,7 @@ public class Paginate<Ttarget,Titem>
   { return pageSize;
   }
   
+  @Override
   protected void handleInitialize(ServiceContext context)
   {
     super.handleInitialize(context);
@@ -74,10 +77,11 @@ public class Paginate<Ttarget,Titem>
   }
   
   /**
-   * Create a new Action target for the Form post
+   * <p>Create a new Action to reset the paginator
+   * </p>
    * 
    * @param context
-   * @return
+   * @return A new Action
    */
   protected Action createResetAction(EventContext context)
   {
@@ -92,7 +96,7 @@ public class Paginate<Ttarget,Titem>
       { clearable=false;
       }
       
-      @SuppressWarnings("unchecked") // Blind cast
+      @Override
       public void invoke(ServiceContext context)
       { 
         if (debug)
@@ -109,6 +113,7 @@ public class Paginate<Ttarget,Titem>
   }  
     
   
+  @Override
   @SuppressWarnings("unchecked") // PageState cast
   protected void handlePrepare(ServiceContext context)
   { 
@@ -155,6 +160,7 @@ public class Paginate<Ttarget,Titem>
   }  
    
 
+  @Override
   protected Channel<?> bindTarget(Focus<?> parentFocus)
     throws BindException
   {
@@ -166,6 +172,7 @@ public class Paginate<Ttarget,Titem>
     return super.bindTarget(parentFocus);
   }
 
+  @Override
   @SuppressWarnings("unchecked") // Issues with genericizing decorate method
   protected Focus<?> bindExports()
     throws BindException
@@ -212,6 +219,7 @@ public class Paginate<Ttarget,Titem>
   
   
 
+  @Override
   public PageState<Ttarget,Titem> createState()
   { return new PageState<Ttarget,Titem>(this);
   }
@@ -223,6 +231,7 @@ public class Paginate<Ttarget,Titem>
       { setTarget(getState());
       }
       
+      @Override
       public void run()
       { this.getTarget().setCurrentPage(num);
       }
@@ -236,6 +245,7 @@ public class Paginate<Ttarget,Titem>
       { setTarget(getState());
       }
       
+      @Override
       public void run()
       { this.getTarget().setCurrentPage(0);
       }

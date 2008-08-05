@@ -69,7 +69,7 @@ public class Option<Ttarget,Tvalue>
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "OPTION";
+    { return "option";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -146,6 +146,7 @@ public class Option<Ttarget,Tvalue>
     }
   }
   
+  @Override
   public String getVariableName()
   { return null;
   }
@@ -155,6 +156,7 @@ public class Option<Ttarget,Tvalue>
   { return new OptionState<Tvalue>(this);
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
@@ -167,7 +169,6 @@ public class Option<Ttarget,Tvalue>
     }
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void gather(ServiceContext context)
   {
@@ -225,6 +226,7 @@ class OptionState<Tvalue>
   { this.selected=selected;
   }
   
+  @SuppressWarnings("unchecked")
   public SelectState<?,Tvalue> getSelectState()
   { return (SelectState<?,Tvalue>) controlGroupState;
   }

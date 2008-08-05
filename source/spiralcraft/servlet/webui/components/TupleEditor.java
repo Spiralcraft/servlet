@@ -77,6 +77,7 @@ public abstract class TupleEditor
   { phantom=val;
   }
   
+  @Override
   protected void handlePrepare(ServiceContext context)
   { 
     super.handlePrepare(context);
@@ -98,7 +99,7 @@ public abstract class TupleEditor
    *   clears the Editor to accommodate a new Tuple
    * </p>
    * 
-   * @return
+   * @return A new Command
    */
   public Command<BufferTuple,Void> addAndClearCommand()
   { 
@@ -106,6 +107,7 @@ public abstract class TupleEditor
       (getState()
       ,new CommandAdapter<BufferTuple,Void>()
         { 
+          @Override
           public void run()
           { 
             addToParent();
@@ -122,7 +124,7 @@ public abstract class TupleEditor
       (getState()
       ,new CommandAdapter<BufferTuple,Void>()
         {
-          @SuppressWarnings("unchecked")
+          @Override
           public void run()
           { 
             try
@@ -146,7 +148,7 @@ public abstract class TupleEditor
       (getState()
       ,new CommandAdapter<BufferTuple,Void>()
         {
-          @SuppressWarnings("unchecked")
+          @Override
           public void run()
           { 
             try
@@ -166,6 +168,7 @@ public abstract class TupleEditor
       );
   }
 
+  @Override
   protected void scatter(ServiceContext context)
   {
     super.scatter(context);
@@ -221,6 +224,7 @@ public abstract class TupleEditor
     }
   }
       
+  @Override
   protected void save()
     throws DataException
   {
@@ -291,9 +295,9 @@ public abstract class TupleEditor
   }  
 
   /**
-   * Adds a buffer to a parent AggregateBuffer
+   * <p>Adds a buffer to a parent AggregateBuffer
+   * </p>
    * 
-   * @param clear
    */
   protected void addToParent()
   {
@@ -331,7 +335,6 @@ public abstract class TupleEditor
   /**
    * Add a new empty buffer to the parent 
    */
-  @SuppressWarnings("unchecked")
   protected void addNewBuffer()
   {
     try
@@ -362,13 +365,12 @@ public abstract class TupleEditor
     if (debug)
     { log.fine("Editor.bind() "+parentFocus);
     }
-    Channel<?> source=(Channel<DataComposite>) 
-      super.bindTarget(parentFocus);
+    Channel<?> source=super.bindTarget(parentFocus);
     
     
     if (source==null)
     { 
-      source=(Channel<DataComposite>) parentFocus.getSubject();
+      source=parentFocus.getSubject();
       if (source==null)
       {
         log.fine
@@ -437,6 +439,7 @@ public abstract class TupleEditor
     return bufferChannel;
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   protected Focus<Buffer> bindExports()
     throws BindException

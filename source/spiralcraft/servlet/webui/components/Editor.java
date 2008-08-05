@@ -243,7 +243,7 @@ public abstract class Editor
    *   long as the value is not null
    * </p>
    * 
-   * @param assignments
+   * @param bindings
    */
   public void setRequestBindings(RequestBinding<?>[] bindings)
   { requestBindings=bindings;
@@ -261,6 +261,7 @@ public abstract class Editor
       (getState()
       ,new CommandAdapter<Buffer,Void>()
         {
+          @Override
           public void run()
           { getState().getValue().revert();
           }
@@ -278,6 +279,7 @@ public abstract class Editor
       (getState()
       ,new CommandAdapter<Buffer,Void>()
         { 
+          @Override
           public void run()
           { 
             getState().queueMessage(SAVE_MESSAGE);
@@ -290,7 +292,7 @@ public abstract class Editor
    * <p>Saves the referenced Buffer and 
    * </p>  clears the Editor to accomodate a new Tuple
    * 
-   * @return
+   * @return A new Command
    */
   public Command<Buffer,Void> saveAndClearCommand()
   { 
@@ -302,6 +304,7 @@ public abstract class Editor
       (getState()
       ,new CommandAdapter<Buffer,Void>()
         { 
+          @Override
           public void run()
           { 
             getState().queueMessage(SAVE_MESSAGE);
@@ -310,6 +313,7 @@ public abstract class Editor
             getState().queueCommand
               (new CommandAdapter<Buffer,Void>()
               {
+                @Override
                 public void run()
                 { 
                   if (!getState().isErrorState())
@@ -328,7 +332,7 @@ public abstract class Editor
    *   clears the Editor to accommodate a new Tuple
    * </p>
    * 
-   * @return
+   * @return A new Command
    */
   public Command<Buffer,Void> addAndClearCommand()
   { 
@@ -336,6 +340,7 @@ public abstract class Editor
       (getState()
       ,new CommandAdapter<Buffer,Void>()
         { 
+          @Override
           public void run()
           { 
             addToParent();
@@ -352,6 +357,7 @@ public abstract class Editor
       (getState()
       ,new CommandAdapter<Buffer,Void>()
         { 
+          @Override
           public void run()
           { newBuffer();
           }
@@ -365,6 +371,7 @@ public abstract class Editor
       (getState()
       ,new CommandAdapter<Buffer,Void>()
         { 
+          @Override
           public void run()
           { addNewBuffer();
           }
@@ -374,9 +381,9 @@ public abstract class Editor
 
 
   /**
-   * Adds a buffer to a parent AggregateBuffer
+   * <p>Adds a buffer to a parent AggregateBuffer
+   * </p>
    * 
-   * @param clear
    */
   protected void addToParent()
   {
@@ -530,6 +537,7 @@ public abstract class Editor
     
   }
  
+  @Override
   protected void handleInitialize(ServiceContext context)
   {
     super.handleInitialize(context);
@@ -539,6 +547,7 @@ public abstract class Editor
     
   }
   
+  @Override
   protected void handlePrepare(ServiceContext context)
   { 
 
@@ -705,10 +714,11 @@ public abstract class Editor
   }
   
   /**
-   * Create a new Action target for the Form post
+   * <p>Create a new Action target for the Form post
+   * </p>
    * 
    * @param context
-   * @return
+   * @return A new Action
    */
   protected Action createNewAction(EventContext context)
   {
@@ -717,7 +727,7 @@ public abstract class Editor
       { clearable=false;
       }
       
-      @SuppressWarnings("unchecked") // Blind cast
+      @Override
       public void invoke(ServiceContext context)
       { 
         if (debug)
@@ -750,7 +760,7 @@ public abstract class Editor
     
     if (source==null)
     { 
-      source=(Channel<DataComposite>) parentFocus.getSubject();
+      source=parentFocus.getSubject();
       if (source==null)
       {
         log.fine
@@ -821,6 +831,7 @@ public abstract class Editor
     return bufferChannel;
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   protected Focus<Buffer> bindExports()
     throws BindException

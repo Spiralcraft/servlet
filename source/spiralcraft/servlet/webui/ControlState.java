@@ -42,7 +42,6 @@ public class ControlState<Tbuf>
   ,RENDERED
   };
   
-  @SuppressWarnings("unused")
   protected static final ClassLogger log=ClassLogger.getInstance(ControlState.class);
 
   
@@ -70,6 +69,7 @@ public class ControlState<Tbuf>
   { return error!=null || exception!=null;
   }
   
+  @Override
   public String toString()
   { 
     String stringValue=value!=null?value.toString():"(null)";

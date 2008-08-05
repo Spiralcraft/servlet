@@ -54,7 +54,7 @@ public class FileInput
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "INPUT";
+    { return "input";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -116,6 +116,7 @@ public class FileInput
     }
   }
   
+  @Override
   public String getVariableName()
   { return name;
   }
@@ -130,6 +131,7 @@ public class FileInput
 //  { return new ControlState<URI>(this);
 //  }
   
+  @Override
   public void render(EventContext context)
     throws IOException
   { 

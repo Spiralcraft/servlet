@@ -36,6 +36,7 @@ public class ErrorFilter
   { this.exception=exception;
   }
   
+  @Override
   public void doFilter
     (ServletRequest request
     , ServletResponse response
@@ -57,11 +58,13 @@ public class ErrorFilter
   { return "error";
   }
 
+  @Override
   public void setGeneralInstance(AutoFilter parentInstance)
   {
 
   }
 
+  @Override
   public Class<? extends AutoFilter> getCommonType()
   { return ErrorFilter.class;
   }
