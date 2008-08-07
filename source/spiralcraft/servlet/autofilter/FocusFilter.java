@@ -58,6 +58,9 @@ public abstract class FocusFilter<T>
    * <p>XXX If we are building context duration, this should always return the
    *   same Focus, because the Filter object is also context duration. Perhaps
    *   the filter should just get the Focus from its parent.
+   *   
+   *   2008-08-06 This really needs to be done, along with integrating Focus
+   *     into the "webapp" model.
    * </p>
    * 
    * @param request 
