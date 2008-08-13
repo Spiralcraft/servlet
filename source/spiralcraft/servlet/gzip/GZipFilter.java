@@ -45,14 +45,45 @@ public class GZipFilter
     
 
     String acceptEncoding=httpRequest.getHeader("Accept-Encoding");
-    if (acceptEncoding!=null && acceptEncoding.indexOf("gzip")>=0)
+    String userAgent=httpRequest.getHeader("User-Agent");
+    
+    
+    if (acceptEncoding!=null 
+        && acceptEncoding.indexOf("gzip")>=0
+       )
     { 
-      HttpServletResponseCompressionWrapper compressResponse
-        =new HttpServletResponseCompressionWrapper
-          ((HttpServletResponse) response);
-      compressResponse.startCompression();
-      chain.doFilter(request,compressResponse);
-      compressResponse.finish();
+      if (debug)
+      { log.fine("Positive gzip match: acceptEncoding="+acceptEncoding);
+      }
+      String ieVersion=null;
+      if (userAgent!=null)
+      { 
+        int index=userAgent.indexOf("MSIE ");
+        if (index>-1)
+        { ieVersion=userAgent.substring(index+5,index+6);
+        }
+      }
+      
+      if (ieVersion!=null 
+          && "56".contains(ieVersion)
+         )
+      {
+        // XXX Figure out how to be more selective about MSIE 6 conditions,
+        //   but there are a multitude of associated gzip bugs
+        log.fine("Skipping gzip for MSIE "+ieVersion);
+        
+        chain.doFilter(request,response);
+      }
+      else
+      {
+        // Do the compression
+        HttpServletResponseCompressionWrapper compressResponse
+          =new HttpServletResponseCompressionWrapper
+            ((HttpServletResponse) response);
+        compressResponse.startCompression();
+        chain.doFilter(request,compressResponse);
+        compressResponse.finish();
+      }
     }
     else
     { chain.doFilter(request,response);
