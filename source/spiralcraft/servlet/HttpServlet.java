@@ -14,6 +14,7 @@
 //
 package spiralcraft.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -21,6 +22,8 @@ import java.net.URI;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.Enumeration;
+import java.util.Set;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -31,10 +34,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spiralcraft.log.ClassLogger;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.UnresolvableURIException;
 
+import spiralcraft.vfs.file.FileResource;
 import spiralcraft.vfs.url.URLResource;
 
 
@@ -46,8 +51,10 @@ import spiralcraft.vfs.url.URLResource;
 public class HttpServlet
   implements Servlet
 {
-  private ServletConfig _config;
 
+  protected static final ClassLogger log=
+      ClassLogger.getInstance(HttpServlet.class);
+  
   public static final String METHOD_GET="GET";
   public static final String METHOD_HEAD="HEAD";
   public static final String METHOD_POST="POST";
@@ -55,12 +62,52 @@ public class HttpServlet
   public static final String METHOD_OPTIONS="OPTIONS";
   public static final String METHOD_TRACE="TRACE";
   public static final String METHOD_DELETE="DELETE";
+
+  private ServletConfig config;
+  protected Set<String> recognizedParameters;
   
 
+  @SuppressWarnings("unchecked")
   public void init(ServletConfig config)
     throws ServletException
-  { _config=config;
+  { 
+    this.config=config;
+    
+    Enumeration<String> names=config.getInitParameterNames();
+    while (names.hasMoreElements())
+    {
+      String name=names.nextElement();
+      if (recognizedParameters!=null 
+          && !recognizedParameters.contains(name)
+         )
+      {
+        throw new ServletException
+          ("Unrecognized init parameter '"+name+"'. Recognized parameters are "
+          +" "+recognizedParameters.toString()
+          );
+      }
+      setInitParameter(name,config.getInitParameter(name));
+      
+    }    
   }
+  
+  /**
+   * <p>Override to handle initialization parameters. The default
+   *   implementation does nothing.
+   * </p>
+   * 
+   * <p>Used in conjunction with the protected 'recognizedParameters' set,
+   *   parameters not listed in the set will not reach this method.
+   * </p>
+   * 
+   * 
+   * @param name
+   * @param value
+   * @throws ServletException
+   */
+  protected void setInitParameter(String name,String value)
+    throws ServletException
+  { }
   
   public void destroy()
   {
@@ -101,6 +148,12 @@ public class HttpServlet
   {
   }
 
+  /**
+   * <p>Provides a default implementation of service(request,response) which
+   *   delegates handling to different methods according to the HTTP request
+   *   method.
+   * </p>
+   */
   public void service(ServletRequest request,ServletResponse response)
     throws ServletException,IOException
   {
@@ -133,7 +186,7 @@ public class HttpServlet
   }
 
   public ServletConfig getServletConfig()
-  { return _config;
+  { return config;
   }
   
   public String getServletInfo()
@@ -167,12 +220,29 @@ public class HttpServlet
   }
   
   /**
-   * Return a spiralcraft.vfs.Resource that provides access to a
-   *   resource relative to the ServletContext.
+   * <p>Return a spiralcraft.vfs.Resource that provides access to a
+   *   resource relative to the ServletContext, whether it exists or not.
+   * </p>
    */
   public Resource getResource(String contextRelativePath)
     throws ServletException
   {
+    
+    String path
+      =getServletConfig()
+        .getServletContext()
+          .getRealPath(contextRelativePath);
+    
+    if (path!=null)
+    { return new FileResource(new File(path).getAbsoluteFile());
+    }
+    
+    // Fallback case: Use getResource()
+    //
+    // Sometimes web servers will not return a URL from getResource()
+    //   if the resource doesn't exist already
+    //
+    
     URL url=null;
     try
     {
@@ -185,6 +255,14 @@ public class HttpServlet
     { 
       throwServletException
         ("Error getting resource ["+contextRelativePath+"]:"+x,x);
+    }
+    
+    if (url==null)
+    { 
+      throw new ServletException
+        ("ServletContext returned null for getResource() called with "
+        +"'"+contextRelativePath+"'"
+        );
     }
     
     URI uri=null;
