@@ -25,7 +25,8 @@ import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.VariableMapBinding;
 
 /**
- * Provides access to the request Query string as part of a UI element
+ * Provides access to the request Query string as part of a UI
+ *   element
  *
  * @author mike
  *

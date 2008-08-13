@@ -25,8 +25,9 @@ import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.StringConverter;
 
 /**
- * Associates a request or form variable map with a target Channel.
- *
+ * <p>Associates a request or form VariableMap with a target Channel.
+ * </p>
+ * 
  * @author mike
  *
  */
@@ -174,7 +175,7 @@ public class VariableMapBinding<Tvar>
         if (debug)
         { 
           log.fine
-            ("Translating raw "
+            ("Passing unconverted String value "
             +val
             );
         }
@@ -192,6 +193,17 @@ public class VariableMapBinding<Tvar>
     }
   }
   
+  /**
+   * <p>Read data from the map and write it to the target channel.
+   * </p>
+   * 
+   * <p>The VariableMap represents data read from an HTTP request in the form
+   *   of a set of variable names mapped to one or more values.
+   * </p>
+   * 
+   * <p>
+   * @param map
+   */
   public void read(VariableMap map)
   {
     List<String> vals=map!=null?map.get(name):null;
