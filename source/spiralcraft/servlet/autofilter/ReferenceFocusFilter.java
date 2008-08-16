@@ -17,6 +17,7 @@ package spiralcraft.servlet.autofilter;
 import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import spiralcraft.lang.BindException;
@@ -229,7 +230,10 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   
 
   @Override
-  protected void pushSubject(HttpServletRequest request) 
+  protected void pushSubject
+    (HttpServletRequest request
+    ,HttpServletResponse response
+    ) 
     throws BindException
   {
     if (scope==Scope.SESSION)

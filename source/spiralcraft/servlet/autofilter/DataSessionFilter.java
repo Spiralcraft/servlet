@@ -15,6 +15,7 @@
 package spiralcraft.servlet.autofilter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import spiralcraft.data.DataComposite;
@@ -82,7 +83,8 @@ public class DataSessionFilter
   
 
   @Override
-  protected void pushSubject(HttpServletRequest request) 
+  protected void pushSubject
+    (HttpServletRequest request,HttpServletResponse response) 
     throws BindException
   {
       

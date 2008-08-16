@@ -138,6 +138,7 @@ public abstract class Control<Ttarget>
         log.fine("NOT Calling SCATTER bc error state: "
           +this+" state="+state
           +" error="+state.getError()
+          +" exception="+state.getException()
         );
       }
 

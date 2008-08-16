@@ -26,6 +26,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>Provides a spiralcraft.lang Expression Language Focus to servlet API
@@ -89,7 +90,8 @@ public abstract class FocusFilter<T>
    *   
    * @param request
    */
-  protected abstract void pushSubject(HttpServletRequest request)
+  protected abstract void pushSubject
+    (HttpServletRequest request,HttpServletResponse response)
     throws BindException;
   
   /**
@@ -122,7 +124,7 @@ public abstract class FocusFilter<T>
       
       // Make sure the subject of our Focus is appropriate for this
       //   Thread's service operation for this request
-      pushSubject((HttpServletRequest) request);
+      pushSubject((HttpServletRequest) request,(HttpServletResponse) response);
       
       pushed=true;
       
@@ -147,6 +149,7 @@ public abstract class FocusFilter<T>
         popSubject((HttpServletRequest) request);
       }
 //      log.fine("Restoring "+requestFocus);
+      // Put the original focus back
       request.setAttribute(attributeName,requestFocus);
     }
 //    log.fine("/doFilter()");

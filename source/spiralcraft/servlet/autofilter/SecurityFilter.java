@@ -14,7 +14,11 @@
 //
 package spiralcraft.servlet.autofilter;
 
+import java.net.URI;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 
@@ -33,13 +37,13 @@ import spiralcraft.lang.spi.ThreadLocalChannel;
 
 
 /**
- * <P>Provides an application with access to stateful security components
+ * <p>Provides an application with access to stateful security components
  *   which provide user authentication services and login/id state.
- * </P>
+ * </p>
  * 
- * <P>Publishes the spiralcraft.security.auth.AuthSession reference into the
- *   Focus chain, along with a self reference to provide access to 
- * </P>
+ * <p>Publishes the spiralcraft.security.auth.AuthSession reference into the
+ *   Focus chain, along with a self reference to support HTTP aware commands.
+ * </p>
  * 
  * @author mike
  *
@@ -47,18 +51,45 @@ import spiralcraft.lang.spi.ThreadLocalChannel;
 public class SecurityFilter
   extends FocusFilter<AuthSession>
 {
+  public static final URI FOCUS_URI
+    =URI.create("class:/spiralcraft/servlet/autofilter/SecurityFilter");
   
   private ThreadLocalChannel<AuthSession> authSessionChannel;
+  private final ThreadLocal<SecurityFilterContext> contextLocal
+    =new ThreadLocal<SecurityFilterContext>();
+  
   private String attributeName;  
   private Authenticator authenticator;
+  private String cookieName="login";
   
   /**
    * @param authenticator The authenticator which will be used to validate the
-   *    userId and password
+   *    login credentials.
    */
   public void setAuthenticator(Authenticator authenticator)
-  { 
-    this.authenticator=authenticator;
+  { this.authenticator=authenticator;
+  }
+
+  /**
+   * Specify the cookie name for persistent logins
+   * 
+   * @param cookieName
+   */
+  public void setCookieName(String cookieName)
+  { this.cookieName=cookieName;
+  }
+
+  /**
+   * The cookie name for persistent logins
+   * 
+   * @return
+   */
+  public String getCookieName()
+  { return cookieName;
+  }
+  
+  public void writeLoginCookie(Cookie cookie)
+  { contextLocal.get().response.addCookie(cookie);
   }
   
   /**
@@ -83,22 +114,19 @@ public class SecurityFilter
     CompoundFocus<AuthSession> authSessionFocus
       =new CompoundFocus<AuthSession>(parentFocus,authSessionChannel);
     authSessionFocus.bindFocus
-      ("spiralcraft.servlet",new BeanFocus<SecurityFilter>(this));
+      (cookieName,new BeanFocus<SecurityFilter>(this));
     authenticator.bind(authSessionFocus);
     return authSessionFocus;
   }
   
-  @Override
-  protected void popSubject(HttpServletRequest request)
-  {
-    authSessionChannel.pop();
-    
-  }
   
   
 
   @Override
-  protected void pushSubject(HttpServletRequest request) 
+  protected void pushSubject
+    (HttpServletRequest request
+    ,HttpServletResponse response
+    ) 
     throws BindException
   {
       
@@ -111,7 +139,17 @@ public class SecurityFilter
       authSession=authenticator.createSession();
       session.setAttribute(attributeName,authSession);
     }
-    authSessionChannel.push(authSession);      
+    authSessionChannel.push(authSession);
+    contextLocal.set(new SecurityFilterContext(request,response));
+    
+  }
+
+  @Override
+  protected void popSubject(HttpServletRequest request)
+  {
+    contextLocal.remove();
+    authSessionChannel.pop();
+    
   }
   
   /**
@@ -132,7 +170,26 @@ public class SecurityFilter
   }
     
   private void logout()
-  { authSessionChannel.get().logout();
+  { 
+    authSessionChannel.get().logout();
+    // Delete the login cookie
+    
+    writeLoginCookie(new Cookie(cookieName,""));
   }  
 
 }
+
+class SecurityFilterContext
+{
+  public final HttpServletRequest request;
+  public final HttpServletResponse response;
+  
+  public SecurityFilterContext
+    (HttpServletRequest request,HttpServletResponse response)
+  { 
+    this.request=request;
+    this.response=response;
+  }
+  
+}
+

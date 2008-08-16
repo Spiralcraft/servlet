@@ -167,9 +167,8 @@ public class AuthenticateFilter
       }
       
       session.addCredentials(credentials);
-      if (session.isAuthenticated())
+      if (session.authenticate())
       { return true;
-       
       }
       else
       { 

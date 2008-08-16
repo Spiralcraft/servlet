@@ -16,6 +16,7 @@ package spiralcraft.servlet.autofilter;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.CompoundFocus;
@@ -75,7 +76,10 @@ public class StaticsFilter
   
 
   @Override
-  protected void pushSubject(HttpServletRequest request) 
+  protected void pushSubject
+    (HttpServletRequest request
+    ,HttpServletResponse response
+    ) 
     throws BindException
   {
 
