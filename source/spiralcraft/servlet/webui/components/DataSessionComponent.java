@@ -104,11 +104,10 @@ public class DataSessionComponent
   { defaultAssignments=assignments;
   }
   
-  @SuppressWarnings("unchecked")
   public void setTypeURI(URI typeURI)
   { 
     try
-    { this.type=(Type<DataComposite>) Type.resolve(typeURI);
+    { this.type= Type.<DataComposite>resolve(typeURI);
     }
     catch (DataException x)
     { throw new IllegalArgumentException(x);
