@@ -134,6 +134,9 @@ public class Guard
     super.handlePrepare(context);
     if (!sessionChannel.get().isAuthenticated())
     { 
+      if (debug)
+      { log.fine("Session not authenticated "+sessionChannel.get());
+      }
       try
       { setupRedirect(context);
       }

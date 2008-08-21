@@ -14,6 +14,7 @@
 //
 package spiralcraft.servlet.autofilter;
 
+import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.http.Cookie;
@@ -24,8 +25,11 @@ import javax.servlet.http.HttpSession;
 
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Authenticator;
+import spiralcraft.security.auth.LoginEntry;
 import spiralcraft.security.auth.TestAuthenticator;
 
+import spiralcraft.codec.CodecException;
+import spiralcraft.codec.text.Base64Codec;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.BeanFocus;
@@ -34,6 +38,8 @@ import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.log.ClassLogger;
+import spiralcraft.net.http.VariableMap;
 
 
 /**
@@ -54,6 +60,9 @@ public class SecurityFilter
   public static final URI FOCUS_URI
     =URI.create("class:/spiralcraft/servlet/autofilter/SecurityFilter");
   
+  private static final ClassLogger log
+    =ClassLogger.getInstance(SecurityFilter.class);
+  
   private ThreadLocalChannel<AuthSession> authSessionChannel;
   private final ThreadLocal<SecurityFilterContext> contextLocal
     =new ThreadLocal<SecurityFilterContext>();
@@ -61,6 +70,16 @@ public class SecurityFilter
   private String attributeName;  
   private Authenticator authenticator;
   private String cookieName="login";
+  private int minutesToPersist;
+
+  /**
+   * The amount of time a login should persist. Setting this enables
+   *   persistent login cookies.
+   */
+  public void setMinutesToPersist(int minutesToPersist)
+  { this.minutesToPersist=minutesToPersist;
+  }
+  
   
   /**
    * @param authenticator The authenticator which will be used to validate the
@@ -87,8 +106,114 @@ public class SecurityFilter
   public String getCookieName()
   { return cookieName;
   }
+
+  public boolean readLoginCookie(LoginEntry entry)
+  {
+    if (minutesToPersist<=0)
+    { return false;
+    }
+    
+    Cookie loginCookie=null;
+      
+    // Check for a cookie
+    Cookie[] cookies=contextLocal.get().request.getCookies();
+    if (cookies!=null)
+    {
+      for (Cookie cookie:cookies)
+      { 
+        if (cookie.getName().equals(cookieName))
+        { 
+          loginCookie=cookie;
+          break;
+        }
+      }
+    }
+      
+      
+    if (loginCookie!=null)
+    { return readLoginCookie(entry,loginCookie);
+    }
+    return false;
+  }
+
+  /**
+   * <p>Read the login cookie and return whether login data was successfully
+   *  read
+   * </p>
+   * 
+   * @param cookie
+   * @return Whether login data was successfully read
+   */
+  private boolean readLoginCookie(LoginEntry entry,Cookie cookie)
+  {
+    VariableMap map=VariableMap.fromUrlEncodedString(cookie.getValue());
+    String username=map.getOne("username");
+    String ticketBase64=map.getOne("ticket");
+    if (username!=null && ticketBase64!=null)
+    {
+      entry.setUsername(username);
+      try
+      { entry.setOpaqueDigest(Base64Codec.decodeBytes(ticketBase64));
+      }
+      catch (IOException x)
+      { 
+        x.printStackTrace();
+        return false;
+      }
+      catch (CodecException x)
+      {
+        x.printStackTrace();
+        return false;
+      }
+      return true;
+    }
+    else
+    { return false;
+    }
+  }  
   
-  public void writeLoginCookie(Cookie cookie)
+  public void writeLoginCookie(LoginEntry entry)
+  {
+    if (minutesToPersist<=0)
+    { return;
+    }
+      
+    VariableMap map=new VariableMap();
+    String username=entry.getUsername();
+    String password=entry.getPasswordCleartext();
+    if (username!=null && password!=null)
+    {
+      byte[] ticket=authSessionChannel.get().opaqueDigest(username+password);
+      map.add("username", entry.getUsername());
+      try
+      { map.add("ticket", Base64Codec.encodeBytes(ticket));
+      }
+      catch (IOException x)
+      {
+        x.printStackTrace();
+        return;
+      }
+      catch (CodecException x)
+      { 
+        x.printStackTrace();
+        return;
+      }
+      String data=map.generateEncodedForm();
+      Cookie cookie=new Cookie(cookieName,data);
+      cookie.setMaxAge(minutesToPersist*60); // Convert from seconds
+      writeLoginCookie(cookie);
+    }
+    else
+    { 
+      if (debug)
+      { 
+        log.fine
+          ("Some credentials were unspecified- no login cookie created");
+      }
+    }
+  }
+  
+  private void writeLoginCookie(Cookie cookie)
   { contextLocal.get().response.addCookie(cookie);
   }
   

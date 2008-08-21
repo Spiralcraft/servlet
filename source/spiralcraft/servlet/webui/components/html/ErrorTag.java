@@ -20,6 +20,15 @@ import java.io.Writer;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
+/**
+ * <p>A Tag that formats an error message that is associated with another
+ *   html based component. By default, this tag will render before
+ *   the specified component.
+ * </p>
+ * 
+ * @author mike
+ *
+ */
 public class ErrorTag
     extends AbstractTag
 {
@@ -54,7 +63,15 @@ public class ErrorTag
   { return true;
   }
     
-
+  @Override
+  protected void renderAfter(EventContext context)
+    throws IOException
+  {
+    if (controlTag!=null)
+    { controlTag.render(context);
+    }
+  }
+  
   @Override
   protected void renderContent(EventContext context)
     throws IOException
@@ -83,9 +100,6 @@ public class ErrorTag
       }
       out.write("-->\r\n");
       
-    }
-    if (controlTag!=null)
-    { controlTag.render(context);
     }
     
   }

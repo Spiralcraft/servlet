@@ -45,6 +45,7 @@ public abstract class AbstractTag
     =new AttributeEncoder();
   
   private String attributes;
+  protected int contentPosition;
   
     
   protected abstract String getTagName(EventContext context);
@@ -170,6 +171,10 @@ public abstract class AbstractTag
   public void setAutocomplete(String val)
   { appendAttribute("autocomplete",val);
   }
+  
+  public void setContentPosition(int contentPosition)
+  { this.contentPosition=contentPosition;
+  }
 
   protected void renderAttribute(Writer writer,String name,String value)
     throws IOException
@@ -207,6 +212,16 @@ public abstract class AbstractTag
     throws IOException
   { 
   }
+  
+  protected void renderBefore(EventContext context)
+    throws IOException
+  {
+  }
+  
+  protected void renderAfter(EventContext context)
+    throws IOException
+  {
+  }
 
   
   /**
@@ -219,6 +234,13 @@ public abstract class AbstractTag
   public final void render(EventContext context)
     throws IOException
   { 
+    boolean hasContent=hasContent();
+
+    renderBefore(context);
+    if (hasContent && contentPosition<0)
+    { renderContent(context);
+    }
+    
     String name=getTagName(context);
     if (name!=null && name.length()>0)
     {
@@ -229,7 +251,7 @@ public abstract class AbstractTag
     
       renderAttributes(context);
     
-      if (hasContent())
+      if (hasContent && contentPosition==0)
       { 
         writer.write(">");
    
@@ -242,6 +264,11 @@ public abstract class AbstractTag
       else
       { writer.write("/>");
       }
+
+      if (hasContent && contentPosition>0)
+      { renderContent(context);
+      }
+
     }
     else
     {
@@ -250,6 +277,7 @@ public abstract class AbstractTag
       { renderContent(context);
       }
     }
+    renderAfter(context);
   }
   
 

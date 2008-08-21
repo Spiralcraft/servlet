@@ -210,6 +210,15 @@ public abstract class Control<Ttarget>
       gather((ServiceContext) context); 
     } 
 
+    if (message.getType()==CommandMessage.TYPE)
+    {
+      // Controls also execute their queued commands in post-order, so that
+      //   any commands queued by child-component's commands will have a
+      //   chance to execute. 
+      
+      // Added 2008-08-18: Fix situation where login is triggered post-save.
+      command((ServiceContext) context); 
+    } 
   }
   
   public ControlGroup<?> getControlGroup()
@@ -263,6 +272,7 @@ public abstract class Control<Ttarget>
         { log.fine("Executing "+command.toString());
         }
         command.setTarget(state.getValue());
+
         command.execute();
         
         if (command.getException()!=null)

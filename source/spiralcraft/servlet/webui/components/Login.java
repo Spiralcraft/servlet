@@ -14,14 +14,11 @@
 //
 package spiralcraft.servlet.webui.components;
 
-import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 
-import spiralcraft.codec.CodecException;
-import spiralcraft.codec.text.Base64Codec;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 
@@ -35,7 +32,6 @@ import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.spi.BeanReflector;
 import spiralcraft.log.ClassLogger;
-import spiralcraft.net.http.VariableMap;
 
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.LoginEntry;
@@ -84,7 +80,6 @@ public class Login
   private String failureMessage
     ="Login failed, username/password combination not recognized";
   
-  private int minutesToPersist;
   
   private SecurityFilter securityFilter;
   
@@ -107,14 +102,7 @@ public class Login
   { this.defaultURI=defaultURI;
   }
   
-  /**
-   * The amount of time a login should persist. Setting this enables
-   *   persistent login cookies.
-   */
-  public void setMinutesToPersist(int minutesToPersist)
-  { this.minutesToPersist=minutesToPersist;
-  }
-  
+
   /**
    * <p>Specify that the login form is an in-place login, and that no redirect
    *   should occur on success or failure.
@@ -169,6 +157,14 @@ public class Login
   private void login(boolean interactive)
   {
     LoginState state=(LoginState) getState();
+    if (debug)
+    { 
+      log.fine
+        ("Attempting login "
+        +(interactive?"(interactive)":"(non-interactive) for user=")
+        +state.getValue().getUsername()
+        );
+    }
     if (preSetters!=null)
     {  
       if (debug)
@@ -184,20 +180,24 @@ public class Login
       {
         state.setError
           (failureMessage);
+        if (debug)
+        { log.fine("Interactive login failure: entry="+getState().getValue());
+        }
+      }
+      else
+      { 
+        if (debug)
+        { log.fine("Non-interactive login failure: entry="+getState().getValue());
+        }
       }
     }
     else
     { 
-      if (securityFilter!=null)
-      { 
-        Cookie cookie=createLoginCookie(state.getValue());
-        if (cookie!=null)
-        { 
-          if (debug)
-          { log.fine("Setting login cookie "+cookie);
-          }
-          securityFilter.writeLoginCookie(cookie);
-        }
+      if (debug)
+      { log.fine("Successful login for "+state.getValue().getUsername());
+      }
+      if (securityFilter!=null && state.getValue().isPersistent())
+      { securityFilter.writeLoginCookie(state.getValue());
       }
       
       state.setValue(null);
@@ -274,40 +274,46 @@ public class Login
     super.handlePrepare(context);
     
     AuthSession session=sessionChannel.get();
-    if (minutesToPersist > 0
-        && securityFilter!=null
+    if (securityFilter!=null
         && !session.isAuthenticated()
         )
     {
       // Only process a login cookie if we are persisting logins
+      if (debug)
+      { log.fine("Not authenticated- checking cookie");
+      }
       
-      Cookie loginCookie=null;
-      String cookieName=securityFilter.getCookieName();
-      
-      // Check for a cookie
-      Cookie[] cookies=context.getRequest().getCookies();
-      if (cookies!=null)
+      if (securityFilter.readLoginCookie(getState().getValue()))
       {
-        for (Cookie cookie:context.getRequest().getCookies())
-        { 
-          if (cookie.getName().equals(cookieName))
-          { 
-            loginCookie=cookie;
-            break;
-          }
+        if (debug)
+        { log.fine("Logging in from cookie");
         }
+        login(false);
       }
-      
-      
-      if (loginCookie!=null && readLoginCookie(loginCookie))
-      { login(false);
-      }
+        
     }
     
-    if (!state.isErrorState() && session.isAuthenticated())
+    if (state.isErrorState())
+    {
+      if (debug)
+      {
+        log.log
+          (Level.FINE
+          ,"Error on login: "+state.getError()
+          ,state.getException()
+          );
+      }
+    }
+    else if (session.isAuthenticated())
     {  
+      if (debug)
+      { log.fine("Session is authenticated "+session);
+      }
       if (!inPlace)
       {
+        if (debug)
+        { log.fine("Redirecting to "+state.getReferer());
+        }
         try
         { context.redirect(URI.create(state.getReferer()));
         }
@@ -316,90 +322,18 @@ public class Login
         }
       }
     }
+    else
+    {
+      if (debug)
+      { log.fine("Session is not authenticated "+session);
+      }
+    }
     
   }
 
-  /**
-   * <p>Read the login cookie and return whether login data was successfully
-   *  read
-   * </p>
-   * 
-   * @param cookie
-   * @return Whether login data was successfully read
-   */
-  private boolean readLoginCookie(Cookie cookie)
-  {
-    VariableMap map=VariableMap.fromUrlEncodedString(cookie.getValue());
-    LoginEntry entry=getState().getValue();
-    String username=map.getOne("username");
-    String ticketBase64=map.getOne("ticket");
-    if (username!=null && ticketBase64!=null)
-    {
-      entry.setUsername(username);
-      try
-      { entry.setOpaqueDigest(Base64Codec.decodeBytes(ticketBase64));
-      }
-      catch (IOException x)
-      { 
-        x.printStackTrace();
-        return false;
-      }
-      catch (CodecException x)
-      {
-        x.printStackTrace();
-        return false;
-      }
-      return true;
-    }
-    else
-    { return false;
-    }
-  }
+
   
-  private Cookie createLoginCookie(LoginEntry entry)
-  {
-    if (minutesToPersist==0 || securityFilter==null)
-    { return null;
-    }
-    else
-    {
-      
-      VariableMap map=new VariableMap();
-      String username=entry.getUsername();
-      String password=entry.getPasswordCleartext();
-      if (username!=null && password!=null)
-      {
-        byte[] ticket=sessionChannel.get().opaqueDigest(username+password);
-        map.add("username", entry.getUsername());
-        try
-        { map.add("ticket", Base64Codec.encodeBytes(ticket));
-        }
-        catch (IOException x)
-        {
-          x.printStackTrace();
-          return null;
-        }
-        catch (CodecException x)
-        {
-          x.printStackTrace();
-          return null;
-        }
-        String data=map.generateEncodedForm();
-        Cookie cookie=new Cookie(securityFilter.getCookieName(),data);
-        cookie.setMaxAge(minutesToPersist*60); // Convert from seconds
-        return cookie;
-      }
-      else
-      { 
-        if (debug)
-        { 
-          log.fine
-            ("Some credentials were unspecified- no login cookie created");
-        }
-        return null;
-      }
-    }
-  }
+
   
   
   
