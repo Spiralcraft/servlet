@@ -18,6 +18,7 @@ package spiralcraft.servlet.webui.components;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -38,6 +39,8 @@ import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.InitializeMessage;
+import spiralcraft.textgen.Message;
 import spiralcraft.textgen.compiler.TglUnit;
 
 
@@ -145,6 +148,33 @@ public class Guard
       }
     }
     
+  }
+
+  @Override
+  public void message
+    (EventContext context
+    ,Message message
+    ,LinkedList<Integer> path
+    )
+  {
+    
+    if (message.getType()!=InitializeMessage.TYPE
+        && !sessionChannel.get().isAuthenticated()
+        )
+    { 
+      if (debug)
+      { log.fine(this.toString()+" redirecting- no authent");
+      }
+      try
+      { setupRedirect((ServiceContext) context);
+      }
+      catch (ServletException x)
+      { x.printStackTrace();
+      }
+    }
+    else
+    { super.message(context,message,path);
+    }
   }
   
   @Override

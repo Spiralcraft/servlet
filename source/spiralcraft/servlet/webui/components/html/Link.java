@@ -50,12 +50,14 @@ public class Link
   
   private Expression<Command<?,?>> commandExpression;
   private Channel<Command<?,?>> commandChannel;
+  private Tag tag=new Tag();
+  private ErrorTag errorTag=new ErrorTag(tag);
   
   public void setX(Expression<Command<?,?>> expression)
   { commandExpression=expression;
   }
   
-  private AbstractTag tag=new AbstractTag()
+  public class Tag extends AbstractTag
   {
     @Override
     protected String getTagName(EventContext context)
@@ -104,15 +106,19 @@ public class Link
     
   }
   
-  public AbstractTag getTag()
+  public Tag getTag()
   { return tag;
+  }
+  
+  public ErrorTag getErrorTag()
+  { return errorTag;
   }
   
   @Override
   public void render(EventContext context)
     throws IOException
-  {
-    tag.render(context);
+  { tag.render(context);
+    
   }
   
 
@@ -129,7 +135,11 @@ public class Link
       
       @Override
       public void invoke(ServiceContext context)
-      { command.execute();
+      { 
+        command.execute();
+        if (command.getException()!=null)
+        { command.getException().printStackTrace();
+        }
       }
     };
   }
