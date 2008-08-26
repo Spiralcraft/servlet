@@ -156,6 +156,7 @@ public class DataSessionComponent
         state.setInitialized(true);
       }
     
+      
       super.message(context,message,path);
     } 
     finally

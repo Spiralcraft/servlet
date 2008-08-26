@@ -37,18 +37,23 @@ import spiralcraft.util.ArrayUtil;
 import spiralcraft.log.ClassLogger;
 
 /**
- * <p>Registers an action that triggers a command, presents no output
+ * <p>Registers a command to be triggered by the 'action' URI query parameter
+ * </p>
+ * 
+ * <p>The command is executed in the "prepare" stage of the request,
+ *   because the action is not a direct user response to a rendered page
+ *   state.
  * </p>
  * 
  * @author mike
  *
  */
-public class ActionComponent
+public class PageAction
   extends Component
 {
   
   private static final ClassLogger log
-    =ClassLogger.getInstance(ActionComponent.class);
+    =ClassLogger.getInstance(PageAction.class);
   
   private Expression<Command<?,?>> commandExpression;
   private Channel<Command<?,?>> commandChannel;  
@@ -67,13 +72,13 @@ public class ActionComponent
   {
     super.handleInitialize(context);
     if (actionName!=null)
-    { context.registerAction(createAction(context));
+    { 
+      context.registerAction(createAction(context));
+      if (debug)
+      { log.fine("Registered action "+actionName);
+      }
     }
-    if (commandChannel!=null)
-    {
-      ((ActionState) context.getState())
-        .setCommand(commandChannel.get());
-    }
+
     
   }
   
@@ -84,12 +89,19 @@ public class ActionComponent
     if (actionName==null)
     { context.registerAction(createAction(context));
     }
-    
-    if (commandChannel!=null)
+
+    Command<?,?> command=((ActionState) context.getState()).dequeueCommand();
+    if (command!=null)
     {
-      ((ActionState) context.getState())
-        .setCommand(commandChannel.get());
+      if (debug)
+      { log.fine("Executing action command for action "+actionName);
+      }
+      command.execute();
+      if (command.getException()!=null)
+      { command.getException().printStackTrace();
+      }
     }
+    
   }
   
   @Override
@@ -125,23 +137,20 @@ public class ActionComponent
     return new Action(actionName,context.getState().getPath())
     {
 
-      { clearable=ActionComponent.this.actionName==null;
+      { clearable=PageAction.this.actionName==null;
       }
       
      
       @Override
       public void invoke(ServiceContext context)
       { 
-        Command<?,?> command=((ActionState) context.getState()).getCommand();
-        if (command!=null)
-        {
-          command.execute();
-          if (command.getException()!=null)
-          { command.getException().printStackTrace();
-          }
+        if (PageAction.this.debug)
+        { log.fine("Action invoked "+getName());
         }
-        else
-        { log.fine("No command associated with action "+getName());
+        if (commandChannel!=null)
+        {
+          ((ActionState) context.getState())
+            .queueCommand(commandChannel.get());
         }
       }
       
@@ -160,16 +169,22 @@ class ActionState
 {
   private Command<?,?> command;
   
-  public ActionState(ActionComponent comp)
+  public ActionState(PageAction comp)
   { super(comp.getChildCount());
   }
   
-  public void setCommand(Command<?,?> command)
+  public void queueCommand(Command<?,?> command)
   { this.command=command;
   }
   
-  public Command<?,?> getCommand()
-  { return command;
+  public Command<?,?> dequeueCommand()
+  { 
+    try
+    { return command;
+    }
+    finally
+    { command=null;
+    }
   }
 }
 
