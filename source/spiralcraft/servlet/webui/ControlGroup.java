@@ -414,14 +414,14 @@ public abstract class ControlGroup<Ttarget>
 
   @Override
   @SuppressWarnings("unchecked")
-  public void command(ServiceContext context)
+  public void handleCommand(ServiceContext context)
   {
     ControlGroupState<Ttarget> state 
       = (ControlGroupState<Ttarget>) context.getState();
       
     while (true)
     {
-      super.command(context);
+      super.handleCommand(context);
 
       // Propogate messages sent by any executed Commands.
       //   We get our own message first.

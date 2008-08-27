@@ -25,6 +25,13 @@ import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
+/**
+ * <p>A TupleEditor suitable for an interactive HTML Form editing context
+ * </p>
+ * 
+ * @author mike
+ *
+ */
 public class TupleEditor
     extends spiralcraft.servlet.webui.components.TupleEditor
 {

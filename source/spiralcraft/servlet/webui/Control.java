@@ -187,12 +187,6 @@ public abstract class Control<Ttarget>
     ,LinkedList<Integer> path
     )
   {
-    if (message.getType()==CommandMessage.TYPE)
-    {
-      // Controls execute their queued commands in pre-order, to provide
-      //   data for children to reference
-      command((ServiceContext) context); 
-    } 
     
     try
     { super.message(context,message,path);
@@ -210,15 +204,6 @@ public abstract class Control<Ttarget>
       gather((ServiceContext) context); 
     } 
 
-    if (message.getType()==CommandMessage.TYPE)
-    {
-      // Controls also execute their queued commands in post-order, so that
-      //   any commands queued by child-component's commands will have a
-      //   chance to execute. 
-      
-      // Added 2008-08-18: Fix situation where login is triggered post-save.
-      command((ServiceContext) context); 
-    } 
   }
   
   public ControlGroup<?> getControlGroup()
@@ -257,7 +242,8 @@ public abstract class Control<Ttarget>
    * @param context
    */
   @SuppressWarnings("unchecked")
-  protected void command(ServiceContext context)
+  @Override
+  protected void handleCommand(ServiceContext context)
   {
     ControlState<Ttarget> state=((ControlState<Ttarget>) context.getState());
     

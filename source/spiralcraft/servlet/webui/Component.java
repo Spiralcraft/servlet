@@ -105,6 +105,9 @@ public abstract class Component
           );
       }
     }
+    else if (message.getType()==CommandMessage.TYPE)
+    { handleCommand((ServiceContext) context);
+    }
     else if (message.getType()==PrepareMessage.TYPE)
     { 
       handlePrepare((ServiceContext) context);
@@ -116,6 +119,9 @@ public abstract class Component
     
     super.message(context,message,path);
 
+    if (message.getType()==CommandMessage.TYPE)
+    { handleCommand((ServiceContext) context);
+    }
 
   }
   
@@ -123,7 +129,9 @@ public abstract class Component
   {
   }
 
-
+  protected void handleCommand(ServiceContext context)
+  {
+  }
   
   protected void handleAction(ServiceContext context,Action action)
   {

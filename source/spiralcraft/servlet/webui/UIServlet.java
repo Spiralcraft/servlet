@@ -30,6 +30,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.InitializeMessage;
+import spiralcraft.textgen.Message;
 import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.data.persist.XmlAssembly;
@@ -54,27 +55,64 @@ import java.util.List;
 import java.util.LinkedList;
 
 /**
- * <P>A Servlet which serves a WebUI Component tree.
- * </P>
+ * <p>A Servlet which serves a WebUI Component tree.
+ * </p>
  * 
- * <H3>Configuration</H3>
+ * <h3>Request processing stages
+ * </h3>
  * 
- * <P>A file, ui.config.xml, contains configuration data for the webui
+ * <ul>
+ *   <li><h4>Resource Session Initialization (at beginning of new session)</h4>
+ *     <p>Provides all components in the tree with an opportunity to set up their
+ *        initial session-state and register any permanent actions.
+ *     </p>
+ *   </li>
+ *   
+ *   <li><h4>Action processing</h4>
+ *     <p>Registers user/client actions encoded in the incoming HTTP request,
+ *       some of which may be in response to the UI state rendered in the
+ *       previous cycle. Actions in response to a previously rendered
+ *       UI state will complete any triggered activities. "Incoming" actions
+ *       not associated with the previous state will enqueue any triggered
+ *       commands for completion during the Command stage.
+ *     </p>
+ *   </li>
+ *   
+ *   <li><h4>Preparation of new state</h4>
+ *     <p>Provides all components in the tree with an opportunity to reset
+ *       their state for command processing and UI rendering.
+ *     </p>
+ *   </li>
+ *   
+ *   <li><h4>Command processing</h4>
+ *     <p>Executes any queued commands to perform computations before rendering.
+ *     </p>
+ *   </li>
+ *   
+ *   <li><h4>Rendering</h4>
+ *     <p>Components generate UI elements and register UI callback actions.
+ *     </p>
+ *   </li>
+ * </ul>
+ * 
+ * <h3>Configuration</h3>
+ * 
+ * <p>A optional file, ui.config.xml, contains configuration data for the webui
  *  servlet and is located in the same directory as the requested webui
  *  resource.
- * </P>
+ * </p>
  *
- * <H3>Mapping</H3>
+ * <h3>Mapping</h3>
  * 
- * <P><B>Path Mapping:</B> When the UiServlet is mapped to a path or is used
+ * <p><b>Path Mapping:</b> When the UiServlet is mapped to a path or is used
  * as the default mapping for an application, and no specific resource is 
  * specified in the request.pathInfo, the "default.webui" resource in the
  * directory specified by the request.servletPath path will be used.
- * </P>
+ * </p>
  * 
- * <P><B>Extension Mapping:</B> The UiServlet can be mapped to the *.webui 
+ * <p><b>Extension Mapping:</b> The UiServlet can be mapped to the *.webui 
  * extension to access to a specific resource directly.
- * </P>
+ * </p>
  *
  *
  */
@@ -91,13 +129,18 @@ public class UIServlet
   
   private HttpFocus<?> httpFocus;
   
+  private static final Message INITIALIZE_MESSAGE=new InitializeMessage();
+  private static final Message PREPARE_MESSAGE=new PrepareMessage();
+  private static final Message COMMAND_MESSAGE=new CommandMessage();
+  
   @Override
   public void init(ServletConfig config)
     throws ServletException
   { 
     super.init(config);
-    
   }
+  
+ 
   
   private void checkInit(HttpServletRequest request)
     throws ServletException
@@ -251,7 +294,7 @@ public class UIServlet
         // Initialize a fresh state
         serviceContext.setState(component.createState());
         // Set up state structure and register "initial" events
-        component.message(serviceContext,new InitializeMessage(),null);
+        component.message(serviceContext,INITIALIZE_MESSAGE,null);
       }
       else
       { 
@@ -280,8 +323,7 @@ public class UIServlet
       else
       {
 
-        component.message(serviceContext,new PrepareMessage(),null);
-      
+        component.message(serviceContext,PREPARE_MESSAGE,null);
         if (serviceContext.getRedirectURI()!=null)
         {
           // Redirect after prepare
@@ -291,7 +333,22 @@ public class UIServlet
             );
         }
         else
-        { render(component,serviceContext);
+        {
+        
+          component.message(serviceContext,COMMAND_MESSAGE,null);
+      
+          if (serviceContext.getRedirectURI()!=null)
+          {
+            // Redirect after commands
+            response.sendRedirect
+              (response.encodeRedirectURL
+                (serviceContext.getRedirectURI().toString())
+              );
+          }
+          else
+          { render(component,serviceContext);
+          }
+        
         }
       }
       

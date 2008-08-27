@@ -24,6 +24,7 @@ import spiralcraft.lang.Focus;
 
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.Component;
+import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 
 import spiralcraft.text.markup.MarkupException;
@@ -89,7 +90,13 @@ public class PageAction
     if (actionName==null)
     { context.registerAction(createAction(context));
     }
-
+    
+  }
+  
+  @Override
+  protected void handleCommand(ServiceContext context)
+  {
+  
     Command<?,?> command=((ActionState) context.getState()).dequeueCommand();
     if (command!=null)
     {
@@ -149,8 +156,19 @@ public class PageAction
         }
         if (commandChannel!=null)
         {
-          ((ActionState) context.getState())
-            .queueCommand(commandChannel.get());
+          Command<?,?> command=commandChannel.get();
+          if (command instanceof QueuedCommand)
+          { 
+            // We should run queued commands immediately, so they are not
+            //   double-queued.
+            command.execute();
+          }
+          else
+          {
+            // We'll execute the command at the Command stage.
+            ((ActionState) context.getState())
+              .queueCommand(commandChannel.get());
+          }
         }
       }
       
