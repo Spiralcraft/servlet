@@ -116,6 +116,15 @@ public abstract class ControlGroup<Ttarget>
         transaction=
           Transaction.startContextTransaction(Transaction.Nesting.ISOLATE);
         newTransaction=true;
+        if (debug)
+        { log.fine("Started new transaction");
+        }
+      }
+      else
+      {
+        if (debug)
+        { log.fine("Obtained existing transaction");
+        }
       }
     }
     

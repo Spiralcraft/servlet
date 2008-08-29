@@ -23,6 +23,7 @@ import spiralcraft.lang.Focus;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.VariableMapBinding;
+import spiralcraft.text.translator.Translator;
 
 /**
  * Provides access to the request Query string as part of a UI
@@ -38,6 +39,7 @@ public class RequestBinding<Tval>
   private boolean passNull;
   private boolean publish;
   private boolean debug;
+  private Translator translator;
   
   private VariableMapBinding<Tval> binding;
 
@@ -65,6 +67,10 @@ public class RequestBinding<Tval>
   { this.target = target;
   }
   
+  public void setTranslator(Translator translator)
+  { this.translator=translator;
+  }
+  
   public VariableMapBinding<Tval> getBinding()
   { return binding;
   }
@@ -76,6 +82,7 @@ public class RequestBinding<Tval>
     binding=new VariableMapBinding<Tval>(targetChannel,name);
     binding.setPassNull(passNull);
     binding.setDebug(debug);
+    binding.setTranslator(translator);
   
   }
   

@@ -17,10 +17,13 @@ package spiralcraft.servlet.webui;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import spiralcraft.lang.Channel;
 import spiralcraft.log.ClassLogger;
 import spiralcraft.net.http.VariableMap;
+import spiralcraft.text.ParseException;
+import spiralcraft.text.translator.Translator;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.StringConverter;
 
@@ -44,6 +47,8 @@ public class VariableMapBinding<Tvar>
   private Class<Tvar> clazz;
   private boolean passNull;
   private boolean debug;
+  private Translator translator;
+  
   
 
   public VariableMapBinding(Channel<Tvar> target,String name)
@@ -64,12 +69,84 @@ public class VariableMapBinding<Tvar>
     }
   }
 
+  /**
+   * <p>Specify a Translator which sits between the VariableMap and the
+   *   StringConverter and normalizes data read from the VariableMap and
+   *   published from the target. 
+   * </p>
+   * 
+   * @param translator
+   */
+  public void setTranslator(Translator translator)
+  { this.translator=translator;
+  }
+  
   public void setDebug(boolean debug)
   { this.debug=debug;
   }
   
   public void setPassNull(boolean passNull)
   { this.passNull = passNull;
+  }
+  
+  private Object translateValueIn(String val)
+  {
+    if (val==null)
+    { return null;
+    }
+    
+    String tval=val;
+    if (translator!=null)
+    { 
+      try
+      { tval=translator.translateIn(val);
+      }
+      catch (ParseException x)
+      {
+        // XXX This method should throw something explicit
+        log.log(Level.WARNING,"Error translating "+val,x);
+        throw new RuntimeException(x);
+      }
+    }
+    
+    if (converter!=null)
+    { return converter.fromString(tval);
+    }
+    else
+    { return tval;
+    }
+  }
+  
+  
+  private String translateValueOut(Object val)
+  {
+    if (val==null)
+    { return null;
+    }
+    
+    String sval;
+    if (converter!=null)
+    { sval=converter.toString(val);
+    }
+    else
+    { sval=(String) val;
+    }
+    
+    String tval=sval;
+    if (translator!=null)
+    { 
+      try
+      { tval=translator.translateOut(sval);
+      }
+      catch (ParseException x)
+      {
+        // XXX This method should throw something explicit
+        log.log(Level.WARNING,"Error translating "+sval,x);
+        throw new RuntimeException(x);
+      }
+        
+    }
+    return tval;
   }
   
   /**
@@ -89,107 +166,55 @@ public class VariableMapBinding<Tvar>
    */
   public List<String> translate()
   {
-    if (converter!=null)
+    if (array)
     {
-      if (array)
-      {
-        Tvar array=target.get();
-        if (debug)
-        { 
-          log.fine
-            ("Translating with "+converter+": "
-            +ArrayUtil.format(array, "," ,"\"")
-            );
-        }
+      Tvar array=target.get();
+      if (debug)
+      { 
+        log.fine
+          ("Translating : "
+          +ArrayUtil.format(array, "," ,"\"")
+          );
+      }
         
-        if (array==null)
-        { return null;
-        }
-        else
-        {
-          int len = Array.getLength(array);
-          List<String> ret=new ArrayList<String>(len);
-          for (int i=0;i<len;i++)
-          { 
-            Object val=Array.get(array,i);
-            if (val!=null)
-            { ret.add(converter.toString(val));
-            }
-          }
-          return ret;
-        }
+      if (array==null)
+      { return null;
       }
       else
       {
-        Tvar val=target.get();
-        if (debug)
+        int len = Array.getLength(array);
+        List<String> ret=new ArrayList<String>(len);
+        for (int i=0;i<len;i++)
         { 
-          log.fine
-            ("Translating with "+converter+": "
-            +val
-            );
+          Object val=Array.get(array,i);
+          String sval=translateValueOut(val);
+          if (sval!=null)
+          { ret.add(sval);
+          }
         }
-        if (val==null)
-        { return null;
-        }
-        else
-        {
-          List<String> ret=new ArrayList<String>(1);
-          ret.add(converter.toString(val));
-          return ret;
-        }
+        return ret;
       }
     }
     else
     {
-      if (array)
-      {
-        Tvar array=target.get();
-        if (debug)
-        { 
-          log.fine
-            ("Translating with "+converter+": "
-            +ArrayUtil.format(array, "," ,"\"")
-            );
-        }
-        if (array==null)
-        { return null;
-        }
-        else
-        {
-          int len = Array.getLength(array);
-          List<String> ret=new ArrayList<String>(len);
-          for (int i=0;i<len;i++)
-          { 
-            String val=(String) Array.get(array,i);
-            if (val!=null)
-            { ret.add(val);
-            }
-          }
-          return ret;
-        }
+      Tvar val=target.get();
+      if (debug)
+      { 
+        log.fine
+          ("Translating : "
+          +val
+          );
+      }
+      String sval=translateValueOut(val);
+      if (sval==null)
+      { return null;
       }
       else
       {
-        String val=(String) target.get();
-        if (debug)
-        { 
-          log.fine
-            ("Passing unconverted String value "
-            +val
-            );
-        }
-        if (val==null)
-        { return null;
-        }
-        else
-        {
-          List<String> ret=new ArrayList<String>(1);
-          ret.add(val);
-          return ret;
-        }
+        List<String> ret=new ArrayList<String>(1);
+        ret.add(sval);
+        return ret;
       }
-      
     }
   }
   
@@ -213,54 +238,32 @@ public class VariableMapBinding<Tvar>
     
     if (vals!=null && vals.size()>0)
     { 
-      if (converter!=null)
+
+      if (array)
       {
-        if (array)
-        {
-          Object array=Array.newInstance(clazz.getComponentType());
-          array=ArrayUtil.expandBy(array, vals.size());
-          int i=0;
-          for (String val : vals)
-          { 
-            Array.set(array, i++, converter.fromString(val));
-          }
-          
-          if (debug)
-          { log.fine("Setting target to "+vals);
-          }
-          target.set((Tvar) array);
-          
-        }
-        else
+        Object array=Array.newInstance(clazz.getComponentType());
+        array=ArrayUtil.expandBy(array, vals.size());
+        int i=0;
+        for (String val : vals)
         { 
-          Object value=converter.fromString(vals.get(0));
-          if (debug)
-          { log.fine("Setting target to "+value);
-          }
-          target.set((Tvar)value);
+          Array.set(array, i++, translateValueIn(val));
         }
-        
+         
+        if (debug)
+        { log.fine("Setting target to "+array);
+        }
+        target.set((Tvar) array);
+          
       }
       else
-      {
-        if (array)
-        {
-          String[] array=new String[vals.size()];
-          vals.toArray(array);
-          if (debug)
-          { log.fine("Setting target to "+array);
-          }
-          target.set((Tvar) array);
+      { 
+        Object value=translateValueIn(vals.get(0));
+        if (debug)
+        { log.fine("Setting target to "+value);
         }
-        else
-        {
-          if (debug)
-          { log.fine("Setting target to "+vals.get(0));
-          }
-          target.set((Tvar) vals.get(0));
-        }
-        
+        target.set((Tvar)value);
       }
+        
     }
     else if (passNull)
     { 
