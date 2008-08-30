@@ -189,14 +189,10 @@ public class Option<Ttarget,Tvalue>
         state.setSelected(state.getSelectState().isSelected(state.getValue()));
       }
       catch (AccessException x)
-      { 
-        state.setError(x.getMessage());
-        state.setException(x);
+      { state.setException(x);
       }
       catch (NumberFormatException x)
-      { 
-        state.setError(x.getMessage());
-        state.setException(x);
+      { state.setException(x);
       }
 
       

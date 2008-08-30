@@ -166,7 +166,11 @@ public class Button
           }
         }
         catch (AccessException x)
-        { state.setError(x.getMessage());
+        { 
+          state.addError(x.getMessage());
+          if (x.getCause()!=null)
+          { state.setException(x.getCause());
+          }
         }
       }
     }
@@ -185,7 +189,7 @@ public class Button
   public void scatter(ServiceContext context)
   { 
     ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
-    state.setError(null);
+    state.resetError();
   }
 
 

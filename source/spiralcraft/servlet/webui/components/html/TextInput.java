@@ -43,6 +43,8 @@ public class TextInput<Ttarget>
   private String name;
   private StringConverter<Ttarget> converter;
   private boolean password;
+  private boolean required;
+  
   
   /**
    * Whether the control is in password mode
@@ -53,8 +55,10 @@ public class TextInput<Ttarget>
   { this.password=password;
   }
   
-  private AbstractTag tag
-    =new AbstractTag()
+  private Tag tag=new Tag();
+  
+  class Tag 
+    extends AbstractTag
   {
     @Override
     protected String getTagName(EventContext context)
@@ -93,10 +97,17 @@ public class TextInput<Ttarget>
   { this.name=name;
   }
   
-  public AbstractTag getTag()
+  public Tag getTag()
   { return tag;
   }
+  
+  public ErrorTag getErrorTag()
+  { return errorTag;
+  }
 
+  public void setRequired(boolean required)
+  { this.required=required;
+  }
 
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
@@ -160,44 +171,61 @@ public class TextInput<Ttarget>
   {
     ControlState<String> state=((ControlState<String>) context.getState());
     //System.err.println("TextInput: readPost");
-    
+      
     // Only update if changed
-    if (context.getPost()!=null
-        && state.updateValue(context.getPost().getOne(state.getVariableName()))
-       )
+    if (context.getPost()!=null)
     {
     
-      if (target!=null)
-      {
+      String postVal=context.getPost().getOne(state.getVariableName());
+      if (debug)
+      { log.fine("Got posted value "+postVal);
+      }
+      // Empty strings should be null.
+      if (postVal!=null && postVal.length()==0)
+      { postVal=null;
+      }
+
+      if (required && postVal==null)
+      { 
         
-        try
+        if (debug)
+        { log.fine("Failed required test");
+        }
+        state.addError("Input required");
+      }
+      else if (state.updateValue(postVal))
+      {
+        if (target!=null)
         {
           
-          String val=state.getValue();
-          if (converter!=null && val!=null)
-          { target.set(converter.fromString(state.getValue()));
-          }
-          else
-          { target.set((Ttarget) val);
-          }
+          try
+          {
           
-        }
-        catch (AccessException x)
-        { 
-          state.setError(x.getMessage());
-          state.setException(x);
-        }
-        catch (NumberFormatException x)
-        { 
-          state.setError(x.getMessage());
-          state.setException(x);
-        }
-        catch (IllegalArgumentException x)
-        { 
-          state.setError(x.getMessage());
-          state.setException(x);
-        }
+            String val=state.getValue();
+          
+            Ttarget tval=null;
+            if (converter!=null && val!=null)
+            { tval=converter.fromString(val);
+            }
+            else
+            { tval=(Ttarget) val;
+            }
+            if (inspect(tval,state))
+            { target.set(tval);
+            }
+          
+          }
+          catch (AccessException x)
+          { state.setException(x);
+          }
+          catch (NumberFormatException x)
+          { state.setException(x);
+          }
+          catch (IllegalArgumentException x)
+          { state.setException(x);
+          }
 
+        }
       }
     }
 
@@ -232,14 +260,10 @@ public class TextInput<Ttarget>
         }
       }
       catch (AccessException x)
-      { 
-        state.setError(x.getMessage());
-        state.setException(x);
+      { state.setException(x);
       }
       catch (NumberFormatException x)
-      { 
-        state.setError(x.getMessage());
-        state.setException(x);
+      { state.setException(x);
       }
 
       

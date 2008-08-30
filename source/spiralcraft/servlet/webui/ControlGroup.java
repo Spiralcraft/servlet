@@ -28,6 +28,7 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.AccessException;
+import spiralcraft.lang.Reflector;
 
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.log.ClassLogger;
@@ -306,6 +307,14 @@ public abstract class ControlGroup<Ttarget>
       CompoundFocus myFocus = new CompoundFocus(parentFocus, valueBinding);
       myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
       focus=myFocus;
+      if (ruleSet!=null)
+      {
+        inspector
+          =ruleSet.bind
+            (valueBinding.getReflector()
+            ,parentFocus
+            );      
+      }
     } 
     else
     {
@@ -320,6 +329,15 @@ public abstract class ControlGroup<Ttarget>
       CompoundFocus myFocus = new CompoundFocus(parentFocus, null);
       myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
       focus=myFocus;
+      
+      if (ruleSet!=null)
+      {
+        inspector
+          =ruleSet.bind
+            ((Reflector<Ttarget>) parentFocus.getSubject().getReflector()
+            ,parentFocus
+            );
+      }
     }
     if (variableName == null)
     {
@@ -377,8 +395,7 @@ public abstract class ControlGroup<Ttarget>
         { log.fine("No target for editor, so not resetting state value");
         }
       }
-      state.setError(null);
-      state.setErrorState(false);
+      state.resetError();
       state.setDataState(DataState.SCATTERED);
     }
     catch (AccessException x)

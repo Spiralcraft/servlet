@@ -14,6 +14,10 @@
 //
 package spiralcraft.servlet.webui;
 
+import spiralcraft.rules.Inspector;
+import spiralcraft.rules.Rule;
+import spiralcraft.rules.RuleSet;
+import spiralcraft.rules.Violation;
 import spiralcraft.servlet.webui.ControlState.DataState;
 import spiralcraft.text.markup.MarkupException;
 
@@ -23,6 +27,7 @@ import spiralcraft.textgen.Message;
 
 import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.textgen.elements.Iterate;
+import spiralcraft.util.ArrayUtil;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -57,6 +62,9 @@ public abstract class Control<Ttarget>
   protected Expression<Ttarget> expression;
   protected int controlGroupStateDistance=-1;
   protected int iterationStateDistance=-1;
+  
+  protected RuleSet<Control<Ttarget>,Ttarget> ruleSet;
+  protected Inspector<Control<Ttarget>,Ttarget> inspector;
   
   public void setX(Expression<Ttarget> x)
   { this.expression=x;
@@ -137,7 +145,7 @@ public abstract class Control<Ttarget>
       {
         log.fine("NOT Calling SCATTER bc error state: "
           +this+" state="+state
-          +" error="+state.getError()
+          +" errors="+ArrayUtil.format(state.getErrors(),",",null)
           +" exception="+state.getException()
         );
       }
@@ -170,8 +178,55 @@ public abstract class Control<Ttarget>
       }
     }
     computeDistances();
+    if (ruleSet!=null)
+    {
+      inspector
+        =ruleSet.bind
+          (target.getReflector()
+          ,parentFocus
+          );      
+    }
     bindChildren(childUnits);
     
+  }
+  
+  /**
+   * <p>Specify any rules that apply to the data value managed by this
+   *   control.
+   * </p>
+   * 
+   * @param rules
+   */
+  public void setRules(Rule<Control<Ttarget>,Ttarget>[] rules)
+  {
+    if (ruleSet==null)
+    { ruleSet=new RuleSet<Control<Ttarget>,Ttarget>(this);
+    }
+    ruleSet.addRules(rules);
+  }
+  
+  /**
+   * <p>Inspect the value and process any Rule Violations, returning "true"
+   *   if there are no Rule Violations.
+   * </p>
+   * 
+   * @param value
+   * @return
+   */
+  protected boolean inspect(Ttarget value,ControlState<?> state)
+  {
+    if (inspector==null)
+    { return true;
+    }
+    Violation<Ttarget>[] violations=inspector.inspect(value);
+    if (violations==null)
+    { return true;
+    }
+    
+    for (Violation<Ttarget> violation : violations)
+    { state.addError(violation.getMessage());
+    }
+    return false;
   }
   
   protected void computeDistances()

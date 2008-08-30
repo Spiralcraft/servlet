@@ -49,8 +49,8 @@ public class ControlState<Tbuf>
   protected final Control<?> control;
   private String variableName;
   private Tbuf value;
-  private String error;
-  private Exception exception;
+  private List<String> errors;
+  private Throwable exception;
   private ArrayList<Command<Tbuf,?>> commands;
   private DataState dataState=DataState.INIT;
   
@@ -66,7 +66,7 @@ public class ControlState<Tbuf>
   }
   
   public boolean isErrorState()
-  { return error!=null || exception!=null;
+  { return errors!=null || exception!=null;
   }
   
   @Override
@@ -144,7 +144,7 @@ public class ControlState<Tbuf>
 
   public void resetError()
   { 
-    this.error=null;
+    this.errors=null;
     this.exception=null;
   }
   
@@ -161,7 +161,7 @@ public class ControlState<Tbuf>
    */
   public boolean updateValue(Tbuf value)
   { 
-    if (error!=null || exception!=null)
+    if (isErrorState())
     { 
       this.value=value;
       resetError();
@@ -204,27 +204,34 @@ public class ControlState<Tbuf>
   { this.value=value;
   }
   
-  public String getError()
-  { return error;
+  public String[] getErrors()
+  { 
+    if (errors==null || errors.isEmpty())
+    { return null;
+    }
+    else
+    { return errors.toArray(new String[errors.size()]);
+    }
   }
   
-  public void setError(String error)
+  public void addError(String error)
   { 
-    this.error=error;
-    if (error!=null && controlGroupState!=null)
+    if (errors==null)
+    { errors=new ArrayList<String>();
+    }
+    errors.add(error);
+    if (controlGroupState!=null)
     { controlGroupState.setErrorState(true);
     }
   }
   
-  public Exception getException()
+  public Throwable getException()
   { return exception;
   }
   
-  public void setException(Exception exception)
+  public void setException(Throwable exception)
   { 
-    if (error!=null)
-    { setError(exception.getMessage());
-    }
+    addError(exception.getMessage());
     this.exception=exception;
   }
   

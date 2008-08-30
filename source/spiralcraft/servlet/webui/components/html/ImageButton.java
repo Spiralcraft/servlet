@@ -141,7 +141,7 @@ public class ImageButton
           }
         }
         catch (AccessException x)
-        { state.setError(x.getMessage());
+        { state.setException(x);
         }
       }
     }
@@ -161,7 +161,7 @@ public class ImageButton
   public void scatter(ServiceContext context)
   { 
     ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
-    state.setError(null);
+    state.resetError();
     // At some point we need to read a command
   }
 

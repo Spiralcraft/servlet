@@ -417,7 +417,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           @Override
           public void run()
           { 
-            getState().queueMessage(SAVE_MESSAGE);
+            if (!getState().isErrorState())
+            { getState().queueMessage(SAVE_MESSAGE);
+            }
             
           }
         }
@@ -441,8 +443,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           @Override
           public void run()
           { 
-            getState().queueMessage(SAVE_MESSAGE);
-            getState().setPostSaveCommand(postSaveCommand);
+            if (!getState().isErrorState())
+            {
+              getState().queueMessage(SAVE_MESSAGE);
+              getState().setPostSaveCommand(postSaveCommand);
+            }
           }
         }
       );

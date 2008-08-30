@@ -156,7 +156,7 @@ public class SubmitButton
           }
         }
         catch (AccessException x)
-        { state.setError(x.getMessage());
+        { state.setException(x);
         }
       }
     }
@@ -176,8 +176,7 @@ public class SubmitButton
   public void scatter(ServiceContext context)
   { 
     ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
-    state.setError(null);
-    // At some point we need to read a command
+    state.resetError();
   }
 
 

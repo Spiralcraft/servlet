@@ -212,14 +212,10 @@ public class Select<Ttarget,Tvalue>
         }
       }
       catch (AccessException x)
-      { 
-        state.setError(x.getMessage());
-        state.setException(x);
+      { state.setException(x);
       }
       catch (NumberFormatException x)
-      { 
-        state.setError(x.getMessage());
-        state.setException(x);
+      { state.setException(x);
       }
     }
 
@@ -246,14 +242,10 @@ public class Select<Ttarget,Tvalue>
         
       }
       catch (AccessException x)
-      { 
-        state.setError(x.getMessage());
-        state.setException(x);
+      { state.setException(x);
       }
       catch (NumberFormatException x)
-      { 
-        state.setError(x.getMessage());
-        state.setException(x);
+      { state.setException(x);
       }
 
       

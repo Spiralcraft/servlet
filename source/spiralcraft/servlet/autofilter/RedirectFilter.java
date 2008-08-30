@@ -49,9 +49,17 @@ public class RedirectFilter
     String url=redirectURL;
     if (!absolute)
     { 
+      URI requestURI
+        =URI.create(((HttpServletRequest) request).getRequestURL().toString());
+      
       url
-        =URI.create(((HttpServletRequest) request).getRequestURL().toString())
-          .resolve(redirectURL).toString();
+        =requestURI.resolve
+          (redirectURL
+            +(requestURI.getQuery()!=null
+              ?"?"+requestURI.getQuery()
+              :""
+             )
+          ).toString();
     }
     HttpServletResponse httpResponse=(HttpServletResponse) response;
     httpResponse.sendRedirect(httpResponse.encodeRedirectURL(url));

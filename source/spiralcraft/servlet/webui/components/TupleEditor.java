@@ -133,7 +133,7 @@ public abstract class TupleEditor
             }
             catch (Exception x)
             { 
-              getState().setError("Error deleting");
+              getState().addError("Error deleting data:");
               getState().setException(x);
             }
           }
@@ -160,7 +160,7 @@ public abstract class TupleEditor
             }
             catch (Exception x)
             { 
-              getState().setError("Error queuing command");
+              getState().addError("Error queuing command:");
               getState().setException(x);
             }
           }

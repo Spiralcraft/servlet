@@ -57,6 +57,7 @@ public class ErrorTag
   public void setTagName(String tagName)
   { this.tagName=tagName;
   }
+  
     
   @Override
   protected boolean hasContent()
@@ -79,8 +80,14 @@ public class ErrorTag
     ControlState<?> state=(ControlState<?>) context.getState();
     Writer out=context.getWriter();
     
-    if (state.getError()!=null)
-    { out.write(state.getError());
+    String[] errors=state.getErrors();
+    if (errors!=null)
+    { 
+      for (String string: errors)
+      { 
+        out.write(string);
+        out.write("<br/>");
+      }
     }
     if (state.getException()!=null)
     { 

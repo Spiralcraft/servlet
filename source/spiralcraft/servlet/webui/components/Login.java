@@ -41,6 +41,7 @@ import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.util.ArrayUtil;
 
 
 /**
@@ -178,7 +179,7 @@ public class Login
     { 
       if (interactive)
       {
-        state.setError
+        state.addError
           (failureMessage);
         if (debug)
         { log.fine("Interactive login failure: entry="+getState().getValue());
@@ -299,7 +300,7 @@ public class Login
       {
         log.log
           (Level.FINE
-          ,"Error on login: "+state.getError()
+          ,"Error on login: "+ArrayUtil.format(state.getErrors(),",",null)
           ,state.getException()
           );
       }
