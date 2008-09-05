@@ -28,7 +28,6 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.AccessException;
-import spiralcraft.lang.Reflector;
 
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.log.ClassLogger;
@@ -307,14 +306,7 @@ public abstract class ControlGroup<Ttarget>
       CompoundFocus myFocus = new CompoundFocus(parentFocus, valueBinding);
       myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
       focus=myFocus;
-      if (ruleSet!=null)
-      {
-        inspector
-          =ruleSet.bind
-            (valueBinding.getReflector()
-            ,parentFocus
-            );      
-      }
+      bindRules(target.getReflector(),parentFocus);
     } 
     else
     {
@@ -329,15 +321,10 @@ public abstract class ControlGroup<Ttarget>
       CompoundFocus myFocus = new CompoundFocus(parentFocus, null);
       myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
       focus=myFocus;
-      
-      if (ruleSet!=null)
-      {
-        inspector
-          =ruleSet.bind
-            ((Reflector<Ttarget>) parentFocus.getSubject().getReflector()
-            ,parentFocus
-            );
-      }
+      bindRules
+        (((Channel<Ttarget>) parentFocus.getSubject()).getReflector()
+        ,parentFocus
+        );
     }
     if (variableName == null)
     {

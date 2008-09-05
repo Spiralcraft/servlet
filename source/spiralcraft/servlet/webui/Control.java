@@ -41,6 +41,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Expression;
+import spiralcraft.lang.Reflector;
 import spiralcraft.lang.Setter;
 import spiralcraft.log.ClassLogger;
 
@@ -178,16 +179,22 @@ public abstract class Control<Ttarget>
       }
     }
     computeDistances();
+    bindRules(target.getReflector(),parentFocus);
+    bindChildren(childUnits);
+    
+  }
+  
+  protected void bindRules(Reflector<Ttarget> reflector,Focus<?> focus)
+    throws BindException
+  {
     if (ruleSet!=null)
     {
       inspector
         =ruleSet.bind
-          (target.getReflector()
-          ,parentFocus
+          (reflector
+          ,focus
           );      
     }
-    bindChildren(childUnits);
-    
   }
   
   /**
