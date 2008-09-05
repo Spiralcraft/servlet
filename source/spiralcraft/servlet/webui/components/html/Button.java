@@ -166,11 +166,7 @@ public class Button
           }
         }
         catch (AccessException x)
-        { 
-          state.addError(x.getMessage());
-          if (x.getCause()!=null)
-          { state.setException(x.getCause());
-          }
+        { state.setException(x);
         }
       }
     }
@@ -184,12 +180,9 @@ public class Button
     }
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void scatter(ServiceContext context)
   { 
-    ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
-    state.resetError();
   }
 
 

@@ -179,7 +179,16 @@ public abstract class Control<Ttarget>
       }
     }
     computeDistances();
-    bindRules(target.getReflector(),parentFocus);
+    if (target!=null)
+    { bindRules(target.getReflector(),parentFocus);
+    }
+    else if (parentFocus.getSubject()!=null)
+    { 
+      bindRules
+        ((Reflector<Ttarget>) parentFocus.getSubject().getReflector()
+        ,parentFocus
+        );
+    }
     bindChildren(childUnits);
     
   }
@@ -242,6 +251,7 @@ public abstract class Control<Ttarget>
     iterationStateDistance=getParent().getStateDistance(Iterate.class);
   }
   
+  @SuppressWarnings("unchecked") // State cast
   @Override
   public void message
     (EventContext context
@@ -249,6 +259,12 @@ public abstract class Control<Ttarget>
     ,LinkedList<Integer> path
     )
   {
+
+    if (message.getType()==GatherMessage.TYPE)
+    {
+      // Reset error in pre-order, so controls can raise it if needed.
+      ((ControlState<Ttarget>) context.getState()).resetError(); 
+    } 
     
     try
     { super.message(context,message,path);
@@ -364,7 +380,6 @@ public abstract class Control<Ttarget>
     
     super.render(context);
     state.setDataState(DataState.RENDERED);
-    state.resetError();
   }
   
   protected Setter<?>[] bindAssignments(Assignment<?>[] assignments)

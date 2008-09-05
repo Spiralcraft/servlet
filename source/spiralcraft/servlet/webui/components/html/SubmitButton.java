@@ -171,12 +171,9 @@ public class SubmitButton
     }
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void scatter(ServiceContext context)
   { 
-    ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
-    state.resetError();
   }
 
 

@@ -41,7 +41,13 @@ public class ErrorTag
 
   @Override
   protected String getTagName(EventContext context)
-  { return tagName;
+  { 
+    if (((ControlState<?>) context.getState()).getErrors()!=null)
+    { return tagName;
+    }
+    else
+    { return null;
+    }
   }
 
   /**

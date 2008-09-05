@@ -208,6 +208,7 @@ public abstract class AbstractTag
    */
   protected abstract boolean hasContent();
   
+  
   protected void renderContent(EventContext context)
     throws IOException
   { 
@@ -234,6 +235,7 @@ public abstract class AbstractTag
   public final void render(EventContext context)
     throws IOException
   { 
+    
     boolean hasContent=hasContent();
 
     renderBefore(context);

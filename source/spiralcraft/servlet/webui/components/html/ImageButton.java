@@ -156,14 +156,6 @@ public class ImageButton
     }
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
-  @Override
-  public void scatter(ServiceContext context)
-  { 
-    ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
-    state.resetError();
-    // At some point we need to read a command
-  }
 
   public class Tag
     extends AbstractTag
@@ -192,6 +184,14 @@ public class ImageButton
     protected boolean hasContent()
     { return false;
     }
+  }
+
+
+  @Override
+  protected void scatter(ServiceContext context)
+  {
+    // TODO Auto-generated method stub
+    
   }
   
 }

@@ -19,6 +19,8 @@ import java.util.List;
 
 import spiralcraft.command.Command;
 import spiralcraft.log.ClassLogger;
+import spiralcraft.rules.RuleException;
+import spiralcraft.rules.Violation;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.MementoState;
 
@@ -161,39 +163,42 @@ public class ControlState<Tbuf>
    */
   public boolean updateValue(Tbuf value)
   { 
-    if (isErrorState())
-    { 
-      this.value=value;
-      resetError();
-      return true;
-    }
-    else
-    { 
-      if (this.value==null)
-      {
-        if (value!=null)
-        { 
-          this.value=value;
-          return true;
-        }
-        else
-        { return false;
-        }
-      }
-      else if (value==null)
-      { 
-        this.value=null;
-        return true;
-      }
-      else if (!this.value.equals(value))
-      { 
-        this.value=value;
-        return true;
-      }
-      else
-      { return false;
-      }
-    }    
+    this.value=value;
+    return true;
+    
+//    if (isErrorState())
+//    { 
+//      this.value=value;
+//      resetError();
+//      return true;
+//    }
+//    else
+//    { 
+//      if (this.value==null)
+//      {
+//        if (value!=null)
+//        { 
+//          this.value=value;
+//          return true;
+//        }
+//        else
+//        { return false;
+//        }
+//      }
+//      else if (value==null)
+//      { 
+//        this.value=null;
+//        return true;
+//      }
+//      else if (!this.value.equals(value))
+//      { 
+//        this.value=value;
+//        return true;
+//      }
+//      else
+//      { return false;
+//      }
+//    }    
   }
   
   public Tbuf getValue()
@@ -231,7 +236,37 @@ public class ControlState<Tbuf>
   
   public void setException(Throwable exception)
   { 
-    addError(exception.getMessage());
+    if (exception instanceof RuleException)
+    {
+      RuleException re=(RuleException) exception;
+      for (Violation<?> v : re.getViolations())
+      { addError(v.getMessage());
+      }
+    }
+    else
+    { 
+      if (exception.getMessage()!=null)
+      { 
+        if (exception.getCause()==null 
+            || !exception.getMessage().equals(exception.getCause().toString())
+            )
+        { 
+          // Keep programmatic strings from coming up into the UI
+          addError(exception.getMessage());
+        }
+      }
+      else if (exception.getCause()==null && this.errors.isEmpty())
+      { 
+        // Only do this if we have nothing else to display and nothing
+        //   was added to the errors list.
+        addError(exception.toString());
+      }
+    }
+    if (exception.getCause()!=null)
+    { 
+      // Recursively go through causes and add error information
+      setException(exception.getCause());
+    }
     this.exception=exception;
   }
   
