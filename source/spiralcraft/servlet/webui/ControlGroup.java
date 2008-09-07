@@ -20,6 +20,7 @@ import java.util.logging.Level;
 
 import java.io.IOException;
 
+import spiralcraft.data.transaction.RollbackException;
 import spiralcraft.data.transaction.Transaction;
 import spiralcraft.data.transaction.TransactionException;
 import spiralcraft.lang.BindException;
@@ -126,6 +127,9 @@ public abstract class ControlGroup<Ttarget>
         { log.fine("Obtained existing transaction");
         }
       }
+      if (debug)
+      { transaction.setDebug(true);
+      }
     }
     
     try
@@ -157,6 +161,12 @@ public abstract class ControlGroup<Ttarget>
       
       if (newTransaction)
       { transaction.commit();
+      }
+    }
+    catch (RollbackException x)
+    {
+      if (debug)
+      { log.fine("Transaction rolled back");
       }
     }
     catch (TransactionException x)
