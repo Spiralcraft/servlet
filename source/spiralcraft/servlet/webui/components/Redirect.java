@@ -100,16 +100,20 @@ public class Redirect
   protected void handlePrepare(ServiceContext context)
   { 
     super.handlePrepare(context);
-    if (whenChannel!=null && whenChannel.get())
+    if (whenChannel!=null)
     {
-      try
-      { setupRedirect(context);
-      }
-      catch (ServletException x)
-      { x.printStackTrace();
+      Boolean val=whenChannel.get();
+      if (val!=null && val)
+      {
+        try 
+        { setupRedirect(context);
+        }
+        catch (ServletException x)
+        { x.printStackTrace();
+        }
       }
     }
-    
+   
   }
   
   @Override
@@ -117,16 +121,23 @@ public class Redirect
     throws IOException
   {
 
-    if (whenChannel!=null && whenChannel.get())
+    if (whenChannel!=null)
     {
-      log.fine("Redirect on render");
-      try
-      { setupRedirect((ServiceContext) context);
+      Boolean val=whenChannel.get();
+      if (val!=null && val)
+      {
+        log.fine("Redirect on render");
+        try
+        { setupRedirect((ServiceContext) context);
+        }
+        catch (ServletException x)
+        { 
+          x.printStackTrace();
+          context.getWriter().write(x.toString());
+        }
       }
-      catch (ServletException x)
-      { 
-        x.printStackTrace();
-        context.getWriter().write(x.toString());
+      else
+      { super.render(context);
       }
     }
     else
