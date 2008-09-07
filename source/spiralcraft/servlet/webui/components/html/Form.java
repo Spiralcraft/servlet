@@ -47,12 +47,21 @@ public class Form<T>
   
   private Expression<Command<?,?>> onPost;
   private Channel<Command<?,?>> onPostChannel;
+
+  private final Tag tag=new Tag();
   
-  private final AbstractTag tag=new AbstractTag()
+  class Tag
+    extends AbstractTag
   {
+  	private String tagName="form";
+  	
     @Override
     protected String getTagName(EventContext context)
-    { return "form";
+    { return tagName;
+    }
+    
+    public void setTagName(String tagName)
+    { this.tagName=tagName;
     }
     
     @Override
@@ -86,6 +95,23 @@ public class Form<T>
   };
   
   private final ErrorTag errorTag=new ErrorTag(tag);
+  
+  /**
+   * 
+   * @return The Tag which controls the HTML markup output of this Control
+   */
+  public Tag getTag()
+  { return tag;
+  }
+  
+  /**
+   * 
+   * @return The ErrorTag which outputs error information associated with
+   *   this Control
+   */
+  public ErrorTag getErrorTag()
+  { return errorTag;
+  }
   
   public void setOnPost(Expression<Command<?,?>> onPost)
   { this.onPost=onPost;
@@ -175,6 +201,8 @@ public class Form<T>
     { tag.render(context);
     }
   }
+  
+  
   
   @Override
   public FormState<T> createState()
