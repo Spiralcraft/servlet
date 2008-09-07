@@ -197,11 +197,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected abstract void save()
     throws DataException;
   
-  @SuppressWarnings("unchecked")
   protected void setupSession(Focus<?> parentFocus)
   {
     Focus<DataSession> sessionFocus
-      =(Focus<DataSession>) parentFocus.findFocus(DataSession.FOCUS_URI);
+      =parentFocus.<DataSession>findFocus(DataSession.FOCUS_URI);
     if (sessionFocus!=null)
     { sessionChannel=sessionFocus.getSubject();
     }

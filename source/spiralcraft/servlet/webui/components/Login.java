@@ -125,11 +125,10 @@ public class Login
   { this.failureMessage=failureMessage;
   }
   
-  @SuppressWarnings("unchecked")
   protected void setupSession(Focus<?> parentFocus)
   {
     Focus<AuthSession> sessionFocus
-      =(Focus<AuthSession>) parentFocus.findFocus(AuthSession.FOCUS_URI);
+      =parentFocus.<AuthSession>findFocus(AuthSession.FOCUS_URI);
     if (sessionFocus!=null)
     { sessionChannel=sessionFocus.getSubject();
     }
@@ -368,7 +367,6 @@ public class Login
   }
    
 
-  @SuppressWarnings("unchecked")
   @Override
   protected Channel<?> bindTarget(Focus<?> parentFocus)
     throws BindException
@@ -377,7 +375,7 @@ public class Login
     //   a ThreadLocalChannel for our LoginEntry, which is directly managed
     //   by this class.
     Focus<SecurityFilter> secFilterFocus
-      =(Focus<SecurityFilter>) parentFocus.findFocus(SecurityFilter.FOCUS_URI);
+      =parentFocus.<SecurityFilter>findFocus(SecurityFilter.FOCUS_URI);
     if (secFilterFocus!=null)
     { securityFilter=secFilterFocus.getSubject().get();
     }

@@ -79,11 +79,11 @@ public class Guard
   { loginURI=uri;
   }
   
-  @SuppressWarnings("unchecked")
+
   protected void setupSession(Focus<?> parentFocus)
   {
     Focus<AuthSession> sessionFocus
-      =(Focus<AuthSession>) parentFocus.findFocus(AuthSession.FOCUS_URI);
+      =parentFocus.<AuthSession>findFocus(AuthSession.FOCUS_URI);
     if (sessionFocus!=null)
     { sessionChannel=sessionFocus.getSubject();
     }
