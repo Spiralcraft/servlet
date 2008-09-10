@@ -691,6 +691,9 @@ public class Controller
         for (AutoFilter filter: localFilters)
         { 
           filter.setPath(container);
+          // TODO: Make a Focus chain
+          //   filter.bind(lastFilter.getFocus());
+          //   
           filter.init(config);
         }
       }

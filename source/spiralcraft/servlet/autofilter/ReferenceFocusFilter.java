@@ -25,16 +25,11 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLogger;
-import spiralcraft.registry.Registry;
 
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
-import spiralcraft.data.builder.BuilderType;
 import spiralcraft.data.persist.AbstractXmlObject;
-import spiralcraft.data.persist.PersistenceException;
-import spiralcraft.data.persist.PersistentFocusProvider;
-import spiralcraft.data.persist.XmlAssembly;
-import spiralcraft.data.persist.XmlBean;
+//import spiralcraft.data.persist.PersistentFocusProvider;
 
 import spiralcraft.builder.LifecycleException;
 
@@ -86,52 +81,9 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   { this.scope=scope;
   }
 
-
-
   private AbstractXmlObject<Treferent,?> createReference()
     throws BindException
-  {
-    AbstractXmlObject<Treferent,?> reference;
-    
-    if (type instanceof BuilderType)
-    { 
-      try
-      {
-        XmlAssembly<Treferent> assy
-          =new XmlAssembly<Treferent>(type.getURI(),instanceURI);
-        assy.register(Registry.getLocalRoot());
-        assy.start();
-        reference=assy;
-        
-      }
-      catch (PersistenceException x)
-      { throw new BindException("Error creating XmlAssembly: "+x,x);
-      }
-      catch (LifecycleException x)
-      { throw new BindException("Error creating XmlAssembly: "+x,x);
-      }
-    }
-    else
-    {
-      try
-      {
-        XmlBean<Treferent> bean
-          =new XmlBean<Treferent>(type.getURI(),instanceURI);
-        bean.register(Registry.getLocalRoot());
-        bean.start();
-        reference=bean;
-        
-      }
-      catch (PersistenceException x)
-      { throw new BindException("Error creating XmlBean: "+x,x);
-      }
-      catch (LifecycleException x)
-      { throw new BindException("Error starting XmlBean: "+x,x);
-      }
-      
-    }
-    return reference;
-    
+  { return AbstractXmlObject.<Treferent>create(type.getURI(),instanceURI,null);
   }
 
   /**
@@ -192,15 +144,23 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     // XXX Register as session event listener
     
     private Focus<Tfocus> referencedFocus;
-    private PersistentFocusProvider<Treferent,Tfocus> focusProvider;
+    private AbstractXmlObject<Treferent,Tfocus> reference;
     
+//    private PersistentFocusProvider<Treferent,Tfocus> focusProvider;
+    
+    @SuppressWarnings("unchecked") // Cast reference to contain Tfocus
     public FocusHolder(Focus<?> parentFocus)
       throws BindException
     { 
-      focusProvider=new PersistentFocusProvider<Treferent,Tfocus>
-        (createReference());
+      reference=(AbstractXmlObject<Treferent,Tfocus>) createReference();
+      reference.bind(parentFocus);
       
-      referencedFocus=focusProvider.createFocus(parentFocus);
+      referencedFocus=(Focus<Tfocus>) reference.getFocus();
+      
+//      focusProvider=new PersistentFocusProvider<Treferent,Tfocus>
+//        (createReference());
+      
+//      referencedFocus=focusProvider.createFocus(parentFocus);
       
     }
     
@@ -211,7 +171,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     
     public void destroy()
       throws LifecycleException
-    { focusProvider.getReference();
+    { reference.stop();
     }
   }
 
