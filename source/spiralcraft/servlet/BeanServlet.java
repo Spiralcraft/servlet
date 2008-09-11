@@ -71,6 +71,7 @@ public class BeanServlet
           (URI.create("class:/javax/servlet/Servlet")
           , resourceURI
           , null
+          , null
           );
         delegate=ref.get();
         delegate.init(getServletConfig());

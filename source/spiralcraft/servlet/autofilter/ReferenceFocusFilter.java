@@ -35,8 +35,9 @@ import spiralcraft.builder.LifecycleException;
 
 
 /**
- * Creates a Focus from an persistent reference Assembly via a 
+ * <p>Creates a Focus from an persistent reference Assembly via a 
  *   spiralcraft.data.persist.XmlAssembly
+ * </p>
  */
 public class ReferenceFocusFilter<Treferent,Tfocus>
     extends FocusFilter<Tfocus>
@@ -81,10 +82,6 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   { this.scope=scope;
   }
 
-  private AbstractXmlObject<Treferent,?> createReference()
-    throws BindException
-  { return AbstractXmlObject.<Treferent>create(type.getURI(),instanceURI,null);
-  }
 
   /**
    * Called -once- to create the Focus
@@ -152,8 +149,13 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     public FocusHolder(Focus<?> parentFocus)
       throws BindException
     { 
-      reference=(AbstractXmlObject<Treferent,Tfocus>) createReference();
-      reference.bind(parentFocus);
+      if (parentFocus==null)
+      { parentFocus=new SimpleFocus(null);
+      }
+      
+      reference=(AbstractXmlObject<Treferent,Tfocus>) 
+        AbstractXmlObject.<Treferent>create
+          (type.getURI(),instanceURI,null,parentFocus);
       
       referencedFocus=(Focus<Tfocus>) reference.getFocus();
       
