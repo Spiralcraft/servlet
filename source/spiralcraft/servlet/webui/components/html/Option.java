@@ -80,7 +80,7 @@ public class Option<Ttarget,Tvalue>
       OptionState<Tvalue> state=((OptionState<Tvalue>) context.getState());
 
       if (state.isSelected())
-      { renderAttribute(context.getWriter(),"selected",null);
+      { renderAttribute(context.getWriter(),"selected","selected");
       }
       if (converter!=null)
       { 
