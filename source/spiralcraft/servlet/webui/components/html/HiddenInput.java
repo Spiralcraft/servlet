@@ -25,23 +25,12 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
 
-public class TextInput<Ttarget>
+public class HiddenInput<Ttarget>
   extends AbstractTextControl<Ttarget>
 {
 //  private static final ClassLogger log
 //    =ClassLogger.getInstance(TextInput.class);
   
-  private boolean password;
-  
-  
-  /**
-   * Whether the control is in password mode
-   * 
-   * @param password
-   */
-  public void setPassword(boolean password)
-  { this.password=password;
-  }
   
   private Tag tag=new Tag();
   
@@ -59,14 +48,9 @@ public class TextInput<Ttarget>
       throws IOException
     {   
       ControlState<String> state=((ControlState<String>) context.getState());
-      if (password)
-      { renderAttribute(context.getWriter(),"type","password");
-      }
-      else
-      { renderAttribute(context.getWriter(),"type","text");
-      }
+      renderAttribute(context.getWriter(),"type","hidden");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
-      if (!password && state.getValue()!=null)
+      if (state.getValue()!=null)
       { renderAttribute(context.getWriter(),"value",state.getValue());
       }
       super.renderAttributes(context);

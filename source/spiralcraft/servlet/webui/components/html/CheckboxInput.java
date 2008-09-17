@@ -47,6 +47,8 @@ public class CheckboxInput
     =ClassLogger.getInstance(TextInput.class);
   
   private String name;
+  private boolean reverse;
+  
   
   private AbstractTag tag
     =new AbstractTag()
@@ -83,6 +85,17 @@ public class CheckboxInput
   
   public void setName(String name)
   { this.name=name;
+  }
+  
+  /**
+   * <p>Indicate that, when checked, a value of false should be written to
+   *   the bound target
+   * </p>
+   * 
+   * @param reverse
+   */
+  public void setReverse(boolean reverse)
+  { this.reverse=reverse;
   }
   
   public AbstractTag getTag()
@@ -152,7 +165,13 @@ public class CheckboxInput
         {
         
           try
-          { target.set(value);
+          { 
+            if (!reverse)
+            { target.set(value);
+            }
+            else
+            { target.set(!value);
+            }
           }
           catch (AccessException x)
           { state.setException(x);
@@ -175,6 +194,10 @@ public class CheckboxInput
       try
       {
         Boolean val=target.get();
+        if (reverse && val!=null)
+        { val=!val;
+        }
+        
         if (debug)
         { log.fine(toString()+" scattering "+val);
         }
