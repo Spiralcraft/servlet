@@ -85,7 +85,7 @@ public abstract class AbstractTextControl<Ttarget>
       }
     }
     if (target==null)
-    { log.fine("Not bound to anything (formvar name="+name+")");
+    { log.fine(getLogPrefix()+"Not bound to anything (formvar name="+name+")");
     }
   }
   
@@ -105,7 +105,7 @@ public abstract class AbstractTextControl<Ttarget>
       {
         Ttarget val=target.get();
         if (debug)
-        { log.fine(toString()+" scattering "+val);
+        { log.fine(getLogPrefix()+" scattering "+val);
         }
         if (val!=null)
         {
@@ -145,8 +145,18 @@ public abstract class AbstractTextControl<Ttarget>
     
       String postVal=context.getPost().getOne(state.getVariableName());
       if (debug)
-      { log.fine("Got posted value "+postVal);
+      { log.fine(getLogPrefix()+"Got posted value "+postVal);
       }
+      
+      if (postVal==null && !state.getPresented())
+      { 
+        if (debug)
+        { log.fine(getLogPrefix()+"Ignoring not-presented control");
+        }
+        return;
+      }
+      
+      
       // Empty strings should be null.
       if (postVal!=null && postVal.length()==0)
       { postVal=null;
@@ -156,7 +166,7 @@ public abstract class AbstractTextControl<Ttarget>
       { 
         
         if (debug)
-        { log.fine("Failed required test");
+        { log.fine(getLogPrefix()+"Failed required test");
         }
         state.addError("Input required");
       }
@@ -196,5 +206,7 @@ public abstract class AbstractTextControl<Ttarget>
       }
     }
 
-  }  
+  }
+  
+
 }

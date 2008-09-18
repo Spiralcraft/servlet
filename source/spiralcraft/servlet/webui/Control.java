@@ -133,6 +133,7 @@ public abstract class Control<Ttarget>
   protected void handlePrepare(ServiceContext context)
   { 
     ControlState<Ttarget> state = (ControlState) context.getState();
+    state.setPresented(false);
     if (!state.isErrorState())
     { 
       if (debug)
@@ -397,5 +398,14 @@ public abstract class Control<Ttarget>
     return null;
   }
 
+  protected String getLogPrefix()
+  {
+    
+    String id=getId();
+    String variableName=getVariableName();
+    return toString()+(id!=null?"id="+id+": ":"")+"name="+variableName+" ";
+    
+    
+  }  
 }
 

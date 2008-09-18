@@ -163,6 +163,7 @@ public class Select<Ttarget,Tvalue>
     else
     { tag.render(context);
     }
+    ((ControlState<?>) context.getState()).setPresented(true);
   }
   
 //  void setValueConverter(StringConverter<Tvalue> converter)
@@ -193,8 +194,18 @@ public class Select<Ttarget,Tvalue>
         if (debug)
         { log.fine("Read ["+strings+"] from posted formvar "+state.getVariableName());
         }
+        
         if (strings==null || strings.size()==0)
-        { val=null;
+        { 
+          if (!state.getPresented())
+          {
+            if (debug)
+            { log.fine(getLogPrefix()+"Ignoring not-presented control");
+            }
+            return;
+          }
+          
+          val=null;
         }
         else if (strings.get(0)!=null && !(strings.get(0).length()==0))
         { val=converter.fromString(strings.get(0));

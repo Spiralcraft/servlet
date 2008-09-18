@@ -53,6 +53,7 @@ public class TextArea<Ttarget>
     else
     { tag.render(context);
     }
+    ((ControlState<?>) context.getState()).setPresented(true);
   }  
 
   public class Tag

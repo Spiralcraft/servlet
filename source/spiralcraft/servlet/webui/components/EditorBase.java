@@ -76,6 +76,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected Assignment<?>[] newAssignments;
   protected Assignment<?>[] publishedAssignments;
   protected RequestBinding<?>[] requestBindings;
+  protected RequestBinding<?>[] redirectBindings;
 
   
   private URI redirectOnSaveURI;
@@ -135,6 +136,20 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       });
   }  
 
+  private void applyRedirectBindings(ServiceContext context)
+  {
+    if (redirectBindings!=null)
+    {
+      for (RequestBinding<?> binding: redirectBindings)
+      { 
+        if (debug)
+        { log.fine("Applying redirectBinding "+binding.getName());
+        }
+        binding.publish(context);
+      }
+    }
+  }
+  
   private void handleRedirect(ServiceContext context,URI specificRedirectURI)
   {
     URI redirectURI=redirectOnSaveURI;
@@ -165,6 +180,8 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
       // Don't mix up parameters intended for the current page. 
       context.clearParameters();
+      
+      applyRedirectBindings(context);
       
       try
       { context.redirect(redirectURI);
@@ -326,14 +343,31 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
 
   /**
-   * <p>RequestBindings are applied to the buffer on every request, as
-   *   long as the value is not null
+   * <p>RequestBindings are applied to the buffer on every request
    * </p>
    * 
    * @param bindings
    */
   public void setRequestBindings(RequestBinding<?>[] bindings)
   { requestBindings=bindings;
+  }
+
+  /**
+   * <p>RedirectBindings are published to any supplied redirectURI, immediately
+   *   before the redirect takes place.
+   * </p>
+   * 
+   * @param bindings
+   */
+  public void setRedirectBindings(RequestBinding<?>[] bindings)
+  { 
+    if (bindings!=null)
+    { 
+      for (RequestBinding<?> binding: bindings)
+      { binding.setPublish(true);
+      }
+    }
+    redirectBindings=bindings;
   }
   
   public boolean isDirty()

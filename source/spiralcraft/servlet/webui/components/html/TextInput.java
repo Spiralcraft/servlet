@@ -102,6 +102,7 @@ public class TextInput<Ttarget>
     else
     { tag.render(context);
     }
+    ((ControlState<?>) context.getState()).setPresented(true);
     super.render(context);
   }
   

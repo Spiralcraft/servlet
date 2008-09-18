@@ -209,6 +209,8 @@ public abstract class TupleEditor
   }
   
     
+
+  
   private void applyRequestBindings(ServiceContext context)
   {
     if (requestBindings!=null)
@@ -468,7 +470,8 @@ public abstract class TupleEditor
     newSetters=bindAssignments(newAssignments);
     initialSetters=bindAssignments(initialAssignments);
     publishedSetters=bindAssignments(publishedAssignments);
-    bindRequestAssignments();
+    bindRequestAssignments(requestBindings);
+    bindRequestAssignments(redirectBindings);
     
     
     return null;
@@ -477,14 +480,14 @@ public abstract class TupleEditor
   
  
   @SuppressWarnings("unchecked")
-  private void bindRequestAssignments()
+  private void bindRequestAssignments(RequestBinding[] bindings)
     throws BindException
   {
-    if (requestBindings==null)
+    if (bindings==null)
     { return;
     }
 
-    for (RequestBinding binding:requestBindings)
+    for (RequestBinding binding:bindings)
     { 
       if (debug)
       { binding.setDebug(true);

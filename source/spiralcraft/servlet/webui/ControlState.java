@@ -55,6 +55,7 @@ public class ControlState<Tbuf>
   private Throwable exception;
   private ArrayList<Command<Tbuf,?>> commands;
   private DataState dataState=DataState.INIT;
+  private boolean presented;
   
 
   public ControlState(Control<?> control)
@@ -63,6 +64,14 @@ public class ControlState<Tbuf>
     this.control=control;
   }
   
+  public void setPresented(boolean presented)
+  { this.presented=presented;
+  }
+  
+  public boolean getPresented()
+  { return presented;
+  }
+
   public ControlGroupState<?> getControlGroupState()
   { return controlGroupState;
   }

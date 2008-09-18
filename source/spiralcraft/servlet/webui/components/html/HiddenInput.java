@@ -87,6 +87,8 @@ public class HiddenInput<Ttarget>
     { tag.render(context);
     }
     super.render(context);
+    ((ControlState<?>) context.getState()).setPresented(true);
+    
   }
   
 

@@ -308,7 +308,8 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       defaultSetters=bindAssignments(defaultAssignments);
       newSetters=bindAssignments(newAssignments);
       initialSetters=bindAssignments(initialAssignments);
-      bindRequestAssignments();
+      bindRequestAssignments(requestBindings);
+      bindRequestAssignments(redirectBindings);
       
     }
     
@@ -338,14 +339,14 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   }
  
   @SuppressWarnings("unchecked")
-  private void bindRequestAssignments()
+  private void bindRequestAssignments(RequestBinding[] bindings)
     throws BindException
   {
-    if (requestBindings==null)
+    if (bindings==null)
     { return;
     }
 
-    for (RequestBinding binding:requestBindings)
+    for (RequestBinding binding:bindings)
     { 
       if (debug)
       { binding.setDebug(true);
