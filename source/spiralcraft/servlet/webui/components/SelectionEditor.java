@@ -130,8 +130,11 @@ public class SelectionEditor
       if (debug)
       { log.fine("setting selection to null");
       }
-      for (BufferTuple buffer : aggregate)
-      { buffer.delete();
+      if (aggregate!=null)
+      {
+        for (BufferTuple buffer : aggregate)
+        { buffer.delete();
+        }
       }
       return;
     }
@@ -144,11 +147,14 @@ public class SelectionEditor
     HashMap<TselectItem,BufferTuple> keyMap
       =new HashMap<TselectItem,BufferTuple>();
     
-    // Populate look-up map
-    for (BufferTuple buffer: aggregate)
-    { 
-      if (!buffer.isDelete())
-      { mapBuffer(keyMap,buffer);
+    if (aggregate!=null)
+    {
+      // Populate look-up map
+      for (BufferTuple buffer: aggregate)
+      { 
+        if (!buffer.isDelete())
+        { mapBuffer(keyMap,buffer);
+        }
       }
     }
     
