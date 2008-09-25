@@ -264,7 +264,9 @@ public class ControlState<Tbuf>
           addError(exception.getMessage());
         }
       }
-      else if (exception.getCause()==null && this.errors.isEmpty())
+      else if (exception.getCause()==null 
+              && (this.errors==null || this.errors.isEmpty())
+              )
       { 
         // Only do this if we have nothing else to display and nothing
         //   was added to the errors list.
