@@ -170,12 +170,25 @@ public class Form<T>
           // Only gather if there was a POST (as opposed to a GET,
           //   which would delete data or throw NPEs if we make the
           //   controls gather.
+
+          formState.resetError(); // Always reset the error on a new post
           relayMessage(context,GATHER_MESSAGE,null);
         
           if (!formState.isErrorState())
           { 
             // Don't run commands if any vars have errors
             relayMessage(context,COMMAND_MESSAGE,null);
+          }
+          else
+          { 
+            if (debug)
+            { 
+              log.fine
+                ("Form: not running commands due to error state: "
+                +formState.getException()+" : "
+                +ArrayUtil.format(formState.getErrors(),",",null)
+                );
+            }
           }
           
           if (onPostChannel!=null && !formState.isErrorState())
