@@ -290,7 +290,7 @@ public class ControlState<Tbuf>
   public synchronized void queueCommand(Command<Tbuf,?> command)
   { 
     if (control.isDebug())
-    { log.fine(control+"Queued command "+command);
+    { log.fine(control+": Queued command "+command);
     }
     if (commands==null)
     { commands=new ArrayList<Command<Tbuf,?>>(1);
