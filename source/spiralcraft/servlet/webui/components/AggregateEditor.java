@@ -145,7 +145,13 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   {
     BufferAggregate<BufferTuple,?> aggregate=getState().getValue();
     
-    if (aggregate.isDirty())
+    if (aggregate==null)
+    {
+      if (debug)
+      { log.fine("BufferAggregate is null, not saving");
+      }      
+    }
+    else if (aggregate.isDirty())
     {
 
       for (int i=0;i<aggregate.size();i++)
