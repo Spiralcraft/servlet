@@ -361,28 +361,37 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     }
   }
 
+  @SuppressWarnings("unchecked") // newBuffer() is not generic
+  protected BufferAggregate<BufferTuple,Tcontent> newAggregate()
+    throws DataException
+  {
+    // Create the aggregate buffer if none
+    BufferAggregate<BufferTuple,Tcontent> aggregate
+      =(BufferAggregate<BufferTuple,Tcontent>) 
+        getDataSession().newBuffer(getType());
+    getState().setValue
+      (aggregate
+      );
+    writeToModel(aggregate);
+    return aggregate;
+  }
+  
   /**
    * Add a new empty buffer
    */
-  @SuppressWarnings("unchecked")
   protected void addNewBuffer()
   {
     try
     {
-      if (getState().getValue()==null)
-      {
-        // Create the aggregate buffer if none
-        getState().setValue
-          ((BufferAggregate<BufferTuple,Tcontent>) getDataSession().newBuffer(getType())
-          );
-        writeToModel(getState().getValue());
-
+      BufferAggregate<BufferTuple,Tcontent> aggregate
+        =getState().getValue();
+      if (aggregate==null)
+      { aggregate=newAggregate();
       }
 
       
       // Add a Tuple to the list
-      getState().getValue()
-        .add(newChildBuffer());
+      aggregate.add(newChildBuffer());
       
     }
     catch (DataException x)
