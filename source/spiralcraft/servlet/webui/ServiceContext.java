@@ -194,14 +194,16 @@ public class ServiceContext
   public void redirect(URI rawURI)
     throws ServletException
   {
-    // XXX Clean up URI reconstruction code
+
     if (redirectURI!=null)
     { 
       throw new ServletException
         ("Duplicate redirect "+rawURI+": Already redirecting to "+redirectURI);
     }
     
-    URI requestURL=URI.create(request.getRequestURL().toString());
+    
+    
+    // Combine the specified query with any encoded parameters
     
     String query=rawURI.getQuery();
     
@@ -209,19 +211,12 @@ public class ServiceContext
     
     if (encodedParameters!=null)
     { 
-      if (query==null)
-      { query="?"+encodedParameters;
+      if (query==null || query.isEmpty())
+      { query=encodedParameters;
       }
       else
-      { query="?"+query+"&"+encodedParameters;
+      { query=query+"&"+encodedParameters;
       }
-    }
-    else
-    {
-      if (query!=null)
-      { query="?"+query;
-      }
-      
     }
     
     if (debug)
@@ -236,21 +231,12 @@ public class ServiceContext
     
     try
     {
-      if (rawURI.isAbsolute())
-      {
-        redirectURI= new URI
-          (rawURI.getScheme()
-          ,rawURI.getUserInfo()
-          ,rawURI.getHost()
-          ,rawURI.getPort()
-          ,rawURI.getPath()
-          ,query
-          ,rawURI.getFragment()
-          );
-      }
-      else
-      {
-        redirectURI = new URI
+      if (!rawURI.isAbsolute())
+      { 
+        URI requestURL=URI.create(request.getRequestURL().toString());
+        
+        // Make rawURI absolute
+        rawURI= new URI
           (requestURL.getScheme()
             ,requestURL.getUserInfo()
             ,requestURL.getHost()
@@ -262,25 +248,27 @@ public class ServiceContext
           .resolve
           ( rawURI
           );
-
-        if (debug)
-        { log.fine(redirectURI.toString());
-        }
-        if (query!=null && encodedParameters!=null)
-        { redirectURI=URI.create(redirectURI.toString()+"&"+encodedParameters);
-        }
-        if (debug)
-        { log.fine(redirectURI.toString());
-        }
+      }
+      
+      // Insert the combined query to complete the redirect URI
+      redirectURI= new URI
+        (rawURI.getScheme()
+        ,rawURI.getUserInfo()
+        ,rawURI.getHost()
+        ,rawURI.getPort()
+        ,rawURI.getPath()
+        ,query
+        ,rawURI.getFragment()
+        );
+      
+      if (debug)
+      { log.fine("Redirecting to "+redirectURI);
       }
     }
     catch (URISyntaxException x)
     { throw new ServletException("Error encoding redirect to "+rawURI,x);
     }
     
-   
-
-  
   }
   
   
