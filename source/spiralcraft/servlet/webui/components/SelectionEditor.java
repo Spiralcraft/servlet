@@ -123,8 +123,9 @@ public class SelectionEditor
     throws DataException
   {
     BufferAggregate<BufferTuple,?> aggregate=getState().getValue();
+    
 
-    if (keys==null)
+    if (keys==null || keys.length==0)
     {
       // Delete everything
       if (debug)
@@ -147,14 +148,15 @@ public class SelectionEditor
     HashMap<TselectItem,BufferTuple> keyMap
       =new HashMap<TselectItem,BufferTuple>();
     
-    if (aggregate!=null)
-    {
-      // Populate look-up map
-      for (BufferTuple buffer: aggregate)
-      { 
-        if (!buffer.isDelete())
-        { mapBuffer(keyMap,buffer);
-        }
+    if (aggregate==null)
+    { aggregate=newAggregate();
+    }
+    
+    // Populate look-up map
+    for (BufferTuple buffer: aggregate)
+    { 
+      if (!buffer.isDelete())
+      { mapBuffer(keyMap,buffer);
       }
     }
     
