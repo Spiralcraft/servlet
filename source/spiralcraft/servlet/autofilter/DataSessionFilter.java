@@ -14,6 +14,8 @@
 //
 package spiralcraft.servlet.autofilter;
 
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,6 +29,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.log.ClassLogger;
 
 
 /**
@@ -41,6 +44,9 @@ import spiralcraft.lang.spi.ThreadLocalChannel;
 public class DataSessionFilter
   extends FocusFilter<DataSession>
 {
+  
+  private static final Logger log
+    =ClassLogger.getInstance(DataSessionFilter.class);
   
   private ThreadLocalChannel<DataSession> dataSessionChannel;
   private String attributeName;
@@ -95,9 +101,38 @@ public class DataSessionFilter
     boolean newDataSession=false;
     if (dataSession==null)
     { 
-      newDataSession=true;
-      dataSession=((DataSessionFocus) getFocus()).newDataSession();
-      session.setAttribute(attributeName,dataSession);
+      // Avoid race condition
+      synchronized (session)
+      {
+        dataSession
+          =(DataSession) session.getAttribute(attributeName);
+        if (dataSession==null)
+        {
+          newDataSession=true;
+          dataSession=((DataSessionFocus) getFocus()).newDataSession();
+          session.setAttribute(attributeName,dataSession);
+          if (debug)
+          { 
+            log.fine
+              ("New dataSession created: "
+              +dataSession.getType().getURI()
+              +" in http session "+session.getId()
+              );
+          }
+          
+        }
+        else
+        {
+          if (debug)
+          { 
+            log.fine
+              ("Race condition averted for dataSession "
+              +dataSession.getType().getURI()
+              +" in http session "+session.getId()
+              );
+          }
+        }
+      }  
     }
     dataSessionChannel.push(dataSession);  
     if (newDataSession)

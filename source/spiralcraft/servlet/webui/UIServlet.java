@@ -273,95 +273,56 @@ public class UIServlet
       serviceContext.setServlet(this);
       
       Session session=getUiSession(request,true);
-      ResourceSession localSession=session.getResourceSession(component);
+
+      boolean interactive=true;
+      if (interactive)
+      {
+        // Interactive mode maintains a session scoped state for a resource
+        //   which must be synchronized.
+        
+        ResourceSession localSession=session.getResourceSession(component);
       
+        if (localSession==null)
+        { 
+        
+          synchronized (session)
+          {
+            localSession=session.getResourceSession(component);
+            if (localSession==null)
+            {
+              localSession=new ResourceSession();
+              localSession.setLocalURI
+                (request.getRequestURI()
+                );
+              session.setResourceSession(component,localSession);
+            }
+          }
+        }
       
-      if (localSession==null)
-      { 
-        localSession=new ResourceSession();
+
+        serviceContext.setResourceSession(localSession);
+      
+        synchronized (localSession)
+        { 
+          // Resource state is not multi-threaded
+          service(component,serviceContext);
+        }
+      }
+      else
+      {
+        // Non-interactive mode doesn't have to synchronize on the local
+        //   resource session and does not maintain session state for the
+        //   resource.
+        
+        ResourceSession localSession=new ResourceSession();
         localSession.setLocalURI
           (request.getRequestURI()
           );
-        session.setResourceSession(component,localSession);
-      }
-      
-      serviceContext.setResourceSession(localSession);
-      
-      ElementState oldState=localSession.getRootState();
-      
-      if (oldState==null)
-      { 
-        // Initialize a fresh state
-        serviceContext.setState(component.createState());
-        // Set up state structure and register "initial" events
-        component.message(serviceContext,INITIALIZE_MESSAGE,null);
-      }
-      else
-      { 
-        // Restore state
-        serviceContext.setState(oldState);
-      }
-      
-      if (request.getContentLength()>0)
-      {
+        serviceContext.setResourceSession(localSession);
+        service(component,serviceContext);
         
       }
-
       
-      handleAction(component,serviceContext);
-
-      localSession.clearActions();
-      
-      if (serviceContext.getRedirectURI()!=null)
-      {
-        // Redirect after action
-        response.sendRedirect
-          (response.encodeRedirectURL
-            (serviceContext.getRedirectURI().toString())
-          );
-      }
-      else
-      {
-
-        component.message(serviceContext,PREPARE_MESSAGE,null);
-        if (serviceContext.getRedirectURI()!=null)
-        {
-          // Redirect after prepare
-          response.sendRedirect
-            (response.encodeRedirectURL
-              (serviceContext.getRedirectURI().toString())
-            );
-        }
-        else
-        {
-        
-          component.message(serviceContext,COMMAND_MESSAGE,null);
-      
-          if (serviceContext.getRedirectURI()!=null)
-          {
-            // Redirect after commands
-            response.sendRedirect
-              (response.encodeRedirectURL
-                (serviceContext.getRedirectURI().toString())
-              );
-          }
-          else
-          { render(component,serviceContext);
-          }
-        
-        }
-      }
-      
-      
-      ElementState newState=serviceContext.getState();
-      if (newState!=oldState)
-      { 
-        // Cache the state for the next iteratio
-        localSession.setRootState(newState);
-      }
-      
-      response.getWriter().flush();
-      response.flushBuffer();
       
     }
     finally
@@ -373,6 +334,100 @@ public class UIServlet
         serviceContext=null;
       }
     }
+  }
+  
+  /**
+   * <p>Service a request on a given component with the specified
+   *    serviceContext, which has already been associated with a request,
+   *    response and a local ResourceSession.
+   * </p>
+   * 
+   * @param component
+   * @param serviceContext
+   * @throws IOException
+   * @throws ServletException
+   */
+  private void service(UIComponent component,ServiceContext serviceContext)
+    throws IOException,ServletException
+  {
+    HttpServletRequest request=serviceContext.getRequest();
+    HttpServletResponse response=serviceContext.getResponse();
+    ResourceSession localSession=serviceContext.getResourceSession();
+
+    ElementState oldState=localSession.getRootState();
+    if (oldState==null)
+    { 
+      // Initialize a fresh state
+      serviceContext.setState(component.createState());
+      // Set up state structure and register "initial" events
+      component.message(serviceContext,INITIALIZE_MESSAGE,null);
+    }
+    else
+    { 
+      // Restore state
+      serviceContext.setState(oldState);
+    }
+      
+    if (request.getContentLength()>0)
+    {
+    
+    }
+
+      
+    handleAction(component,serviceContext);
+
+    localSession.clearActions();
+      
+    if (serviceContext.getRedirectURI()!=null)
+    {
+      // Redirect after action
+      response.sendRedirect
+        (response.encodeRedirectURL
+          (serviceContext.getRedirectURI().toString())
+        );
+    }
+    else
+    {
+
+      component.message(serviceContext,PREPARE_MESSAGE,null);
+      if (serviceContext.getRedirectURI()!=null)
+      {
+        // Redirect after prepare
+        response.sendRedirect
+          (response.encodeRedirectURL
+            (serviceContext.getRedirectURI().toString())
+          );
+      }
+      else
+      {
+       
+        component.message(serviceContext,COMMAND_MESSAGE,null);
+      
+        if (serviceContext.getRedirectURI()!=null)
+        {
+          // Redirect after commands
+          response.sendRedirect
+            (response.encodeRedirectURL
+              (serviceContext.getRedirectURI().toString())
+            );
+        }
+        else
+        { render(component,serviceContext);
+        }
+       
+      }
+    }
+      
+      
+    ElementState newState=serviceContext.getState();
+    if (newState!=oldState)
+    { 
+      // Cache the state for the next iteratio
+      localSession.setRootState(newState);
+    }
+      
+    response.getWriter().flush();
+    response.flushBuffer();
   }
   
   /**
@@ -456,6 +511,16 @@ public class UIServlet
     
   }
       
+  /**
+   * <p>Send all relevant response headers and call
+   *   component.render(serviceContext)
+   * </p>
+   * 
+   * @param component
+   * @param serviceContext
+   * @throws IOException
+   * @throws ServletException
+   */
   private void render
     (UIComponent component
     ,ServiceContext serviceContext

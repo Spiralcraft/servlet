@@ -127,12 +127,49 @@ public class AuthenticateFilter
     )
     throws IOException,ServletException
   {
-    HttpSession httpSession
-      =httpRequest.getSession(useSession);
     
     AuthSession session=null;
     if (useSession)
-    { session=(AuthSession) httpSession.getAttribute(sessionName);
+    { 
+      HttpSession httpSession
+        =httpRequest.getSession(useSession);
+      
+      // Re-check in synchronized block
+      // To avoid race condition of 2 threads associated with the same
+      //   session where one overwrites the in-use auth session with
+      //   an empty one.      
+      session=(AuthSession) httpSession.getAttribute(sessionName);
+      
+      if (session==null)
+      {
+        synchronized (httpSession)
+        {
+          session=(AuthSession) httpSession.getAttribute(sessionName);
+          if (session==null)
+          {
+            session=authenticator.createSession();
+            httpSession.setAttribute(sessionName,session);
+            if (debug)
+            { 
+              log.fine
+                ("Created new AuthSession in HttpSession "
+                +httpSession.getId()
+                );
+            }
+          }
+          else
+          {
+            if (debug)
+            { 
+              log.fine
+                ("Avoided race condition for creation of AuthSession in"
+                +"HttpSession "+httpSession.getId()
+                );
+            }
+          }
+        }
+      }
+      
     }
     
     if (session!=null && session.isAuthenticated())
@@ -154,24 +191,33 @@ public class AuthenticateFilter
       // Try to authenticate the credentials
       if (session==null)
       { 
+        // Only happens if useSession=false
         session=authenticator.createSession();
-        if (useSession)
-        { httpSession.setAttribute(sessionName,session);
+        if (debug)
+        { log.fine("Created new AuthSession- not using HttpSession");
         }
+
       }
       if (session==null)
       { 
-        System.err.println
+        log.warning
           ("AuthenticateFilter: authenticator failed to create session");
         return false;
       }
       
       session.addCredentials(credentials);
       if (session.authenticate())
-      { return true;
+      { 
+        if (debug)
+        { log.fine("Authentication successful");
+        }
+        return true;
       }
       else
       { 
+        if (debug)
+        { log.fine("Authentication failed");
+        }
         httpAdapter.writeChallenge(httpResponse);
         return false;
       }

@@ -42,7 +42,8 @@ import spiralcraft.builder.LifecycleException;
 public class ReferenceFocusFilter<Treferent,Tfocus>
     extends FocusFilter<Tfocus>
 {
-  private final ClassLogger log=ClassLogger.getInstance(ReferenceFocusFilter.class);
+  private final ClassLogger log
+    =ClassLogger.getInstance(ReferenceFocusFilter.class);
   
   public enum Scope
   { 
@@ -217,8 +218,34 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
       
       if (targetFocusHolder==null)
       { 
-        targetFocusHolder=new FocusHolder(parentFocus);
-        session.setAttribute(attributeName, targetFocusHolder);
+        // Avoid race condition
+        synchronized (session)
+        {
+          targetFocusHolder
+            =(FocusHolder) session.getAttribute(attributeName);
+          if (targetFocusHolder==null)
+          {
+            targetFocusHolder=new FocusHolder(parentFocus);
+            session.setAttribute(attributeName, targetFocusHolder);
+            if (debug)
+            { 
+              log.fine
+                ("Created session scoped reference "+instanceURI+" for session "
+                +session.getId()
+                );
+            }
+          }
+          else
+          {
+            if (debug)
+            {
+              log.fine
+                ("Averted race condition creating session scoped reference "
+                +instanceURI+" for session "+session.getId()
+                );
+            }
+          }
+        }
       }
       transientBinding.push(targetFocusHolder.getFocus().getSubject().get());      
     }

@@ -131,7 +131,15 @@ public class SecurityFilter
       
       
     if (loginCookie!=null)
-    { return readLoginCookie(entry,loginCookie);
+    { 
+      if (debug)
+      { log.fine("Found a login cookie "+loginCookie);
+      }
+      return readLoginCookie(entry,loginCookie);
+    }
+    
+    if (debug)
+    { log.fine("No login cookie");
     }
     return false;
   }
@@ -165,10 +173,17 @@ public class SecurityFilter
         x.printStackTrace();
         return false;
       }
+      if (debug)
+      { log.fine("Read login info from cookie for user "+username);
+      }
       return true;
     }
     else
-    { return false;
+    { 
+      if (debug)
+      { log.fine("Login cookie didn't contain required data: "+cookie);
+      }
+      return false;
     }
   }  
   
@@ -202,6 +217,9 @@ public class SecurityFilter
       Cookie cookie=new Cookie(cookieName,data);
       cookie.setMaxAge(minutesToPersist*60); // Convert from seconds
       writeLoginCookie(cookie);
+      if (debug)
+      { log.fine("Wrote a login cookie for for user "+username);
+      }
     }
     else
     { 
@@ -256,14 +274,45 @@ public class SecurityFilter
   {
       
     HttpSession session=request.getSession();
+    
     AuthSession authSession
       =(AuthSession) session.getAttribute(attributeName);
-      
+    
     if (authSession==null)
-    { 
-      authSession=authenticator.createSession();
-      session.setAttribute(attributeName,authSession);
+    {
+      // Re-check in synchronized block
+      // To avoid race condition of 2 threads associated with the same
+      //   session where one overwrites the in-use auth session with
+      //   an empty one.
+      synchronized (session)
+      {
+        authSession
+          =(AuthSession) session.getAttribute(attributeName);      
+      
+        if (authSession==null)
+        { 
+          if (debug)
+          { 
+            log.fine
+              ("Creating a new AuthSession for HTTP Session "+session.getId());
+          }
+          
+          authSession=authenticator.createSession();
+          session.setAttribute(attributeName,authSession);
+        }
+        else
+        {
+          if (debug)
+          { 
+            log.fine
+              ("Successfully avoided race condition for " +
+              "HttpSession->AuthSession for session "+session.getId()
+              );
+          }
+        }
+      }
     }
+    
     authSessionChannel.push(authSession);
     contextLocal.set(new SecurityFilterContext(request,response));
     
@@ -296,6 +345,12 @@ public class SecurityFilter
     
   private void logout()
   { 
+    if (debug)
+    { 
+      log.fine
+        ("Logging out "+authSessionChannel.get().getPrincipal());
+    }
+    
     authSessionChannel.get().logout();
     // Delete the login cookie
     
