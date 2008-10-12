@@ -249,7 +249,6 @@ public class SecurityFilter
     this.attributeName=this.getPath().format("/")
       +"!spiralcraft.security.AuthSession";
     
-    // XXX Replace with XML binding
     authSessionChannel
       =new ThreadLocalChannel<AuthSession>
         (BeanReflector.<AuthSession>getInstance(AuthSession.class));
