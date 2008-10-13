@@ -194,12 +194,12 @@ public class SecurityFilter
     }
       
     VariableMap map=new VariableMap();
-    String username=entry.getUsername();
+    String username=authSessionChannel.get().getPrincipal().getName();
     String password=entry.getPasswordCleartext();
     if (username!=null && password!=null)
     {
       byte[] ticket=authSessionChannel.get().opaqueDigest(username+password);
-      map.add("username", entry.getUsername());
+      map.add("username", username);
       try
       { map.add("ticket", Base64Codec.encodeBytes(ticket));
       }
