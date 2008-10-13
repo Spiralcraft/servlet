@@ -174,7 +174,21 @@ public class Login
       {  setter.set();
       }
     }
-    if (!sessionChannel.get().authenticate())
+    
+    AuthSession session=sessionChannel.get();
+      
+    boolean authenticated;
+    String username=null;;
+    
+    synchronized (session)
+    {
+      authenticated=session.authenticate();
+      if (authenticated)
+      { username=session.getPrincipal().getName(); 
+      }
+    }
+      
+    if (!authenticated)
     { 
       if (interactive)
       {
@@ -194,14 +208,17 @@ public class Login
     else
     { 
       if (debug)
-      { log.fine("Successful login for "+state.getValue().getUsername());
+      { 
+        log.fine("Successful login for "
+          +username
+          );
       }
+
       if (securityFilter!=null && state.getValue().isPersistent())
       { securityFilter.writeLoginCookie(state.getValue());
       }
       
-      state.setValue(null);
-      newEntry();
+
       if (postSetters!=null)
       {
         if (debug)
@@ -211,6 +228,9 @@ public class Login
         { setter.set();
         }
       }            
+
+      state.setValue(null);
+      newEntry();
     }
       
   }
