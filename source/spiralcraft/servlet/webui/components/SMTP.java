@@ -34,10 +34,7 @@ import spiralcraft.log.ClassLogger;
 import spiralcraft.net.smtp.SMTPConnector;
 import spiralcraft.net.smtp.Envelope;
 
-import spiralcraft.security.auth.LoginEntry;
-import spiralcraft.servlet.autofilter.SecurityFilter;
 import spiralcraft.servlet.webui.ControlGroup;
-import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 
 import spiralcraft.textgen.Generator;
