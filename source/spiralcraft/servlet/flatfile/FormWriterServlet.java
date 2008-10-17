@@ -40,7 +40,7 @@ import spiralcraft.data.lang.DataReflector;
 import spiralcraft.data.spi.EditableArrayTuple;
 import spiralcraft.data.spi.SingleSpace;
 
-import spiralcraft.lang.BeanFocus;
+import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.DictionaryBinding;
 import spiralcraft.lang.Expression;

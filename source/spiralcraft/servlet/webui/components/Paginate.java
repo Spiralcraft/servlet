@@ -28,7 +28,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.IterationCursor;
 import spiralcraft.lang.IterationDecorator;
 import spiralcraft.lang.spi.AbstractChannel;
-import spiralcraft.lang.spi.ArrayReflector;
+import spiralcraft.lang.reflect.ArrayReflector;
 
 import spiralcraft.log.ClassLogger;
 

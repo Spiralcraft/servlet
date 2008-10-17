@@ -19,7 +19,7 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.BindException;
 
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.lang.spi.BeanReflector;
+import spiralcraft.lang.reflect.BeanReflector;
 
 import javax.servlet.ServletContext;
 

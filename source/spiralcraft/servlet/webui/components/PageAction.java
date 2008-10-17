@@ -42,8 +42,8 @@ import spiralcraft.log.ClassLogger;
  * </p>
  * 
  * <p>The command is executed in the "prepare" stage of the request,
- *   because the action is not a direct user response to a rendered page
- *   state.
+ *   because the action is not a direct user response to a previously rendered
+ *   page state.
  * </p>
  * 
  * @author mike

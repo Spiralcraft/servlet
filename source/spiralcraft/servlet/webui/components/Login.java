@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 1998,2008 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -30,7 +30,7 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.AbstractChannel;
-import spiralcraft.lang.spi.BeanReflector;
+import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.log.ClassLogger;
 
 import spiralcraft.security.auth.AuthSession;

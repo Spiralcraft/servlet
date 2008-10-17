@@ -1,0 +1,231 @@
+//
+//Copyright (c) 1998,2008 Michael Toth
+//Spiralcraft Inc., All Rights Reserved
+//
+//This package is part of the Spiralcraft project and is licensed under
+//a multiple-license framework.
+//
+//You may not use this file except in compliance with the terms found in the
+//SPIRALCRAFT-LICENSE.txt file at the top of this distribution, or available
+//at http://www.spiralcraft.org/licensing/SPIRALCRAFT-LICENSE.txt.
+//
+//Unless otherwise agreed to in writing, this software is distributed on an
+//"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+//
+package spiralcraft.servlet.webui.components;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.logging.Level;
+
+import spiralcraft.command.Command;
+import spiralcraft.command.CommandAdapter;
+import spiralcraft.lang.AccessException;
+import spiralcraft.lang.Assignment;
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Channel;
+import spiralcraft.lang.Focus;
+import spiralcraft.lang.Setter;
+import spiralcraft.lang.spi.AbstractChannel;
+import spiralcraft.lang.reflect.BeanReflector;
+
+import spiralcraft.log.ClassLogger;
+
+import spiralcraft.net.smtp.SMTPConnector;
+import spiralcraft.net.smtp.Envelope;
+
+import spiralcraft.security.auth.LoginEntry;
+import spiralcraft.servlet.autofilter.SecurityFilter;
+import spiralcraft.servlet.webui.ControlGroup;
+import spiralcraft.servlet.webui.QueuedCommand;
+import spiralcraft.servlet.webui.ServiceContext;
+
+import spiralcraft.textgen.Generator;
+import spiralcraft.util.ArrayUtil;
+import spiralcraft.vfs.Resolver;
+import spiralcraft.vfs.Resource;
+import spiralcraft.vfs.UnresolvableURIException;
+
+  
+public class SMTP
+  extends ControlGroup<Envelope>
+{
+  private static final ClassLogger log
+    =ClassLogger.getInstance(SMTP.class);
+  
+  private Channel<SMTPConnector> smtpChannel;
+  
+  private Assignment<?>[] postAssignments;
+  private Setter<?>[] postSetters;
+
+  private Assignment<?>[] preAssignments;
+  private Setter<?>[] preSetters;
+
+  private Generator generator;
+  private Resource templateResource;
+  
+  /**
+   * <p>Specify the URI of the textgen email template for the message body
+   * </p>
+   * @param templateURI
+   */
+  public void setTemplateURI(URI templateURI)
+  { 
+    try
+    { 
+      this.templateResource
+        =Resolver.getInstance().resolve(templateURI);
+    }
+    catch (UnresolvableURIException x)
+    { throw new IllegalArgumentException(x);
+    }
+    
+  }
+  
+  
+  /**
+   * <p>Assignments which get executed prior to a login attempt (eg. to resolve
+   *   credentials)
+   * </p>
+   * 
+   * @param assignments
+   */
+  public void setPreAssignments(Assignment<?>[] assignments)
+  { this.preAssignments=assignments;
+  }  
+
+  /**
+   * <p>Assignments which get executed immediately after a successful login
+   * </p>
+   * 
+   * <p>XXX refactor to setPostAssignments()
+   * </p>
+   * 
+   * @param assignments
+   */
+  public void setAssignments(Assignment<?>[] assignments)
+  { this.postAssignments=assignments;
+  }  
+  
+  protected void newEntry()
+  { 
+    getState().setValue(new Envelope());
+  }  
+  
+
+  @Override
+  protected Channel<?> bindTarget(Focus<?> parentFocus)
+    throws BindException
+  {
+    Focus<SMTPConnector> smtpFocus
+      =parentFocus.<SMTPConnector>
+        findFocus(URI.create("class:/spiralcraft/net/smtp/SMTPConnector"));
+    if (smtpFocus!=null)
+    { smtpChannel=smtpFocus.getSubject();
+    } 
+    
+    return new AbstractChannel<Envelope>
+      (BeanReflector.<Envelope>getInstance(Envelope.class))
+        {
+          @Override
+          protected Envelope retrieve()
+          { return null;
+          }
+
+          @Override
+          protected boolean store(Envelope val) throws AccessException
+          { return false;
+          }
+        };
+        
+
+  }  
+  
+  public Command<Envelope,Void> sendCommand()
+  {     
+    return new CommandAdapter<Envelope,Void>()
+    { 
+      @Override
+      public void run()
+      { send();
+      }
+    };
+  }  
+  
+  public void send()
+  {
+    Envelope envelope=getState().getValue();
+    Setter.applyArray(preSetters);
+    try
+    {
+      envelope.setEncodedMessage(generator.render());
+      if (envelope.getSenderMailAddress()==null)
+      { getState().addError("Missing sender address");
+      }
+      else if 
+        (envelope.getRecipients()==null || envelope.getRecipients().isEmpty())
+      { getState().addError("Missing recipients");
+      }
+      else
+      {
+        smtpChannel.get().send(envelope);
+        Setter.applyArray(postSetters);
+        if (debug)
+        { 
+          log.fine
+            ("Sent to "+envelope.getRecipients()
+            +"\r\n"+envelope.getEncodedMessage()
+            );
+        }
+        
+      }
+      
+    }
+    catch (IOException x)
+    { getState().setException(x);
+    }
+    if (debug && getState().getErrors()!=null)
+    { log.fine(ArrayUtil.format(getState().getErrors(),",",null));
+    }
+  }
+  
+  @Override
+  protected Focus<?> bindExports()
+    throws BindException
+  {
+    postSetters=bindAssignments(postAssignments);
+    preSetters=bindAssignments(preAssignments);
+    generator
+      =new Generator
+        (templateResource
+        ,getFocus()
+        );      
+    if (generator.getException()!=null)
+    { 
+      log.log
+        (Level.SEVERE
+        ,"Error compiling email template "+templateResource.getURI()
+        ,generator.getException()
+        );
+    }
+    return super.bindExports();
+    
+  }
+  
+  @Override
+  protected void scatter(ServiceContext context)
+  { 
+    Envelope lastEntry=getState().getValue();
+   
+    super.scatter(context);
+    if (getState().getValue()==null)
+    { 
+      if (lastEntry==null)
+      { newEntry();
+      }
+      else
+      { getState().setValue(lastEntry);
+      }
+    }
+  }   
+}
