@@ -124,6 +124,7 @@ public class Controller
     
     // Bind the "context://www","context://data" resources to this thread.
     contextResourceMap.put("war",contextURI);
+    contextResourceMap.putDefault(contextURI);
     contextResourceMap.put("data",contextURI.resolve("WEB-INF/data/"));
     
     contextResourceMap.push();
