@@ -69,7 +69,7 @@ public class CheckboxInput
       renderAttribute(context.getWriter(),"value","on");
       Boolean val=state.getValue();
       if (val!=null && val)
-      { renderAttribute(context.getWriter(),"CHECKED",null);
+      { renderAttribute(context.getWriter(),"checked","checked");
       }
       super.renderAttributes(context);
     }
