@@ -19,7 +19,7 @@ import java.util.List;
 
 import spiralcraft.text.markup.MarkupException;
 
-import spiralcraft.util.StringConverter;
+import spiralcraft.util.string.StringConverter;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.compiler.TglUnit;

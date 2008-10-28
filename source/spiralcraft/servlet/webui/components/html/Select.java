@@ -20,7 +20,7 @@ import java.util.List;
 
 
 import spiralcraft.util.ArrayUtil;
-import spiralcraft.util.StringConverter;
+import spiralcraft.util.string.StringConverter;
 
 import spiralcraft.textgen.EventContext;
 

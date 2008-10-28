@@ -23,9 +23,9 @@ import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.compiler.TglUnit;
-import spiralcraft.util.ArrayToString;
-import spiralcraft.util.StringArrayToString;
-import spiralcraft.util.StringConverter;
+import spiralcraft.util.string.ArrayToString;
+import spiralcraft.util.string.StringArrayToString;
+import spiralcraft.util.string.StringConverter;
 
 /**
  * <p>Provides common functionality associated with controls that manipulate

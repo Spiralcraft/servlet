@@ -25,7 +25,7 @@ import spiralcraft.net.http.VariableMap;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.translator.Translator;
 import spiralcraft.util.ArrayUtil;
-import spiralcraft.util.StringConverter;
+import spiralcraft.util.string.StringConverter;
 
 /**
  * <p>Associates a request or form VariableMap with a target Channel.
