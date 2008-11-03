@@ -148,6 +148,22 @@ public class SMTP
       }
     };
   }  
+
+  public Command<Envelope,Void> sendCommand(final Command<?,?> successCommand)
+  {     
+    return new CommandAdapter<Envelope,Void>()
+    { 
+      @Override
+      public void run()
+      { 
+        send();
+        if (getState().getErrors()==null)
+        { successCommand.execute();
+        } 
+        
+      }
+    };
+  }  
   
   public void send()
   {
