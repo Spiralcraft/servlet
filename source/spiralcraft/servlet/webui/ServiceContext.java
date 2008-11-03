@@ -35,6 +35,8 @@ import spiralcraft.net.http.MultipartVariableMap;
 
 import spiralcraft.vfs.StreamUtil;
 
+import spiralcraft.command.Command;
+import spiralcraft.command.CommandAdapter;
 import spiralcraft.command.CommandProcessor;
 
 /**
@@ -184,6 +186,26 @@ public class ServiceContext
   }
   
 
+  public Command<Void,Void> redirectCommand(final String uriString)
+  { 
+    final URI uri=URI.create(uriString);
+    return new CommandAdapter<Void,Void>()
+    {
+      @Override
+      public void run()
+      { 
+        try
+        { redirect(uri);
+        }
+        catch (ServletException x)
+        { 
+          setException(x);
+          x.printStackTrace();
+        }
+      }
+    };
+  }
+  
   /**
    * <p>Directs that a redirect should occur before rendering (the page will
    *   still finish processing actions, or if preparing, will finish preparing)
