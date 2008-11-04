@@ -106,6 +106,8 @@ public abstract class FocusFilter<T>
   public void doFilter(ServletRequest request, ServletResponse response,
       FilterChain chain) throws IOException, ServletException
   {
+    // XXX Implement a pattern include and exclude list
+    
     // log.fine("doFilter()");
     Focus<?> requestFocus=null;
     boolean pushed=false;
