@@ -196,9 +196,13 @@ public class SecurityFilter
     VariableMap map=new VariableMap();
     String username=authSessionChannel.get().getPrincipal().getName();
     String password=entry.getPasswordCleartext();
-    if (username!=null && password!=null)
+    byte[] digest=entry.getOpaqueDigest();
+    if (username!=null && (password!=null || digest!=null))
     {
-      byte[] ticket=authSessionChannel.get().opaqueDigest(username+password);
+      byte[] ticket=digest;
+      if (password!=null)
+      { ticket=authSessionChannel.get().opaqueDigest(username+password);
+      }
       map.add("username", username);
       try
       { map.add("ticket", Base64Codec.encodeBytes(ticket));
@@ -226,7 +230,9 @@ public class SecurityFilter
       if (debug)
       { 
         log.fine
-          ("Some credentials were unspecified- no login cookie created");
+          ("Some credentials were unspecified for user '"
+          +username+"'- no login cookie created"
+          );
       }
     }
   }
