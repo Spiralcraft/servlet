@@ -30,6 +30,7 @@ import spiralcraft.data.session.DataSessionFocus;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.CompoundFocus;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.reflect.BeanReflector;
@@ -59,6 +60,7 @@ public class DataSessionComponent
   private CompoundFocus<DataComposite> dataFocus;
   private Assignment<?>[] defaultAssignments;
   private Setter<?>[] defaultSetters;
+  private Expression<Type<DataComposite>> typeX;
 
   @SuppressWarnings("unchecked")
   @Override
@@ -70,10 +72,18 @@ public class DataSessionComponent
     if (debug)
     { log.fine("DataSession.bind() "+parentFocus);
     }
+    if (type==null && typeX!=null)
+    { type=parentFocus.bind(typeX).get();
+    }
+    if (type==null)
+    { throw new BindException("No type specified "+getErrorContext());
+    }
+    
     dataSessionChannel
       =new ThreadLocalChannel<DataSession>
         (BeanReflector.<DataSession>getInstance
            (DataSession.class)
+        ,true
         );
     dataSessionFocus
       =new DataSessionFocus(parentFocus,dataSessionChannel,type);
@@ -102,6 +112,10 @@ public class DataSessionComponent
    */
   public void setDefaultAssignments(Assignment<?>[] assignments)
   { defaultAssignments=assignments;
+  }
+  
+  public void setTypeX(Expression<Type<DataComposite>> typeX)
+  { this.typeX=typeX;
   }
   
   public void setTypeURI(URI typeURI)
