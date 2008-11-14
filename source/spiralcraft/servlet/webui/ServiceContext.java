@@ -146,6 +146,7 @@ public class ServiceContext
       String contentType=request.getContentType();
       if (contentType.startsWith("application/x-www-form-urlencoded"))
       { 
+        // XXX Need to consider the optional ;charset=xxx parameter
         String postString
           =StreamUtil.readAsciiString
             (request.getInputStream(),request.getContentLength());
