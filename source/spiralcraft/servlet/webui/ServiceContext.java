@@ -144,7 +144,7 @@ public class ServiceContext
     if (request.getContentLength()>0)
     {
       String contentType=request.getContentType();
-      if (contentType.equals("application/x-www-form-urlencoded"))
+      if (contentType.startsWith("application/x-www-form-urlencoded"))
       { 
         String postString
           =StreamUtil.readAsciiString
