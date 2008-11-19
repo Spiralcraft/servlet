@@ -252,7 +252,8 @@ public class Paginate<Ttarget,Titem>
       
       @Override
       public void run()
-      { this.getTarget().setCurrentPage(0);
+      { 
+        this.getTarget().setCurrentPage(0);
       }
     };
   }

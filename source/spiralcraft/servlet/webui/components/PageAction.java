@@ -63,6 +63,7 @@ public class PageAction
   private Expression<Command<?,?>> commandExpression;
   private Channel<Command<?,?>> commandChannel;  
   private String actionName;
+  private boolean queue=true;
 
   public void setX(Expression<Command<?,?>> expression)
   { commandExpression=expression;
@@ -72,6 +73,17 @@ public class PageAction
   { actionName=name;
   }
 
+  /**
+   * <p>Queue the command. When in a form, this is a good idea. If
+   *   not in a form, it will never run if queued. Defaults to true,
+   *   for compatibility, but in the future will be auto-set.
+   * </p>
+   * @param queue
+   */
+  public void setQueue(boolean queue)
+  { this.queue=queue;
+  }
+  
   @Override
   protected void handleInitialize(ServiceContext context)
   {
@@ -131,7 +143,6 @@ public class PageAction
     }
 
     bindChildren(childUnits);
-    
   }  
   
   /**
@@ -168,15 +179,34 @@ public class PageAction
           Command<?,?> command=commandChannel.get();
           if (command instanceof QueuedCommand)
           { 
+            if (debug)
+            { log.fine("Executing "+command);
+            }
             // We should run queued commands immediately, so they are not
             //   double-queued.
             command.execute();
           }
           else
           {
-            // We'll execute the command at the Command stage.
-            ((ActionState) context.getState())
-              .queueCommand(commandChannel.get());
+            if (queue)
+            {
+              if (debug)
+              { log.fine("Queueing "+command);
+              }
+              // We'll execute the command at the Command stage.
+              ((ActionState) context.getState())
+                .queueCommand(commandChannel.get());
+            }
+            else
+            { 
+              if (debug)
+              { log.fine("Executing "+command);
+              }
+              command.execute();
+              if (command.getException()!=null)
+              { command.getException().printStackTrace(); 
+              }
+            }
           }
         }
       }
