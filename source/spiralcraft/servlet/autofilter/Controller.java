@@ -70,7 +70,7 @@ public class Controller
 {
   private static final ClassLogger log=ClassLogger.getInstance(Controller.class);
   
-  private long updateIntervalMs=10000;
+  private int updateIntervalMs=10000;
   private String controlFileName=".control.xml";
   
   private final HashMap<String,CacheEntry> uriCache
@@ -128,12 +128,18 @@ public class Controller
     contextResourceMap.put("data",contextURI.resolve("WEB-INF/data/"));
     
     contextResourceMap.push();
+    if (config.getInitParameter("updateIntervalMs")!=null)
+    { 
+      updateIntervalMs
+        =Integer.parseInt(config.getInitParameter("updateIntervalMs"));
+    }
     try
     { updateConfig();
     }
     finally
     { contextResourceMap.pop();
     }
+    
   }
   
   /**
@@ -203,7 +209,7 @@ public class Controller
     }
     
     long time=Clock.instance().approxTimeMillis();
-    if (time-lastUpdate>updateIntervalMs)
+    if (time==0 || (updateIntervalMs>0 && time-lastUpdate>updateIntervalMs))
     { 
       throwable=null;
       // System.err.println("Controller.updateConfig(): scanning");
