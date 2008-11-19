@@ -72,7 +72,6 @@ public class TextArea<Ttarget>
       ControlState<String> state=((ControlState<String>) context.getState());
       renderAttribute(context.getWriter(),"type","text");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
-      renderAttribute(context.getWriter(),"value",state.getValue());
       super.renderAttributes(context);
     }
     
