@@ -403,6 +403,15 @@ public abstract class ControlGroup<Ttarget>
     
   }
 
+  @Override
+  /**
+   * <p>Finalized as unused because bind() is overridden
+   * </p>
+   */
+  protected final void bindSelf()
+  {
+  }
+  
   @SuppressWarnings("unchecked")
   // Blind cast
   @Override

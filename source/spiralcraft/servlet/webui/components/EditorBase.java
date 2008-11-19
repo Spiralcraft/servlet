@@ -68,7 +68,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   private Type<?> type;
   private Channel<DataSession> sessionChannel;
 
-  private String newActionName;
+  protected String newActionName;
   
   protected Assignment<?>[] fixedAssignments;
   protected Assignment<?>[] initialAssignments;
@@ -382,6 +382,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         {
+          { name="redirect";
+          }
+          
           @Override
           public void run()
           { 
@@ -398,6 +401,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         {
+          { name="redirect";
+          }
+
           @Override
           public void run()
           { getState().setRedirect(true);
@@ -412,6 +418,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         {
+          { name="revert";
+          }
+
           @Override
           public void run()
           { getState().getValue().revert();
@@ -426,6 +435,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         {
+          { name="revert";
+          }
+
           @Override
           public void run()
           { 
@@ -447,6 +459,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         { 
+          { name="save";
+          }
+          
           @Override
           public void run()
           { 
@@ -473,6 +488,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         { 
+          { name="save";
+          }
+
           @Override
           public void run()
           { 
@@ -499,6 +517,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         { 
+          { name="clear";
+          }
+          
           @Override
           public void run()
           { getState().setValue(null);
@@ -515,6 +536,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (getState()
       ,new CommandAdapter<Tbuffer,Void>()
         { 
+          { name="new";
+          }
+
           @Override
           public void run()
           { newBuffer();

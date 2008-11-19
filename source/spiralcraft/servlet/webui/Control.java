@@ -43,7 +43,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Reflector;
 import spiralcraft.lang.Setter;
-import spiralcraft.log.ClassLogger;
 
 /**
  * <P>An Component that coordinates or provides a means of user input.
@@ -57,8 +56,6 @@ import spiralcraft.log.ClassLogger;
 public abstract class Control<Ttarget>
   extends Component
 {
-  protected static final ClassLogger log=ClassLogger.getInstance(Control.class);
-  
   protected Channel<Ttarget> target;
   protected Expression<Ttarget> expression;
   protected int controlGroupStateDistance=-1;
@@ -66,9 +63,27 @@ public abstract class Control<Ttarget>
   
   protected RuleSet<Control<Ttarget>,Ttarget> ruleSet;
   protected Inspector<Control<Ttarget>,Ttarget> inspector;
+  protected boolean scatterOnRequest;
   
   public void setX(Expression<Ttarget> x)
   { this.expression=x;
+  }
+  
+  /**
+   * <p>Specify that this control should consider the contents of 
+   *   its source expression during the REQUEST phase, before any actions are
+   *   handled. This is useful for components that need an up-to-date value
+   *   against which to process user actions.
+   * </p>
+   * 
+   * <p>The default behavior is to consider the contents of the source
+   *   expression during the PREPARE phase, so that any actions are processed
+   *   against the state that was in effect during the last RENDER phase.
+   * </p>
+   * @param val
+   */
+  public void setScatterOnRequest(boolean val)
+  { this.scatterOnRequest=val;
   }
   
   /**
@@ -127,6 +142,37 @@ public abstract class Control<Ttarget>
    * @param context
    */
   protected abstract void scatter(ServiceContext context);
+
+  @Override
+  @SuppressWarnings("unchecked")
+  protected void handleRequest(ServiceContext context)
+  { 
+    if (scatterOnRequest)
+    {
+      ControlState<Ttarget> state = (ControlState) context.getState();
+      state.setPresented(false);
+      if (!state.isErrorState())
+      { 
+        if (debug)
+        { log.fine("Calling SCATTER: "+this+" state="+state);
+        }
+        scatter(context);
+      }
+      else
+      { 
+        if (debug)
+        {
+          log.fine("NOT Calling SCATTER bc error state: "
+            +this+" state="+state
+            +" errors="+ArrayUtil.format(state.getErrors(),",",null)
+            +" exception="+state.getException()
+          );
+        }
+
+      }
+    }
+    
+  }
   
   @Override
   @SuppressWarnings("unchecked")
@@ -180,19 +226,30 @@ public abstract class Control<Ttarget>
       }
     }
     computeDistances();
+    bindSelf();
     if (target!=null)
-    { bindRules(target.getReflector(),parentFocus);
+    { bindRules(target.getReflector(),getFocus());
     }
-    else if (parentFocus.getSubject()!=null)
+    else if (getFocus().getSubject()!=null)
     { 
       bindRules
-        ((Reflector<Ttarget>) parentFocus.getSubject().getReflector()
-        ,parentFocus
+        ((Reflector<Ttarget>) getFocus().getSubject().getReflector()
+        ,getFocus()
         );
     }
     bindChildren(childUnits);
     
   }
+  
+  /**
+   * <p>Override to bind anything and set this component's focus. Called from
+   *   bind() before rules are bound.
+   * </p>
+   * @throws BindException
+   */
+  protected void bindSelf()
+    throws BindException
+  { }
   
   protected void bindRules(Reflector<Ttarget> reflector,Focus<?> focus)
     throws BindException

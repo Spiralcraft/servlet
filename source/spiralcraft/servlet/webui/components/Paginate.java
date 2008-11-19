@@ -120,9 +120,14 @@ public class Paginate<Ttarget,Titem>
     
     
     super.handlePrepare(context);
-
     PageState<Ttarget,Titem> state
       =(PageState<Ttarget,Titem>) context.getState();
+    resetPageState(state);
+  }
+  
+  @SuppressWarnings("unchecked") // PageItem cast
+  protected void resetPageState(PageState<Ttarget,Titem> state)
+  {
    
       
     int start=state.getCurrentPage()*state.getPageSize();

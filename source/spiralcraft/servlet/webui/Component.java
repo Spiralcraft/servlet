@@ -14,8 +14,6 @@
 //
 package spiralcraft.servlet.webui;
 
-
-import spiralcraft.log.ClassLogger;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
@@ -59,8 +57,6 @@ import java.util.LinkedList;
 public abstract class Component
   extends Element
 {
-  private static final ClassLogger log=ClassLogger.getInstance(Component.class);
-
   private Component parentComponent;
 
   public Component getParentComponent()
@@ -92,8 +88,10 @@ public abstract class Component
     if (debug)
     { log.fine(this.toString()+" message "+message);
     }
-    
-    if (message.getType()==ActionMessage.TYPE)
+    if (message.getType()==RequestMessage.TYPE)
+    { handleRequest((ServiceContext) context);
+    }
+    else if (message.getType()==ActionMessage.TYPE)
     {
       if (((ActionMessage) message).getAction().getTargetPath()
            ==context.getState().getPath()
@@ -126,6 +124,20 @@ public abstract class Component
   }
   
   public void destroy()
+  {
+  }
+  
+  /**
+   * <p>Called as soon as a request comes in, before actions
+   *   are triggered.
+   * </p>
+   * 
+   * <p>This method is visited in pre-order
+   * </p>
+   * 
+   * @param context
+   */
+  protected void handleRequest(ServiceContext context)
   {
   }
 

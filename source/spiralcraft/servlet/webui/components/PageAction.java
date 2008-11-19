@@ -46,6 +46,10 @@ import spiralcraft.log.ClassLogger;
  *   page state.
  * </p>
  * 
+ * <p>If triggering behavior on a form post is desired, use a FormCommand
+ *   instead.
+ * </p>
+ * 
  * @author mike
  *
  */
@@ -67,22 +71,27 @@ public class PageAction
   public void setActionName(String name)
   { actionName=name;
   }
-  
+
   @Override
   protected void handleInitialize(ServiceContext context)
   {
     super.handleInitialize(context);
     if (actionName!=null)
-    { 
-      context.registerAction(createAction(context));
-      if (debug)
-      { log.fine("Registered action "+actionName);
-      }
+    { context.registerAction(createAction(context));
     }
-
     
   }
   
+  @Override
+  protected void handleRequest(ServiceContext context)
+  {
+    super.handleRequest(context);
+    if (actionName==null)
+    { context.registerAction(createAction(context));
+    }
+    
+  }
+
   @Override
   protected void handlePrepare(ServiceContext context)
   {

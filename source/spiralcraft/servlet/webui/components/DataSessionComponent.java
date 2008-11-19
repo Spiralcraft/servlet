@@ -35,7 +35,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.log.ClassLogger;
+
 import spiralcraft.net.http.VariableMap;
 
 import spiralcraft.servlet.webui.Component;
@@ -49,8 +49,6 @@ import spiralcraft.textgen.compiler.TglUnit;
 public class DataSessionComponent
   extends Component
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(DataSessionComponent.class);
 
   private DataSessionFocus dataSessionFocus;
   private Type<DataComposite> type;
@@ -151,7 +149,8 @@ public class DataSessionComponent
       dataSessionChannel.pop();
     }
   }
-    
+
+  
   @Override
   public void message
     (EventContext context
@@ -172,6 +171,11 @@ public class DataSessionComponent
     
       
       super.message(context,message,path);
+      if (debug)
+      { 
+        log.fine
+          (((DataSessionState) context.getState()).get().getData().toString());
+      }
     } 
     finally
     {
@@ -188,6 +192,25 @@ public class DataSessionComponent
   }
   
   @Override
+  public void handleRequest(ServiceContext context)
+  { 
+
+    applyRequestBindings(context);
+    if (defaultSetters!=null)
+    { 
+      if (debug)
+      { log.fine(toString()+": applying default values");
+      }
+      for (Setter<?> setter: defaultSetters)
+      { 
+        if (setter.getTarget().get()==null)
+        { setter.set(); 
+        }  
+      }
+    }  
+  } 
+
+  @Override
   public void handlePrepare(ServiceContext context)
   { 
     if (defaultSetters!=null)
@@ -202,9 +225,9 @@ public class DataSessionComponent
         }  
       }
     }  
-    applyRequestBindings(context);
+    publishRequestBindings(context);
   } 
-  
+
   @SuppressWarnings("unchecked")
   private void bindRequestAssignments()
     throws BindException
@@ -226,11 +249,25 @@ public class DataSessionComponent
   {
     if (requestBindings!=null)
     {
+      if (debug)
+      { log.fine("Applying request bindings");
+      }
       VariableMap query=context.getQuery();
       for (RequestBinding<?> binding: requestBindings)
-      { 
-        binding.getBinding().read(query);
-        binding.publish(context);
+      { binding.getBinding().read(query);
+      }
+    }
+  }
+  
+  private void publishRequestBindings(ServiceContext context)
+  {
+    if (requestBindings!=null)
+    {
+      if (debug)
+      { log.fine("Publishing request bindings");
+      }
+      for (RequestBinding<?> binding: requestBindings)
+      { binding.publish(context);
       }
     }
   }

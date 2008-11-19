@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
@@ -42,12 +43,15 @@ public class Form<T>
   
   private static final GatherMessage GATHER_MESSAGE=new GatherMessage();
   private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();
+  private static final PrepareMessage PREPARE_MESSAGE=new PrepareMessage();
   
   private boolean mimeEncoded;
   
   private Expression<Command<?,?>> onPost;
   private Channel<Command<?,?>> onPostChannel;
-
+    
+  private String clientPostActionName;
+  
   private final Tag tag=new Tag();
   
   class Tag
@@ -82,7 +86,7 @@ public class Form<T>
       
       String actionURI
         =((ServiceContext) context)
-          .registerAction(createAction(context));
+          .registerAction(createAction(context,true));
       
       
       renderAttribute(context.getWriter(),"action",actionURI);
@@ -121,6 +125,10 @@ public class Form<T>
   { this.mimeEncoded=mimeEncoded;
   }
   
+  public void setClientPostActionName(String name)
+  { this.clientPostActionName=name;
+  }
+  
   @Override
   public String getVariableName()
   { return null;
@@ -131,6 +139,14 @@ public class Form<T>
   { new ErrorTag(tag).render(context);
   }
     
+  @Override
+  public void handleInitialize(ServiceContext context)
+  { 
+    if (clientPostActionName!=null)
+    { context.registerAction(createAction(context,false));
+    }
+  }
+  
   /**
    * <p>Create a new Action target for the Form post
    * </p>
@@ -138,18 +154,25 @@ public class Form<T>
    * @param context
    * @return A new Action
    */
-  protected Action createAction(EventContext context)
+  protected Action createAction(EventContext context,final boolean isClearable)
   {
     int[] path=context.getState().getPath();
     
-    String pathString=ArrayUtil.format(path,".",null);
+    String pathString;
+    if (isClearable)
+    { pathString=ArrayUtil.format(path,".",null);
+    }
+    else
+    { pathString=clientPostActionName;
+    }
     
     return new Action
       (pathString
       ,path
       )
     {
-      
+      { this.clearable=isClearable;
+      }
       @Override
       @SuppressWarnings("unchecked") // Blind cast
       public void invoke(ServiceContext context)
@@ -172,6 +195,19 @@ public class Form<T>
           //   controls gather.
 
           formState.resetError(); // Always reset the error on a new post
+
+          if (!clearable && !scatterOnRequest)
+          { 
+            // Make sure we pre-scatter the whole subtree before running the
+            //   permanently registered action or we might not be making the
+            //   target data model elements available to the child controls.
+            //
+            // This makes the non-clearable form action forget any intermediate
+            //   state from one request to the next
+            //   
+            scatter(context);
+            relayMessage(context,PREPARE_MESSAGE,null);
+          }
           relayMessage(context,GATHER_MESSAGE,null);
         
           if (!formState.isErrorState())

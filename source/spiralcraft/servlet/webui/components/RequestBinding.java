@@ -46,7 +46,7 @@ public class RequestBinding<Tval>
   public String getName()
   { return name;
   }
-  
+    
   public boolean isPassNull()
   { return passNull;
   }

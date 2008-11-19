@@ -132,6 +132,7 @@ public class UIServlet
   private static final Message INITIALIZE_MESSAGE=new InitializeMessage();
   private static final Message PREPARE_MESSAGE=new PrepareMessage();
   private static final Message COMMAND_MESSAGE=new CommandMessage();
+  private static final Message REQUEST_MESSAGE=new RequestMessage();
   
   @Override
   public void init(ServletConfig config)
@@ -373,6 +374,7 @@ public class UIServlet
     
     }
 
+    component.message(serviceContext,REQUEST_MESSAGE,null);
       
     handleAction(component,serviceContext);
 
@@ -389,6 +391,9 @@ public class UIServlet
     else
     {
 
+      //
+      // PREPARE
+      //
       component.message(serviceContext,PREPARE_MESSAGE,null);
       if (serviceContext.getRedirectURI()!=null)
       {
@@ -401,6 +406,9 @@ public class UIServlet
       else
       {
        
+        //
+        // COMMAND
+        //
         component.message(serviceContext,COMMAND_MESSAGE,null);
       
         if (serviceContext.getRedirectURI()!=null)
@@ -412,7 +420,11 @@ public class UIServlet
             );
         }
         else
-        { render(component,serviceContext);
+        { 
+          //
+          // RENDER
+          //
+          render(component,serviceContext);
         }
        
       }

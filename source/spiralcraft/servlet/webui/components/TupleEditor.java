@@ -37,8 +37,11 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.TranslatorChannel;
 import spiralcraft.log.ClassLogger;
+import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.textgen.EventContext;
+import spiralcraft.util.ArrayUtil;
 
 
 
@@ -180,36 +183,40 @@ public abstract class TupleEditor
       { log.fine("Scattering buffer "+buffer);
       }
       applyRequestBindings(context);
-      if (!buffer.isDirty())
-      {
-        if (newSetters!=null && buffer.getOriginal()==null)
-        { 
-          if (debug)
-          { log.fine(toString()+": applying new values");
-          }
-          
-          for (Setter<?> setter : newSetters)
-          { setter.set();
-          }
-        }
-        
-        if (initialSetters!=null)
-        {
-          if (debug)
-          { log.fine(toString()+": applying initial values");
-          }
-
-          for (Setter<?> setter : initialSetters)
-          { setter.set();
-          }
-        }
-      }
+      setInitialValues(buffer);
     }
 
   }
   
     
+  protected void setInitialValues(Buffer buffer)
+  {
+    if (!buffer.isDirty())
+    {
+      if (newSetters!=null && buffer.getOriginal()==null)
+      { 
+        if (debug)
+        { log.fine(toString()+": applying new values");
+        }
+         
+        for (Setter<?> setter : newSetters)
+        { setter.set();
+        }
+      }
+        
+      if (initialSetters!=null)
+      {
+        if (debug)
+        { log.fine(toString()+": applying initial values");
+        }
 
+        for (Setter<?> setter : initialSetters)
+        { setter.set();
+        }
+      }
+    }
+    
+  }
   
   private void applyRequestBindings(ServiceContext context)
   {
@@ -478,7 +485,40 @@ public abstract class TupleEditor
     
   }
   
- 
+  /**
+   * <p>Create a new Action target for the Form post
+   * </p>
+   * 
+   * @param context
+   * @return A new Action
+   */
+  @Override
+  protected Action createNewAction(EventContext context)
+  {
+    return new Action(newActionName,context.getState().getPath())
+    {
+
+      { clearable=false;
+      }
+      
+      @Override
+      public void invoke(ServiceContext context)
+      { 
+        if (debug)
+        {
+          log.fine
+            ("Editor: Action invoked: "+getName()+"@"
+            +ArrayUtil.format(getTargetPath(),".",null)
+            );
+        }
+        newBuffer();
+        applyRequestBindings(context);
+        setInitialValues(getState().getValue());
+        
+      }
+    };
+  }   
+  
   @SuppressWarnings("unchecked")
   private void bindRequestAssignments(RequestBinding[] bindings)
     throws BindException
