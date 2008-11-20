@@ -90,7 +90,7 @@ public class Form<T>
       
       
       renderAttribute(context.getWriter(),"action",actionURI);
-      renderAttribute(context.getWriter(),"method","POST");
+      renderAttribute(context.getWriter(),"method","post");
       if (mimeEncoded)
       { renderAttribute(context.getWriter(),"enctype","multipart/form-data");
       }

@@ -70,7 +70,6 @@ public class TextArea<Ttarget>
       throws IOException
     {   
       ControlState<String> state=((ControlState<String>) context.getState());
-      renderAttribute(context.getWriter(),"type","text");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       super.renderAttributes(context);
     }
