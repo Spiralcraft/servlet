@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.AccessException;
 
 import spiralcraft.lang.spi.AbstractChannel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 
 import spiralcraft.servlet.webui.ControlState.DataState;
@@ -60,7 +60,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 public abstract class ControlGroup<Ttarget>
     extends Control<Ttarget>
 {
-  private static final ClassLogger log = ClassLogger.getInstance(ControlGroup.class);
+  private static final ClassLog log = ClassLog.getInstance(ControlGroup.class);
 
   private int nextVariableName = 0;
 

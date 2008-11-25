@@ -30,7 +30,7 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
@@ -55,8 +55,8 @@ import spiralcraft.servlet.webui.ServiceContext;
 public class Select<Ttarget,Tvalue>
   extends ControlGroup<Ttarget>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(Select.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(Select.class);
   
   private String name;
   private StringConverter<Ttarget> converter;

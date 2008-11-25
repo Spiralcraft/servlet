@@ -32,7 +32,7 @@ import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 
 /**
@@ -51,8 +51,8 @@ import spiralcraft.log.ClassLogger;
 public class UIComponent
   extends Component
 {
-  private static final ClassLogger log 
-    = ClassLogger.getInstance(UIComponent.class);
+  private static final ClassLog log 
+    = ClassLog.getInstance(UIComponent.class);
   
   private Focus<?> focus;
   private String contextRelativePath;

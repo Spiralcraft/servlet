@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui.components;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
@@ -29,7 +29,7 @@ import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.reflect.BeanReflector;
 
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.net.smtp.SMTPConnector;
 import spiralcraft.net.smtp.Envelope;
@@ -47,8 +47,8 @@ import spiralcraft.vfs.UnresolvableURIException;
 public class SMTP
   extends ControlGroup<Envelope>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(SMTP.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(SMTP.class);
   
   private Channel<SMTPConnector> smtpChannel;
   

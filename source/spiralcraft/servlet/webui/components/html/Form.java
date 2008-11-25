@@ -21,7 +21,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -39,7 +39,7 @@ import java.io.IOException;
 public class Form<T>
   extends ControlGroup<T>
 {
-  private static final ClassLogger log=ClassLogger.getInstance(Form.class);
+  private static final ClassLog log=ClassLog.getInstance(Form.class);
   
   private static final GatherMessage GATHER_MESSAGE=new GatherMessage();
   private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();

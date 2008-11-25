@@ -14,8 +14,6 @@
 //
 package spiralcraft.servlet.autofilter;
 
-import java.util.logging.Logger;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -29,7 +27,8 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.log.ClassLogger;
+
+import spiralcraft.log.ClassLog;
 
 
 /**
@@ -45,8 +44,8 @@ public class DataSessionFilter
   extends FocusFilter<DataSession>
 {
   
-  private static final Logger log
-    =ClassLogger.getInstance(DataSessionFilter.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(DataSessionFilter.class);
   
   private ThreadLocalChannel<DataSession> dataSessionChannel;
   private String attributeName;

@@ -34,7 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.UnresolvableURIException;
@@ -52,8 +52,8 @@ public class HttpServlet
   implements Servlet
 {
 
-  protected static final ClassLogger log=
-      ClassLogger.getInstance(HttpServlet.class);
+  protected static final ClassLog log=
+      ClassLog.getInstance(HttpServlet.class);
   
   public static final String METHOD_GET="GET";
   public static final String METHOD_HEAD="HEAD";

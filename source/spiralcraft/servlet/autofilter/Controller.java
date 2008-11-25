@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.data.persist.PersistenceException;
 import spiralcraft.data.persist.XmlBean;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.time.Clock;
 import spiralcraft.util.Path;
@@ -68,7 +68,7 @@ import spiralcraft.vfs.file.FileResource;
 public class Controller
   implements Filter
 {
-  private static final ClassLogger log=ClassLogger.getInstance(Controller.class);
+  private static final ClassLog log=ClassLog.getInstance(Controller.class);
   
   private int updateIntervalMs=10000;
   private String controlFileName=".control.xml";

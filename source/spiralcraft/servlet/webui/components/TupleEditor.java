@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui.components;
 
 
 
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
@@ -36,7 +36,7 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.TranslatorChannel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -56,8 +56,8 @@ import spiralcraft.util.ArrayUtil;
 public abstract class TupleEditor
   extends EditorBase<BufferTuple>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(TupleEditor.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(TupleEditor.class);
 
   private Setter<?>[] fixedSetters;
   private Setter<?>[] initialSetters;

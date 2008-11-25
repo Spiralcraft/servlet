@@ -38,7 +38,7 @@ import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.net.http.VariableMap;
 
 
@@ -60,8 +60,8 @@ public class SecurityFilter
   public static final URI FOCUS_URI
     =URI.create("class:/spiralcraft/servlet/autofilter/SecurityFilter");
   
-  private static final ClassLogger log
-    =ClassLogger.getInstance(SecurityFilter.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(SecurityFilter.class);
   
   private ThreadLocalChannel<AuthSession> authSessionChannel;
   private final ThreadLocal<SecurityFilterContext> contextLocal

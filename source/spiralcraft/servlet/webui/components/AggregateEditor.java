@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui.components;
 
 
 
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
@@ -40,7 +40,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.util.ArrayUtil;
@@ -56,8 +56,8 @@ import spiralcraft.util.ArrayUtil;
 public abstract class AggregateEditor<Tcontent extends DataComposite>
   extends EditorBase<BufferAggregate<BufferTuple,Tcontent>>
 {
-  protected static final ClassLogger log
-    =ClassLogger.getInstance(AggregateEditor.class);
+  protected static final ClassLog log
+    =ClassLog.getInstance(AggregateEditor.class);
 
   protected ThreadLocalChannel<BufferTuple> childChannel;
   protected Focus<BufferTuple> childFocus;

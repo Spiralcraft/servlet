@@ -28,7 +28,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
@@ -57,8 +57,8 @@ import spiralcraft.servlet.webui.ServiceContext;
 public class Option<Ttarget,Tvalue>
   extends Control<Ttarget>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(TextInput.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(TextInput.class);
   
   private StringConverter<Tvalue> converter;
   private Expression<Tvalue> valueExpression;

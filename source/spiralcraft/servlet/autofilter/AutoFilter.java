@@ -25,7 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.util.Path;
 
 
@@ -46,8 +46,8 @@ import spiralcraft.util.Path;
 public abstract class AutoFilter
   implements Filter
 {
-  protected static final ClassLogger log
-    =ClassLogger.getInstance(AutoFilter.class);
+  protected static final ClassLog log
+    =ClassLog.getInstance(AutoFilter.class);
   
   private boolean additive=true;
   private boolean overridable=true;

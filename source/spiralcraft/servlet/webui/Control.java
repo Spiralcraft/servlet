@@ -32,7 +32,7 @@ import spiralcraft.util.ArrayUtil;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 
 import spiralcraft.command.Command;

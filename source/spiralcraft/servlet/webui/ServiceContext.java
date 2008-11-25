@@ -13,7 +13,7 @@
 //"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
 package spiralcraft.servlet.webui;
-
+ 
 import java.io.Writer;
 import java.io.IOException;
 import java.net.URI;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.net.http.MultipartVariableMap;
@@ -49,8 +49,8 @@ import spiralcraft.command.CommandProcessor;
 public class ServiceContext
   extends EventContext
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(ServiceContext.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(ServiceContext.class);
   
   private ResourceSession resourceSession;
   private HttpServletRequest request;

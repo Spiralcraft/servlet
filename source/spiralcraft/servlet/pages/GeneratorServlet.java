@@ -50,7 +50,7 @@ import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 
 /**
@@ -73,7 +73,7 @@ import spiralcraft.log.ClassLogger;
 public class GeneratorServlet
   extends HttpServlet
 {
-  private static final ClassLogger log=ClassLogger.getInstance(GeneratorServlet.class);
+  private static final ClassLog log=ClassLog.getInstance(GeneratorServlet.class);
   
   private final HashMap<String,ResourceEntry> resourceMap
     =new HashMap<String,ResourceEntry>();

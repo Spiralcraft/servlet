@@ -19,7 +19,7 @@ import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.BindException;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 
 import spiralcraft.vfs.Resource;
@@ -119,7 +119,7 @@ import java.util.LinkedList;
 public class UIServlet
   extends HttpServlet
 {
-  private static final ClassLogger log=ClassLogger.getInstance(UIServlet.class);
+  private static final ClassLog log=ClassLog.getInstance(UIServlet.class);
 
   private String defaultResourceName="default.webui";
   private UICache uiCache;

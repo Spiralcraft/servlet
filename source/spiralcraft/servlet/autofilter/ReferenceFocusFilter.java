@@ -24,7 +24,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
@@ -42,8 +42,8 @@ import spiralcraft.builder.LifecycleException;
 public class ReferenceFocusFilter<Treferent,Tfocus>
     extends FocusFilter<Tfocus>
 {
-  private final ClassLogger log
-    =ClassLogger.getInstance(ReferenceFocusFilter.class);
+  private final ClassLog log
+    =ClassLog.getInstance(ReferenceFocusFilter.class);
   
   public enum Scope
   { 

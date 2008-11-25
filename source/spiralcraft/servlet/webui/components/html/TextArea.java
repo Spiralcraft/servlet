@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import spiralcraft.textgen.EventContext;
 
-//import spiralcraft.log.ClassLogger;
+//import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
@@ -26,8 +26,8 @@ import spiralcraft.servlet.webui.components.AbstractTextControl;
 public class TextArea<Ttarget>
   extends AbstractTextControl<Ttarget>
 {
-//  private static final ClassLogger log
-//    =ClassLogger.getInstance(TextInput.class);
+//  private static final ClassLog log
+//    =ClassLog.getInstance(TextInput.class);
   
   
   private Tag tag=new Tag();

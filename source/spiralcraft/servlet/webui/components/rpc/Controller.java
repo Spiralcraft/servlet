@@ -15,7 +15,7 @@
 package spiralcraft.servlet.webui.components.rpc;
 
 
-//import spiralcraft.log.ClassLogger;
+//import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -29,7 +29,7 @@ import spiralcraft.servlet.webui.CommandMessage;
 public class Controller<T>
   extends ControlGroup<T>
 {
-  //private static final ClassLogger log=ClassLogger.getInstance(Controller.class);
+  //private static final ClassLog log=ClassLog.getInstance(Controller.class);
   
   private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();
     

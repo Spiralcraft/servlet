@@ -35,7 +35,7 @@ import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -58,8 +58,8 @@ import spiralcraft.util.ArrayUtil;
 public abstract class EditorBase<Tbuffer extends Buffer>
   extends ControlGroup<Tbuffer>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(EditorBase.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(EditorBase.class);
 
   private static final SaveMessage SAVE_MESSAGE=new SaveMessage();
   

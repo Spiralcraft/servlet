@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.util.ListMap;
@@ -19,8 +19,8 @@ import spiralcraft.util.ListMap;
  */
 public class ResourceSession
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(ResourceSession.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(ResourceSession.class);
   
 //  private final HashMap<String,Action> actionMap
 //    =new HashMap<String,Action>();

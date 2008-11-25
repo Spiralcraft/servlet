@@ -15,7 +15,7 @@
 package spiralcraft.servlet.webui.components;
 
 import java.net.URI;
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 import javax.servlet.ServletException;
 
@@ -31,7 +31,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.reflect.BeanReflector;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.LoginEntry;
@@ -65,8 +65,8 @@ import spiralcraft.util.ArrayUtil;
 public class Login
   extends ControlGroup<LoginEntry>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(Login.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(Login.class);
 
   private Channel<AuthSession> sessionChannel;
   private URI defaultURI;

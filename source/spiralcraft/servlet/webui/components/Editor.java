@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui.components;
 
 
 import java.net.URI;
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 import javax.servlet.ServletException;
 
@@ -42,7 +42,7 @@ import spiralcraft.lang.Focus;
 
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.TranslatorChannel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -61,7 +61,7 @@ import spiralcraft.util.ArrayUtil;
 public abstract class Editor
   extends ControlGroup<Buffer>
 {
-  private static final ClassLogger log=ClassLogger.getInstance(Editor.class);
+  private static final ClassLog log=ClassLog.getInstance(Editor.class);
 
   private static final SaveMessage SAVE_MESSAGE=new SaveMessage();
   

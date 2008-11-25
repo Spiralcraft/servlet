@@ -17,10 +17,10 @@ package spiralcraft.servlet.webui;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
+import spiralcraft.log.Level;
 
 import spiralcraft.lang.Channel;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.translator.Translator;
@@ -37,8 +37,8 @@ import spiralcraft.util.string.StringConverter;
 @SuppressWarnings("unchecked") // Casts related to StringConverter and arrays
 public class VariableMapBinding<Tvar>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(VariableMapBinding.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(VariableMapBinding.class);
 
   private final Channel<Tvar> target;
   private final String name;

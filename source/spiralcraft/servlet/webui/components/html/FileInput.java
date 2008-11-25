@@ -31,7 +31,7 @@ import spiralcraft.vfs.Resource;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
@@ -42,8 +42,8 @@ import spiralcraft.text.html.URLEncoder;
 public class FileInput
   extends Control<URI>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(TextInput.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(TextInput.class);
   
   private String name;
   private String contextRelativeRoot;

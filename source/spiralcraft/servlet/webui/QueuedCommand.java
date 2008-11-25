@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 /**
  * Defers the execution of a Command by placing into a state queue to allow
@@ -28,8 +28,8 @@ import spiralcraft.log.ClassLogger;
 public class QueuedCommand<Ttarget,Tresult>
   extends CommandAdapter<Ttarget,Tresult>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(QueuedCommand.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(QueuedCommand.class);
   private static boolean debug;
   
   private final ControlGroupState<Ttarget> state;

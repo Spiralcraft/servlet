@@ -30,7 +30,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.security.auth.AuthSession;
 
@@ -63,8 +63,8 @@ import spiralcraft.textgen.compiler.TglUnit;
 public class Guard
   extends Component
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(Guard.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(Guard.class);
 
   private Channel<AuthSession> sessionChannel;
   private URI loginURI;

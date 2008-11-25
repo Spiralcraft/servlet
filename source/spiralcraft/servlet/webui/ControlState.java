@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import spiralcraft.command.Command;
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 import spiralcraft.rules.RuleException;
 import spiralcraft.rules.Violation;
 import spiralcraft.textgen.ElementState;
@@ -44,7 +44,7 @@ public class ControlState<Tbuf>
   ,RENDERED
   };
   
-  protected static final ClassLogger log=ClassLogger.getInstance(ControlState.class);
+  protected static final ClassLog log=ClassLog.getInstance(ControlState.class);
 
   
   protected ControlGroupState<?> controlGroupState;

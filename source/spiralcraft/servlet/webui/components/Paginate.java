@@ -30,7 +30,7 @@ import spiralcraft.lang.IterationDecorator;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.reflect.ArrayReflector;
 
-import spiralcraft.log.ClassLogger;
+import spiralcraft.log.ClassLog;
 
 
 import spiralcraft.servlet.webui.Action;
@@ -49,8 +49,8 @@ import spiralcraft.util.ArrayUtil;
 public class Paginate<Ttarget,Titem>
   extends ControlGroup<Ttarget>
 {
-  private static final ClassLogger log
-    =ClassLogger.getInstance(Login.class);
+  private static final ClassLog log
+    =ClassLog.getInstance(Login.class);
 
   private IterationDecorator<Ttarget,Titem> decorator;
   private int pageSize=10;
