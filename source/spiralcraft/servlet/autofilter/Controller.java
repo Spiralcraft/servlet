@@ -86,6 +86,8 @@ public class Controller
     = new ContextResourceMap();
   
   private Throwable throwable;
+  
+  private boolean debug=false;
 
   /**
    * Filter.init()
@@ -98,10 +100,17 @@ public class Controller
     if (realPath!=null)
     { root=new FileResource(new File(realPath));
     }
+    if (debug)
+    { log.fine("Root is "+root.getURI());
+    }
     
     URI contextURI=null;
     try
-    { contextURI =config.getServletContext().getResource("/").toURI();
+    { 
+      contextURI =config.getServletContext().getResource("/").toURI();
+      if (debug)
+      { log.fine("Context is "+contextURI);
+      }
     }
     catch (URISyntaxException x)
     { 
@@ -524,8 +533,9 @@ public class Controller
     
     Resource resource;
     long lastModified;
-    PathTree<FilterSet> node;
     Throwable exception;
+
+    PathTree<FilterSet> node;
     
     /**
      * Check to see if a Resource has been modified
@@ -664,6 +674,7 @@ public class Controller
     
     private FilterSet findParentSet()
     { 
+      // Called from compute()
       PathTree<FilterSet> parentNode=node.getParent();
       FilterSet parentSet=null;
       while (parentNode!=null && parentSet==null)
