@@ -38,7 +38,6 @@ import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.TranslatorChannel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.Action;
-import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.EventContext;
