@@ -289,8 +289,12 @@ public abstract class Control<Ttarget>
    */
   protected boolean inspect(Ttarget value,ControlState<?> state)
   {
+    
     if (inspector==null)
     { return true;
+    }
+    if (debug)
+    { log.fine("Inspecting "+value);
     }
     Violation<Ttarget>[] violations=inspector.inspect(value);
     if (violations==null)
@@ -298,7 +302,11 @@ public abstract class Control<Ttarget>
     }
     
     for (Violation<Ttarget> violation : violations)
-    { state.addError(violation.getMessage());
+    { 
+      if (debug)
+      { log.fine("Failed inspection "+violation.getMessage());
+      }
+      state.addError(violation.getMessage());
     }
     return false;
   }

@@ -57,6 +57,7 @@ public class QueuedCommand<Ttarget,Tresult>
     state.queueCommand(command);
   }
   
+  @Override
   public String toString()
   { return super.toString()+" queues: "+command.toString();
   }

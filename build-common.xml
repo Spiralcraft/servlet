@@ -3,7 +3,7 @@
   >
 	<!--
 	  Master Template
-	  Last updated 2008-11-18 12:09
+	  Last updated 2008-11-19 1:01
   -->
   <taskdef 
     resource="org/apache/ivy/ant/antlib.xml" 
@@ -25,6 +25,9 @@
     name="version" value="${buildVersion}"
   />
   
+  <property
+    name="spiralcraft-build" value="../../build/"
+  />
   
   
   <property 
@@ -59,13 +62,18 @@
     </and>
       
   </condition>
-
-
+  
+  <target name="freshBuild"
+    depends="resolve,build"
+    >
+    
+  </target>
+  
   <target name="resolve" 
     if="isIvy"
     >
     
-    <ivy:configure file="${ivySettings}"/> 
+    <ivy:configure file="${spiralcraft-build}${ivySettings}"/> 
     
     <ivy:retrieve pattern="${ivy.lib.dir}/[artifact].[ext]"/>
   </target>
@@ -169,7 +177,7 @@
     
   </target>
   
-  <target name="lunt" depends="resolve,jar,doc,ivyPublish">
+  <target name="lunt" depends="freshBuild,jar,doc,ivyPublish">
 
 	</target>
   

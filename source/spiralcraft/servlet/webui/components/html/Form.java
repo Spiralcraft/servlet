@@ -51,6 +51,7 @@ public class Form<T>
   private Channel<Command<?,?>> onPostChannel;
     
   private String clientPostActionName;
+  private String resetActionName;
   
   private final Tag tag=new Tag();
   
@@ -129,6 +130,10 @@ public class Form<T>
   { this.clientPostActionName=name;
   }
   
+  public void setResetActionName(String name)
+  { this.resetActionName=name;
+  }
+  
   @Override
   public String getVariableName()
   { return null;
@@ -142,10 +147,57 @@ public class Form<T>
   @Override
   public void handleInitialize(ServiceContext context)
   { 
+    if (resetActionName!=null)
+    { context.registerAction(createResetAction(context,false));
+    }
     if (clientPostActionName!=null)
     { context.registerAction(createAction(context,false));
     }
   }
+  /**
+   * <p>Create a new Action target to reset the form before handling
+   *   an unsolicied client post
+   * </p>
+   * 
+   * @param context
+   * @return A new Action
+   */
+  protected Action createResetAction(EventContext context,final boolean isClearable)
+  {
+    int[] path=context.getState().getPath();
+    
+    String pathString;
+    if (isClearable)
+    { pathString=ArrayUtil.format(path,".",null);
+    }
+    else
+    { pathString=resetActionName;
+    }
+    
+    return new Action
+      (pathString
+      ,path
+      )
+    {
+      { this.clearable=isClearable;
+      }
+      @Override
+      public void invoke(ServiceContext context)
+      { 
+        if (debug)
+        {
+          log.fine
+            ("Form: Reset action invoked: "
+            +ArrayUtil.format(getTargetPath(),"/",null)
+            );
+        }
+        // XXX Need to do this recursively?
+        scatter(context);
+        
+      }
+    };
+  }
+
   
   /**
    * <p>Create a new Action target for the Form post
@@ -180,7 +232,7 @@ public class Form<T>
         if (debug)
         {
           log.fine
-            ("Form: Generic action invoked: "
+            ("Form: POST action invoked: "
             +ArrayUtil.format(getTargetPath(),"/",null)
             );
         }

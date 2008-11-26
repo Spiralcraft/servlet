@@ -41,6 +41,10 @@ public class ActionMessage
   { return action;
   }
   
+  @Override
+  public String toString()
+  { return super.toString()+": "+action;
+  }
   
   
 }

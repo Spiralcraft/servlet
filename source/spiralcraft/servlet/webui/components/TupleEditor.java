@@ -38,6 +38,7 @@ import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.TranslatorChannel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.Action;
+import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.EventContext;
@@ -272,18 +273,20 @@ public abstract class TupleEditor
         }
       }
       
-      
-      buffer.save();
-      
-      if (publishedAssignments!=null)
+      if (inspect((BufferTuple) buffer,getState()))
       {
-        if (debug)
-        { log.fine(toString()+": applying published assignments post-save");
+        buffer.save();
+      
+        if (publishedAssignments!=null)
+        {
+          if (debug)
+          { log.fine(toString()+": applying published assignments post-save");
+          }
+          for (Setter<?> setter: publishedSetters)
+          { setter.set();
+          }
         }
-        for (Setter<?> setter: publishedSetters)
-        { setter.set();
-        }
-      }      
+      }
     }
     else
     { 

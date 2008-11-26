@@ -462,10 +462,13 @@ public class UIServlet
     {
 
       List<String> actionNames=vars.get("action");
+
+//      log.fine("action="+actionNames);
       if (actionNames!=null)
       {
         for (String actionName:actionNames)
-        { fireAction(component,context,actionName);
+        { 
+          fireAction(component,context,actionName);
         }
       }
     }
