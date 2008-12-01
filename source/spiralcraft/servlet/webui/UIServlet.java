@@ -120,7 +120,28 @@ public class UIServlet
   extends HttpServlet
 {
   private static final ClassLog log=ClassLog.getInstance(UIServlet.class);
+  
+  private static final Message INITIALIZE_MESSAGE=new InitializeMessage();
+  private static final Message PREPARE_MESSAGE=new PrepareMessage();
+  private static final Message COMMAND_MESSAGE=new CommandMessage();
+  private static final Message REQUEST_MESSAGE=new RequestMessage();
 
+  /**
+   * Return whether objects of the specifed type are valid from
+   *   request to request.
+   *    
+   * @param clazz
+   * @return
+   */
+  public static final boolean cachingProhibited(Class<?> clazz)
+  {
+    return 
+      ServiceContext.class.isAssignableFrom(clazz)
+      || HttpServletRequest.class.isAssignableFrom(clazz)
+      || HttpServletResponse.class.isAssignableFrom(clazz)
+      ;
+  }
+  
   private String defaultResourceName="default.webui";
   private UICache uiCache;
   
@@ -129,10 +150,6 @@ public class UIServlet
   
   private HttpFocus<?> httpFocus;
   
-  private static final Message INITIALIZE_MESSAGE=new InitializeMessage();
-  private static final Message PREPARE_MESSAGE=new PrepareMessage();
-  private static final Message COMMAND_MESSAGE=new CommandMessage();
-  private static final Message REQUEST_MESSAGE=new RequestMessage();
   
   @Override
   public void init(ServletConfig config)
@@ -142,6 +159,7 @@ public class UIServlet
   }
   
  
+  
   
   private void checkInit(HttpServletRequest request)
     throws ServletException

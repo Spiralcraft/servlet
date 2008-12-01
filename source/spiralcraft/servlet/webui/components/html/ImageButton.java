@@ -128,7 +128,6 @@ public class ImageButton
             if (oCommand instanceof Command)
             { command=(Command) oCommand;
             }
-            
           }
           
           if (command!=null)

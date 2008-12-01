@@ -63,6 +63,7 @@ public abstract class Control<Ttarget>
   protected RuleSet<Control<Ttarget>,Ttarget> ruleSet;
   protected Inspector<Control<Ttarget>,Ttarget> inspector;
   protected boolean scatterOnRequest;
+  protected boolean uncacheable;
   
   public void setX(Expression<Ttarget> x)
   { this.expression=x;
@@ -76,7 +77,8 @@ public abstract class Control<Ttarget>
    * </p>
    * 
    * <p>The default behavior is to consider the contents of the source
-   *   expression during the PREPARE phase, so that any actions are processed
+   *   expression during the PREPARE phase, so that any "responsive" actions
+   *   are processed
    *   against the state that was in effect during the last RENDER phase.
    * </p>
    * @param val
@@ -146,7 +148,7 @@ public abstract class Control<Ttarget>
   @SuppressWarnings("unchecked")
   protected void handleRequest(ServiceContext context)
   { 
-    if (scatterOnRequest)
+    if (scatterOnRequest || uncacheable)
     {
       ControlState<Ttarget> state = (ControlState) context.getState();
       state.setPresented(false);
@@ -159,13 +161,26 @@ public abstract class Control<Ttarget>
       }
       else
       { 
-        if (debug)
+        if (uncacheable)
         {
-          log.fine("NOT Calling SCATTER bc error state: "
-            +this+" state="+state
-            +" errors="+ArrayUtil.format(state.getErrors(),",",null)
-            +" exception="+state.getException()
-          );
+          if (debug)
+          { 
+            log.fine("Calling SCATTER b/c uncacheable target "
+             +target.getContentType().getName()
+             +": "+this+" state="+state);
+          }
+          scatter(context);
+        }
+        else
+        {
+          if (debug)
+          {
+            log.fine("NOT Calling SCATTER bc error state: "
+              +this+" state="+state
+              +" errors="+ArrayUtil.format(state.getErrors(),",",null)
+              +" exception="+state.getException()
+              );
+          }
         }
 
       }

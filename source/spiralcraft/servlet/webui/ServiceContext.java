@@ -60,7 +60,7 @@ public class ServiceContext
   private VariableMap query;
   private CommandProcessor commandProcessor;
   private URI redirectURI;
-  private boolean debug;
+  private boolean debug=false;
   private UIServlet servlet;
   private List<String> queuedActions;
   
@@ -212,9 +212,7 @@ public class ServiceContext
         { redirect(uri);
         }
         catch (ServletException x)
-        { 
-          setException(x);
-          x.printStackTrace();
+        { setException(x);
         }
       }
     };
@@ -243,6 +241,9 @@ public class ServiceContext
     
     String query=rawURI.getQuery();
     
+    if (resourceSession==null)
+    { throw new RuntimeException("??? null resource session "+this);
+    }
     String encodedParameters=resourceSession.getEncodedParameters();
     
     if (encodedParameters!=null)

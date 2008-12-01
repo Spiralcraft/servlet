@@ -307,7 +307,12 @@ public abstract class ControlGroup<Ttarget>
           return true;
         }
       };
-
+      
+      // Always scatter on request if we can't cache the target
+      if (UIServlet.cachingProhibited(target.getContentType()))
+      { uncacheable=true;
+      }
+          
       // Expose the expression target as the new Focus, and add the
       // assembly in as another layer
       CompoundFocus myFocus = new CompoundFocus(parentFocus, valueBinding);
@@ -386,7 +391,7 @@ public abstract class ControlGroup<Ttarget>
       else
       {
         if (debug)
-        { log.fine("No target for editor, so not resetting state value");
+        { log.fine("No target for control group, so not resetting state value");
         }
       }
       state.resetError();
