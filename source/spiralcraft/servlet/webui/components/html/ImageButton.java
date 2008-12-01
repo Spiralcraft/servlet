@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
+import java.io.Writer;
 
 import spiralcraft.textgen.EventContext;
 
@@ -160,23 +161,47 @@ public class ImageButton
   public class Tag
     extends AbstractTag
   {
+    private String height;
+    private String width;
+    private String border;
+    private String alt;
+    
     @Override
     protected String getTagName(EventContext context)
     { return "input";
     }
 
+    public void setHeight(String height)
+    { this.height=height;
+    }
+    
+    public void setWidth(String width)
+    { this.width=width;
+    }
+    
+    public void setBorder(String border)
+    { this.border=border;
+    }
+    
+    public void setAlt(String alt)
+    { this.alt=alt;
+    }
+    
     @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
       ControlState<Command> state=((ControlState<Command>) context.getState());
-      renderAttribute(context.getWriter(),"type","image");
-      renderAttribute(context.getWriter(),"src",src);
-      if (alt!=null)
-      { renderAttribute(context.getWriter(),"alt",alt);
-      }
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      Writer writer=context.getWriter();
+      renderAttribute(writer,"type","image");
+      renderPresentAttribute(writer,"src",src);
+      renderPresentAttribute(writer,"alt",ImageButton.this.alt);
+      renderPresentAttribute(writer,"alt",alt);
+      renderPresentAttribute(writer,"height",height);
+      renderPresentAttribute(writer,"width",width);
+      renderPresentAttribute(writer,"border",border);
+      renderAttribute(writer,"name",state.getVariableName());
       super.renderAttributes(context);
     }
 

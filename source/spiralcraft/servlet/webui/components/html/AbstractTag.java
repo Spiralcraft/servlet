@@ -176,6 +176,15 @@ public abstract class AbstractTag
   { this.contentPosition=contentPosition;
   }
 
+  protected void renderPresentAttribute
+    (Writer writer,String name,String value)
+    throws IOException
+  { 
+    if (value!=null)
+    { renderAttribute(writer,name,value);
+    }
+  }
+  
   protected void renderAttribute(Writer writer,String name,String value)
     throws IOException
   {
