@@ -717,22 +717,22 @@ public class Controller
       }
       catch (PersistenceException x)
       { 
-        log.warning("Controller.loadResource() failed: "+x.toString());
+        log.log(Level.WARNING,"Controller.loadResource() failed",x);
         loadError(container,x);
       }
       catch (ServletException x)
       { 
-        log.warning("Controller.loadResource() failed: "+x.toString());
+        log.log(Level.WARNING,"Controller.loadResource() failed",x);
         loadError(container,x);
       }
       catch (IOException x)
       { 
-        log.warning("Controller.loadResource() failed: "+x.toString());
+        log.log(Level.WARNING,"Controller.loadResource() failed",x);
         loadError(container,x);
       }
       catch (RuntimeException x)
       { 
-        log.warning("Controller.loadResource() failed: "+x.toString());
+        log.log(Level.WARNING,"Controller.loadResource() failed",x);
         throw x;
       }
 
