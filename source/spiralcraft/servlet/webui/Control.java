@@ -32,7 +32,6 @@ import spiralcraft.util.ArrayUtil;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import spiralcraft.log.Level;
 
 
 import spiralcraft.command.Command;
@@ -406,12 +405,7 @@ public abstract class Control<Ttarget>
         command.execute();
         
         if (command.getException()!=null)
-        { 
-          state.setException(command.getException());
-          log.log
-            (Level.FINE,"Command threw exception "+command.toString()
-            ,command.getException()
-            );
+        { handleException(context,command.getException());
         }
           
       }
@@ -472,5 +466,23 @@ public abstract class Control<Ttarget>
     
     
   }  
+  
+  /**
+   * <p>Call to handle an exception. Standard behavior is to put exception in
+   *   the state and log it.
+   * </p>
+   * @param context
+   * @param state
+   * @param x
+   */
+  protected void handleException
+    (EventContext context
+    ,Exception x
+    )
+  {
+    ((ControlState<?>) context.getState()).setException(x);
+    logHandledException(context,x);
+  }
+  
 }
 

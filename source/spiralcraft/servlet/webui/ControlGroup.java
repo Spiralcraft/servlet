@@ -16,7 +16,6 @@ package spiralcraft.servlet.webui;
 
 import java.util.LinkedList;
 import java.util.List;
-import spiralcraft.log.Level;
 
 import java.io.IOException;
 
@@ -170,9 +169,7 @@ public abstract class ControlGroup<Ttarget>
       }
     }
     catch (TransactionException x)
-    { 
-      getState().setException(x);
-      log.log(Level.FINE,"Caught exception in transaction message ",x);
+    { handleException(context,x);
     }
     finally
     { 
@@ -396,9 +393,7 @@ public abstract class ControlGroup<Ttarget>
       state.setDataState(DataState.SCATTERED);
     }
     catch (AccessException x)
-    {
-      state.setException(x);
-      log.fine(toString()+": Caught "+x);
+    { handleException(context,x);
     }
     
   }
@@ -430,9 +425,7 @@ public abstract class ControlGroup<Ttarget>
         state.setDataState(DataState.GATHERED);
       } 
       catch (AccessException x)
-      {
-        state.setException(x);
-        log.fine(toString()+": Caught "+x);
+      { handleException(context,x);
       }
     }
 

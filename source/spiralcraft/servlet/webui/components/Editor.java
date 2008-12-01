@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui.components;
 
 
 import java.net.URI;
-import spiralcraft.log.Level;
+
 
 import javax.servlet.ServletException;
 
@@ -110,7 +110,7 @@ public abstract class Editor
             { save();
             }
             catch (DataException x)
-            { Editor.this.getState().setException(x);
+            { handleException(context,x);
             }
           }
           
@@ -127,7 +127,7 @@ public abstract class Editor
               { ((ServiceContext) context).redirect(redirectOnSaveURI);
               }
               catch (ServletException x)
-              { Editor.this.getState().setException(x);
+              { handleException(context,x);
               }
             }
           }
@@ -359,7 +359,14 @@ public abstract class Editor
         { 
           @Override
           public void run()
-          { newBuffer();
+          { 
+            try
+            { newBuffer();
+            }
+            catch (DataException x)
+            { setException(x);
+            }
+            
           }
         }
       );
@@ -373,7 +380,14 @@ public abstract class Editor
         { 
           @Override
           public void run()
-          { addNewBuffer();
+          { 
+            try
+            { addNewBuffer();
+            }
+            catch (DataException x)
+            { setException(x);
+            }
+            
           }
         }
       );
@@ -424,35 +438,29 @@ public abstract class Editor
    */
   @SuppressWarnings("unchecked")
   protected void addNewBuffer()
+    throws DataException
   {
-    try
+
+    if (type.isAggregate())
     {
-      if (type.isAggregate())
+      if (getState().getValue()==null)
       {
-        if (getState().getValue()==null)
-        {
-          // Create the aggregate buffer if none
-          getState().setValue
+        // Create the aggregate buffer if none
+        getState().setValue
           (sessionChannel.get().newBuffer(type)
           );
-          bufferChannel.set(getState().getValue());
+        bufferChannel.set(getState().getValue());
 
-        }
+      }
 
-        // Add a Tuple to the list
-        ((BufferAggregate<Buffer,?>) getState().getValue())
-        .add(sessionChannel.get().newBuffer(type.getContentType()));
-      }
-      else if (aggregateChannel!=null)
-      {
-        aggregateChannel.get()
-          .add(sessionChannel.get().newBuffer(type.getContentType()));
-      }
+      // Add a Tuple to the list
+      ((BufferAggregate<Buffer,?>) getState().getValue())
+      .add(sessionChannel.get().newBuffer(type.getContentType()));
     }
-    catch (DataException x)
-    { 
-      log.log(Level.WARNING,"Error adding new buffer",x);
-      getState().setException(x);
+    else if (aggregateChannel!=null)
+    {
+      aggregateChannel.get()
+        .add(sessionChannel.get().newBuffer(type.getContentType()));
     }
   }
   
@@ -460,19 +468,12 @@ public abstract class Editor
    * Create a new buffer
    */
   protected void newBuffer()
+    throws DataException
   {
-    try
-    {
-      getState().setValue
-      (sessionChannel.get().newBuffer(type)
-      );
-      bufferChannel.set(getState().getValue());
-    }
-    catch (DataException x)
-    { 
-      x.printStackTrace();
-      getState().setException(x);
-    }
+    getState().setValue
+    (sessionChannel.get().newBuffer(type)
+    );
+    bufferChannel.set(getState().getValue());
   }
   
   
@@ -625,9 +626,15 @@ public abstract class Editor
         if (autoCreate)
         {
           // Current value was null, and newly scattered value was null
-          newBuffer();
-          if (debug)
-          { log.fine("Created new buffer "+getState().getValue());
+          try
+          {
+            newBuffer();
+            if (debug)
+            { log.fine("Created new buffer "+getState().getValue());
+            }
+          }
+          catch (DataException x)
+          { handleException(context,x);
           }
         }
         else
@@ -655,13 +662,19 @@ public abstract class Editor
         }
         else if (autoCreate)
         {
-          newBuffer();
-          if (debug)
-          { 
-            log.fine
-              ("Created new buffer to replace last buffer: new="
-              +getState().getValue()
-              );
+          try
+          {
+            newBuffer();
+            if (debug)
+            { 
+              log.fine
+                ("Created new buffer to replace last buffer: new="
+                +getState().getValue()
+                );
+            }
+          }
+          catch (DataException x)
+          { handleException(context,x);
           }
         }
         else
@@ -737,7 +750,13 @@ public abstract class Editor
             +ArrayUtil.format(getTargetPath(),"/",null)
             );
         }
-        newBuffer();
+        try
+        {  newBuffer();
+        }
+        catch (DataException x)
+        { handleException(context,x);
+        }
+        
         
       }
     };

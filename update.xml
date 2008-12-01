@@ -4,18 +4,26 @@
   	<copy 
   	  file="../core/lib/spiralcraft-core.jar"
   	  todir="lib"
+  	  preserveLastModified="true"
+  	  verbose="true"
   	/>
   	<copy 
   	  file="../textgen/lib/spiralcraft-textgen.jar"
   	  todir="lib"
+      preserveLastModified="true"
+      verbose="true"
   	/>
   	<copy 
   	  file="../net/lib/spiralcraft-net.jar"
   	  todir="lib"
+      preserveLastModified="true"
+      verbose="true"
   	/>
     <copy 
       file="../../build/build-common.xml"
       todir="."
+      preserveLastModified="true"
+      verbose="true"
     />  	
   </target>
   

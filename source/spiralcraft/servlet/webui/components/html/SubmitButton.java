@@ -151,12 +151,12 @@ public class SubmitButton
             //   interact with WebUI api to coordinate- controller role.
             command.execute();
             if (command.getException()!=null)
-            { state.setException(command.getException());
+            { handleException(context,command.getException());
             }
           }
         }
         catch (AccessException x)
-        { state.setException(x);
+        { handleException(context,x);
         }
       }
     }

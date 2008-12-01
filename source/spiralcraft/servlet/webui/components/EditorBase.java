@@ -111,7 +111,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
                   }
                   postSaveCommand.execute();
                   if (postSaveCommand.getException()!=null)
-                  { state.setException(postSaveCommand.getException());
+                  { handleException(context,postSaveCommand.getException());
                   }
                   
                 }
@@ -119,7 +119,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
               }
             }
             catch (DataException x)
-            { state.setException(x);
+            { handleException(context,x);
             }
           }
           
@@ -187,7 +187,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       { context.redirect(redirectURI);
       }
       catch (ServletException x)
-      { EditorBase.this.getState().setException(x);
+      { handleException(context,x);
       }
     }
   }
@@ -541,7 +541,13 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
           @Override
           public void run()
-          { newBuffer();
+          { 
+            try
+            { newBuffer();
+            }
+            catch (DataException x)
+            { setException(x);
+            }
           }
         }
       );
@@ -558,19 +564,12 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    */
   @SuppressWarnings("unchecked")
   protected void newBuffer()
+    throws DataException
   {
-    try
-    {
-      getState().setValue
-      ((Tbuffer) sessionChannel.get().newBuffer(type)
-      );
-      writeToModel(getState().getValue());
-    }
-    catch (DataException x)
-    { 
-      x.printStackTrace();
-      getState().setException(x);
-    }
+    getState().setValue
+    ((Tbuffer) sessionChannel.get().newBuffer(type)
+    );
+    writeToModel(getState().getValue());
   }
   
   
@@ -607,13 +606,15 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
    
 
+  @SuppressWarnings("unchecked")
   @Override
   protected void scatter(ServiceContext context)
   { 
-    Tbuffer lastBuffer=getState().getValue();
+    EditorState<Tbuffer> state=(EditorState<Tbuffer>) context.getState();
+    Tbuffer lastBuffer=state.getValue();
    
     super.scatter(context);
-    if (getState().getValue()==null)
+    if (state.getValue()==null)
     { 
       // Deal with new value being null
       if (lastBuffer==null)
@@ -621,9 +622,15 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         if (autoCreate)
         {
           // Current value was null, and newly scattered value was null
-          newBuffer();
+          try
+          { newBuffer();
+          }
+          catch (DataException x)
+          { handleException(context,x);
+          }
+          
           if (debug)
-          { log.fine("Created new buffer "+getState().getValue());
+          { log.fine("Created new buffer "+state.getValue());
           }
         }
         else
@@ -638,7 +645,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         if (debug)
         { log.fine("New buffer is sticky "+lastBuffer);
         }
-        getState().setValue(lastBuffer);
+        state.setValue(lastBuffer);
       }
       else
       {
@@ -647,17 +654,23 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           if (debug)
           { log.fine("Retaining buffer "+lastBuffer);
           }
-          getState().setValue(lastBuffer);
+          state.setValue(lastBuffer);
         }
         else if (autoCreate)
         {
-          newBuffer();
-          if (debug)
-          { 
-            log.fine
-              ("Created new buffer to replace last buffer: new="
-              +getState().getValue()
-              );
+          try
+          {
+            newBuffer();
+            if (debug)
+            { 
+              log.fine
+                ("Created new buffer to replace last buffer: new="
+                +state.getValue()
+                );
+            }
+          }
+          catch (DataException x)
+          { handleException(context,x);
           }
         }
         else
@@ -701,7 +714,13 @@ public abstract class EditorBase<Tbuffer extends Buffer>
             +ArrayUtil.format(getTargetPath(),".",null)
             );
         }
-        newBuffer();
+        try
+        { newBuffer();
+        }
+        catch (DataException x)
+        { handleException(context,x);
+        }
+        
         
       }
     };

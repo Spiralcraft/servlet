@@ -338,7 +338,7 @@ public class Login
         { context.redirect(URI.create(state.getReferer()));
         }
         catch (ServletException x)
-        { state.setException(x);
+        { handleException(context,x);
         }
       }
     }

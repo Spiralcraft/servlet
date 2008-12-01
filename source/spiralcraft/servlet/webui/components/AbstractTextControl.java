@@ -122,10 +122,10 @@ public abstract class AbstractTextControl<Ttarget>
         }
       }
       catch (AccessException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
       catch (NumberFormatException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
 
       
@@ -193,13 +193,13 @@ public abstract class AbstractTextControl<Ttarget>
           
           }
           catch (AccessException x)
-          { state.setException(x);
+          { handleException(context,x);
           }
           catch (NumberFormatException x)
-          { state.setException(x);
+          { handleException(context,x);
           }
           catch (IllegalArgumentException x)
-          { state.setException(x);
+          { handleException(context,x);
           }
 
         }

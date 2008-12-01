@@ -76,6 +76,10 @@ public class ResourceSession
   { this.localURI=localURI;
   }
   
+  public String getLocalURI()
+  { return localURI;
+  }
+  
   /**
    * 
    * @param action The Action to register

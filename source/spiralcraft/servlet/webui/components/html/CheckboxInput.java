@@ -174,7 +174,7 @@ public class CheckboxInput
             }
           }
           catch (AccessException x)
-          { state.setException(x);
+          { handleException(context,x);
           }
         }
 
@@ -204,10 +204,10 @@ public class CheckboxInput
         state.setValue(val);
       }
       catch (AccessException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
       catch (NumberFormatException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
 
       

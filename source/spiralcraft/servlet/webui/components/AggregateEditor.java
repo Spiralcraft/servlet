@@ -14,10 +14,6 @@
 //
 package spiralcraft.servlet.webui.components;
 
-
-
-import spiralcraft.log.Level;
-
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
@@ -76,7 +72,13 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         { 
           @Override
           public void run()
-          { addNewBuffer();
+          { 
+            try
+            { addNewBuffer();
+            }
+            catch (DataException x)
+            { setException(x);
+            }
           }
         }
       );
@@ -380,25 +382,17 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
    * Add a new empty buffer
    */
   protected void addNewBuffer()
+    throws DataException
   {
-    try
-    {
-      BufferAggregate<BufferTuple,Tcontent> aggregate
-        =getState().getValue();
-      if (aggregate==null)
-      { aggregate=newAggregate();
-      }
+    BufferAggregate<BufferTuple,Tcontent> aggregate
+      =getState().getValue();
+    if (aggregate==null)
+    { aggregate=newAggregate();
+    }
 
+    // Add a Tuple to the list
+    aggregate.add(newChildBuffer());
       
-      // Add a Tuple to the list
-      aggregate.add(newChildBuffer());
-      
-    }
-    catch (DataException x)
-    { 
-      log.log(Level.WARNING,"Error adding new buffer",x);
-      getState().setException(x);
-    }
   }
   
   protected BufferTuple newChildBuffer()

@@ -223,10 +223,10 @@ public class Select<Ttarget,Tvalue>
         }
       }
       catch (AccessException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
       catch (NumberFormatException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
     }
 
@@ -253,10 +253,10 @@ public class Select<Ttarget,Tvalue>
         
       }
       catch (AccessException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
       catch (NumberFormatException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
 
       

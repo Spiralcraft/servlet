@@ -16,7 +16,6 @@ package spiralcraft.servlet.webui.components;
 
 
 
-import spiralcraft.log.Level;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
@@ -129,16 +128,7 @@ public abstract class TupleEditor
         {
           @Override
           public void run()
-          { 
-            try
-            { 
-              getState().getValue().delete();
-            }
-            catch (Exception x)
-            { 
-              getState().addError("Error deleting data:");
-              getState().setException(x);
-            }
+          { getState().getValue().delete();
           }
         }
       );
@@ -154,17 +144,13 @@ public abstract class TupleEditor
           @Override
           public void run()
           { 
-            try
+            getState().getValue().delete();
+            if (chainedCommand!=null)
             { 
-              getState().getValue().delete();
-              if (chainedCommand!=null)
-              { chainedCommand.execute();
+              chainedCommand.execute();
+              if (chainedCommand.getException()!=null)
+              { setException(chainedCommand.getException());
               }
-            }
-            catch (Exception x)
-            { 
-              getState().addError("Error queuing command:");
-              getState().setException(x);
             }
           }
         }
@@ -347,19 +333,12 @@ public abstract class TupleEditor
    * Add a new empty buffer to the parent 
    */
   protected void addNewBuffer()
+    throws DataException
   {
-    try
+    if (aggregateChannel!=null)
     {
-      if (aggregateChannel!=null)
-      {
-        aggregateChannel.get()
-          .add(getDataSession().newBuffer(getType().getContentType()));
-      }
-    }
-    catch (DataException x)
-    { 
-      log.log(Level.WARNING,"Error adding new buffer",x);
-      getState().setException(x);
+      aggregateChannel.get()
+        .add(getDataSession().newBuffer(getType().getContentType()));
     }
   }  
 
@@ -513,9 +492,15 @@ public abstract class TupleEditor
             +ArrayUtil.format(getTargetPath(),".",null)
             );
         }
-        newBuffer();
-        applyRequestBindings(context);
-        setInitialValues(getState().getValue());
+        try
+        {
+          newBuffer();
+          applyRequestBindings(context);
+          setInitialValues(getState().getValue());
+        }
+        catch (DataException x)
+        { handleException(context,x);
+        }
         
       }
     };

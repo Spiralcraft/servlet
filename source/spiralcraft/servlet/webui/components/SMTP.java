@@ -144,7 +144,13 @@ public class SMTP
     { 
       @Override
       public void run()
-      { send();
+      { 
+        try
+        { send();
+        }
+        catch (IOException x)
+        { setException(x);
+        }
       }
     };
   }  
@@ -156,47 +162,50 @@ public class SMTP
       @Override
       public void run()
       { 
-        send();
-        if (getState().getErrors()==null)
-        { successCommand.execute();
-        } 
+        try
+        { 
+          send();
+          if (getState().getErrors()==null)
+          { successCommand.execute();
+          } 
+        }
+        catch (IOException x)
+        { setException(x);
+        }
+        
         
       }
     };
   }  
   
   public void send()
+    throws IOException
   {
     Envelope envelope=getState().getValue();
     Setter.applyArray(preSetters);
-    try
+
+    envelope.setEncodedMessage(generator.render());
+    if (envelope.getSenderMailAddress()==null)
+    { getState().addError("Missing sender address");
+    }
+    else if 
+      (envelope.getRecipients()==null || envelope.getRecipients().isEmpty())
+    { getState().addError("Missing recipients");
+    }
+    else
     {
-      envelope.setEncodedMessage(generator.render());
-      if (envelope.getSenderMailAddress()==null)
-      { getState().addError("Missing sender address");
-      }
-      else if 
-        (envelope.getRecipients()==null || envelope.getRecipients().isEmpty())
-      { getState().addError("Missing recipients");
-      }
-      else
-      {
-        smtpChannel.get().send(envelope);
-        Setter.applyArray(postSetters);
-        if (debug)
-        { 
-          log.fine
-            ("Sent to "+envelope.getRecipients()
-            +"\r\n"+envelope.getEncodedMessage()
-            );
-        }
-        
+      smtpChannel.get().send(envelope);
+      Setter.applyArray(postSetters);
+      if (debug)
+      { 
+        log.fine
+          ("Sent to "+envelope.getRecipients()
+          +"\r\n"+envelope.getEncodedMessage()
+          );
       }
       
     }
-    catch (IOException x)
-    { getState().setException(x);
-    }
+      
     if (debug && getState().getErrors()!=null)
     { log.fine(ArrayUtil.format(getState().getErrors(),",",null));
     }

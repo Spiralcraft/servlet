@@ -210,19 +210,19 @@ public class FileInput
                     
         }
         catch (ServletException x)
-        { state.setException(x);
+        { handleException(context,x);
         }
         catch (IOException x)
-        { state.setException(x);
+        { handleException(context,x);
         }
         catch (AccessException x)
-        { state.setException(x);
+        { handleException(context,x);
         }
         catch (NumberFormatException x)
-        { state.setException(x);
+        { handleException(context,x);
         }
         catch (IllegalArgumentException x)
-        { state.setException(x);
+        { handleException(context,x);
         }
 
       }
@@ -277,7 +277,7 @@ public class FileInput
         }
       }
       catch (AccessException x)
-      { state.setException(x);
+      { handleException(context,x);
       }
       
     }

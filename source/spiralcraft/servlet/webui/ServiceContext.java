@@ -26,6 +26,7 @@ import spiralcraft.textgen.EventContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
 
 import spiralcraft.log.ClassLog;
@@ -77,6 +78,18 @@ public class ServiceContext
   
   void setServlet(UIServlet servlet)
   { this.servlet=servlet;
+  }
+  
+  @Override
+  public String getLogPrefix()
+  { 
+    HttpSession session=request.getSession(false);
+    if (session!=null)
+    { return "s:"+session.getId()+":"+resourceSession.getLocalURI();
+    }
+    else
+    { return resourceSession.getLocalURI();
+    }
   }
   
   /**
