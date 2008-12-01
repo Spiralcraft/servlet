@@ -137,7 +137,9 @@ public class ImageButton
             //   interact with WebUI api to coordinate- controller role.
             command.execute();
             if (command.getException()!=null)
-            { state.setException(command.getException());
+            { 
+              state.setException(command.getException());
+              logHandledException(context,command.getException());
             }
           }
         }
