@@ -73,9 +73,9 @@ public class DataSessionComponent
     if (type==null && typeX!=null)
     { type=parentFocus.bind(typeX).get();
     }
-    if (type==null)
-    { throw new BindException("No type specified "+getErrorContext());
-    }
+//    if (type==null)
+//    { throw new BindException("No type specified "+getErrorContext());
+//    }
     
     dataSessionChannel
       =new ThreadLocalChannel<DataSession>
@@ -85,12 +85,15 @@ public class DataSessionComponent
         );
     dataSessionFocus
       =new DataSessionFocus(parentFocus,dataSessionChannel,type);
+  
+    if (type!=null)
+    {
+      // Pull the data from the dataSession focus
+      dataFocus=new CompoundFocus
+        (dataSessionFocus,dataSessionFocus.findFocus(type.getURI()).getSubject());
     
-    // Pull the data from the dataSession focus
-    dataFocus=new CompoundFocus
-      (dataSessionFocus,dataSessionFocus.findFocus(type.getURI()).getSubject());
-    
-    dataFocus.bindFocus("spiralcraft.data",dataSessionFocus);
+      dataFocus.bindFocus("spiralcraft.data",dataSessionFocus);
+    }
     defaultSetters=bindAssignments(defaultAssignments);
     bindRequestAssignments();
     bindChildren(childUnits);
@@ -98,7 +101,7 @@ public class DataSessionComponent
   
   @Override
   public Focus<?> getFocus()
-  { return dataFocus;
+  { return dataFocus!=null?dataFocus:dataSessionFocus;
   }
  
   /**
