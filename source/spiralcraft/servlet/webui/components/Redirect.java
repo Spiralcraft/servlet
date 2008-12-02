@@ -28,6 +28,7 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -38,7 +39,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 
 
 /**
- * Provides common functionality for Editors
+ * Redirects
  * 
  * @author mike
  *
@@ -100,17 +101,14 @@ public class Redirect
   protected void handlePrepare(ServiceContext context)
   { 
     super.handlePrepare(context);
-    if (whenChannel!=null)
+    Boolean val=whenChannel!=null?whenChannel.get():true;
+    if (val!=null && val)
     {
-      Boolean val=whenChannel.get();
-      if (val!=null && val)
-      {
-        try 
-        { setupRedirect(context);
-        }
-        catch (ServletException x)
-        { x.printStackTrace();
-        }
+      try 
+      { setupRedirect(context);
+      }
+      catch (ServletException x)
+      { log.log(Level.WARNING,getLogPrefix(context),x);
       }
     }
    
@@ -121,24 +119,17 @@ public class Redirect
     throws IOException
   {
 
-    if (whenChannel!=null)
+    Boolean val=whenChannel!=null?whenChannel.get():true;
+    if (val!=null && val)
     {
-      Boolean val=whenChannel.get();
-      if (val!=null && val)
-      {
-        log.fine("Redirect on render");
-        try
-        { setupRedirect((ServiceContext) context);
-        }
-        catch (ServletException x)
-        { 
-          x.printStackTrace();
-          context.getWriter().write(x.toString());
-        }
+      log.fine(getLogPrefix(context)+":Redirect on render");
+      try
+      { setupRedirect((ServiceContext) context);
       }
-      else
-      { super.render(context);
+      catch (ServletException x)
+      { log.log(Level.WARNING,getLogPrefix(context),x);
       }
+        
     }
     else
     { super.render(context);
