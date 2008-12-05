@@ -20,6 +20,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.VariableMapBinding;
@@ -35,6 +36,9 @@ import spiralcraft.util.string.StringConverter;
  */
 public class RequestBinding<Tval>
 {
+  private static final ClassLog log
+    =ClassLog.getInstance(RequestBinding.class);
+  
   private String name;
   private Expression<Tval> target;
   private boolean passNull;
@@ -92,12 +96,15 @@ public class RequestBinding<Tval>
     throws BindException
   { 
     Channel<Tval> targetChannel=focus.bind(target);
-    
-    binding=new VariableMapBinding<Tval>(targetChannel,name);
+    if (debug)
+    { log.fine("Bound target "+targetChannel);
+    }
+    binding=new VariableMapBinding<Tval>(targetChannel,name,converter);
     binding.setPassNull(passNull);
     binding.setDebug(debug);
-    binding.setTranslator(translator);
-    binding.setConverter(converter);
+    if (translator!=null)
+    { binding.setTranslator(translator);
+    }
   
   }
   

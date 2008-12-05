@@ -241,10 +241,10 @@ public class DataSessionComponent
 
     for (RequestBinding binding:requestBindings)
     { 
-      binding.bind(getFocus());
       if (debug)
       { binding.setDebug(true);
       }
+      binding.bind(getFocus());
     }
   }
   

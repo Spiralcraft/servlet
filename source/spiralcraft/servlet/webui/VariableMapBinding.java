@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import spiralcraft.log.Level;
 
+import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.net.http.VariableMap;
@@ -52,21 +53,41 @@ public class VariableMapBinding<Tvar>
   
   
 
-  public VariableMapBinding(Channel<Tvar> target,String name)
+  public VariableMapBinding
+    (Channel<Tvar> target
+    ,String name
+    ,StringConverter converter
+    )
+    throws BindException
   {
     this.target=target;
     this.name=name;
+    this.converter=converter;
     clazz=target.getContentType();
     if (clazz.isArray())
     { 
       array=true;
-      converter
-        =StringConverter.getInstance(clazz.getComponentType());
+      if (this.converter==null)
+      {
+        this.converter
+          =StringConverter.getInstance(clazz.getComponentType());
+      }
     }
     else
     {
-      converter
-        =StringConverter.getInstance(clazz);
+      if (this.converter==null)
+      {
+        this.converter
+          =StringConverter.getInstance(clazz);
+      }
+    }
+    
+    if (this.converter==null && clazz!=String.class)
+    { 
+      throw new BindException
+        ("Auto-conversion failed- can't resolve StringConverter for "
+        +clazz.getName()+" and no explicit converter supplied"
+        );
     }
   }
 
@@ -133,10 +154,18 @@ public class VariableMapBinding<Tvar>
     }
     
     if (converter!=null)
-    { return converter.fromString(tval);
+    { 
+      if (debug)
+      { log.fine("Converting "+tval+" with "+converter.toString());
+      }
+      return converter.fromString(tval);
     }
     else
-    { return tval;
+    { 
+      if (debug)
+      { log.fine("Not converting "+tval);
+      }      
+      return tval;
     }
   }
   

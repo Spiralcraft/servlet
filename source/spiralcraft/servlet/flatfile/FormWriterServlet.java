@@ -168,6 +168,7 @@ public class FormWriterServlet
               (new VariableMapBinding
                 (focus.bind(Expression.create(field.getName()))
                 ,field.getName()
+                ,null
                 )
               );
 
@@ -187,6 +188,7 @@ public class FormWriterServlet
             (new VariableMapBinding
               (focus.bind(binding.getTarget())
               ,binding.getName()
+              ,null
               )
             );
         }
