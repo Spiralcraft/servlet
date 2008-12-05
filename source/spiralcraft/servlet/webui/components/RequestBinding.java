@@ -20,11 +20,13 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.parser.AssignmentNode;
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.VariableMapBinding;
 import spiralcraft.text.translator.Translator;
+import spiralcraft.util.string.ExpressionStringConverter;
 import spiralcraft.util.string.StringConverter;
 
 /**
@@ -46,6 +48,7 @@ public class RequestBinding<Tval>
   private boolean debug;
   private Translator translator;
   private StringConverter<Tval> converter;
+  private boolean assignment;
   
   private VariableMapBinding<Tval> binding;
 
@@ -70,7 +73,11 @@ public class RequestBinding<Tval>
   }
 
   public void setTarget(Expression<Tval> target)
-  { this.target = target;
+  { 
+    this.target = target;
+    if (this.target.getRootNode() instanceof AssignmentNode)
+    { assignment=true;
+    }
   }
   
   public void setTranslator(Translator translator)
@@ -92,14 +99,50 @@ public class RequestBinding<Tval>
   { return binding;
   }
   
+  @SuppressWarnings("unchecked")
   public void bind(Focus<?> focus)
     throws BindException
   { 
-    Channel<Tval> targetChannel=focus.bind(target);
-    if (debug)
-    { log.fine("Bound target "+targetChannel);
+    if (assignment)
+    { 
+      if (converter!=null)
+      { 
+        throw new BindException
+          ("In binding for "+name+": Cannot set "
+          +" both a target assignment and a converter"
+          );
+      }
+      
+      Channel<Tval> targetChannel
+        =focus.bind
+          (new Expression
+            ( ((AssignmentNode<Tval,Tval>)target.getRootNode()).getTarget())
+          );
+      if (debug)
+      { log.fine("Bound target "+targetChannel);
+      }
+      
+      binding=new VariableMapBinding<Tval>
+        (targetChannel
+        ,name
+        ,new ExpressionStringConverter
+          (focus
+          ,new Expression
+            ( ((AssignmentNode<Tval,Tval>) target.getRootNode()).getSource()
+            )
+          ,targetChannel.getReflector()
+          )
+        );
     }
-    binding=new VariableMapBinding<Tval>(targetChannel,name,converter);
+    else
+    { 
+      Channel<Tval> targetChannel=focus.bind(target);
+      if (debug)
+      { log.fine("Bound target "+targetChannel);
+      }
+      
+      binding=new VariableMapBinding<Tval>(targetChannel,name,converter);
+    }
     binding.setPassNull(passNull);
     binding.setDebug(debug);
     if (translator!=null)
