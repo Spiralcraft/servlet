@@ -102,6 +102,10 @@ public class VariableMapBinding<Tvar>
    *   conversion from a String to the native type of the binding target
    * </p>
    * 
+   * <p>Note that for array types, the Converter should be specified for
+   *   the array component type, as the array elements are unpacked for
+   *   use in the VariableMap.
+   * </p> 
    * @param converter
    */
   public void setConverter(StringConverter converter)
