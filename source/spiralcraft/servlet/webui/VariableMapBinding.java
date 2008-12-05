@@ -50,6 +50,7 @@ public class VariableMapBinding<Tvar>
   private Translator translator;
   
   
+  
 
   public VariableMapBinding(Channel<Tvar> target,String name)
   {
@@ -85,8 +86,26 @@ public class VariableMapBinding<Tvar>
   { this.debug=debug;
   }
   
+  /**
+   * <p>Whether the binding will set the target value to null of the bound
+   *   request variable is not present
+   * </p>
+   * @param passNull
+   */
+  
   public void setPassNull(boolean passNull)
   { this.passNull = passNull;
+  }
+  
+  /**
+   * <p>Specifies the StringConverter which will provide the bidirectional
+   *   conversion from a String to the native type of the binding target
+   * </p>
+   * 
+   * @param converter
+   */
+  public void setConverter(StringConverter converter)
+  { this.converter=converter;
   }
   
   private Object translateValueIn(String val)

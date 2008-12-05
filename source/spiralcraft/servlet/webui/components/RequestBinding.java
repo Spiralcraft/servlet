@@ -24,6 +24,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.VariableMapBinding;
 import spiralcraft.text.translator.Translator;
+import spiralcraft.util.string.StringConverter;
 
 /**
  * Provides access to the request Query string as part of a UI
@@ -40,6 +41,7 @@ public class RequestBinding<Tval>
   private boolean publish;
   private boolean debug;
   private Translator translator;
+  private StringConverter<Tval> converter;
   
   private VariableMapBinding<Tval> binding;
 
@@ -71,6 +73,17 @@ public class RequestBinding<Tval>
   { this.translator=translator;
   }
   
+  /**
+   * <p>Specifies the StringConverter which will provide the bidirectional
+   *   conversion from a String to the native type of the binding target
+   * </p>
+   * 
+   * @param converter
+   */
+  public void setConverter(StringConverter<Tval> converter)
+  { this.converter=converter;
+  }
+  
   public VariableMapBinding<Tval> getBinding()
   { return binding;
   }
@@ -79,10 +92,12 @@ public class RequestBinding<Tval>
     throws BindException
   { 
     Channel<Tval> targetChannel=focus.bind(target);
+    
     binding=new VariableMapBinding<Tval>(targetChannel,name);
     binding.setPassNull(passNull);
     binding.setDebug(debug);
     binding.setTranslator(translator);
+    binding.setConverter(converter);
   
   }
   
