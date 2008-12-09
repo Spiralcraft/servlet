@@ -101,7 +101,7 @@ public class Redirect
   protected void handlePrepare(ServiceContext context)
   { 
     super.handlePrepare(context);
-    Boolean val=whenChannel!=null?whenChannel.get():true;
+    Boolean val=whenChannel!=null?whenChannel.get():Boolean.TRUE;
     if (val!=null && val)
     {
       try 
@@ -119,7 +119,7 @@ public class Redirect
     throws IOException
   {
 
-    Boolean val=whenChannel!=null?whenChannel.get():true;
+    Boolean val=whenChannel!=null?whenChannel.get():Boolean.TRUE;
     if (val!=null && val)
     {
       log.fine(getLogPrefix(context)+":Redirect on render");
