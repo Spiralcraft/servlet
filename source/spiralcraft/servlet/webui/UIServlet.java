@@ -392,62 +392,56 @@ public class UIServlet
     
     }
 
+    boolean done=false;
+    
+    //
+    // REQUEST
+    //
     component.message(serviceContext,REQUEST_MESSAGE,null);
-      
-    handleAction(component,serviceContext);
-
-    localSession.clearActions();
-      
-    if (serviceContext.getRedirectURI()!=null)
+    done=processRedirect(serviceContext);
+    
+    if (!done)
     {
-      // Redirect after action
-      response.sendRedirect
-        (response.encodeRedirectURL
-          (serviceContext.getRedirectURI().toString())
-        );
+     
+      //
+      // ACTION
+      //
+      handleAction(component,serviceContext);
+
+      localSession.clearActions();
+      done=processRedirect(serviceContext);
     }
-    else
+    
+    
+    if (!done)
     {
 
       //
       // PREPARE
       //
       component.message(serviceContext,PREPARE_MESSAGE,null);
-      if (serviceContext.getRedirectURI()!=null)
-      {
-        // Redirect after prepare
-        response.sendRedirect
-          (response.encodeRedirectURL
-            (serviceContext.getRedirectURI().toString())
-          );
-      }
-      else
-      {
-       
-        //
-        // COMMAND
-        //
-        component.message(serviceContext,COMMAND_MESSAGE,null);
-      
-        if (serviceContext.getRedirectURI()!=null)
-        {
-          // Redirect after commands
-          response.sendRedirect
-            (response.encodeRedirectURL
-              (serviceContext.getRedirectURI().toString())
-            );
-        }
-        else
-        { 
-          //
-          // RENDER
-          //
-          render(component,serviceContext);
-        }
-       
-      }
+      done=processRedirect(serviceContext);
     }
+    
+    if (!done)
+    {
+       
+      //
+      // COMMAND
+      //
+      component.message(serviceContext,COMMAND_MESSAGE,null);
+      done=processRedirect(serviceContext);
+    }
+    
+    if (!done)
+    { 
+      //
+      // RENDER
+      //
+      render(component,serviceContext);
+      done=processRedirect(serviceContext);
       
+    }
       
     ElementState newState=serviceContext.getState();
     if (newState!=oldState)
@@ -458,6 +452,31 @@ public class UIServlet
       
     response.getWriter().flush();
     response.flushBuffer();
+  }
+  
+  /**
+   * <p>Check to see whether a redirect needs to be performed. If so,
+   *   perform the redirect and return true, otherwise return false
+   * </p>
+   * @param serviceContext
+   * @return
+   * @throws ServletException
+   * @throws IOException
+   */
+  private boolean processRedirect(ServiceContext serviceContext)
+    throws ServletException,IOException
+  {
+    if (serviceContext.getRedirectURI()!=null)
+    {
+      HttpServletResponse response=serviceContext.getResponse();
+
+      response.sendRedirect
+        (response.encodeRedirectURL
+          (serviceContext.getRedirectURI().toString())
+        );
+      return true;
+    }
+    return false;
   }
   
   /**
