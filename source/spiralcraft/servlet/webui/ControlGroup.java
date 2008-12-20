@@ -71,6 +71,8 @@ public abstract class ControlGroup<Ttarget>
   private Focus<?> focus;
 
   private String variableName;
+  
+  protected boolean useDefaultTarget=true;
 
   public ControlGroupState<Ttarget> getState()
   {
@@ -234,8 +236,11 @@ public abstract class ControlGroup<Ttarget>
     if (expression != null)
     { return parentFocus.bind(expression);
     } 
-    else
+    else if (useDefaultTarget)
     { return parentFocus.getSubject();
+    }
+    else
+    { return null;
     }
   }
 

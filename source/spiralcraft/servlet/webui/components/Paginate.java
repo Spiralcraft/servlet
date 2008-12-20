@@ -93,7 +93,7 @@ public class Paginate<Ttarget,Titem>
     return new Action(actionName,context.getState().getPath())
     {
 
-      { clearable=false;
+      { responsive=false;
       }
       
       @Override

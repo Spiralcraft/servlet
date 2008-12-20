@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 2008,2008 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -17,42 +17,70 @@ package spiralcraft.servlet.webui.components.rpc;
 
 //import spiralcraft.log.ClassLog;
 
+
+import spiralcraft.servlet.webui.RequestMessage;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.servlet.webui.ControlGroup;
-import spiralcraft.servlet.webui.ControlGroupState;
-import spiralcraft.servlet.webui.CommandMessage;
-
-
-
+import spiralcraft.servlet.webui.components.Acceptor;
+import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.Message;
+import spiralcraft.textgen.MessageHandler;
 
 
 public class Controller<T>
-  extends ControlGroup<T>
+  extends Acceptor<T>
 {
   //private static final ClassLog log=ClassLog.getInstance(Controller.class);
   
-  private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();
-    
-  @Override
-  protected void handlePrepare(ServiceContext context)
+  private boolean autoPost;
+  
   {
-    super.handlePrepare(context);
-    relayMessage(context,COMMAND_MESSAGE,null);
-  }
-  
-  
-  @Override
-  public ControllerState<T> createState()
-  { return new ControllerState<T>(this);
-  }
- 
-  
-  public class ControllerState<X>
-    extends ControlGroupState<X>
-  {
-    public ControllerState(Controller<X> form)
-    { super(form);
-    }
+    // Add a handler to invoke the automatic post action after all the
+    //   subcomponents have processed the RequestMessage
+    addHandler
+      (new MessageHandler()
+      {
+        @Override
+        public void handleMessage(EventContext context, Message message,
+            boolean postOrder)
+        { 
+          if (autoPost && postOrder && message.getType()==RequestMessage.TYPE)
+          { createAction(context,false).invoke((ServiceContext) context);
+          }
+        }
+      });
+  }  
 
+    
+  /**
+   * <p>Automatically run the "post" action before the "prepare" stage,
+   *   regardless of whether or not the associated action appears in the 
+   *   request line.
+   * </p>
+   * 
+   * <p>Useful to trigger data updates and refreshes on each 
+   *   page view.
+   * </p>
+   * 
+   * @param autoPost
+   */
+  public void setAutoPost(boolean autoPost)
+  { this.autoPost=autoPost;
   }
+  
+  @Override
+  protected boolean wasActioned(ServiceContext context)
+  { return autoPost || true;
+  }
+  
+  @Override
+  protected void handleRequest(ServiceContext context)
+  {
+    super.handleRequest(context);
+    if (autoPost)
+    { 
+    }
+  }
+  
 }
+    
+

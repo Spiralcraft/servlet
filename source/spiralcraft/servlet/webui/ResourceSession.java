@@ -44,7 +44,7 @@ public class ResourceSession
     // Remove clearable Actions only
     for (Action action:actions)
     {
-      if (action.isClearable())
+      if (action.isResponsive())
       { actionMap.remove(action.getName(),action);
       }
     }

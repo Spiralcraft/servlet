@@ -14,6 +14,7 @@
 //
 package spiralcraft.servlet.webui;
 
+import spiralcraft.lang.BindException;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
@@ -22,10 +23,12 @@ import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.textgen.Message;
+import spiralcraft.textgen.compiler.TglUnit;
 
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * <p>A Component is a unit of web user interface composition. 
@@ -58,7 +61,16 @@ public abstract class Component
   extends Element
 {
   private Component parentComponent;
-
+  
+//  private Expression<?> beforeRequest;
+//  private Expression<?> afterRequest;
+//  
+//  private Expression<?> beforePrepare;
+//  private Expression<?> afterPrepare;
+//  
+//  private Expression<?> beforeRender;
+//  private Expression<?> afterRender;
+  
   public Component getParentComponent()
   { return parentComponent;
   }
@@ -88,6 +100,7 @@ public abstract class Component
     if (debug)
     { log.fine(this.toString()+" message "+message);
     }
+    
     if (message.getType()==RequestMessage.TYPE)
     { handleRequest((ServiceContext) context);
     }
@@ -181,5 +194,10 @@ public abstract class Component
   { renderChildren(context);
   }
   
-  
+  @Override
+  public void bind(List<TglUnit> childUnits)
+    throws BindException,MarkupException
+  { 
+    bindChildren(childUnits);
+  }
 }

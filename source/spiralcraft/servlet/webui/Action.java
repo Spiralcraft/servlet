@@ -26,7 +26,7 @@ public abstract class Action
   
   private final String name;
   private final int[] targetPath;
-  protected boolean clearable=true;
+  protected boolean responsive=true;
 
   public Action(String name,int[] targetPath)
   { 
@@ -35,22 +35,25 @@ public abstract class Action
   }
   
   /**
-   * <P>Indicates that an Action should be cleared after handling user input.
-   * </P>
+   * <p>Indicates that an Action is set up for a user to respond to a specific
+   *   output element, and should be cleared in-between requests.
+   * </p>
    * 
-   * <P>An action that is always clearable is effectively a single-use action,
+   * <p>An action that is responsive is effectively a single-use action,
    *   one that would normally be generated from a specific rendering.
-   * </P>
+   * </p>
    * 
-   * <P>An action that is not clearable would typically be used to handle
-   *   explicit invocation of functionality via the URL.
+   * <P>An action that is not responsive would typically be used to handle
+   *   explicit invocation of functionality, eg. via the URL, and should not 
+   *   depend on the state of the component as it may linger from the
+   *   last request. 
    * </P>
    *   
    * 
    * @return Whether the Action will be cleared after handling user input.
    */
-  public boolean isClearable()
-  { return clearable;
+  public boolean isResponsive()
+  { return responsive;
   }
   
   /**

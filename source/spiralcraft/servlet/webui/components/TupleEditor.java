@@ -357,6 +357,7 @@ public abstract class TupleEditor
     }
     Channel<?> source=super.bindTarget(parentFocus);
     
+
     
     if (source==null)
     { 
@@ -412,7 +413,7 @@ public abstract class TupleEditor
           );
       }
       
-      setupType();
+      checkTypeCompatibility();
     }
     
     if (bufferChannel==null)
@@ -434,6 +435,7 @@ public abstract class TupleEditor
   protected Focus<Buffer> bindExports()
     throws BindException
   {
+    super.bindExports();
     DataReflector<Buffer> reflector
     =(DataReflector<Buffer>) getFocus().getSubject().getReflector();
   
@@ -479,7 +481,7 @@ public abstract class TupleEditor
     return new Action(newActionName,context.getState().getPath())
     {
 
-      { clearable=false;
+      { responsive=false;
       }
       
       @Override

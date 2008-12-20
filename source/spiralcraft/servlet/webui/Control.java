@@ -44,8 +44,9 @@ import spiralcraft.lang.Reflector;
 import spiralcraft.lang.Setter;
 
 /**
- * <P>An Component that coordinates or provides a means of user input.
- * </P>
+ * <p>A Component that provides a view or an interaction point bound a model
+ *   object specified by an expression
+ * </p>
  * 
  * 
  * 

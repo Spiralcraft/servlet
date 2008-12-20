@@ -20,8 +20,6 @@ import java.io.IOException;
 
 
 import spiralcraft.data.DataComposite;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
@@ -93,15 +91,7 @@ public class AggregateEditor<T extends DataComposite>
     }
   }
 
-  @Override
-  protected Focus<?> bindExports()
-    throws BindException
-  {
-    if (findElement(Form.class)==null)
-    { throw new BindException("Editor must be contained in a Form");
-    }
-    return super.bindExports();
-  }
+
   
 
 }

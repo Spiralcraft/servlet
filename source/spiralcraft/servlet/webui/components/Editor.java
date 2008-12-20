@@ -737,7 +737,7 @@ public abstract class Editor
   {
     return new Action(newActionName,context.getState().getPath())
     {
-      { clearable=false;
+      { responsive=false;
       }
       
       @Override

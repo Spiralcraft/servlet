@@ -16,10 +16,8 @@ package spiralcraft.servlet.webui.components.rpc;
 
 import java.io.IOException;
 
-import spiralcraft.data.session.Buffer;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.textgen.EventContext;
+
 
 /**
  * <p>A TupleEditor geared towards RPC based editing
@@ -39,13 +37,6 @@ public class TupleEditor
     renderChildren(context);
   }
 
-  @Override
-  protected Focus<Buffer> bindExports()
-    throws BindException
-  {
 
-    return super.bindExports();
-  }
-  
 
 }

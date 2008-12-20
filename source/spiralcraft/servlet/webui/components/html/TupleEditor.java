@@ -18,10 +18,6 @@ import java.io.IOException;
 
 
 
-
-import spiralcraft.data.session.Buffer;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
@@ -92,15 +88,7 @@ public class TupleEditor
     }
   }
 
-  @Override
-  protected Focus<Buffer> bindExports()
-    throws BindException
-  {
-    if (findElement(Form.class)==null)
-    { throw new BindException("Editor must be contained in a Form");
-    }
-    return super.bindExports();
-  }
+
   
 
 }

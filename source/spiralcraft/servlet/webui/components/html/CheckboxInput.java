@@ -102,6 +102,9 @@ public class CheckboxInput
   { return tag;
   }
 
+  public ErrorTag getErrorTag()
+  { return errorTag;
+  }
 
   @Override
   public void bind(List<TglUnit> childUnits)

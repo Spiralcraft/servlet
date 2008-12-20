@@ -34,7 +34,9 @@ import spiralcraft.data.session.Buffer;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.spi.NullChannel;
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Action;
@@ -65,8 +67,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   
   protected Channel<Buffer> bufferChannel;
   
-  private Type<?> type;
+  protected Type<?> type;
   private Channel<DataSession> sessionChannel;
+  
+  protected Expression<?> typeX;
 
   protected String newActionName;
   
@@ -83,9 +87,12 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   private String redirectOnSaveParameter;
   
   protected boolean autoCreate;
+  protected boolean autoSave;
   protected boolean retain;
 
   {
+    useDefaultTarget=false;
+    
     addHandler
       (new MessageHandler()
       {
@@ -236,9 +243,38 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   { return type;
   }
   
-  public void setupType()
+  public void setTypeX(Expression<?> typeX)
+  { this.typeX=typeX;
+  }
+  
+  
+  protected void setupExplicitType(Focus<?> focus)
     throws BindException
   {
+    if (typeX!=null)
+    { 
+      Channel<?> typeC=focus.bind(typeX);
+      if (Type.class.isAssignableFrom(typeC.getContentType()))
+      { type=((Type<?>) typeC.get());
+      }
+      else if (DataReflector.class.isAssignableFrom(typeC.getContentType()))
+      { type=((DataReflector<?>) typeC.get()).getType();
+      }
+      else
+      { 
+        throw new BindException
+          ("Could not derive a data Type from "+typeX+": "+typeC);
+      }
+      type=Type.getBufferType(type);
+      
+    }
+  }
+  
+  protected void checkTypeCompatibility()
+    throws BindException
+  {
+    
+    
     Type<?> newType
       =((DataReflector<?>) bufferChannel.getReflector()).getType();
 
@@ -279,6 +315,15 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     
   }
   
+  /**
+   * <p>The Editor will save the Editor tree after the GATHER action.
+   * </p>
+   */
+  public void setAutoSave(boolean val)
+  { autoSave=val;
+    
+  }
+
   /**
    * Retain any original value if the source provides a null value
    */
@@ -608,6 +653,16 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
   @SuppressWarnings("unchecked")
   @Override
+  protected void gather(ServiceContext context)
+  { 
+    if (autoSave)
+    { ((ControlGroupState) context.getState()).queueCommand(saveCommand());
+    }
+    super.gather(context);
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
   protected void scatter(ServiceContext context)
   { 
     EditorState<Tbuffer> state=(EditorState<Tbuffer>) context.getState();
@@ -701,7 +756,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     return new Action(newActionName,context.getState().getPath())
     {
 
-      { clearable=false;
+      { responsive=false;
       }
       
       @Override
@@ -736,6 +791,38 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   @Override
   public EditorState<Tbuffer> getState()
   { return (EditorState<Tbuffer>) super.getState();
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  protected Channel<?> bindTarget(Focus<?> parentFocus)
+    throws BindException
+  {
+    Channel<?> source=super.bindTarget(parentFocus);
+    
+    setupExplicitType(parentFocus);
+    
+    if (source==null && type!=null)
+    { 
+      log.fine("No source: Binding NullChannel for type "+type);
+      source=new NullChannel(DataReflector.getInstance(type));
+    }
+    else
+    { log.fine("Source="+source);
+
+    }
+    return source;
+  }
+  
+  @Override
+  protected Focus<?> bindExports()
+    throws BindException
+  {
+    if (findElement(Acceptor.class)==null)
+    { throw new BindException
+        ("Editor must be contained in a Form or other Acceptor");
+    }
+    return super.bindExports();
   }
 }
 

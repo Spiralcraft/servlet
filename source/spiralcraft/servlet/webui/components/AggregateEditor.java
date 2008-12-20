@@ -228,8 +228,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     }
     Channel<?> source=super.bindTarget(parentFocus);
     
-    
-    if (source==null)
+    if (source==null && type==null)
     { 
       source=parentFocus.getSubject();
       if (source==null)
@@ -265,7 +264,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
           ,(Channel<DataComposite>) source
           );
       }
-      setupType();
+      checkTypeCompatibility();
     }
     
     if (bufferChannel==null)
@@ -288,6 +287,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   protected Focus<?> bindExports()
     throws BindException
   {
+    super.bindExports();
     DataReflector<Buffer> reflector
       =(DataReflector<Buffer>) getFocus().getSubject().getReflector();
   

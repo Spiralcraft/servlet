@@ -164,7 +164,7 @@ public class PageAction
     return new Action(actionName,context.getState().getPath())
     {
 
-      { clearable=PageAction.this.actionName==null;
+      { responsive=PageAction.this.actionName==null;
       }
       
      
