@@ -19,12 +19,7 @@
       preserveLastModified="true"
       verbose="true"
     />
-    <copy 
-      file="../../build/build-common.xml"
-      todir="."
-      preserveLastModified="true"
-      verbose="true"
-    />  	
+
   </target>
   
 </project>

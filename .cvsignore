@@ -3,3 +3,4 @@ out
 build.number
 bin
 *.local
+test-out

@@ -18,6 +18,6 @@
     value="spiralcraft-core.jar spiralcraft-net.jar spiralcraft-textgen.jar"
   />	
 
-  <import file="build-common.xml"/>
+  <import file="../../build/build-common.xml"/>
 	
 </project>
