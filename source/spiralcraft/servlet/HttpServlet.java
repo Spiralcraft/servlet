@@ -45,15 +45,16 @@ import spiralcraft.vfs.url.URLResource;
 
 
 /**
- * Base class for web servlets, with useful utility methods to simplify
+ * <p>Base class for web servlets, with useful utility methods to simplify
  *  implementations.
+ * </p>
  */
 public class HttpServlet
   implements Servlet
 {
 
-  protected static final ClassLog log=
-      ClassLog.getInstance(HttpServlet.class);
+  protected final ClassLog log=
+      ClassLog.getInstance(getClass());
   
   public static final String METHOD_GET="GET";
   public static final String METHOD_HEAD="HEAD";
@@ -113,36 +114,85 @@ public class HttpServlet
   {
   }
   
+  /**
+   * 
+   * @param request
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */
   protected void doGet(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
   }
   
+  /**
+   * 
+   * @param request
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */
   protected void doHead(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   { 
   }
 
+  /**
+   * 
+   * @param request
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */
   protected void doPost(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
   }
 
+  /**
+   *   
+   * @param request
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */ 
   protected void doPut(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
   }
 
+  /**
+   * 
+   * @param request
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */
   protected void doOptions(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   { 
   }
 
+  /**
+   * 
+   * @param request
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */
   protected void doTrace(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
   }
 
+  /**
+   * 
+   * @param request
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */
   protected void doDelete(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {

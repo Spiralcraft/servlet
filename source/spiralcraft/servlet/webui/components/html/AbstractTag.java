@@ -217,17 +217,31 @@ public abstract class AbstractTag
    */
   protected abstract boolean hasContent();
   
-  
+  /**
+   * 
+   * @param context
+   * @throws IOException
+   */
   protected void renderContent(EventContext context)
     throws IOException
   { 
   }
   
+  /**
+   * 
+   * @param context
+   * @throws IOException
+   */
   protected void renderBefore(EventContext context)
     throws IOException
   {
   }
   
+  /**
+   * 
+   * @param context
+   * @throws IOException
+   */
   protected void renderAfter(EventContext context)
     throws IOException
   {

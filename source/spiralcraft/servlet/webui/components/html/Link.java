@@ -90,7 +90,7 @@ public class Link
       Link.super.render(context);
     }
     
-  };
+  }
   
   @Override
   public void bind(List<TglUnit> childUnits)

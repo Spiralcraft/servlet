@@ -61,18 +61,12 @@ public class UICache
    * Create a new UI Cache with components bound to the specified Focus
    */
   public UICache(UIServlet servlet,Focus<?> parentFocus)
-    throws ServletException
   { 
     this.servlet=servlet;
-    try
-    { 
-      focus=new SimpleFocus<UIServlet>();
-      focus.setParentFocus(parentFocus);
-      focus.setSubject(new SimpleChannel<UIServlet>(servlet,true));
-    }
-    catch (BindException x)
-    { throw new ServletException("Error binding Session "+x,x);
-    }
+    focus=new SimpleFocus<UIServlet>();
+    focus.setParentFocus(parentFocus);
+    focus.setSubject(new SimpleChannel<UIServlet>(servlet,true));
+
   }  
   
   /**

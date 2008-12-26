@@ -55,7 +55,7 @@ public class Login
       throws IOException
     { super.renderAttributes(context);
     }
-  };
+  }
   
   private Tag tag=new Tag();
   

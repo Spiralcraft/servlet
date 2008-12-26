@@ -73,7 +73,7 @@ public class SubmitButton
     protected boolean hasContent()
     { return false;
     }
-  };
+  }
     
   private ErrorTag errorTag=new ErrorTag(tag);
   

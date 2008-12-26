@@ -64,7 +64,7 @@ public class AggregateEditor<T extends DataComposite>
       throws IOException
     { super.renderAttributes(context);
     }
-  };
+  }
   
   private Tag tag=new Tag();
   

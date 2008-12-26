@@ -163,7 +163,7 @@ public class ImageButton
     private String height;
     private String width;
     private String border;
-    private String alt;
+    private String tagAlt;
     
     @Override
     protected String getTagName(EventContext context)
@@ -183,7 +183,7 @@ public class ImageButton
     }
     
     public void setAlt(String alt)
-    { this.alt=alt;
+    { this.tagAlt=alt;
     }
     
     @SuppressWarnings("unchecked") // Generic cast
@@ -196,7 +196,7 @@ public class ImageButton
       renderAttribute(writer,"type","image");
       renderPresentAttribute(writer,"src",src);
       renderPresentAttribute(writer,"alt",ImageButton.this.alt);
-      renderPresentAttribute(writer,"alt",alt);
+      renderPresentAttribute(writer,"alt",tagAlt);
       renderPresentAttribute(writer,"height",height);
       renderPresentAttribute(writer,"width",width);
       renderPresentAttribute(writer,"border",border);

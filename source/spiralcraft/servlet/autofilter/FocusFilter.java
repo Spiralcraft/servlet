@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
-import spiralcraft.log.ClassLog;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -40,8 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class FocusFilter<T>
   extends AutoFilter
 {
-  @SuppressWarnings("unused")
-  private static final ClassLog log=ClassLog.getInstance(FocusFilter.class);
   
   private static final String attributeName="spiralcraft.lang.focus";
   

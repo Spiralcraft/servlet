@@ -686,7 +686,6 @@ public class Controller
     }
     
     public void loadResource(Resource resource,Path container)
-      throws IOException,PersistenceException
     { 
       exception=null;
       try

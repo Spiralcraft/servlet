@@ -42,7 +42,7 @@ public class ControlState<Tbuf>
   ,PROCESSED
   ,SCATTERED
   ,RENDERED
-  };
+  }
   
   protected static final ClassLog log=ClassLog.getInstance(ControlState.class);
 

@@ -62,7 +62,7 @@ public class TupleEditor
       throws IOException
     { super.renderAttributes(context);
     }
-  };
+  }
   
   private Tag tag=new Tag();
   

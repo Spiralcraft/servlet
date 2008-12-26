@@ -178,7 +178,7 @@ public class Login
     AuthSession session=sessionChannel.get();
       
     boolean authenticated;
-    String username=null;;
+    String username=null;
     
     synchronized (session)
     {

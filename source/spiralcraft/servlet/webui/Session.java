@@ -47,6 +47,11 @@ public class Session
   
 
 
+  /**
+   * 
+   * @param parentFocus
+   * @throws ServletException
+   */
   public void init(Focus<?> parentFocus)
     throws ServletException
   {

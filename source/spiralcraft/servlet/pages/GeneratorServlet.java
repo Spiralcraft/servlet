@@ -50,7 +50,6 @@ import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
-import spiralcraft.log.ClassLog;
 
 
 /**
@@ -73,7 +72,6 @@ import spiralcraft.log.ClassLog;
 public class GeneratorServlet
   extends HttpServlet
 {
-  private static final ClassLog log=ClassLog.getInstance(GeneratorServlet.class);
   
   private final HashMap<String,ResourceEntry> resourceMap
     =new HashMap<String,ResourceEntry>();
@@ -125,7 +123,7 @@ public class GeneratorServlet
         response.sendError(404,request.getRequestURI()+" not found");
         return;
       }
-      entry.service(request,response);
+      entry.service(response);
     }
     catch (URISyntaxException x)
     { throw new ServletException(x.toString(),x);
@@ -261,8 +259,8 @@ class ResourceEntry
   
   
   public void service
-    (HttpServletRequest request,HttpServletResponse response)
-    throws ServletException,IOException
+    (HttpServletResponse response)
+    throws IOException
   {
     checkState();
     if (exception!=null)

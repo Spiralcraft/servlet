@@ -46,8 +46,8 @@ import spiralcraft.util.Path;
 public abstract class AutoFilter
   implements Filter
 {
-  protected static final ClassLog log
-    =ClassLog.getInstance(AutoFilter.class);
+  protected final ClassLog log
+    =ClassLog.getInstance(getClass());
   
   private boolean additive=true;
   private boolean overridable=true;

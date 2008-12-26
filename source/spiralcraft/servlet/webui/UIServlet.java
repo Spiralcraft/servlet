@@ -19,7 +19,6 @@ import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.BindException;
-import spiralcraft.log.ClassLog;
 
 
 import spiralcraft.vfs.Resource;
@@ -119,7 +118,6 @@ import java.util.LinkedList;
 public class UIServlet
   extends HttpServlet
 {
-  private static final ClassLog log=ClassLog.getInstance(UIServlet.class);
   
   private static final Message INITIALIZE_MESSAGE=new InitializeMessage();
   private static final Message PREPARE_MESSAGE=new PrepareMessage();

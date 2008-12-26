@@ -28,8 +28,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 
-import spiralcraft.log.ClassLog;
-
 
 /**
  * Create a session scoped DataSession and state managed to allow data
@@ -44,8 +42,6 @@ public class DataSessionFilter
   extends FocusFilter<DataSession>
 {
   
-  private static final ClassLog log
-    =ClassLog.getInstance(DataSessionFilter.class);
   
   private ThreadLocalChannel<DataSession> dataSessionChannel;
   private String attributeName;

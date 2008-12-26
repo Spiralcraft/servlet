@@ -80,7 +80,7 @@ public class Button
       throws IOException
     { Button.super.render(context);
     }
-  };
+  }
     
   private ErrorTag errorTag=new ErrorTag(tag);
   

@@ -78,7 +78,6 @@ public abstract class Component
 
   @Override
   public void setParent(Element parentElement)
-    throws MarkupException
   {
     super.setParent(parentElement);
     if (parentElement!=null)
@@ -154,6 +153,9 @@ public abstract class Component
   {
   }
 
+  /**
+   * @param context
+   */
   protected void handleCommand(ServiceContext context)
   {
   }

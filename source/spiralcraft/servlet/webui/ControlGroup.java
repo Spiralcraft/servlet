@@ -254,6 +254,7 @@ public abstract class ControlGroup<Ttarget>
    * 
    * @return The new Focus to export, or null if the current Focus will be
    *   exported
+   * @throws BindException 
    */
   protected Focus<?> bindExports()
     throws BindException

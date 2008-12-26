@@ -77,7 +77,7 @@ public class TextInput<Ttarget>
     { return false;
     }
     
-  };
+  }
   
   private ErrorTag errorTag=new ErrorTag(tag);
   

@@ -62,7 +62,7 @@ public class FormCommand
     protected boolean hasContent()
     { return false;
     }
-  };
+  }
     
   private ErrorTag errorTag=new ErrorTag(tag);
   

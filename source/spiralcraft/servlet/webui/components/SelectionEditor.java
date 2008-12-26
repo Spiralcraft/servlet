@@ -242,7 +242,6 @@ public class SelectionEditor
     extends AbstractChannel<TselectItem[]>
   {
     public SelectionChannel(Class<TselectItem[]> arrayClass)
-      throws BindException
     { super(BeanReflector.<TselectItem[]>getInstance(arrayClass));
     }
     

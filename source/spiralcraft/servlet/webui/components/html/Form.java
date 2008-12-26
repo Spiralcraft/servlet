@@ -78,7 +78,7 @@ public class Form<T>
       }
       super.renderAttributes(context);
     }
-  };
+  }
   
   private final ErrorTag errorTag=new ErrorTag(tag);
   

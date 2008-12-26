@@ -59,7 +59,7 @@ public class SelectionEditor<TorigContent extends DataComposite,TselectItem>
       throws IOException
     { super.renderAttributes(context);
     }
-  };
+  }
   
   private Tag tag=new Tag();
   
