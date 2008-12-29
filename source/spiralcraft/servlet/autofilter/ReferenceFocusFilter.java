@@ -30,7 +30,7 @@ import spiralcraft.data.Type;
 import spiralcraft.data.persist.AbstractXmlObject;
 //import spiralcraft.data.persist.PersistentFocusProvider;
 
-import spiralcraft.builder.LifecycleException;
+import spiralcraft.common.LifecycleException;
 
 
 /**
