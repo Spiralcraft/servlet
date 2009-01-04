@@ -172,11 +172,6 @@ public class Controller
       if (throwable==null)
       {
         String pathString=request.getRequestURI();
-        if (pathString.startsWith("/WEB-INF"))
-        { 
-          ((HttpServletResponse) servletResponse).sendError(403);
-          return;
-        }
         FilterChain chain=resolveChain(pathString,endpoint);
         chain.doFilter(servletRequest,servletResponse);
       }
