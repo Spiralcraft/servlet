@@ -113,7 +113,7 @@ public class ControlState<Tbuf>
     { localName=controlGroupState.nextLocalName();
     }
     
-    if (controlGroupState!=null)
+    if (controlGroupState!=null && control.getContextualizeName())
     { 
       // Determine contextual part of variable name
       variableName=controlGroupState.getVariableName();

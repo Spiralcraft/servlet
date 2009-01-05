@@ -66,8 +66,48 @@ public abstract class Control<Ttarget>
   protected boolean scatterOnRequest;
   protected boolean uncacheable;
   
+  private boolean contextualizeName=true;
+  
+  /**
+   * <p>The binding target expression that represents the "model" that this
+   *   Control provides a view for.
+   * </p>
+   * 
+   * @param x
+   */
   public void setX(Expression<Ttarget> x)
   { this.expression=x;
+  }
+  
+  
+  /**
+   * <p>Indicates whether the variable name for this Control (which is used
+   *   by the client to uniquely identify it for data binding purposes- eg.
+   *   accepting a form post), should be contextualized (ie. given an 
+   *   automatically generated prefix) to permit multiple instances of the
+   *   control in the same unit (eg. a form) to function properly.
+   * </p>
+   * 
+   * <p>Defaults to true. Set to false if the control must be addressed using a
+   *   pre-determined name, as may be the case in non-responsive client
+   *   requests.
+   * </p>
+   * 
+   * @param contextualizeName
+   */
+  public void setContextualizeName(boolean contextualizeName)
+  { this.contextualizeName=contextualizeName;
+  }
+  
+  /**
+   * 
+   * @return Whether or not the variable name output in markup will be
+   *   contextualized
+   *   (automatically prefixed) to permit multiple instances.
+   *   
+   */
+  public boolean getContextualizeName()
+  { return contextualizeName;
   }
   
   /**
