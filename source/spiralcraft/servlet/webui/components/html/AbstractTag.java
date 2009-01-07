@@ -46,9 +46,24 @@ public abstract class AbstractTag
   
   private String attributes;
   protected int contentPosition;
+  protected boolean shouldRender=true;
   
     
   protected abstract String getTagName(EventContext context);
+  
+  /**
+   * <p>Set to false if the tag should not render. The associated
+   *   control will still process input, however.
+   * </p>
+   * 
+   * <p>Useful for cases where the actual output tag is implemented
+   *   using custom markup but the control should still be enabled.
+   * </p>
+   * @param shouldRender
+   */
+  public void setShouldRender(boolean shouldRender)
+  { this.shouldRender=shouldRender;
+  }
   
   public void setAttributes(String attributes)
   { 
@@ -267,7 +282,7 @@ public abstract class AbstractTag
     }
     
     String name=getTagName(context);
-    if (name!=null && name.length()>0)
+    if (shouldRender && name!=null && name.length()>0)
     {
       Writer writer=context.getWriter();
       writer.write("<");
@@ -297,7 +312,7 @@ public abstract class AbstractTag
     }
     else
     {
-      // Empty tag name suppresses tag and attributes
+      // Rendering disabled
       if (hasContent())
       { renderContent(context);
       }
