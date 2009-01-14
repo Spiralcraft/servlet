@@ -42,11 +42,12 @@ import spiralcraft.data.spi.SingleSpace;
 
 import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.DictionaryBinding;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
+
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.lang.util.DictionaryBinding;
 
 import spiralcraft.net.http.VariableMap;
 

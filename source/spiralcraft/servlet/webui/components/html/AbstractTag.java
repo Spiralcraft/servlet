@@ -19,7 +19,7 @@ import spiralcraft.textgen.EventContext;
 import java.io.IOException;
 import java.io.Writer;
 
-import spiralcraft.text.html.AttributeEncoder;
+import spiralcraft.text.xml.AttributeEncoder;
 
 /**
  * <p>A representation of an HTML 4.0 tag for use by components that render

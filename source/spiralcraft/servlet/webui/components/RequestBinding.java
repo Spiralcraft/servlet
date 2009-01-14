@@ -20,13 +20,17 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+
 import spiralcraft.lang.parser.AssignmentNode;
+import spiralcraft.lang.util.ExpressionStringConverter;
+
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.VariableMapBinding;
+
 import spiralcraft.text.translator.Translator;
-import spiralcraft.util.string.ExpressionStringConverter;
+
 import spiralcraft.util.string.StringConverter;
 
 /**
