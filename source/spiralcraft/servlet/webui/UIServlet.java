@@ -317,7 +317,7 @@ public class UIServlet
         }
       
 
-        serviceContext.setResourceSession(localSession);
+        serviceContext.startRequest(localSession);
       
         synchronized (localSession)
         { 
@@ -335,7 +335,7 @@ public class UIServlet
         localSession.setLocalURI
           (request.getRequestURI()
           );
-        serviceContext.setResourceSession(localSession);
+        serviceContext.startRequest(localSession);
         service(component,serviceContext);
         
       }

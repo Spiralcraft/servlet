@@ -242,11 +242,8 @@ public class Login
     // Set up a LoginEntry?
   }
   
-  @Override
-  protected void handlePrepare(ServiceContext context)
-  { 
-    
-    LoginState state=(LoginState) context.getState();
+  private void computeReferer(ServiceContext context,LoginState state)
+  {
     if (state.getValue()==null 
         && state.getReferer()==null
         )
@@ -291,6 +288,15 @@ public class Login
         }
       }
     }
+    
+  }
+  
+  @Override
+  protected void handlePrepare(ServiceContext context)
+  { 
+    
+    LoginState state=(LoginState) context.getState();
+    computeReferer(context,state);
     super.handlePrepare(context);
     
     AuthSession session=sessionChannel.get();
@@ -303,7 +309,7 @@ public class Login
       { log.fine("Not authenticated- checking cookie");
       }
       
-      if (securityFilter.readLoginCookie(getState().getValue()))
+      if (securityFilter.readLoginCookie(state.getValue()))
       {
         if (debug)
         { log.fine("Logging in from cookie");
@@ -440,6 +446,7 @@ public class Login
     LoginEntry lastEntry=getState().getValue();
    
     super.scatter(context);
+    computeReferer(context,(LoginState) getState());
     if (getState().getValue()==null)
     { 
       if (lastEntry==null)

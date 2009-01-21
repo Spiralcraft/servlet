@@ -64,6 +64,7 @@ public abstract class Control<Ttarget>
   protected RuleSet<Control<Ttarget>,Ttarget> ruleSet;
   protected Inspector<Control<Ttarget>,Ttarget> inspector;
   protected boolean scatterOnRequest;
+  protected boolean scatterOnPrepare=true;
   protected boolean uncacheable;
   
   private boolean contextualizeName=true;
@@ -111,22 +112,42 @@ public abstract class Control<Ttarget>
   }
   
   /**
-   * <p>Specify that this control should consider the contents of 
+   * <p>Specify that this control should ALWAYS consider the contents of 
    *   its source expression during the REQUEST phase, before any actions are
-   *   handled. This is useful for components that need an up-to-date value
-   *   against which to process user actions.
+   *   handled. This is useful for components that need an immediately 
+   *   up-to-date value against which to process user actions.
    * </p>
    * 
-   * <p>The default behavior is to consider the contents of the source
-   *   expression during the PREPARE phase, so that any "responsive" actions
-   *   are processed
-   *   against the state that was in effect during the last RENDER phase.
+   * <p>Normally, scatter() is called during the REQUEST phase ONLY for
+   *   non-responsive requests- ie. not a link-back or post-back. scatter()
+   *   is usually called during the PREPARE phase, after actions complete
+   *   and before rendering takes place.
    * </p>
+   * 
    * @param val
    */
   public void setScatterOnRequest(boolean val)
   { this.scatterOnRequest=val;
   }
+  
+  /**
+   * <p>Specify whether this control should consider the contents of 
+   *   its source expression during the PREPARE phase, after any actions are
+   *   handled. Typically, when Controls are read, values are updated and 
+   *   scatter() must be called to refresh the state tree.
+   * </p>
+   * 
+   * <p>The default value of this property is true. If set to false, scatter()
+   *   will not be called on prepare. This is useful when the source value
+   *   for the control is expensive to compute and not likely to change
+   *   independently of the user interface.
+   * </p>
+   * 
+   * @param val
+   */
+  public void setScatterOnPrepare(boolean val)
+  { this.scatterOnPrepare=val;
+  }  
   
   /**
    * <p>Read the value of the control from the input context and apply it 
@@ -162,10 +183,16 @@ public abstract class Control<Ttarget>
    *   it to the UI state.
    * </p> 
    * 
-   * <p>This method is called from the default implementation of handleRequest()
-   *   if there the state is not in an error state
+   * <p>If the request is not responsive (ie. not in response to a previous
+   *   rendering), this method is called from the default implementation of 
+   *   handleRequest() if the state is not in an error state, in order to
+   *   establish an initial state for a sequence of interations.
    * </p>
    * 
+   * <p>This method is also called from the default implementation of 
+   *   handlePrepare() if the state is not in an error state
+   * </p>
+
    * <p>Implementer should read the value of the control from the target
    *   Channel and buffer it in the control state for later rendering.
    * </p>
@@ -189,14 +216,29 @@ public abstract class Control<Ttarget>
   @SuppressWarnings("unchecked")
   protected void handleRequest(ServiceContext context)
   { 
-    if (scatterOnRequest || uncacheable)
+    ControlState<Ttarget> state = (ControlState) context.getState();
+    if (!context.isResponsive())
     {
-      ControlState<Ttarget> state = (ControlState) context.getState();
-      state.setPresented(false);
+      if (debug)
+      { 
+        log.fine
+          (getErrorContext()
+            +": Scattering for non-responsive request : state="+state
+          );
+      }
+      state.resetError();
+      scatter(context);
+    }
+    else if (scatterOnRequest || uncacheable)
+    {
       if (!state.isErrorState())
       { 
         if (debug)
-        { log.fine("Calling SCATTER: "+this+" state="+state);
+        { 
+          log.fine
+            (getErrorContext()
+              +": Calling SCATTER: state="+state
+            );
         }
         scatter(context);
       }
@@ -206,9 +248,12 @@ public abstract class Control<Ttarget>
         {
           if (debug)
           { 
-            log.fine("Calling SCATTER b/c uncacheable target "
-             +target.getContentType().getName()
-             +": "+this+" state="+state);
+            log.fine
+              (getErrorContext()
+              +": Calling SCATTER b/c uncacheable target "
+              +target.getContentType().getName()
+              +": state="+state
+              );
           }
           scatter(context);
         }
@@ -216,8 +261,9 @@ public abstract class Control<Ttarget>
         {
           if (debug)
           {
-            log.fine("NOT Calling SCATTER bc error state: "
-              +this+" state="+state
+            log.fine
+              (getErrorContext()+": NOT Calling SCATTER bc error state: "
+              +" state="+state
               +" errors="+ArrayUtil.format(state.getErrors(),",",null)
               +" exception="+state.getException()
               );
@@ -233,26 +279,41 @@ public abstract class Control<Ttarget>
   @SuppressWarnings("unchecked")
   protected void handlePrepare(ServiceContext context)
   { 
-    ControlState<Ttarget> state = (ControlState) context.getState();
-    state.setPresented(false);
-    if (!state.isErrorState())
-    { 
-      if (debug)
-      { log.fine("Calling SCATTER: "+this+" state="+state);
+    if (scatterOnPrepare)
+    {
+      ControlState<Ttarget> state = (ControlState) context.getState();
+      state.setPresented(false);
+      if (!state.isErrorState())
+      { 
+        if (debug)
+        { log.fine("Calling SCATTER: "+this+" state="+state);
+        }
+        scatter(context);
       }
-      scatter(context);
+      else
+      { 
+        if (debug)
+        {
+          log.fine
+          (getErrorContext()
+          +": NOT Calling SCATTER bc error state: "
+          +" state="+state
+          +" errors="+ArrayUtil.format(state.getErrors(),",",null)
+          +" exception="+state.getException()
+          );
+        }
+
+      }
     }
     else
     { 
       if (debug)
       {
-        log.fine("NOT Calling SCATTER bc error state: "
-          +this+" state="+state
-          +" errors="+ArrayUtil.format(state.getErrors(),",",null)
-          +" exception="+state.getException()
-        );
+        log.fine
+          (getErrorContext()
+          +": Not scattering- scatterOnPrepare=false"
+          );
       }
-
     }
     
   }
@@ -506,7 +567,12 @@ public abstract class Control<Ttarget>
       Setter<?>[] setters=new Setter<?>[assignments.length];
       int i=0;
       for (Assignment<?> assignment: assignments)
-      { setters[i++]=assignment.bind(getFocus());
+      { 
+        setters[i]=assignment.bind(getFocus());
+        if (debug)
+        { setters[i].setDebug(true);
+        }
+        i++;
       }
       return setters;
     }

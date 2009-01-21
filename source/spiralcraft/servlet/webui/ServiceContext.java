@@ -63,6 +63,7 @@ public class ServiceContext
   private boolean debug=false;
   private UIServlet servlet;
   private List<String> queuedActions;
+  private boolean responsive;
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
@@ -120,13 +121,32 @@ public class ServiceContext
   }
   
   /**
+   * <p>Indicate whether the current request is responsive to the most recent
+   *   rendering state of the resource as stored in the ResourceSession.
+   * </p>
+   * @return
+   */
+  public boolean isResponsive()
+  { return responsive;
+  }
+  
+  /**
+   * <p>Associate a resource session with this ServiceContext and initialize
+   *   various attributes.
+   * </p>
+   * 
+   * <p>Called once at the start of every request
+   * </p>
    * 
    * @param resourceSession The ResourceSession that stores data and
    *   objects for a user's session that are associated with the 
    *   containing WebUI user interface resource
    */
-  void setResourceSession(ResourceSession resourceSession)
-  { this.resourceSession=resourceSession;
+  void startRequest(ResourceSession resourceSession)
+  { 
+    this.resourceSession=resourceSession;
+    responsive=(query!=null?this.resourceSession.isResponsive(query):false);
+    resourceSession.nextRequest();
   }  
     
   /**

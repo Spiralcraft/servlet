@@ -35,6 +35,7 @@ public class ResourceSession
   
   private String localURI;
   private boolean debug;
+  private volatile int sequence;
   
   synchronized void clearActions()
   { 
@@ -50,6 +51,23 @@ public class ResourceSession
     }
 
     parameterMap.clear();
+  }
+  
+  /**
+   * <p>Indicate whether the "lrs" or "last request state" provided in the 
+   *   request query synchronizes with this ResourceSession
+   * </p>
+   *   
+   * @param query
+   */
+  boolean isResponsive(VariableMap query)
+  {
+    String state=query.getOne("lrs");
+    return Integer.toString(sequence).equals(state);
+  }
+  
+  void nextRequest()
+  { sequence++;
   }
   
   void clearParameters()
@@ -100,6 +118,7 @@ public class ResourceSession
     String encodedParameters=parameterMap.generateEncodedForm();
     return localURI
       +"?action="+action.getName()
+      +"&lrs="+Integer.toString(sequence)
       +(encodedParameters!=null?"&"+encodedParameters:"")
       ;
     

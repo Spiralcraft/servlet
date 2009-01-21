@@ -198,36 +198,25 @@ public class DataSessionComponent
   public void handleRequest(ServiceContext context)
   { 
 
-    applyRequestBindings(context);
-    if (defaultSetters!=null)
-    { 
-      if (debug)
-      { log.fine(toString()+": applying default values");
-      }
-      for (Setter<?> setter: defaultSetters)
-      { 
-        if (setter.getTarget().get()==null)
-        { setter.set(); 
-        }  
-      }
-    }  
+    // Leave the session object alone until handlePrepare()
+    //   for a responsive request
+    if (!context.isResponsive())
+    {
+      applyRequestBindings(context);
+      applyDefaults(context);
+    }
   } 
 
   @Override
   public void handlePrepare(ServiceContext context)
   { 
-    if (defaultSetters!=null)
+    if (context.isResponsive())
     { 
-      if (debug)
-      { log.fine(toString()+": applying default values");
-      }
-      for (Setter<?> setter: defaultSetters)
-      { 
-        if (setter.getTarget().get()==null)
-        { setter.set(); 
-        }  
-      }
-    }  
+      // Only do this here if we didn't do it in handleRequest()
+      applyRequestBindings(context);
+    }
+    
+    applyDefaults(context);
     publishRequestBindings(context);
   } 
 
@@ -259,6 +248,17 @@ public class DataSessionComponent
       for (RequestBinding<?> binding: requestBindings)
       { binding.getBinding().read(query);
       }
+    }
+  }
+
+  private void applyDefaults(ServiceContext context)
+  {
+    if (defaultSetters!=null)
+    { 
+      if (debug)
+      { log.fine(toString()+": applying default values");
+      }
+      Setter.applyArrayIfNull(defaultSetters);
     }
   }
   
