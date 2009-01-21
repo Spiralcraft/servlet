@@ -200,7 +200,11 @@ public class Select<Ttarget,Tvalue>
           if (!state.getPresented())
           {
             if (debug)
-            { log.fine(getLogPrefix()+"Ignoring not-presented control");
+            { 
+              log.fine
+                (getLogPrefix()
+                +"Ignoring missing value for not-presented control"
+                );
             }
             return;
           }

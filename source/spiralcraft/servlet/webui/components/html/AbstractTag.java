@@ -200,6 +200,15 @@ public abstract class AbstractTag
     }
   }
   
+  /**
+   * <p>Encode and render the specified attribute/value pair
+   * </p>
+   * 
+   * @param writer
+   * @param name
+   * @param value
+   * @throws IOException
+   */
   protected void renderAttribute(Writer writer,String name,String value)
     throws IOException
   {
