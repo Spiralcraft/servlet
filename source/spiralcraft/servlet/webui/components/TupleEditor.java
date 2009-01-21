@@ -174,7 +174,7 @@ public abstract class TupleEditor
 
   }
   
-    
+  
   protected void setInitialValues(Buffer buffer)
   {
     if (!buffer.isDirty())
