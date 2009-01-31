@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import spiralcraft.log.Level;
@@ -30,6 +31,7 @@ import spiralcraft.log.Level;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -41,6 +43,7 @@ import spiralcraft.data.persist.XmlBean;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.time.Clock;
+import spiralcraft.util.ContextDictionary;
 import spiralcraft.util.Path;
 import spiralcraft.util.tree.PathTree;
 import spiralcraft.vfs.Resource;
@@ -88,6 +91,9 @@ public class Controller
   private Throwable throwable;
   
   private boolean debug=false;
+  
+  private final ContextDictionary contextDictionary
+    =new ContextDictionary(ContextDictionary.getInstance());
 
   /**
    * Filter.init()
@@ -96,7 +102,9 @@ public class Controller
     throws ServletException
   {
     this.config=config;
-    String realPath=config.getServletContext().getRealPath("/");
+    ServletContext context=config.getServletContext();
+    
+    String realPath=context.getRealPath("/");
     if (realPath!=null)
     { root=new FileResource(new File(realPath));
     }
@@ -104,10 +112,48 @@ public class Controller
     { log.fine("Root is "+root.getURI());
     }
     
+    initContextResourceMap(context);
+    initContextDictionary(context);
+    
+    ContextDictionary.pushInstance(contextDictionary);
+    contextResourceMap.push();
+    if (config.getInitParameter("updateIntervalMs")!=null)
+    { 
+      updateIntervalMs
+        =Integer.parseInt(config.getInitParameter("updateIntervalMs"));
+    }
+    try
+    { updateConfig();
+    }
+    finally
+    { 
+      contextResourceMap.pop();
+      ContextDictionary.popInstance();
+    }
+    
+  }
+
+  @SuppressWarnings("unchecked")
+  private void initContextDictionary(ServletContext context)
+  {
+    Enumeration<String> params=context.getInitParameterNames();
+    while (params.hasMoreElements())
+    { 
+      String name=params.nextElement();
+      contextDictionary.set(name, context.getInitParameter(name));
+      if (debug)
+      { log.fine(name+" = "+contextDictionary.find(name));
+      }
+    }
+  }
+  
+  private void initContextResourceMap(ServletContext context)
+    throws ServletException
+  {
     URI contextURI=null;
     try
     { 
-      contextURI =config.getServletContext().getResource("/").toURI();
+      contextURI = context.getResource("/").toURI();
       if (debug)
       { log.fine("Context is "+contextURI);
       }
@@ -118,7 +164,7 @@ public class Controller
       {
         throw new ServletException
           ("Error reading context URL '"
-          +config.getServletContext().getResource("/").toString()
+          +context.getResource("/").toString()
           ,x);
       }
       catch (MalformedURLException y)
@@ -136,19 +182,6 @@ public class Controller
     contextResourceMap.putDefault(contextURI);
     contextResourceMap.put("data",contextURI.resolve("WEB-INF/data/"));
     
-    contextResourceMap.push();
-    if (config.getInitParameter("updateIntervalMs")!=null)
-    { 
-      updateIntervalMs
-        =Integer.parseInt(config.getInitParameter("updateIntervalMs"));
-    }
-    try
-    { updateConfig();
-    }
-    finally
-    { contextResourceMap.pop();
-    }
-    
   }
   
   /**
@@ -161,6 +194,8 @@ public class Controller
     )
     throws ServletException,IOException
   {
+    
+    ContextDictionary.pushInstance(contextDictionary);
     contextResourceMap.push();
     try
     {
@@ -194,7 +229,9 @@ public class Controller
       log.log(Level.WARNING,"Exception handling request",x);
     }
     finally
-    { contextResourceMap.pop();
+    { 
+      contextResourceMap.pop();
+      ContextDictionary.popInstance();
     }
     
   }
