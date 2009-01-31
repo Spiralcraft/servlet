@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
 
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.net.http.MultipartVariableMap;
@@ -64,6 +65,7 @@ public class ServiceContext
   private UIServlet servlet;
   private List<String> queuedActions;
   private boolean responsive;
+  private URI contextURI;
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
@@ -366,6 +368,30 @@ public class ServiceContext
    */
   public void setCommandProcessor(CommandProcessor commandProcessor)
   { this.commandProcessor=commandProcessor;
+  }
+  
+  public URI getContextURI()
+  { 
+    if (contextURI==null)
+    { 
+      try
+      {
+        contextURI=new URI
+          (request.getScheme()
+          ,null
+          ,request.getServerName()
+          ,request.getServerPort()
+          ,request.getContextPath()+"/"
+          ,null
+          ,null
+          );
+      }
+      catch (URISyntaxException x)
+      { log.log(Level.SEVERE,"Error assembling context URI",x);
+      }
+    }
+    return contextURI;
+
   }
   
   /**
