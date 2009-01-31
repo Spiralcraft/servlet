@@ -37,7 +37,6 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.NullChannel;
-import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -60,8 +59,6 @@ import spiralcraft.util.ArrayUtil;
 public abstract class EditorBase<Tbuffer extends Buffer>
   extends ControlGroup<Tbuffer>
 {
-  private static final ClassLog log
-    =ClassLog.getInstance(EditorBase.class);
 
   private static final SaveMessage SAVE_MESSAGE=new SaveMessage();
   
@@ -114,7 +111,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
                 if (!state.isErrorState())
                 { 
                   if (debug)
-                  { log.fine("Executing "+postSaveCommand);
+                  { logFine("Executing "+postSaveCommand);
                   }
                   postSaveCommand.execute();
                   if (postSaveCommand.getException()!=null)
@@ -150,7 +147,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       for (RequestBinding<?> binding: redirectBindings)
       { 
         if (debug)
-        { log.fine("Applying redirectBinding "+binding.getName());
+        { logFine("Applying redirectBinding "+binding.getName());
         }
         binding.publish(context);
       }
@@ -182,7 +179,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     if (redirectURI!=null)
     { 
       if (debug)
-      { log.fine("Redirecting to "+redirectURI);
+      { logFine("Redirecting to "+redirectURI);
       }
 
       // Don't mix up parameters intended for the current page. 
@@ -685,20 +682,20 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           }
           
           if (debug)
-          { log.fine("Created new buffer "+state.getValue());
+          { logFine("Created new buffer "+state.getValue());
           }
         }
         else
         {
           if (debug)
-          { log.fine("Buffer remains null (autoCreate==false)");
+          { logFine("Buffer remains null (autoCreate==false)");
           }
         }
       }
       else if (lastBuffer.getOriginal()==null)
       { 
         if (debug)
-        { log.fine("New buffer is sticky "+lastBuffer);
+        { logFine("New buffer is sticky "+lastBuffer);
         }
         state.setValue(lastBuffer);
       }
@@ -707,7 +704,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         if (retain)
         {
           if (debug)
-          { log.fine("Retaining buffer "+lastBuffer);
+          { logFine("Retaining buffer "+lastBuffer);
           }
           state.setValue(lastBuffer);
         }
@@ -718,7 +715,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
             newBuffer();
             if (debug)
             { 
-              log.fine
+              logFine
                 ("Created new buffer to replace last buffer: new="
                 +state.getValue()
                 );
@@ -732,7 +729,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         {
           if (debug)
           { 
-            log.fine
+            logFine
               ("Replacing last buffer with null " 
               +"(autoCreate==false && retain==false)"
               );
@@ -764,7 +761,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       { 
         if (debug)
         {
-          log.fine
+          logFine
             ("Editor: Action invoked: "+getName()+"@"
             +ArrayUtil.format(getTargetPath(),".",null)
             );
@@ -804,11 +801,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     
     if (source==null && type!=null)
     { 
-      log.fine("No source: Binding NullChannel for type "+type);
+      logFine("No source: Binding NullChannel for type "+type);
       source=new NullChannel(DataReflector.getInstance(type));
     }
     else
-    { log.fine("Source="+source);
+    { logFine("Source="+source);
 
     }
     return source;

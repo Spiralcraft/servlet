@@ -30,7 +30,6 @@ import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.AccessException;
 
 import spiralcraft.lang.spi.AbstractChannel;
-import spiralcraft.log.ClassLog;
 
 
 import spiralcraft.servlet.webui.ControlState.DataState;
@@ -59,7 +58,6 @@ import spiralcraft.textgen.compiler.TglUnit;
 public abstract class ControlGroup<Ttarget>
     extends Control<Ttarget>
 {
-  private static final ClassLog log = ClassLog.getInstance(ControlGroup.class);
 
   private int nextVariableName = 0;
 
@@ -119,13 +117,13 @@ public abstract class ControlGroup<Ttarget>
           Transaction.startContextTransaction(Transaction.Nesting.ISOLATE);
         newTransaction=true;
         if (debug)
-        { log.fine("Started new transaction");
+        { logFine("Started new transaction");
         }
       }
       else
       {
         if (debug)
-        { log.fine("Obtained existing transaction");
+        { logFine("Obtained existing transaction");
         }
       }
       if (debug)
@@ -154,7 +152,7 @@ public abstract class ControlGroup<Ttarget>
       else
       {
         if (debug)
-        { log.fine("Re-entering message()");
+        { logFine("Re-entering message()");
         }
         // re-entrant mode
         super.message(context, message, path);
@@ -167,7 +165,7 @@ public abstract class ControlGroup<Ttarget>
     catch (RollbackException x)
     {
       if (debug)
-      { log.fine("Transaction rolled back");
+      { logFine("Transaction rolled back");
       }
     }
     catch (TransactionException x)
@@ -197,7 +195,7 @@ public abstract class ControlGroup<Ttarget>
   public void render(EventContext context) throws IOException
   {
     if (debug)
-    { log.fine(toString()+": render");
+    { logFine(toString()+": render");
     }
     
     try
@@ -289,7 +287,7 @@ public abstract class ControlGroup<Ttarget>
       MarkupException
   {
     if (debug)
-    { log.fine(getClass().getName() + ".bind():expression=" + expression);
+    { logFine(" bind():expression=" + expression);
     }
     Focus<?> parentFocus = getParent().getFocus();
 
@@ -331,10 +329,7 @@ public abstract class ControlGroup<Ttarget>
       // Expose the expression target as the new Focus, and add the
       // assembly in as another layer
       if (debug)
-      {
-        log.fine("No Channel created, using parent focus: for "
-          + getClass().getName()
-        );
+      { logFine("No Channel created, using parent focus");
       }
       CompoundFocus myFocus = new CompoundFocus(parentFocus, null);
       myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
@@ -391,13 +386,13 @@ public abstract class ControlGroup<Ttarget>
           if (valueString.length()>256)
           { valueString=valueString.substring(0,256)+"...";
           }
-          log.fine("Read value from target into state "+valueString);
+          logFine("Read value from target into state "+valueString);
         }
       }
       else
       {
         if (debug)
-        { log.fine("No target for control group, so not resetting state value");
+        { logFine("No target for control group, so not resetting state value");
         }
       }
       state.resetError();

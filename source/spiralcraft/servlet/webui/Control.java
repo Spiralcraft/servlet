@@ -42,6 +42,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Reflector;
 import spiralcraft.lang.Setter;
+import spiralcraft.log.Level;
 
 /**
  * <p>A Component that provides a view or an interaction point bound a model
@@ -220,11 +221,7 @@ public abstract class Control<Ttarget>
     if (!context.isResponsive())
     {
       if (debug)
-      { 
-        log.fine
-          (getErrorContext()
-            +": Scattering for non-responsive request : state="+state
-          );
+      { logFine("Scattering for non-responsive request : state="+state);
       }
       state.resetError();
       scatter(context);
@@ -234,11 +231,7 @@ public abstract class Control<Ttarget>
       if (!state.isErrorState())
       { 
         if (debug)
-        { 
-          log.fine
-            (getErrorContext()
-              +": Calling SCATTER: state="+state
-            );
+        { logFine("Calling SCATTER: state="+state);
         }
         scatter(context);
       }
@@ -248,9 +241,8 @@ public abstract class Control<Ttarget>
         {
           if (debug)
           { 
-            log.fine
-              (getErrorContext()
-              +": Calling SCATTER b/c uncacheable target "
+            logFine
+              ("Calling SCATTER b/c uncacheable target "
               +target.getContentType().getName()
               +": state="+state
               );
@@ -261,8 +253,8 @@ public abstract class Control<Ttarget>
         {
           if (debug)
           {
-            log.fine
-              (getErrorContext()+": NOT Calling SCATTER bc error state: "
+            logFine
+              ("NOT Calling SCATTER bc error state: "
               +" state="+state
               +" errors="+ArrayUtil.format(state.getErrors(),",",null)
               +" exception="+state.getException()
@@ -286,7 +278,7 @@ public abstract class Control<Ttarget>
       if (!state.isErrorState())
       { 
         if (debug)
-        { log.fine("Calling SCATTER: "+this+" state="+state);
+        { logFine("Calling SCATTER: "+this+" state="+state);
         }
         scatter(context);
       }
@@ -294,9 +286,8 @@ public abstract class Control<Ttarget>
       { 
         if (debug)
         {
-          log.fine
-          (getErrorContext()
-          +": NOT Calling SCATTER bc error state: "
+          logFine
+          ("NOT Calling SCATTER bc error state: "
           +" state="+state
           +" errors="+ArrayUtil.format(state.getErrors(),",",null)
           +" exception="+state.getException()
@@ -309,9 +300,8 @@ public abstract class Control<Ttarget>
     { 
       if (debug)
       {
-        log.fine
-          (getErrorContext()
-          +": Not scattering- scatterOnPrepare=false"
+        logFine
+          ("Not scattering- scatterOnPrepare=false"
           );
       }
     }
@@ -410,7 +400,7 @@ public abstract class Control<Ttarget>
     { return true;
     }
     if (debug)
-    { log.fine("Inspecting "+value);
+    { logFine("Inspecting "+value);
     }
     Violation<Ttarget>[] violations=inspector.inspect(value);
     if (violations==null)
@@ -420,7 +410,7 @@ public abstract class Control<Ttarget>
     for (Violation<Ttarget> violation : violations)
     { 
       if (debug)
-      { log.fine("Failed inspection "+violation.getMessage());
+      { logFine("Failed inspection "+violation.getMessage());
       }
       state.addError(violation.getMessage());
     }
@@ -515,7 +505,7 @@ public abstract class Control<Ttarget>
       for (Command<Ttarget,?> command : commands)
       { 
         if (debug)
-        { log.fine("Executing "+command.toString());
+        { logFine("Executing "+command.toString());
         }
         command.setTarget(state.getValue());
 
@@ -552,7 +542,7 @@ public abstract class Control<Ttarget>
     { throw new RuntimeException("State tree out of sync "+state+" "+this);
     }
     if (debug)
-    { log.fine("Control.render() "+this+" state="+state);
+    { logFine("Control.render() "+this+" state="+state);
     }
     
     super.render(context);
@@ -577,6 +567,18 @@ public abstract class Control<Ttarget>
       return setters;
     }
     return null;
+  }
+
+  protected void logFine(String message)
+  { log.log(Level.FINE,getLogPrefix()+": "+message,null,1);
+  }
+
+  protected void logWarning(String message)
+  { log.warning(getLogPrefix()+": "+message);
+  }
+  
+  protected void logInfo(String message)
+  { log.info(getLogPrefix()+": "+message);
   }
 
   protected String getLogPrefix()

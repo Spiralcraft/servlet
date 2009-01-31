@@ -27,7 +27,6 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 
 import spiralcraft.servlet.webui.Component;
@@ -47,8 +46,6 @@ import spiralcraft.textgen.compiler.TglUnit;
 public class Redirect
   extends Component
 {
-  private static final ClassLog log
-    =ClassLog.getInstance(Guard.class);
 
   private URI redirectURI;
 

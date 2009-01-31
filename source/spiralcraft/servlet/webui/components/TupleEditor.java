@@ -35,7 +35,6 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.TranslatorChannel;
-import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -55,9 +54,6 @@ import spiralcraft.util.ArrayUtil;
 public abstract class TupleEditor
   extends EditorBase<BufferTuple>
 {
-  private static final ClassLog log
-    =ClassLog.getInstance(TupleEditor.class);
-
   private Setter<?>[] fixedSetters;
   private Setter<?>[] initialSetters;
   private Setter<?>[] defaultSetters;
@@ -87,7 +83,7 @@ public abstract class TupleEditor
     if (publishedSetters!=null)
     {
       if (debug)
-      { log.fine(toString()+": applying published assignments on prepare");
+      { logFine("applying published assignments on prepare");
       }
       for (Setter<?> setter: publishedSetters)
       { setter.set();
@@ -121,17 +117,7 @@ public abstract class TupleEditor
   }
   
   public Command<BufferTuple,Void> deleteCommand()
-  { 
-    return new QueuedCommand<BufferTuple,Void>
-      (getState()
-      ,new CommandAdapter<BufferTuple,Void>()
-        {
-          @Override
-          public void run()
-          { getState().getValue().delete();
-          }
-        }
-      );
+  { return deleteCommand(null);
   }
   
   public Command<BufferTuple,Void> deleteCommand
@@ -144,12 +130,22 @@ public abstract class TupleEditor
           @Override
           public void run()
           { 
-            getState().getValue().delete();
-            if (chainedCommand!=null)
-            { 
-              chainedCommand.execute();
-              if (chainedCommand.getException()!=null)
-              { setException(chainedCommand.getException());
+            EditorState<BufferTuple> state=getState();
+            if (state.getValue()!=null)
+            {
+              state.getValue().delete();
+              if (chainedCommand!=null)
+              { 
+                chainedCommand.execute();
+                if (chainedCommand.getException()!=null)
+                { setException(chainedCommand.getException());
+                }
+              }
+            }
+            else
+            {
+              if (debug)
+              { logFine("Nothing to delete");
               }
             }
           }
@@ -166,7 +162,8 @@ public abstract class TupleEditor
     if (buffer!=null)
     {
       if (debug)
-      { log.fine("Scattering buffer "+buffer);
+      { 
+        logFine("Scattering buffer "+buffer);
       }
       applyRequestBindings(context);
       setInitialValues(buffer);
@@ -182,7 +179,7 @@ public abstract class TupleEditor
       if (newSetters!=null && buffer.getOriginal()==null)
       { 
         if (debug)
-        { log.fine(toString()+": applying new values");
+        { logFine("applying new values");
         }
          
         for (Setter<?> setter : newSetters)
@@ -193,7 +190,7 @@ public abstract class TupleEditor
       if (initialSetters!=null)
       {
         if (debug)
-        { log.fine(toString()+": applying initial values");
+        { logFine("applying initial values");
         }
 
         for (Setter<?> setter : initialSetters)
@@ -211,7 +208,7 @@ public abstract class TupleEditor
       for (RequestBinding<?> binding: requestBindings)
       { 
         if (debug)
-        { log.fine("Applying requestBinding "+binding.getName());
+        { logFine("applying requestBinding "+binding.getName());
         }
         binding.getBinding().read(context.getQuery());
         binding.publish(context);
@@ -226,7 +223,7 @@ public abstract class TupleEditor
     if (phantom)
     {
       if (debug)
-      { log.fine("Editor with phantom=true skipping save. "+toString());
+      { logFine("Editor with phantom=true skipping save.");
       }
     }
     
@@ -237,7 +234,7 @@ public abstract class TupleEditor
       if (defaultSetters!=null)
       { 
         if (debug)
-        { log.fine(toString()+": applying default values");
+        { logFine("applying default values");
         }
         for (Setter<?> setter: defaultSetters)
         { 
@@ -251,7 +248,7 @@ public abstract class TupleEditor
       if (fixedSetters!=null)
       {
         if (debug)
-        { log.fine(toString()+": applying fixed values");
+        { logFine("applying fixed values");
         }
         for (Setter<?> setter: fixedSetters)
         { setter.set();
@@ -265,7 +262,7 @@ public abstract class TupleEditor
         if (publishedAssignments!=null)
         {
           if (debug)
-          { log.fine(toString()+": applying published assignments post-save");
+          { logFine("applying published assignments post-save");
           }
           for (Setter<?> setter: publishedSetters)
           { setter.set();
@@ -277,13 +274,13 @@ public abstract class TupleEditor
     { 
       if (buffer==null)
       {
-        log.warning
+        logWarning
           ("No buffer exists to save- no data read- try Editor.autoCreate");
       }
       else
       {
         if (debug)
-        { log.fine("Not dirty "+buffer.toString());
+        { logFine("Not dirty "+buffer.toString());
         }
       }
       
@@ -306,7 +303,7 @@ public abstract class TupleEditor
       if (aggregate!=null && buffer!=null)
       { 
         if (debug)
-        { log.fine("Adding buffer to parent "+aggregate+": buffer="+buffer);
+        { logFine("Adding buffer to parent "+aggregate+": buffer="+buffer);
         }
         aggregate.add(buffer);
       }
@@ -315,13 +312,13 @@ public abstract class TupleEditor
         if (aggregate==null)
         {
           if (debug)
-          { log.fine("Not adding buffer to null parent: buffer="+buffer);
+          { logFine("Not adding buffer to null parent: buffer="+buffer);
           }
         }
         else
         {
           if (debug)
-          { log.fine("Not adding null buffer to parent "+aggregate);
+          { logFine("Not adding null buffer to parent "+aggregate);
           }
         }
       }
@@ -353,7 +350,7 @@ public abstract class TupleEditor
       throws BindException
   { 
     if (debug)
-    { log.fine("Editor.bind() "+parentFocus);
+    { logFine("Editor.bind() "+parentFocus);
     }
     Channel<?> source=super.bindTarget(parentFocus);
     
@@ -364,7 +361,7 @@ public abstract class TupleEditor
       source=parentFocus.getSubject();
       if (source==null)
       {
-        log.fine
+        logFine
           ("No source specified, and parent Focus has no subject: "+parentFocus);
       }
     }
@@ -389,7 +386,7 @@ public abstract class TupleEditor
               ,null // parentFocus.bind(indexExpression);
               );
           if (debug)
-          { log.fine("Buffering indexed detail "+bufferChannel.getReflector());
+          { logFine("Buffering indexed detail "+bufferChannel.getReflector());
           }
           aggregateChannel=(Channel<BufferAggregate<Buffer,?>>) source;
           
@@ -397,7 +394,7 @@ public abstract class TupleEditor
         else
         {
           if (debug)
-          { log.fine("Using existing BufferChannel for "+source.getReflector());
+          { logFine("Using existing BufferChannel for "+source.getReflector());
           }
           bufferChannel=(Channel<Buffer>) source;
         }
@@ -405,7 +402,7 @@ public abstract class TupleEditor
       else
       {
         if (debug)
-        { log.fine("Creating BufferChannel for "+source.getReflector());
+        { logFine("Creating BufferChannel for "+source.getReflector());
         }
         bufferChannel=new BufferChannel
           ((Focus<DataComposite>) parentFocus
@@ -489,7 +486,7 @@ public abstract class TupleEditor
       { 
         if (debug)
         {
-          log.fine
+          logFine
             ("Editor: Action invoked: "+getName()+"@"
             +ArrayUtil.format(getTargetPath(),".",null)
             );
