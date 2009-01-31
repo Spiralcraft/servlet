@@ -66,6 +66,8 @@ public class ServiceContext
   private List<String> queuedActions;
   private boolean responsive;
   private URI contextURI;
+  private String contentType;
+  
   
   public ServiceContext(Writer writer,boolean stateful)
   { super(writer,stateful);
@@ -428,6 +430,16 @@ public class ServiceContext
     }
     queuedActions.add(actionName);
   }
+  
+  public void setContentType(String contentType)
+  { this.contentType=contentType;
+  }
+  
+  public String getContentType()
+  { return contentType;
+  }
+  
+  
   
   /**
    * <p>Called by the UIServlet repeatedly during the action handling

@@ -577,14 +577,19 @@ public class UIServlet
     )
     throws IOException,ServletException
   {
-    //long time=System.nanoTime();
+    if (serviceContext.getContentType()!=null)
+    { 
+      serviceContext.getResponse().setContentType
+        (serviceContext.getContentType());
+    }
+    else
+    { serviceContext.getResponse().setContentType(component.getContentType());
+    }
     
-    serviceContext.getResponse().setContentType(component.getContentType());
     serviceContext.getResponse().setStatus(200);
     serviceContext.getResponse().addHeader("Cache-Control","no-cache");
     component.render(serviceContext);
     
-    // System.err.println("UIServler.render: "+(System.nanoTime()-time));
     
   }
   
