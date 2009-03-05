@@ -30,18 +30,21 @@ import spiralcraft.util.Path;
 
 
 /**
- * <P>A Filter which applies to a web server resource context, that 
+ * <p>A Filter which applies to a web server resource context, that 
  *   is configured as a Bean and read from a spiralcraft.data XML file
  *   contained in a directory in the resource context.
- *   
- * <P>Multiple AutoFilters can be in effect for a given resource context.
+ * </p>
+ *  
+ * <p>Multiple AutoFilters can be in effect for a given resource context.
  *   A server may have a default Filter, a Filter for a specific domain,
  *   and a Filter for each resource path within the domain. Each Filter
  *   will back-reference a Filter of the same type configured at a more
  *   general location (a parent directory).
+ * </p>
  *   
- * <P>The Controller will construct a FilterChain for a given request which
+ * <p>The Controller will construct a FilterChain for a given request which
  *   chains together all relevant Filters for a given path.
+ * </p>
  */
 public abstract class AutoFilter
   implements Filter
