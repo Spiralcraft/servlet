@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spiralcraft.lang.util.Configurator;
 import spiralcraft.log.ClassLog;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.Resolver;
@@ -66,6 +67,8 @@ public class HttpServlet
 
   private ServletConfig config;
   protected Set<String> recognizedParameters;
+  protected boolean autoConfigure;
+  protected Configurator<?> configurator;
   
 
   @SuppressWarnings("unchecked")
@@ -94,7 +97,9 @@ public class HttpServlet
   
   /**
    * <p>Override to handle initialization parameters. The default
-   *   implementation does nothing.
+   *   implementation invokes the automatic configuration mechanism
+   *   if autoConfigure=true (the default case) which maps the name and
+   *   value to the bean properties if this object.
    * </p>
    * 
    * <p>Used in conjunction with the protected 'recognizedParameters' set,
@@ -108,7 +113,15 @@ public class HttpServlet
    */
   protected void setInitParameter(String name,String value)
     throws ServletException
-  { }
+  { 
+    if (autoConfigure)
+    {
+      if (configurator==null)
+      { configurator=Configurator.forBean(this);
+      }
+      configurator.set(name,value);
+    }
+  }
   
   public void destroy()
   {

@@ -25,14 +25,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import spiralcraft.log.ClassLog;
+import spiralcraft.servlet.AbstractFilter;
 import spiralcraft.util.Path;
 
 
 /**
- * <p>A Filter which applies to a web server resource context, that 
- *   is configured as a Bean and read from a spiralcraft.data XML file
- *   contained in a directory in the resource context.
+ * <p>A Filter which participates in a system of filters configured within
+ *   and mapped to individual directories within a servlet context, that 
+ *   is configured as a Bean (directly, from a spiralcraft.data XML file in
+ *   the target directory, from a spiralcraft.builder AssemblyClass, or 
+ *   via automatic configuration from initialization parameters).
  * </p>
  *  
  * <p>Multiple AutoFilters can be in effect for a given resource context.
@@ -42,15 +44,19 @@ import spiralcraft.util.Path;
  *   general location (a parent directory).
  * </p>
  *   
- * <p>The Controller will construct a FilterChain for a given request which
- *   chains together all relevant Filters for a given path.
+ * <p>Many AutoFilters can be used standalone (ie. traditional web.xml or
+ *   container level configuration) or via the Controller mechanism which
+ *   integrates .control.xml files in the directory tree under the context.
+ * </p>
+ * 
+ * <p>When used with the Controller, the Controller will construct a
+ *   FilterChain for a given request which chains together all relevant 
+ *   Filters for a given path.
  * </p>
  */
 public abstract class AutoFilter
-  implements Filter
+  extends AbstractFilter
 {
-  protected final ClassLog log
-    =ClassLog.getInstance(getClass());
   
   private boolean additive=true;
   private boolean overridable=true;
@@ -60,7 +66,6 @@ public abstract class AutoFilter
   protected String pattern;
   protected AutoFilter parent;
   
-  protected FilterConfig config;
 
   
   /**
@@ -248,10 +253,11 @@ public abstract class AutoFilter
   { this.parent=parent;
   }
   
+  @Override
   public void init(FilterConfig config)
     throws ServletException
   { 
-    this.config=config;
+    super.init(config);
     if (pattern==null)
     { pattern="*";
     }
