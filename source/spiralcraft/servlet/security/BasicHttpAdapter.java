@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import spiralcraft.codec.text.Base64Codec;
 import spiralcraft.codec.CodecException;
 
+import spiralcraft.log.ClassLog;
 import spiralcraft.security.auth.Credential;
 import spiralcraft.security.auth.UsernameCredential;
 import spiralcraft.security.auth.PasswordCleartextCredential;
@@ -41,6 +42,9 @@ public class BasicHttpAdapter
   implements HttpAdapter
 {
 
+  private static final ClassLog log
+    =ClassLog.getInstance(BasicHttpAdapter.class);
+  
   private String realm;
 
   /**
@@ -87,6 +91,13 @@ public class BasicHttpAdapter
       }
       
       String decodedCredentials=new String(out.toByteArray());
+      int separator=decodedCredentials.lastIndexOf(":");
+      if (separator<0)
+      { 
+        log.info
+          ("Credentials didn't contain ':' separator: "+encodedCredentials+"->"+decodedCredentials);
+        return null;
+      }
       String user 
         = decodedCredentials.substring
           (0, decodedCredentials.lastIndexOf(":"));
