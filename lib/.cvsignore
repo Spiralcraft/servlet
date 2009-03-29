@@ -1,1 +1,2 @@
-spiralcraft-servlet.jar
+*.jar
+ivy.xml
