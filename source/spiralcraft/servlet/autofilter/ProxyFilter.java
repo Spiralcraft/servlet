@@ -203,7 +203,6 @@ public class ProxyFilter
     (HttpServletResponse httpResponse
     ,URLConnection connection
     )
-    throws IOException
   {
     String contentType=connection.getContentType();
     int contentLength=connection.getContentLength();

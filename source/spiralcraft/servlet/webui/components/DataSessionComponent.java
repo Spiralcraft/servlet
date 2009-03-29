@@ -203,7 +203,7 @@ public class DataSessionComponent
     if (!context.isResponsive())
     {
       applyRequestBindings(context);
-      applyDefaults(context);
+      applyDefaults();
     }
   } 
 
@@ -216,7 +216,7 @@ public class DataSessionComponent
       applyRequestBindings(context);
     }
     
-    applyDefaults(context);
+    applyDefaults();
     publishRequestBindings(context);
   } 
 
@@ -251,7 +251,7 @@ public class DataSessionComponent
     }
   }
 
-  private void applyDefaults(ServiceContext context)
+  private void applyDefaults()
   {
     if (defaultSetters!=null)
     { 

@@ -14,7 +14,6 @@
 //
 package spiralcraft.servlet.autofilter;
 
-import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.http.Cookie;
@@ -28,7 +27,6 @@ import spiralcraft.security.auth.Authenticator;
 import spiralcraft.security.auth.LoginEntry;
 import spiralcraft.security.auth.TestAuthenticator;
 
-import spiralcraft.codec.CodecException;
 import spiralcraft.codec.text.Base64Codec;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
@@ -158,19 +156,7 @@ public class SecurityFilter
     if (username!=null && ticketBase64!=null)
     {
       entry.setUsername(username);
-      try
-      { entry.setOpaqueDigest(Base64Codec.decodeBytes(ticketBase64));
-      }
-      catch (IOException x)
-      { 
-        x.printStackTrace();
-        return false;
-      }
-      catch (CodecException x)
-      {
-        x.printStackTrace();
-        return false;
-      }
+      entry.setOpaqueDigest(Base64Codec.decodeBytes(ticketBase64));
       if (debug)
       { log.fine("Read login info from cookie for user "+username);
       }
@@ -202,19 +188,7 @@ public class SecurityFilter
       { ticket=authSessionChannel.get().opaqueDigest(username+password);
       }
       map.add("username", username);
-      try
-      { map.add("ticket", Base64Codec.encodeBytes(ticket));
-      }
-      catch (IOException x)
-      {
-        x.printStackTrace();
-        return;
-      }
-      catch (CodecException x)
-      { 
-        x.printStackTrace();
-        return;
-      }
+      map.add("ticket", Base64Codec.encodeBytes(ticket));
       String data=map.generateEncodedForm();
       Cookie cookie=new Cookie(cookieName,data);
       cookie.setMaxAge(minutesToPersist*60); // Convert from seconds

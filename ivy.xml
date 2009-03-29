@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info organisation="spiralcraft" module="servlet">
+  </info> 
+  
+  <publications>
+    <artifact name="spiralcraft-servlet" type="jar" ext="jar"/>
+  </publications> 
+    
+  <dependencies>
+    <dependency org="spiralcraft" name="core" rev="latest.integration">
+      <exclude name="spiralcraft-core-test"/>
+    </dependency>
+
+    <dependency org="spiralcraft" name="net" rev="latest.integration"/>
+
+    <dependency org="spiralcraft" name="textgen" rev="latest.integration">
+      <exclude name="spiralcraft-textgen-test"/>
+    </dependency>
+    
+  </dependencies>
+
+</ivy-module>
