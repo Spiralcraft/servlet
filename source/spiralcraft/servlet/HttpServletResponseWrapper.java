@@ -185,4 +185,14 @@ public class HttpServletResponseWrapper
   public void resetBuffer()
   { delegate.resetBuffer();
   }
+
+  @Override
+  public String getContentType()
+  { return delegate.getContentType();
+  }
+
+  @Override
+  public void setCharacterEncoding(String encoding)
+  { delegate.setCharacterEncoding(encoding);
+  }
 }

@@ -152,7 +152,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
       }
       
       reference=(AbstractXmlObject<Treferent,Tfocus>) 
-        AbstractXmlObject.<Treferent>create
+        AbstractXmlObject.<Treferent>activate
           (type.getURI(),instanceURI,null,parentFocus);
       
       referencedFocus=(Focus<Tfocus>) reference.getFocus();

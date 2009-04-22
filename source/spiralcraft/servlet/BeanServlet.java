@@ -70,8 +70,6 @@ public class BeanServlet
         ref=AbstractXmlObject.<Servlet>create
           (URI.create("class:/javax/servlet/Servlet")
           , resourceURI
-          , null
-          , null
           );
         delegate=ref.get();
         delegate.init(getServletConfig());
