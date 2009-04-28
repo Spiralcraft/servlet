@@ -218,10 +218,10 @@ public abstract class Control<Ttarget>
   protected void handleRequest(ServiceContext context)
   { 
     ControlState<Ttarget> state = (ControlState) context.getState();
-    if (!context.isResponsive())
+    if (state.frameChanged(context.getCurrentFrame()))
     {
       if (debug)
-      { logFine("Scattering for non-responsive request : state="+state);
+      { logFine("Scattering on Request due to frame change : state="+state);
       }
       state.resetError();
       scatter(context);
@@ -271,9 +271,9 @@ public abstract class Control<Ttarget>
   @SuppressWarnings("unchecked")
   protected void handlePrepare(ServiceContext context)
   { 
-    if (scatterOnPrepare)
+    ControlState<Ttarget> state = (ControlState) context.getState();
+    if (state.frameChanged(context.getCurrentFrame()) || scatterOnPrepare)
     {
-      ControlState<Ttarget> state = (ControlState) context.getState();
       state.setPresented(false);
       if (!state.isErrorState())
       { 

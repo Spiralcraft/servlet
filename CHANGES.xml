@@ -2,6 +2,47 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.3
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <detail>
+      <scm:Change>
+        <date>2009-04-27
+        </date>
+
+        <notes>
+          <scm:Note>Integrate textgen StateFrame solution into WebUI.
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/
+        </path>
+
+        <resources>
+          <URI>pages/GeneratorServlet.java
+          </URI>
+          <URI>webui/Control.java
+          </URI>
+          <URI>webui/ControlState.java
+          </URI>
+          <URI>webui/ResourceSession.java
+          </URI>
+          <URI>webui/ServiceContext.java
+          </URI>
+          <URI>webui/UIServlet.java
+          </URI>
+          <URI>webui/components/DataSessionComponent.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.2
     </revision>
     

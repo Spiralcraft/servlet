@@ -7,6 +7,7 @@ import java.util.List;
 import spiralcraft.log.ClassLog;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.textgen.ElementState;
+import spiralcraft.textgen.StateFrame;
 import spiralcraft.util.ListMap;
 
 
@@ -36,6 +37,7 @@ public class ResourceSession
   private String localURI;
   private boolean debug;
   private volatile int sequence;
+  private volatile StateFrame currentFrame;
   
   synchronized void clearActions()
   { 
@@ -63,11 +65,19 @@ public class ResourceSession
   boolean isResponsive(VariableMap query)
   {
     String state=query.getOne("lrs");
+    
     return Integer.toString(sequence).equals(state);
   }
   
-  void nextRequest()
-  { sequence++;
+  StateFrame currentFrame()
+  { return currentFrame;
+  }
+  
+  StateFrame nextFrame()
+  { 
+    sequence++;
+    currentFrame=new StateFrame();
+    return currentFrame;
   }
   
   void clearParameters()

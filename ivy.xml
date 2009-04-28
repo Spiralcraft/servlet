@@ -12,7 +12,7 @@
 
     <dependency org="spiralcraft" name="net" rev="latest.integration"/>
 
-    <dependency org="spiralcraft" name="textgen" rev="latest.integration"/>
+    <dependency org="spiralcraft" name="textgen" rev="[0.3.3,)"/>
     
     <dependency org="java" name="servlet-api" rev="2.4"/>
 

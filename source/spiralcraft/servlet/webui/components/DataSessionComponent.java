@@ -44,6 +44,7 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
+import spiralcraft.textgen.StateFrame;
 import spiralcraft.textgen.compiler.TglUnit;
 
 public class DataSessionComponent
@@ -197,24 +198,41 @@ public class DataSessionComponent
   @Override
   public void handleRequest(ServiceContext context)
   { 
-
+		DataSessionState state=(DataSessionState) context.getState();
+		
     // Leave the session object alone until handlePrepare()
     //   for a responsive request
-    if (!context.isResponsive())
+    if (state.frameChanged(context.getCurrentFrame()))
     {
       applyRequestBindings(context);
       applyDefaults();
+      state.setRequestBindingsApplied(true);
     }
   } 
 
   @Override
   public void handlePrepare(ServiceContext context)
   { 
-    if (context.isResponsive())
+    DataSessionState state=(DataSessionState) context.getState();
+    if (state.frameChanged(context.getCurrentFrame()))
     { 
-      // Only do this here if we didn't do it in handleRequest()
-      applyRequestBindings(context);
+    	if (!state.getRequestBindingsApplied())
+    	{
+    	  // Only do this here if we didn't do it in handleRequest()
+    	  applyRequestBindings(context);
+    	}
+    	else
+    	{ 
+    	  if (debug)
+    	  { 
+    	    log.fine
+    	      ("Not applying request bindings on frame change because they"
+    	      +" have been applied at the Request stage"
+    	      );
+    	  }
+    	}
     }
+    state.setRequestBindingsApplied(false);
     
     applyDefaults();
     publishRequestBindings(context);
@@ -303,12 +321,25 @@ class DataSessionState
 
   private DataSession session;
   private boolean initialized;
+  private volatile StateFrame currentFrame;
+  private boolean requestBindingsApplied;
   
   public DataSessionState(DataSession session,int childCount)
   { 
     super(childCount);
     this.session=session;
     
+  }
+
+  public boolean frameChanged(StateFrame frame)
+  { 
+    if (currentFrame!=frame)
+    { 
+      currentFrame=frame;
+      return true;
+    }
+    return false;
+      
   }
   
   public boolean isInitialized()
@@ -321,6 +352,26 @@ class DataSessionState
   
   public DataSession get()
   { return session;
+  }
+  
+  /**
+   * <p>For backwards compatibility- should be removed as soon as we figure out
+   *   what requires this. 
+   * </p>
+   * 
+   * <p>Why should we avoid applying request bindings on PREPARE, if we
+   *   already applied them on REQUEST.
+   * </p>
+   * 
+   * 
+   * @return
+   */
+  public boolean getRequestBindingsApplied()
+  { return requestBindingsApplied;
+  }
+  
+  public void setRequestBindingsApplied(boolean val)
+  { requestBindingsApplied=val;
   }
   
 }

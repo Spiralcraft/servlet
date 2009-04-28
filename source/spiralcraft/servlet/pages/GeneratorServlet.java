@@ -272,7 +272,7 @@ class ResourceEntry
     else
     { 
       Writer writer=response.getWriter();
-      EventContext context=new EventContext(writer,false);
+      EventContext context=new EventContext(writer,false,null);
       element.render(context);
       writer.flush();
     }

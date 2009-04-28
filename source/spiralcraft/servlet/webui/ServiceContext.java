@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.StateFrame;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,13 +65,12 @@ public class ServiceContext
   private boolean debug=false;
   private UIServlet servlet;
   private List<String> queuedActions;
-  private boolean responsive;
   private URI contextURI;
   private String contentType;
   
   
-  public ServiceContext(Writer writer,boolean stateful)
-  { super(writer,stateful);
+  public ServiceContext(Writer writer,boolean stateful,StateFrame frame)
+  { super(writer,stateful,frame);
   }
     
   public void setDebug(boolean debug)
@@ -125,18 +125,7 @@ public class ServiceContext
   }
   
   /**
-   * <p>Indicate whether the current request is responsive to the most recent
-   *   rendering state of the resource as stored in the ResourceSession.
-   * </p>
-   * @return
-   */
-  public boolean isResponsive()
-  { return responsive;
-  }
-  
-  /**
-   * <p>Associate a resource session with this ServiceContext and initialize
-   *   various attributes.
+   * <p>Associate a resource session with this ServiceContext
    * </p>
    * 
    * <p>Called once at the start of every request
@@ -146,11 +135,8 @@ public class ServiceContext
    *   objects for a user's session that are associated with the 
    *   containing WebUI user interface resource
    */
-  void startRequest(ResourceSession resourceSession)
-  { 
-    this.resourceSession=resourceSession;
-    responsive=(query!=null?this.resourceSession.isResponsive(query):false);
-    resourceSession.nextRequest();
+  void setResourceSession(ResourceSession resourceSession)
+  { this.resourceSession=resourceSession;
   }  
     
   /**

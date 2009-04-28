@@ -31,6 +31,7 @@ import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.Message;
 import spiralcraft.textgen.PrepareMessage;
+import spiralcraft.textgen.StateFrame;
 
 import spiralcraft.data.persist.XmlAssembly;
 import spiralcraft.data.persist.PersistenceException;
@@ -282,13 +283,6 @@ public class UIServlet
     
     try
     {
-      
-      serviceContext=new ServiceContext(response.getWriter(),true);
-      
-      serviceContext.setRequest(request);
-      serviceContext.setResponse(response);
-      serviceContext.setServlet(this);
-      
       Session session=getUiSession(request,true);
 
       boolean interactive=true;
@@ -298,6 +292,20 @@ public class UIServlet
         //   which must be synchronized.
         
         ResourceSession localSession=session.getResourceSession(component);
+        
+        // Set up the ServiceContext with the last frame used.
+        serviceContext
+          =new ServiceContext
+            (response.getWriter(),true,localSession.currentFrame());
+
+        serviceContext.setRequest(request);
+        serviceContext.setResponse(response);
+        serviceContext.setServlet(this);
+        
+        if (!localSession.isResponsive(serviceContext.getQuery()))
+        { serviceContext.setCurrentFrame(localSession.nextFrame());
+        }
+      
       
         if (localSession==null)
         { 
@@ -317,7 +325,7 @@ public class UIServlet
         }
       
 
-        serviceContext.startRequest(localSession);
+        serviceContext.setResourceSession(localSession);
       
         synchronized (localSession)
         { 
@@ -330,12 +338,19 @@ public class UIServlet
         // Non-interactive mode doesn't have to synchronize on the local
         //   resource session and does not maintain session state for the
         //   resource.
-        
         ResourceSession localSession=new ResourceSession();
+
+        serviceContext
+          =new ServiceContext(response.getWriter(),true,new StateFrame());
+      
+        serviceContext.setRequest(request);
+        serviceContext.setResponse(response);
+        serviceContext.setServlet(this);
+        
         localSession.setLocalURI
           (request.getRequestURI()
           );
-        serviceContext.startRequest(localSession);
+        serviceContext.setResourceSession(localSession);
         service(component,serviceContext);
         
       }
@@ -420,6 +435,8 @@ public class UIServlet
       component.message(serviceContext,PREPARE_MESSAGE,null);
       done=processRedirect(serviceContext);
     }
+    
+    serviceContext.setCurrentFrame(localSession.nextFrame());
     
     if (!done)
     {
