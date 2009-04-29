@@ -223,13 +223,13 @@ public class DataSessionComponent
     	}
     	else
     	{ 
-    	  if (debug)
-    	  { 
-    	    log.fine
+//    	  if (debug)
+//    	  { 
+    	    log.debug
     	      ("Not applying request bindings on frame change because they"
     	      +" have been applied at the Request stage"
     	      );
-    	  }
+//    	  }
     	}
     }
     state.setRequestBindingsApplied(false);
