@@ -292,20 +292,6 @@ public class UIServlet
         //   which must be synchronized.
         
         ResourceSession localSession=session.getResourceSession(component);
-        
-        // Set up the ServiceContext with the last frame used.
-        serviceContext
-          =new ServiceContext
-            (response.getWriter(),true,localSession.currentFrame());
-
-        serviceContext.setRequest(request);
-        serviceContext.setResponse(response);
-        serviceContext.setServlet(this);
-        
-        if (!localSession.isResponsive(serviceContext.getQuery()))
-        { serviceContext.setCurrentFrame(localSession.nextFrame());
-        }
-      
       
         if (localSession==null)
         { 
@@ -323,7 +309,20 @@ public class UIServlet
             }
           }
         }
-      
+
+        // Set up the ServiceContext with the last frame used.
+        serviceContext
+          =new ServiceContext
+            (response.getWriter(),true,localSession.currentFrame());
+
+        serviceContext.setRequest(request);
+        serviceContext.setResponse(response);
+        serviceContext.setServlet(this);
+        
+        if (!localSession.isResponsive(serviceContext.getQuery()))
+        { serviceContext.setCurrentFrame(localSession.nextFrame());
+        }
+        
 
         serviceContext.setResourceSession(localSession);
       
