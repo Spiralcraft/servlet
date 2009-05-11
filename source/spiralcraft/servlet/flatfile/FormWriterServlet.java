@@ -38,7 +38,6 @@ import spiralcraft.data.core.FieldImpl;
 import spiralcraft.data.flatfile.Writer;
 import spiralcraft.data.lang.DataReflector;
 import spiralcraft.data.spi.EditableArrayTuple;
-import spiralcraft.data.spi.SingleSpace;
 
 import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
@@ -135,7 +134,7 @@ public class FormWriterServlet
     try
     {
       Focus<Space> context
-        =new BeanFocus(new SingleSpace());
+        =new BeanFocus(new Space());
 
       channel=new ThreadLocalChannel<Tuple>
         (DataReflector.<Tuple>getInstance(type));
