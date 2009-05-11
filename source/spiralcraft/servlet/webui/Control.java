@@ -272,7 +272,13 @@ public abstract class Control<Ttarget>
   protected void handlePrepare(ServiceContext context)
   { 
     ControlState<Ttarget> state = (ControlState) context.getState();
-    if (state.frameChanged(context.getCurrentFrame()) || scatterOnPrepare)
+    boolean frameChanged=state.frameChanged(context.getCurrentFrame());
+    
+    if (frameChanged && debug)
+    { log.fine("Frame changed on PREPARE");
+    }
+    
+    if (frameChanged || scatterOnPrepare)
     {
       state.setPresented(false);
       if (!state.isErrorState())
@@ -306,6 +312,26 @@ public abstract class Control<Ttarget>
       }
     }
     
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  protected void postPrepare(ServiceContext context)
+  { 
+   
+    ControlState<Ttarget> state = (ControlState<Ttarget>) context.getState();
+    List<Command<Ttarget,?>> commands=state.dequeueCommands();
+    if (commands!=null && commands.size()>0)
+    {
+      for (Command<Ttarget,?> command : commands)
+      {
+        log.warning
+          ("Unexecuted command queued post-prepare- results may not "
+          +" be rendered: "+command
+          );
+        state.queueCommand(command);
+      }
+    }
   }
   
   @Override
