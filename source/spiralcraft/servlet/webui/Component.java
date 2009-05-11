@@ -129,6 +129,10 @@ public abstract class Component
     
     super.message(context,message,path);
 
+    if (message.getType()==PrepareMessage.TYPE)
+    { postPrepare((ServiceContext) context);
+    }
+    
     if (message.getType()==CommandMessage.TYPE)
     { handleCommand((ServiceContext) context);
     }
@@ -178,6 +182,16 @@ public abstract class Component
   protected void handlePrepare(ServiceContext context)
   { 
     
+  }
+  
+  /**
+   * Override to do something after the Prepare message has been recursively
+   *   handled. 
+   * 
+   * @param context
+   */
+  protected void postPrepare(ServiceContext context)
+  {
   }
 
   /**
