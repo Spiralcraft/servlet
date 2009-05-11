@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.StateFrame;
@@ -22,6 +23,8 @@ public class ResourceSession
 {
   private static final ClassLog log
     =ClassLog.getInstance(ResourceSession.class);
+  private static final Level debugLevel
+    =ClassLog.getInitialDebugLevel(ResourceSession.class, null);
   
 //  private final HashMap<String,Action> actionMap
 //    =new HashMap<String,Action>();
@@ -35,7 +38,6 @@ public class ResourceSession
   private ElementState state;
   
   private String localURI;
-  private boolean debug;
   private volatile int sequence;
   private volatile StateFrame currentFrame;
   
@@ -64,9 +66,25 @@ public class ResourceSession
    */
   boolean isResponsive(VariableMap query)
   {
-    String state=query.getOne("lrs");
+    if (query==null)
+    { 
+      if (debugLevel.canLog(Level.TRACE))
+      { log.trace("Request is non-resposive because query is null");
+      }
+      return false;
+    }
     
-    return Integer.toString(sequence).equals(state);
+    String state=query.getOne("lrs");
+    if (Integer.toString(sequence).equals(state))
+    { return true;
+    }
+    else
+    { 
+      if (debugLevel.canLog(Level.TRACE))
+      { log.trace("Request is non-responsive- ?lrs="+state+" != "+sequence);
+      }
+      return false;
+    }
   }
   
   StateFrame currentFrame()
@@ -82,10 +100,6 @@ public class ResourceSession
   
   void clearParameters()
   { parameterMap.clear();
-  }
-  
-  public void setDebug(boolean debug)
-  { this.debug=debug;
   }
   
   public List<Action> getActions(String name)
@@ -117,7 +131,7 @@ public class ResourceSession
    */
   String registerAction(Action action)
   {     
-    if (debug)
+    if (debugLevel.canLog(Level.FINE))
     {
       log.fine
         ("Registering action "+action.getName()+"="+action
@@ -147,7 +161,7 @@ public class ResourceSession
     if (values!=null)
     { 
       parameterMap.put(name,values);
-      if (debug)
+      if (debugLevel.canLog(Level.FINE))
       { 
         log.fine
           ("Added actionParameter "+name+"="+values+" to map "+parameterMap);
