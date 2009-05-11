@@ -70,6 +70,9 @@ public class ControlState<Tbuf>
   { 
     if (currentFrame!=frame)
     { 
+      if (control.isDebug())
+      { control.logFine("Frame changed to "+frame+" from "+currentFrame);
+      }
       currentFrame=frame;
       return true;
     }
