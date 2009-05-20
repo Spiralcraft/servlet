@@ -10,11 +10,44 @@
     
     <detail>
       <scm:Change>
+        <date>2009-05-09
+        </date>
+
+        <notes>
+          <scm:Note>Pre-release cleanup
+          </scm:Note>
+          <scm:Note>Remove debug message in editorbase
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/webui/components/EditorBase
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-05-09
+        </date>
+
+        <notes>
+          <scm:Note>Flatfile form writer util updated for data/Space refactor
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/flatfile/FormWriterServlet.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
         <date>2009-04-27
         </date>
 
         <notes>
           <scm:Note>Integrate textgen StateFrame solution into WebUI.
+          </scm:Note>
+          <scm:Note>Add postPrepare hook to Component to perform post-order
+            operations
           </scm:Note>
         </notes>
     
@@ -23,6 +56,8 @@
 
         <resources>
           <URI>pages/GeneratorServlet.java
+          </URI>
+          <URI>webui/Component.java
           </URI>
           <URI>webui/Control.java
           </URI>

@@ -425,6 +425,9 @@ public class UIServlet
     }
     
     
+    
+    serviceContext.setCurrentFrame(localSession.nextFrame());
+    
     if (!done)
     {
 
@@ -435,10 +438,15 @@ public class UIServlet
       done=processRedirect(serviceContext);
     }
     
-    serviceContext.setCurrentFrame(localSession.nextFrame());
-    
     if (!done)
     {
+      // XXX: A command may change the internal state, but components
+      //  will not pick it up unless the command triggers a state change, but
+      //  if a command triggers a state change at this point, not all
+      //  components will pick up that change before render.
+      // 
+      // Therefore all page modifying state needs to take place before the
+      //   completion of "prepare". 
        
       //
       // COMMAND
@@ -446,6 +454,7 @@ public class UIServlet
       component.message(serviceContext,COMMAND_MESSAGE,null);
       done=processRedirect(serviceContext);
     }
+
     
     if (!done)
     { 

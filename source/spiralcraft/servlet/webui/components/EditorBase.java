@@ -801,11 +801,16 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     
     if (source==null && type!=null)
     { 
-      logFine("No source: Binding NullChannel for type "+type);
+      if (debug)
+      { logFine("No source: Binding NullChannel for type "+type);
+      }
       source=new NullChannel(DataReflector.getInstance(type));
     }
     else
-    { logFine("Source="+source);
+    { 
+      if (debug)
+      { logFine("Source="+source);
+      }
 
     }
     return source;

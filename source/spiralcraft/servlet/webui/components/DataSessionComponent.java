@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 1998,2009 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -223,13 +223,13 @@ public class DataSessionComponent
     	}
     	else
     	{ 
-//    	  if (debug)
-//    	  { 
+    	  if (debug)
+    	  { 
     	    log.debug
     	      ("Not applying request bindings on frame change because they"
     	      +" have been applied at the Request stage"
     	      );
-//    	  }
+    	  }
     	}
     }
     state.setRequestBindingsApplied(false);
