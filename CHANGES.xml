@@ -2,12 +2,59 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.4
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-05-21
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-05-21
+        </date>
+
+        <notes>
+          <scm:Note>PageAction no longer queues its command, by default. The
+            command will execute when the action is invoked, or queue="true"
+            must be specified to queue it for the next Command cycle.
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/autofilter/ReferenceFocusFilter.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-05-21
+        </date>
+
+        <notes>
+          <scm:Note>Provide a CONSTANT scope for the ReferenceFocusFilter
+            to make objects available at bind time.
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/autofilter/ReferenceFocusFilter.java
+        </path>
+
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.3
     </revision>
     
     <authorId>miketoth
     </authorId>
     
+    <date>2009-05-09
+    </date>
+
     <detail>
       <scm:Change>
         <date>2009-05-09
