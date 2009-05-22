@@ -63,7 +63,7 @@ public class PageAction
   private Expression<Command<?,?>> commandExpression;
   private Channel<Command<?,?>> commandChannel;  
   private String actionName;
-  private boolean queue=true;
+  private boolean queue=false;
 
   public void setX(Expression<Command<?,?>> expression)
   { commandExpression=expression;
@@ -110,6 +110,18 @@ public class PageAction
     super.handlePrepare(context);
     if (actionName==null)
     { context.registerAction(createAction(context));
+    }
+    
+    ActionState state=(ActionState) context.getState();
+    
+    Command<?,?> command=state.dequeueCommand();
+    if (command!=null)
+    { 
+      log.warning
+        ("Unexecuted command on Prepare "+command+"."
+        +" Result visibility may be delayed"
+        );
+      state.queueCommand(command);
     }
     
   }
