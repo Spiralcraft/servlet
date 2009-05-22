@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
+import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 
 import spiralcraft.data.DataException;
@@ -46,13 +47,13 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   { 
     SESSION
     ,APPLICATION
+    ,CONSTANT
   }
 
   private URI instanceURI;
   private Type<?> type;
   private Scope scope=Scope.APPLICATION;
   private ThreadLocalChannel<Tfocus> transientBinding;
-  private FocusHolder stableFocusHolder;
   private Focus<?> parentFocus;
   private String attributeName;
 
@@ -76,6 +77,22 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   }
 
   
+  /**
+   * Specify the Scope in which each instance will be made available
+   * 
+   * <ul>
+   *   <li>SESSION: A unique instance will be made available for each session
+   *   </li>
+   *   <li>APPLICATION: A mutable, shared instance will be made available for 
+   *     the entire application.
+   *   </li>
+   *   <li>CONSTANT: An unmodifiable instance will be made available for
+   *     the entire application, and may be retrieved at load-time.
+   *   </li>
+   * </ul>
+   * 
+   * @param scope
+   */
   public void setScope(Scope scope)
   { this.scope=scope;
   }
@@ -89,11 +106,19 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     (Focus<?> parentFocus)
     throws BindException
   { 
-    this.attributeName=this.getPath().format("/")+"!"+type.getURI();
+    URI attributeURI=instanceURI;
+    if (attributeURI==null)
+    { attributeURI=type.getURI();
+    }
+    
+    this.attributeName
+      =this.getPath().format("/")+"!"+attributeURI;
     
     this.parentFocus=parentFocus;
     switch (scope)
     {
+      case CONSTANT:
+        return createConstantFocus(parentFocus);
       case APPLICATION:
         return createStableFocus(parentFocus);
       case SESSION:
@@ -102,10 +127,29 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     throw new BindException("Unknown scope "+scope);
   }
 
+  private Focus<Tfocus> createConstantFocus(Focus<?> parentFocus)
+    throws BindException
+  {
+    Focus<Tfocus> focus=createStableFocus(parentFocus);
+    SimpleChannel<Tfocus> constantChannel
+      =new SimpleChannel<Tfocus>
+        (focus.getSubject().getReflector()
+        ,focus.getSubject().get()
+        ,true
+        );
+    
+    if (parentFocus!=null)
+    { return parentFocus.chain(constantChannel);
+    }
+    else
+    { return new SimpleFocus<Tfocus>(constantChannel);
+    }
+  }
+  
   private Focus<Tfocus> createStableFocus(Focus<?> parentFocus)
     throws BindException
   {
-    stableFocusHolder
+    FocusHolder stableFocusHolder
       =new FocusHolder(parentFocus);
     
     if (debug)
@@ -153,7 +197,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
       
       reference=(AbstractXmlObject<Treferent,Tfocus>) 
         AbstractXmlObject.<Treferent>activate
-          (type.getURI(),instanceURI,null,parentFocus);
+          (type!=null?type.getURI():null,instanceURI,null,parentFocus);
       
       referencedFocus=(Focus<Tfocus>) reference.getFocus();
       
