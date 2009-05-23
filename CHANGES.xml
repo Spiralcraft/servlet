@@ -2,6 +2,34 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.5
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-05-23
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-05-23
+        </date>
+
+        <notes>
+          <scm:Note>Added a loginCommand(Command onSuccess) method to Login
+            to support performing an immediate action on login success.
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/autofilter/ReferenceFocusFilter.java
+        </path>
+
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.4
     </revision>
     

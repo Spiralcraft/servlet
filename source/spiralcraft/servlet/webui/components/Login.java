@@ -105,8 +105,9 @@ public class Login
   
 
   /**
-   * <p>Specify that the login form is an in-place login, and that no redirect
-   *   should occur on success or failure.
+   * <p>Specify that the login form is an in-place login that may be present
+   *   inside the secured page, and thus no automatic redirect to a 
+   *   referrering page should occur.
    * </p>
    * 
    * @param inPlace
@@ -148,13 +149,34 @@ public class Login
       );
   }
   
+  public Command<LoginEntry,Void> loginCommand(final Command<?,?> onSuccess)
+  {     
+    return new QueuedCommand<LoginEntry,Void>
+      (getState()
+      ,new CommandAdapter<LoginEntry,Void>()
+        { 
+          @Override
+          public void run()
+          { 
+            if (login(true))
+            { 
+              onSuccess.execute();
+              if (onSuccess.getException()!=null)
+              { setException(onSuccess.getException());
+              }
+            }
+          }
+        }
+      );
+  }
+
   @Override
   public LoginState createState()
   {
     return new LoginState(this);
   }
 
-  private void login(boolean interactive)
+  private boolean login(boolean interactive)
   {
     LoginState state=(LoginState) getState();
     if (debug)
@@ -204,6 +226,7 @@ public class Login
         { log.fine("Non-interactive login failure: entry="+getState().getValue());
         }
       }
+      return false;
     }
     else
     { 
@@ -231,6 +254,7 @@ public class Login
 
       state.setValue(null);
       newEntry();
+      return true;
     }
       
   }
