@@ -303,7 +303,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
           Assignment<?> assignment
             =new Assignment(Expression.create(field.getName()),expression);
           defaultAssignments
-            =(Assignment[]) ArrayUtil.append(defaultAssignments,assignment);
+            =ArrayUtil.append(defaultAssignments,assignment);
         }
       }
       

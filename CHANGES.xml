@@ -2,6 +2,26 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.6
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-05-27
+    </date>
+
+    <notes>
+      <scm:Note>Updated for ArrayUtil genericization
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/servlet/webui/components/AggregateEditor.java
+    </path>
+
+  </scm:Change>
+    
+  <scm:Change>
     <revision>0.3.5
     </revision>
     
