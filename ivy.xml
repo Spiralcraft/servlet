@@ -10,7 +10,7 @@
   <dependencies>
     <dependency org="spiralcraft" name="core" rev="[0.3.8,)"/>
 
-    <dependency org="spiralcraft" name="net" rev="latest.integration"/>
+    <dependency org="spiralcraft" name="net" rev="[0.3.2,)"/>
 
     <dependency org="spiralcraft" name="textgen" rev="[0.3.3,)"/>
     

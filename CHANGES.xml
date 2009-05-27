@@ -11,13 +11,66 @@
     <date>2009-05-27
     </date>
 
-    <notes>
-      <scm:Note>Updated for ArrayUtil genericization
-      </scm:Note>
-    </notes>
+    <detail>
+      <scm:Change>
+        <date>2009-05-27
+        </date>
+        
+        <notes>
+          <scm:Note>Provide expression based query params to ProxyFilter
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/
+        </path>
+        <resources>
+          <URI>autofilter/ProxyFilter.java
+          </URI>
+          <URI>autofilter/ParameterBinding.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-05-27
+        </date>
+        
+        <notes>
+          <scm:Note>Moved VariableMapBinding to more common
+             spiralcraft.net.http package in spiralcraft-net module
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/
+        </path>
+        <resources>
+          <URI>webui/VariableMapBinding.java
+          </URI>
+          <URI>webui/components/RequestBinding.java
+          </URI>          
+          <URI>flatfile/FormWriterServlet.java
+          </URI>          
+          
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-05-27
+        </date>
+        
+        <notes>
+          <scm:Note>Updated AggregateEditor for ArrayUtil genericization
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/AggregateEditor.java
+        </path>
+
+      </scm:Change>
+    </detail>
     
-    <path>/source/spiralcraft/servlet/webui/components/AggregateEditor.java
-    </path>
 
   </scm:Change>
     
