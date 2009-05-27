@@ -60,50 +60,52 @@ public class CacheFilter
   @Override
   public Class<? extends AutoFilter> getCommonType()
   { return CacheFilter.class;
-}
-  
-  
-class CacheWrapper
-  extends HttpServletResponseWrapper
-{
-  private int status;
-  private long date;
-  
-  public CacheWrapper(HttpServletResponse response)
-  { super(response);
-  }
-  
-  @Override
-  public void setDateHeader(String name,long value)
-  { 
-    if (name.equals("Date"))
-    { this.date=value;
-    }
-    super.setDateHeader(name,value);
-    updated();
-  }
-  
-  @Override
-  public void setStatus(int status)
-  { 
-    this.status=status;
-    super.setStatus(status);
-    updated();
-  }
-  
-  private void updated()
-  { 
-    if (date!=0 && status!=0)
-    {
-      long expires=floorToSecond(Clock.instance().approxTimeMillis());
-      setDateHeader("Expires",expires);
-      setHeader("Cache-Control","max-age="+seconds);
-    }
   }
 
-  private long floorToSecond(long timeInMs)
-  { return (long) Math.floor((double) timeInMs/(double) 1000)*1000;
-  }  
-}  
+  
+  
+  class CacheWrapper
+    extends HttpServletResponseWrapper
+  {
+    private int status;
+    private long date;
+  
+    public CacheWrapper(HttpServletResponse response)
+    { super(response);
+    }
+  
+    @Override
+    public void setDateHeader(String name,long value)
+    {  
+      if (name.equals("Date"))
+      { this.date=value;
+      }
+      super.setDateHeader(name,value);
+      updated();
+    }
+  
+    @Override
+    public void setStatus(int status)
+    { 
+      this.status=status;
+      super.setStatus(status);
+      updated();
+    }
+  
+    private void updated()
+    { 
+      if (date!=0 && status!=0)
+      {
+        long expires=floorToSecond(Clock.instance().approxTimeMillis());
+        setDateHeader("Expires",expires);
+        setHeader("Cache-Control","max-age="+seconds);
+      }
+    }
+
+    private long floorToSecond(long timeInMs)
+    { return (long) Math.floor((double) timeInMs/(double) 1000)*1000;
+    }  
+
+  }
 }
 
