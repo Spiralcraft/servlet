@@ -25,9 +25,9 @@ import spiralcraft.lang.parser.AssignmentNode;
 import spiralcraft.lang.util.ExpressionStringConverter;
 
 import spiralcraft.log.ClassLog;
+import spiralcraft.net.http.VariableMapBinding;
 
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.servlet.webui.VariableMapBinding;
 
 import spiralcraft.text.translator.Translator;
 

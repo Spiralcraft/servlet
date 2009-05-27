@@ -49,9 +49,9 @@ import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.lang.util.DictionaryBinding;
 
 import spiralcraft.net.http.VariableMap;
+import spiralcraft.net.http.VariableMapBinding;
 
 import spiralcraft.servlet.HttpServlet;
-import spiralcraft.servlet.webui.VariableMapBinding;
 
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
