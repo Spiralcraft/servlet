@@ -31,6 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 
 
 
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
+import spiralcraft.net.http.VariableMap;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.html.URLEncoder;
 import spiralcraft.util.ContextDictionary;
@@ -43,8 +46,13 @@ public class ProxyFilter
 {
 
   private String proxyURL;
+  private String proxyQuery;
   private boolean useRequestURI=false;
   private boolean absolute;
+  private boolean bound;
+  private ParameterBinding<?>[] queryBindings;
+  
+  
 //  private PathPattern pattern;
 
   public void setProxyURL(String url)
@@ -55,6 +63,7 @@ public class ProxyFilter
       this.proxyURL=ContextDictionary.substitute(url);
       URI uri=URI.create(this.proxyURL);
       absolute=uri.isAbsolute();
+      proxyQuery=uri.getQuery();
     }
     catch (ParseException x)
     { throw new IllegalArgumentException(x);
@@ -63,9 +72,32 @@ public class ProxyFilter
     
   }
   
+  public void setQueryBindings(ParameterBinding<?>[] queryBindings)
+  { this.queryBindings=queryBindings;
+  }
+  
 //  public void setPattern(PathPattern pattern)
 //  { this.pattern=pattern;
 //  }
+  
+  public void bind(Focus<?> focus)
+    throws BindException
+  {
+
+    if (queryBindings!=null)
+    {
+      if (focus!=null)
+      {
+        for (ParameterBinding<?> binding: queryBindings)
+        { binding.bind(focus);
+        }
+      }
+      else
+      { throw new BindException("No Focus");
+      }
+    }    
+    bound=true;
+  }
   
   @Override
   public void doFilter
@@ -77,6 +109,17 @@ public class ProxyFilter
   {
     
     HttpServletRequest httpRequest=(HttpServletRequest) request;
+    
+    if (!bound)
+    { 
+      try
+      { bind(FocusFilter.getFocusChain(httpRequest));
+      }
+      catch (BindException x)
+      { throw new ServletException("Error binding ProxyFilter",x);
+      }
+    }
+
     
 //    if (pattern==null 
 //        || !pattern.matches(new Path(httpRequest.getRequestURI(),'/'))
@@ -92,6 +135,37 @@ public class ProxyFilter
     String encodedRequestURI
       =URLEncoder.encode(httpRequest.getRequestURI()).substring(1);      
     
+    String queryString=httpRequest.getQueryString();
+    if (proxyQuery!=null)
+    { queryString=queryString!=null?queryString+"&"+proxyQuery:proxyQuery;
+    }
+    
+    if (queryBindings!=null)
+    {
+      
+      VariableMap map;
+      if (queryString!=null && queryString.length()>0)
+      { map=VariableMap.fromUrlEncodedString(queryString);
+      }
+      else
+      { map=new VariableMap();
+      }
+      
+      for (ParameterBinding<?> binding: queryBindings)
+      { binding.getBinding().read(map);
+      }
+    
+      for (ParameterBinding<?> binding: queryBindings)
+      { binding.publish(map);
+      }
+      
+      queryString=map.generateEncodedForm();
+    }
+    
+    if (debug && queryString!=null)
+    { log.fine("proxy query="+queryString);
+    }
+    
     if (!absolute)
     { 
       URI requestURL
@@ -104,8 +178,8 @@ public class ProxyFilter
         =requestURL.resolve
           (proxyURL
             +(useRequestURI?"/"+encodedRequestURI:"")
-            +(requestURL.getQuery()!=null
-              ?"?"+requestURL.getQuery()
+            +(queryString!=null
+              ?"?"+queryString
               :""
              )
           ).toString();
@@ -121,8 +195,8 @@ public class ProxyFilter
       url=
         proxyURL
         +(useRequestURI?"/"+encodedRequestURI:"")
-        +(httpRequest.getQueryString()!=null
-         ?"?"+httpRequest.getQueryString()
+        +(queryString!=null
+         ?"?"+queryString
          :""
          );
 
