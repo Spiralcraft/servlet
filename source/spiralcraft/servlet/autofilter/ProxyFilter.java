@@ -152,7 +152,7 @@ public class ProxyFilter
       }
       
       for (ParameterBinding<?> binding: queryBindings)
-      { binding.getBinding().read(map);
+      { binding.read(map);
       }
     
       for (ParameterBinding<?> binding: queryBindings)

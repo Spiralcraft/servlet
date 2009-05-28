@@ -174,6 +174,13 @@ public class ParameterBinding<Tval>
     { binding.setDebug(debug);
     }
   }
+  
+  public void read(VariableMap map)
+  {
+    if (read)
+    { binding.read(map);
+    }
+  }
       
   public void publish(VariableMap map)
   {
