@@ -20,6 +20,12 @@
           <scm:Note>Bug fix: ControlGroup rule should bind against the stateful
             target object, not the parent focus.
           </scm:Note>
+          <scm:Note>Bug fix: Transaction should roll back when an error state
+            results from a message.
+          </scm:Note>
+          <scm:Note>Bug fix: EditorBase should run post-save command only on
+            error free return from save message (post-order)
+          </scm:Note>
         </notes>
 
         <path>/source/spiralcraft/servlet/webui/ControlGroup.java
