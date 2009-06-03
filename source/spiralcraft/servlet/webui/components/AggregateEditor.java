@@ -14,6 +14,8 @@
 //
 package spiralcraft.servlet.webui.components;
 
+import java.util.ArrayList;
+
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.data.DataComposite;
@@ -21,6 +23,7 @@ import spiralcraft.data.DataException;
 import spiralcraft.data.Field;
 import spiralcraft.data.Type;
 
+import spiralcraft.data.core.SequenceField;
 import spiralcraft.data.lang.DataReflector;
 import spiralcraft.data.session.Buffer;
 import spiralcraft.data.session.BufferAggregate;
@@ -37,6 +40,7 @@ import spiralcraft.lang.Setter;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.util.ArrayUtil;
@@ -57,6 +61,9 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
 
   protected ThreadLocalChannel<BufferTuple> childChannel;
   protected Focus<BufferTuple> childFocus;
+  protected int padSize;
+  protected Expression<Boolean> padX;
+  protected Channel<Boolean> isPadChannel;
   
   private Setter<?>[] fixedSetters;
   private Setter<?>[] initialSetters;
@@ -84,6 +91,32 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       );
   }
   
+  /**
+   * <p>The number of incomplete unsaved Buffers that will be maintained.
+   * </p>
+   * 
+   * <p>The "padX" property determines what is considered "padding".
+   * </p>
+   * @param padSize
+   */
+  public void setPadSize(int padSize)
+  { this.padSize=padSize;
+  }
+  
+  /**
+   * <p>An Expression, evaluated against a child Buffer, which determines
+   *   whether the buffer is "padding", or ignorable when saving.
+   * </p>
+   * 
+   * <p>Defaults to an Expression which checks if any required field values
+   *   are null
+   * </p>
+   * @param padX
+   */
+  public void setPadX(Expression<Boolean> padX)
+  { this.padX=padX;
+  }
+  
   @Override
   protected void scatter(ServiceContext context)
   {
@@ -99,10 +132,49 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       for (BufferTuple buffer: aggregate)
       { initChild(buffer);
       }
+      
+      if (padSize>0)
+      { makePadding(aggregate);
+      }
+      
     }
 
   }
 
+  private void makePadding(BufferAggregate<BufferTuple,?> aggregate)
+  { 
+    int padCount=0;
+    for (BufferTuple buffer: aggregate)
+    {
+    
+      childChannel.push(buffer);
+      try
+      {
+        if (Boolean.TRUE.equals(isPadChannel.get()))
+        { padCount++;
+        }
+      }
+      finally
+      { childChannel.pop();
+      }      
+    }
+    
+    try
+    {
+      
+      for (int i=padCount;i<padSize;i++)
+      { aggregate.add(newChildBuffer());
+      }
+    }
+    catch (DataException x)
+    { 
+      log.log
+        (Level.SEVERE,toString()+": Error padding buffer for type "+getType()
+        ,x);
+    }
+    
+  }
+  
   private void initChild(BufferTuple child)
   {
     if (newSetters==null && initialSetters==null)
@@ -204,8 +276,11 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         }
       }
       
-      
-      child.save();
+      if (isPadChannel==null 
+          || !Boolean.TRUE.equals(isPadChannel.get())
+          )
+      { child.save();
+      }
       
     }
     finally
@@ -295,6 +370,8 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
 
     if (!contentType.isAggregate() && contentType.getScheme()!=null)
     { 
+      ArrayList<String> padFieldNames
+        =new ArrayList<String>();
       for (Field field: contentType.getFieldSet().fieldIterable())
       {
         Expression<?> expression=field.getDefaultExpression();
@@ -302,9 +379,24 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         { 
           Assignment<?> assignment
             =new Assignment(Expression.create(field.getName()),expression);
-          defaultAssignments
-            =ArrayUtil.append(defaultAssignments,assignment);
+          if (defaultAssignments==null)
+          { defaultAssignments=new Assignment[] {assignment};
+          }
+          else
+          { 
+            defaultAssignments
+              =ArrayUtil.append(defaultAssignments,assignment);
+          }
         }
+        
+        if (field.isRequired() 
+            && !(field instanceof SequenceField)
+            && field.getDefaultExpression()==null
+            )
+        { padFieldNames.add(field.getName());
+        }
+        
+        
       }
       
       childChannel=new ThreadLocalChannel<BufferTuple>
@@ -318,6 +410,28 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       initialSetters=bindAssignments(initialAssignments);
       bindRequestAssignments(requestBindings);
       bindRequestAssignments(redirectBindings);
+      
+      if (padSize>0 && padX==null)
+      { 
+        if (padFieldNames.size()==0)
+        { 
+          throw new BindException
+            ("No padX specified, and no candidate fields found");
+        }
+        StringBuffer expr=new StringBuffer();
+        for (String name:padFieldNames)
+        { 
+          if (expr.length()>0)
+          { expr.append(" || ");
+          }
+          expr.append(name+"==null ");
+        }
+        
+        padX=Expression.<Boolean>create(expr.toString());
+      }
+      if (padX!=null)
+      { isPadChannel=childFocus.bind(padX);
+      }
       
     }
     
