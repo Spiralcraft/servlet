@@ -2,6 +2,61 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.7
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-03
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-06-02
+        </date>
+        
+        <notes>
+          <scm:Note>Provide bean properties for specifying dataURI and
+            configURI mapped to context://data and context://config
+            respectively, to provide for external data directory.
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-06-02
+        </date>
+        
+        <notes>
+          <scm:Note>Added padSize and padX properties to maintain a pad of
+            new BufferTuples that can be edited simultaneously
+          </scm:Note>
+
+          <scm:Note>Fix NPE in AggregateEditor while binding when
+            a data field has a defaultExpression but there are no
+            defaultExpressions set up in the Editor.
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        <resources>
+          <URI>AggregateEditor.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+    </detail>
+    
+
+  </scm:Change>
+  
+  <scm:Change>
     <revision>0.3.6
     </revision>
     
