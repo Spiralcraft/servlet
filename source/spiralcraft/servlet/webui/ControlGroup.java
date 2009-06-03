@@ -158,6 +158,14 @@ public abstract class ControlGroup<Ttarget>
         super.message(context, message, path);
       }
       
+      if (transaction!=null && state.isErrorState())
+      { 
+        if (debug)
+        { logFine("Setting transaction rollbackOnComplete() due to error state");
+        }
+        transaction.rollbackOnComplete();
+      }
+      
       if (newTransaction)
       { transaction.commit();
       }
