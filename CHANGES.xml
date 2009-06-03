@@ -2,6 +2,35 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.7.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-03
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-06-03
+        </date>
+        
+        <notes>
+          <scm:Note>Bug fix: ControlGroup rule should bind against the stateful
+            target object, not the parent focus.
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/ControlGroup.java
+        </path>
+
+      </scm:Change>
+    
+    </detail>
+  </scm:Change>
+  
+  <scm:Change>
     <revision>0.3.7
     </revision>
     

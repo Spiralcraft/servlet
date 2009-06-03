@@ -322,7 +322,7 @@ public abstract class ControlGroup<Ttarget>
       CompoundFocus myFocus = new CompoundFocus(parentFocus, valueBinding);
       myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
       focus=myFocus;
-      bindRules(target.getReflector(),parentFocus);
+      bindRules(target.getReflector(),focus);
     } 
     else
     {
