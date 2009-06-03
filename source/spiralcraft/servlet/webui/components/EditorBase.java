@@ -100,11 +100,21 @@ public abstract class EditorBase<Tbuffer extends Buffer>
             boolean postOrder)
         { 
           EditorState state=(EditorState) context.getState();
-          if (!postOrder && message.getType()==SaveMessage.TYPE)
+          if (message.getType()==SaveMessage.TYPE)
           {
-            try
-            { 
-              save();
+            if (!postOrder)
+            {
+              // Save on descent
+              try
+              { save();
+              }
+              catch (DataException x)
+              { handleException(context,x);
+              }
+            }
+            else
+            {
+              // Run post-save command on ascent
               Command<?,?> postSaveCommand=state.getPostSaveCommand();
               if (postSaveCommand!=null)
               { 
@@ -121,9 +131,6 @@ public abstract class EditorBase<Tbuffer extends Buffer>
                 }
                 state.setPostSaveCommand(null);
               }
-            }
-            catch (DataException x)
-            { handleException(context,x);
             }
           }
           
