@@ -55,18 +55,21 @@ import spiralcraft.vfs.file.FileResource;
 
 /**
  * 
- * <P>Manages Filter chains for an HTTP resource tree using definition
- *   files contained inside the resource tree. 
+ * <p>Manages Filter chains for an HTTP resource (directory) tree using 
+ *   definition files contained inside the resource tree. 
+ * </p>
  * 
- * <P>One Controller is registered as a 'global' Filter for a given
+ * <p>One Controller is registered as a 'global' Filter for a given
  *   container context. The controller monitors the resource tree being
  *   served by the context and maintains sets of filters for specific
  *   paths as defined by the ".control.xml" control files found in the
  *   paths.
+ * </p>
  *   
- * <P>The Controller will re-scan the resource tree for new or changed
+ * <p>The Controller will re-scan the resource tree for new or changed
  *   control files at a configurable interval that defaults to every 10
  *   seconds.
+ * </p>
  */
 public class Controller
   implements Filter
@@ -94,7 +97,45 @@ public class Controller
   
   private final ContextDictionary contextDictionary
     =new ContextDictionary(ContextDictionary.getInstance());
+  
+  private URI dataURI=URI.create("WEB-INF/data/");
+  private URI configURI=URI.create("WEB-INF/config/");
+  
 
+  /**
+   * <p>The URI where modifiable persistent data is kept.
+   * </p>
+   * 
+   * <p>If a relative URI is specified, it will be relative to the context
+   *   root.
+   * </p>
+   * 
+   * <p>defaults to WEB-INF/data/
+   * </p>
+   * 
+   * @param dataURI
+   */
+  public void setDataURI(URI dataURI)
+  { this.dataURI=dataURI;
+  }
+      
+  /**
+   * <p>The URI where modifiable persistent data is kept.
+   * </p>
+   * 
+   * <p>If a relative URI is specified, it will be relative to the context
+   *   root.
+   * </p>
+   * 
+   * <p>defaults to WEB-INF/config/
+   * </p>
+   * 
+   * @param dataURI
+   */
+  public void setConfigURI(URI configURI)
+  { this.configURI=configURI;
+  }
+      
   /**
    * Filter.init()
    */
@@ -180,7 +221,8 @@ public class Controller
     // Bind the "context://www","context://data" resources to this thread.
     contextResourceMap.put("war",contextURI);
     contextResourceMap.putDefault(contextURI);
-    contextResourceMap.put("data",contextURI.resolve("WEB-INF/data/"));
+    contextResourceMap.put("data",contextURI.resolve(dataURI));
+    contextResourceMap.put("config",contextURI.resolve(configURI));
     
   }
   
