@@ -2,6 +2,70 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.8
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-05
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-06-05
+        </date>
+        
+        <notes>
+          <scm:Note>Bug fix: ControlGroup didn't use parent control to
+            generate variable name.
+          </scm:Note>
+          <scm:Note>ControlGroup now provides a bean property to specify
+            the variable name prefix used to generate the client-side formvar
+            name.
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/ControlGroup.java
+        </path>
+
+      </scm:Change>
+    
+      <scm:Change>
+        <date>2009-06-05
+        </date>
+        
+        <notes>
+          <scm:Note>Added filters to provide logic and state functionality
+          </scm:Note>
+          <scm:Note>SharedDataFilter provides a Type instance shared across
+            the Servlet context.
+          </scm:Note>
+          <scm:Note>RequestDataFilter provides a Type instance scoped to the
+            current request which can provide access to request parameters
+          </scm:Note>
+          <scm:Note>GuardFilter manages access to resources via a boolean
+            Expression and a custom status result.
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/autofilter/
+        </path>
+        
+        <resources>
+          <URI>GuardFilter.java
+          </URI>
+          <URI>RequestDataFilter.java
+          </URI>
+          <URI>SharedDataFilter.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.7.1
     </revision>
     
