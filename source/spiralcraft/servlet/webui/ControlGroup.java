@@ -347,12 +347,18 @@ public abstract class ControlGroup<Ttarget>
         ,parentFocus
         );
     }
-    if (variableName == null)
+    if (variableName == null && getParent()!=null)
     {
-      ControlGroup parentGroup = this.findElement(ControlGroup.class);
+      ControlGroup parentGroup = getParent().findElement(ControlGroup.class);
       if (parentGroup != null)
-      {
-        variableName = parentGroup.nextVariableName();
+      { variableName = parentGroup.nextVariableName();
+      }
+      if (debug)
+      { 
+        log.debug
+          ("Generating variable name '"+variableName+"' using parent "
+              +parentGroup.toString()
+          );
       }
     }
     computeDistances();
@@ -363,6 +369,18 @@ public abstract class ControlGroup<Ttarget>
     bindChildren(childUnits);
   }
 
+  /**
+   * Specify the variable name for this ControlGroup, which will prefix
+   *   the variable names of any contained Controls. If not supplied,
+   *   a sequential name will be generated in the context of the parent
+   *   control group.
+   * 
+   * @param variableName
+   */
+  public final void setVariableName(String variableName)
+  { this.variableName=variableName;
+  }
+  
   @Override
   public Focus<?> getFocus()
   {
