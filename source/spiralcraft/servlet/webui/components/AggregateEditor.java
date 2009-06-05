@@ -379,6 +379,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         { 
           Assignment<?> assignment
             =new Assignment(Expression.create(field.getName()),expression);
+          
           if (defaultAssignments==null)
           { defaultAssignments=new Assignment[] {assignment};
           }
@@ -387,6 +388,25 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
             defaultAssignments
               =ArrayUtil.append(defaultAssignments,assignment);
           }
+          
+          
+        }
+        
+        expression=field.getFixedExpression();
+        if (expression!=null)
+        {
+          Assignment<?> assignment
+            =new Assignment(Expression.create(field.getName()),expression);
+          
+          if (fixedAssignments==null)
+          { fixedAssignments=new Assignment[] {assignment};
+          }
+          else
+          { 
+            fixedAssignments
+              =ArrayUtil.prepend(fixedAssignments,assignment);
+          }
+          
         }
         
         if (field.isRequired() 

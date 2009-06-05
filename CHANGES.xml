@@ -17,6 +17,22 @@
         </date>
         
         <notes>
+          <scm:Note>Prepend fixedAssignments from element Type to
+            configured fixedAssignments in AggregateEditor
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/AggregateEditor.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-06-05
+        </date>
+        
+        <notes>
           <scm:Note>Bug fix: ControlGroup didn't use parent control to
             generate variable name.
           </scm:Note>
