@@ -2,6 +2,36 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.8.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-05
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-06-05
+        </date>
+        
+        <notes>
+          <scm:Note>Fix: ProxyFilter checks for null ContentType before
+            copying to outgoing connection
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/autofilter/ProxyFilter.java
+        </path>
+
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  
+  <scm:Change>
     <revision>0.3.8
     </revision>
     
