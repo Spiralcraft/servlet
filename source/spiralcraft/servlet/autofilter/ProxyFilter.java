@@ -247,7 +247,9 @@ public class ProxyFilter
     )
   {
     connection.setRequestProperty("Connection","close");
-    connection.setRequestProperty("ContentType",httpRequest.getContentType());
+    if (httpRequest.getContentType()!=null)
+    { connection.setRequestProperty("ContentType",httpRequest.getContentType());
+    }
     if (httpRequest.getContentLength()>0)
     { 
       connection.setRequestProperty
