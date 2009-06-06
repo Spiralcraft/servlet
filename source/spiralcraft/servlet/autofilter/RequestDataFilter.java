@@ -59,10 +59,19 @@ public class RequestDataFilter
   }
   
   
+  /**
+   * Specify assignments that will be performed after any queryBindings
+   *   are read.
+   * 
+   * @param assignments
+   */
   public void setAssignments(Assignment<?>[] assignments)
   { this.initialAssignments=assignments;
   }
   
+  public void setQueryBindings(ParameterBinding<?>[] queryBindings)
+  { this.queryBindings=queryBindings;
+  }
   
   /**
    * Called -once- to create the Focus
@@ -98,7 +107,9 @@ public class RequestDataFilter
     if (queryBindings!=null)
     {
       for (ParameterBinding<?> binding: queryBindings)
-      { binding.bind(focus);
+      { 
+        binding.setRead(true);
+        binding.bind(focus);
       }
     }
     

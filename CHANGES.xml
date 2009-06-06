@@ -20,11 +20,20 @@
           <scm:Note>Fix: ProxyFilter checks for null ContentType before
             copying to outgoing connection
           </scm:Note>
+          <scm:Note>Implemented RequestDataFilter queryBinding setter
+          </scm:Note>
 
         </notes>
 
-        <path>/source/spiralcraft/servlet/autofilter/ProxyFilter.java
+        <path>/source/spiralcraft/servlet/autofilter/
         </path>
+        
+        <resource>
+          <URI>ProxyFilter.java
+          </URI>
+          <URI>RequestDataFilter.java
+          </URI>
+        </resource>
 
       </scm:Change>
     </detail>
