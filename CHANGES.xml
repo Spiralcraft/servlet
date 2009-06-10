@@ -2,6 +2,73 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.9
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-09
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-06-09
+        </date>
+        
+        <notes>
+          <scm:Note>Form now accepts a tag.name property for client-side AJAX
+            binding support.
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/html/Form.java
+        </path>
+
+      </scm:Change>   
+          
+      <scm:Change>
+        <date>2009-06-09
+        </date>
+        
+        <notes>
+          <scm:Note>Allow setting of cookieDomain in SecurityFilter
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/autofilter/
+        </path>
+        
+        <resource>
+          <URI>SecurityFilter.java
+          </URI>
+        </resource>
+
+      </scm:Change>
+      
+      <scm:Change>
+        <date>2009-06-09
+        </date>
+        
+        <notes>
+          <scm:Note>AggregateEditor has contentRequired and 
+            contentRequiredMessage properties, and will throw an error during
+            save if contentRequired=true and the list doesn't contain at
+            least one saveable (non-padding) entry.
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/AggregateEditor.java
+        </path>
+
+      </scm:Change>      
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.8.1
     </revision>
     
