@@ -108,7 +108,12 @@ public class SecurityFilter
       throw new IllegalArgumentException
         ("Cookie domain must start with a '.'");
     }
-    this.cookieDomain=cookieDomain;
+    else if (cookieDomain.equals("."))
+    { this.cookieDomain=null;
+    }
+    else
+    { this.cookieDomain=cookieDomain;
+    }
   }
   
   /**

@@ -2,6 +2,36 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.10
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-10
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-06-10
+        </date>
+        
+        <notes>
+          <scm:Note>If cookieDomain is set to ".", it will be treated as
+            if no cookie domain was specified
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+
+      </scm:Change>   
+    </detail>
+  </scm:Change>
+          
+
+  <scm:Change>
     <revision>0.3.9
     </revision>
     
