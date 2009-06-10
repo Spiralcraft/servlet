@@ -70,6 +70,9 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   private Setter<?>[] defaultSetters;
   private Setter<?>[] newSetters;
   
+  private boolean contentRequired;
+  private String contentRequiredMessage="At least one entry is required";
+  
   public Command<BufferAggregate<BufferTuple,Tcontent>,Void> 
     addNewCommand()
   {
@@ -115,6 +118,26 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
    */
   public void setPadX(Expression<Boolean> padX)
   { this.padX=padX;
+  }
+  
+  /**
+   * Require at least one non-padding entry on save, or generate an error
+   *   that will abort the save attempt.
+   *   
+   * @param contentRequired
+   */
+  public void setContentRequired(boolean contentRequired)
+  { this.contentRequired=contentRequired;
+  }
+  
+  /**
+   * The error message that will be generated when contentRequired=true and
+   *   the list does not contain at least one savable entry 
+   * 
+   * @param contentRequiredMessage
+   */
+  public void setContentRequiredMessage(String contentRequiredMessage)
+  { this.contentRequiredMessage=contentRequiredMessage;
   }
   
   @Override
@@ -228,12 +251,20 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     else if (aggregate.isDirty())
     {
 
+      int saveCount=0;
       for (int i=0;i<aggregate.size();i++)
       { 
         BufferTuple buffer=aggregate.get(i);
         if (buffer.isDirty())
-        { saveChild(buffer);
+        { 
+          if (saveChild(buffer))
+          { saveCount++;
+          }
         }
+      }
+      
+      if (contentRequired && saveCount==0)
+      { throw new DataException(contentRequiredMessage);
       }
       aggregate.reset();
     }
@@ -246,7 +277,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     
   }  
   
-  private void saveChild(BufferTuple child)
+  private boolean saveChild(BufferTuple child)
     throws DataException
   {
     childChannel.push(child);
@@ -279,7 +310,12 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       if (isPadChannel==null 
           || !Boolean.TRUE.equals(isPadChannel.get())
           )
-      { child.save();
+      { 
+        child.save();
+        return true;
+      }
+      else
+      { return false;
       }
       
     }
