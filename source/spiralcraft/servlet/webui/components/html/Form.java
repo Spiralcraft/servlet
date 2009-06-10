@@ -26,6 +26,7 @@ import spiralcraft.servlet.webui.components.Acceptor;
 
 
 import java.io.IOException;
+import java.io.Writer;
 
 public class Form<T>
   extends Acceptor<T>
@@ -40,6 +41,7 @@ public class Form<T>
     extends AbstractTag
   {
   	private String tagName="form";
+  	private String name;
   	
     @Override
     protected String getTagName(EventContext context)
@@ -48,6 +50,10 @@ public class Form<T>
     
     public void setTagName(String tagName)
     { this.tagName=tagName;
+    }
+    
+    public void setName(String name)
+    { this.name=name;
     }
     
     @Override
@@ -70,11 +76,12 @@ public class Form<T>
         =((ServiceContext) context)
           .registerAction(createAction(context,true));
       
-      
-      renderAttribute(context.getWriter(),"action",actionURI);
-      renderAttribute(context.getWriter(),"method","post");
+      Writer writer=context.getWriter();
+      renderPresentAttribute(writer,"name",name);
+      renderAttribute(writer,"action",actionURI);
+      renderAttribute(writer,"method","post");
       if (mimeEncoded)
-      { renderAttribute(context.getWriter(),"enctype","multipart/form-data");
+      { renderAttribute(writer,"enctype","multipart/form-data");
       }
       super.renderAttributes(context);
     }
@@ -127,10 +134,6 @@ public class Form<T>
     { tag.render(context);
     }
   }
-
-  
-  
-
   
 
 }
