@@ -66,6 +66,7 @@ public class SecurityFilter
   private String attributeName;  
   private Authenticator authenticator;
   private String cookieName="login";
+  private String cookieDomain;
   private int minutesToPersist;
 
   /**
@@ -94,6 +95,22 @@ public class SecurityFilter
   { this.cookieName=cookieName;
   }
 
+  /**
+   * Specify the RFC2109 cookie domain to use the cookie across multiple
+   *   servers in the domain
+   *   
+   * @param cookieDomain
+   */
+  public void setCookieDomain(String cookieDomain)
+  { 
+    if (cookieDomain!=null && !cookieDomain.startsWith("."))
+    { 
+      throw new IllegalArgumentException
+        ("Cookie domain must start with a '.'");
+    }
+    this.cookieDomain=cookieDomain;
+  }
+  
   /**
    * The cookie name for persistent logins
    * 
@@ -192,6 +209,9 @@ public class SecurityFilter
       String data=map.generateEncodedForm();
       Cookie cookie=new Cookie(cookieName,data);
       cookie.setMaxAge(minutesToPersist*60); // Convert from seconds
+      if (cookieDomain!=null)
+      { cookie.setDomain(cookieDomain);
+      }
       writeLoginCookie(cookie);
       if (debug)
       { log.fine("Wrote a login cookie for for user "+username);
@@ -331,7 +351,11 @@ public class SecurityFilter
     authSessionChannel.get().logout();
     // Delete the login cookie
     
-    writeLoginCookie(new Cookie(cookieName,""));
+    Cookie cookie=new Cookie(cookieName,"");
+    if (cookieDomain!=null)
+    { cookie.setDomain(cookieDomain);
+    }
+    writeLoginCookie(cookie);
   }  
 
 }
