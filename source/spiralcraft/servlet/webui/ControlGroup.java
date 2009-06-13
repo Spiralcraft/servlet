@@ -351,14 +351,16 @@ public abstract class ControlGroup<Ttarget>
     {
       ControlGroup parentGroup = getParent().findElement(ControlGroup.class);
       if (parentGroup != null)
-      { variableName = parentGroup.nextVariableName();
-      }
-      if (debug)
       { 
-        log.debug
-          ("Generating variable name '"+variableName+"' using parent "
-              +parentGroup.toString()
-          );
+        
+        variableName = parentGroup.nextVariableName();
+        if (debug)
+        { 
+          log.debug
+            ("Generating variable name '"+variableName+"' using parent "
+                +parentGroup.toString()
+            );
+        }
       }
     }
     computeDistances();
