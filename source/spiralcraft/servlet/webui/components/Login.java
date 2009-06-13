@@ -315,6 +315,7 @@ public class Login
     
   }
   
+  
   @Override
   protected void handlePrepare(ServiceContext context)
   { 
@@ -324,24 +325,27 @@ public class Login
     super.handlePrepare(context);
     
     AuthSession session=sessionChannel.get();
-    if (securityFilter!=null
-        && !session.isAuthenticated()
-        )
-    {
-      // Only process a login cookie if we are persisting logins
-      if (debug)
-      { log.fine("Not authenticated- checking cookie");
-      }
-      
-      if (securityFilter.readLoginCookie(state.getValue()))
-      {
-        if (debug)
-        { log.fine("Logging in from cookie");
-        }
-        login(false);
-      }
-        
-    }
+
+// This is now handled in scatter(), so we probably just did it
+//
+//    if (securityFilter!=null
+//        && !session.isAuthenticated()
+//        )
+//    {
+//      // Only process a login cookie if we are persisting logins
+//      if (debug)
+//      { log.fine("Not authenticated- checking cookie");
+//      }
+//      
+//      if (securityFilter.readLoginCookie(state.getValue()))
+//      {
+//        if (debug)
+//        { log.fine("Logging in from cookie");
+//        }
+//        login(false);
+//      }
+//        
+//    }
     
     if (state.isErrorState())
     {
@@ -467,6 +471,7 @@ public class Login
   @Override
   protected void scatter(ServiceContext context)
   { 
+    LoginState state=(LoginState) context.getState();
     LoginEntry lastEntry=getState().getValue();
    
     super.scatter(context);
@@ -479,6 +484,28 @@ public class Login
       else
       { getState().setValue(lastEntry);
       }
+    }
+    
+    // Figure out whether the user has a login ticket
+    AuthSession session=sessionChannel.get();    
+    if (inPlace 
+        && securityFilter!=null
+        && !session.isAuthenticated()
+        && !state.isErrorState()
+        )
+    { 
+      // Only process a login cookie if we are persisting logins
+      if (debug)
+      { log.fine("Not authenticated- checking cookie");
+      }
+      
+      if (securityFilter.readLoginCookie(state.getValue()))
+      {
+        if (debug)
+        { log.fine("Logging in from cookie");
+        }
+        login(false);
+      }      
     }
   } 
   
