@@ -75,6 +75,10 @@ public class Redirect
   { this.refererParameter=refererParameter;
   }
 
+  public void setMergeQuery(boolean mergeQuery)
+  { this.mergeQuery=mergeQuery;
+  }
+  
   @Override
   public String getVariableName()
   { return null;
