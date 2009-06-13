@@ -60,14 +60,25 @@
         </date>
         
         <notes>
-          <scm:Note>Check cookie on scatter(), not just at PREPARE, so
+          <scm:Note>Login: Check cookie on scatter(), not just at PREPARE, so
             non-responsive requests apply cookie check early.
+          </scm:Note>
+          <scm:Note>SecurityFilter: Avoid reading cookie in same request after
+            a logout has been performed to avoid immediate but unremembered
+            re-login.
           </scm:Note>
 
         </notes>
 
-        <path>/source/spiralcraft/servlet/webui/components/Login.java
+        <path>/source/spiralcraft/servlet/
         </path>
+        
+        <resources>
+          <URI>webui/components/Login.java
+          </URI>
+          <URI>servlet/autofilter/SecurityFilter.java
+          </URI>
+        </resources>
 
       </scm:Change>   
 
