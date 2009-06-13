@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 1998,2009 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -17,7 +17,10 @@ package spiralcraft.servlet.webui.components;
 
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -29,7 +32,7 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.Level;
 
-import spiralcraft.servlet.webui.Component;
+import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.text.markup.MarkupException;
@@ -44,17 +47,24 @@ import spiralcraft.textgen.compiler.TglUnit;
  *
  */
 public class Redirect
-  extends Component
+  extends Control<Void>
 {
 
   private URI redirectURI;
 
   private Channel<Boolean> whenChannel;
+  private Channel<URI> locationChannel;
   private Expression<Boolean> when;
+  private Expression<URI> locationX;
   private String refererParameter;
+  private boolean mergeQuery;
 
   public void setRedirectURI(URI uri)
   { redirectURI=uri;
+  }
+  
+  public void setLocationX(Expression<URI> locationX)
+  { this.locationX=locationX;
   }
   
   public void setWhen(Expression<Boolean> when)
@@ -66,12 +76,25 @@ public class Redirect
   }
 
   @Override
+  public String getVariableName()
+  { return null;
+  }
+  
+  @Override
+  protected void gather(ServiceContext context)
+  {
+  }
+  
+  @Override
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
     Focus<?> parentFocus=getParent().getFocus();
     if (when!=null)
     { whenChannel=parentFocus.bind(when);
+    }
+    if (locationX==null)
+    { locationChannel=parentFocus.bind(locationX);
     }
     super.bind(childUnits);
   }  
@@ -81,25 +104,106 @@ public class Redirect
     throws ServletException
   {
     String referer=context.getRequest().getRequestURL().toString();
-    String refererQuery="";
+    
+    URI refererURI;
+    try
+    { refererURI=new URL(referer).toURI();
+    }
+    catch (URISyntaxException x)
+    { throw new ServletException(x);
+    }
+    catch (MalformedURLException x)
+    { throw new ServletException(x);
+    }
+    
+    URI redirectURI
+      =locationChannel==null?this.redirectURI:locationChannel.get();
+    if (redirectURI==null)
+    { redirectURI=this.redirectURI;
+    }
+      
+    String redirectScheme=redirectURI.getScheme();
+    if (redirectScheme==null)
+    { redirectScheme=refererURI.getScheme();
+    }
+    
+    String redirectAuthority=redirectURI.getAuthority();
+    if (redirectAuthority==null)
+    { redirectAuthority=refererURI.getAuthority();
+    }
+    
+    // If no path was specified, use the request path
+    String redirectPath=redirectURI.getPath();
+    if (redirectPath==null || redirectPath.length()==0)
+    { redirectPath=refererURI.getPath();
+    }
+    
+    String redirectQuery=redirectURI.getQuery();
+    if (redirectQuery==null)
+    { 
+      if (mergeQuery)
+      { redirectQuery=refererURI.getQuery();
+      }
+    }
+    else if (mergeQuery && refererURI.getQuery()!=null)
+    { redirectQuery=refererURI.getQuery()+"&"+redirectQuery;
+    }
+
     if (refererParameter!=null)
-    { refererQuery="?"+refererParameter+"="+URLDataEncoder.encode(referer);
+    { 
+      if (redirectQuery==null || !redirectQuery.contains(refererParameter+"="))
+      {
+        String refererQuery=refererParameter+"="+URLDataEncoder.encode(referer);
+        if (redirectQuery!=null)
+        { redirectQuery=redirectQuery+"&"+refererQuery;
+        }
+        else
+        { redirectQuery=refererQuery;
+        }
+      }
+      else
+      {
+        if (debug)
+        { 
+          log.debug
+            ("Skipping referer insertion: redirect query ["+redirectQuery
+            +"] already contains referer parameter '"+refererParameter+"'"
+            );
+        }
+      }
     }
-    URI redirect
-      =URI.create
-        (redirectURI.getPath()+refererQuery);
-    if (debug)
-    { log.fine("Setting up redirect to "+redirect);
+
+    
+    try
+    {
+      URI redirect
+        =new URI
+          (redirectScheme,redirectAuthority,redirectPath,redirectQuery,null);
+
+      if (redirect.equals(refererURI))
+      { 
+        if (debug)
+        { log.fine("Skipping self-redirect to "+redirect);
+        }
+      }
+      else
+      {   
+        if (debug)
+        { log.fine("Setting up redirect to "+redirect);
+        }         
+        context.redirect(redirect);
+      }
     }
-    context.redirect(redirect);
+    catch (URISyntaxException x)
+    { throw new ServletException(x);
+    }
   }
   
   @Override
-  protected void handlePrepare(ServiceContext context)
+  protected void scatter(ServiceContext context)
   { 
-    super.handlePrepare(context);
     Boolean val=whenChannel!=null?whenChannel.get():Boolean.TRUE;
-    if (val!=null && val)
+    if (Boolean.TRUE.equals(val))
     {
       try 
       { setupRedirect(context);
@@ -109,8 +213,8 @@ public class Redirect
       }
     }
    
-  }
-  
+  }  
+    
   @Override
   public void render(EventContext context)
     throws IOException
