@@ -1,6 +1,79 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  
+  <scm:Change>
+    <revision>0.3.11
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-12
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-06-12
+        </date>
+        
+        <notes>
+          <scm:Note>Redirect now substitutes request URI components where
+            they are not specified in the redirectURI, which allows
+            redirecting to the same resource on a different server, a 
+            different resource on the same server, a different scheme
+            on the same server, a different query, etc.
+          </scm:Note>
+
+          <scm:Note>Redirect automatically avoids a redirect to the same
+            location 
+          </scm:Note>
+
+          <scm:Note>Redirect accepts a locationX property to dynamically supply
+            the redirect URI. 
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/Redirect.java
+        </path>
+
+      </scm:Change>   
+          
+      <scm:Change>
+        <date>2009-06-12
+        </date>
+        
+        <notes>
+          <scm:Note>Fixed NPE in debug output code
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/ControlGroup.java
+        </path>
+
+      </scm:Change>   
+
+      <scm:Change>
+        <date>2009-06-12
+        </date>
+        
+        <notes>
+          <scm:Note>Check cookie on scatter(), not just at PREPARE, so
+            non-responsive requests apply cookie check early.
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/Login.java
+        </path>
+
+      </scm:Change>   
+
+    </detail>
+  </scm:Change>
+  
   <scm:Change>
     <revision>0.3.10
     </revision>
