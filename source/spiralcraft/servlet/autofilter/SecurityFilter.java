@@ -136,6 +136,7 @@ public class SecurityFilter
       if (debug)
       { log.fine("Logout pending, skipping cookie check");
       }
+      return false;
     }
     
     Cookie loginCookie=null;
