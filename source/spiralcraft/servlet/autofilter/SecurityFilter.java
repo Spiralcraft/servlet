@@ -131,6 +131,13 @@ public class SecurityFilter
     { return false;
     }
     
+    if (contextLocal.get().logoutPending)
+    {
+      if (debug)
+      { log.fine("Logout pending, skipping cookie check");
+      }
+    }
+    
     Cookie loginCookie=null;
       
     // Check for a cookie
@@ -361,6 +368,7 @@ public class SecurityFilter
     { cookie.setDomain(cookieDomain);
     }
     writeLoginCookie(cookie);
+    contextLocal.get().logoutPending=true;
   }  
 
 }
@@ -369,6 +377,7 @@ class SecurityFilterContext
 {
   public final HttpServletRequest request;
   public final HttpServletResponse response;
+  public boolean logoutPending;
   
   public SecurityFilterContext
     (HttpServletRequest request,HttpServletResponse response)
