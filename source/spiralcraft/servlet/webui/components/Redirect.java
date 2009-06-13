@@ -93,7 +93,7 @@ public class Redirect
     if (when!=null)
     { whenChannel=parentFocus.bind(when);
     }
-    if (locationX==null)
+    if (locationX!=null)
     { locationChannel=parentFocus.bind(locationX);
     }
     super.bind(childUnits);
