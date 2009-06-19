@@ -57,7 +57,8 @@ public class SecurityFilter
 {
   public static final URI FOCUS_URI
     =URI.create("class:/spiralcraft/servlet/autofilter/SecurityFilter");
-  
+  private static final String AUTH_SESSION_COOKIE_ATTRIBUTE
+    ="spiralcraft.servlet.autofilter.SecurityFilter.activeCookie";
   
   private ThreadLocalChannel<AuthSession> authSessionChannel;
   private final ThreadLocal<SecurityFilterContext> contextLocal
@@ -68,6 +69,7 @@ public class SecurityFilter
   private String cookieName="login";
   private String cookieDomain;
   private int minutesToPersist;
+  private boolean requireValidCookie;
 
   /**
    * The amount of time a login should persist. Setting this enables
@@ -77,6 +79,26 @@ public class SecurityFilter
   { this.minutesToPersist=minutesToPersist;
   }
   
+  /**
+   * <p>Predicates maintaining logged-in state on the presence of a valid 
+   *   login cookie. Setting this to true enables persistent login cookies.
+   * </p>
+   * 
+   * <p>Makes all logins persistent regardless of the setting of 
+   *   LoginEntry.persistent (aka "Remember Me").
+   * </p>
+   * 
+   * <p>When cookieDomain is used, allows another server in the domain to
+   *   effectively logout the user on all servers that sare the same cookie.
+   * </p>
+   *  
+   * 
+   * @param requireValidCookie Whether a valid cookie is required to maintain
+   *   logged-in state. 
+   */
+  public void setRequireValidCookie(boolean requireValidCookie)
+  { this.requireValidCookie=requireValidCookie;
+  }
   
   /**
    * @param authenticator The authenticator which will be used to validate the
@@ -125,9 +147,17 @@ public class SecurityFilter
   { return cookieName;
   }
 
+
+  
+  /**
+   * Read the cookie into the LoginEntry
+   * 
+   * @param entry
+   * @return
+   */
   public boolean readLoginCookie(LoginEntry entry)
   {
-    if (minutesToPersist<=0)
+    if (!usingCookies())
     { return false;
     }
     
@@ -139,22 +169,8 @@ public class SecurityFilter
       return false;
     }
     
-    Cookie loginCookie=null;
-      
-    // Check for a cookie
-    Cookie[] cookies=contextLocal.get().request.getCookies();
-    if (cookies!=null)
-    {
-      for (Cookie cookie:cookies)
-      { 
-        if (cookie.getName().equals(cookieName))
-        { 
-          loginCookie=cookie;
-          break;
-        }
-      }
-    }
-      
+    
+    Cookie loginCookie=contextLocal.get().getLoginCookie();      
       
     if (loginCookie!=null)
     { 
@@ -200,10 +216,54 @@ public class SecurityFilter
       return false;
     }
   }  
+
+  private boolean usingCookies()
+  { return minutesToPersist>0 || requireValidCookie; 
+  }
+  
+  private void revalidateCookieLogin()
+  { 
+    Cookie loginCookie=contextLocal.get().getLoginCookie();      
+      
+    if (loginCookie!=null)
+    { 
+      if (debug)
+      { log.fine("revalidating login cookie "+loginCookie);
+      }
+      if (!loginCookie.getValue().equals
+            (authSessionChannel.get()
+              .getAttribute(AUTH_SESSION_COOKIE_ATTRIBUTE)
+            )
+         )
+      { 
+        authSessionChannel.get().logout();
+        if (debug)
+        {
+          log.fine
+            ("auto-logout because cookie doesn't match: "
+              +loginCookie.getValue()
+              +" != "
+              +authSessionChannel.get()
+               .getAttribute(AUTH_SESSION_COOKIE_ATTRIBUTE)
+            );
+        }
+      }
+    }
+    else
+    { 
+      if (debug)
+      { log.fine("auto-logout because no login cookie");
+      }
+      authSessionChannel.get().logout();
+    }
+    
+    
+    
+  }
   
   public void writeLoginCookie(LoginEntry entry)
   {
-    if (minutesToPersist<=0)
+    if (!usingCookies())
     { return;
     }
       
@@ -220,8 +280,14 @@ public class SecurityFilter
       map.add("username", username);
       map.add("ticket", Base64Codec.encodeBytes(ticket));
       String data=map.generateEncodedForm();
+      
+      authSessionChannel.get().setAttribute
+        (AUTH_SESSION_COOKIE_ATTRIBUTE,data);
+      
       Cookie cookie=new Cookie(cookieName,data);
-      cookie.setMaxAge(minutesToPersist*60); // Convert from seconds
+      
+      // Compute seconds, or session level persistence
+      cookie.setMaxAge(minutesToPersist>0?minutesToPersist*60:-1);
       if (cookieDomain!=null)
       { cookie.setDomain(cookieDomain);
       }
@@ -324,7 +390,15 @@ public class SecurityFilter
     }
     
     authSessionChannel.push(authSession);
-    contextLocal.set(new SecurityFilterContext(request,response));
+    contextLocal.set(new SecurityFilterContext(request,response,cookieName));
+    
+    
+    if (requireValidCookie)
+    { 
+      // Make sure we check the current cookie before allowing a
+      //   previously authenticated session to continue
+      revalidateCookieLogin();
+    }
     
   }
 
@@ -378,14 +452,51 @@ class SecurityFilterContext
 {
   public final HttpServletRequest request;
   public final HttpServletResponse response;
+  private final String cookieName;
+  
   public boolean logoutPending;
+  private Cookie loginCookie;
+  private volatile boolean checkedCookies;
   
   public SecurityFilterContext
-    (HttpServletRequest request,HttpServletResponse response)
+    (HttpServletRequest request,HttpServletResponse response,String cookieName)
   { 
     this.request=request;
     this.response=response;
+    this.cookieName=cookieName;
   }
   
+  public synchronized Cookie getLoginCookie()
+  {
+    if (!checkedCookies)
+    { 
+      checkedCookies=true;
+      readLoginCookie();
+    }
+    
+    return loginCookie;
+  }
+  
+  
+  /**
+   * @return The login Cookie, if present, from the http request
+   */
+  private void readLoginCookie()
+  {
+      
+    // Check for a cookie
+    Cookie[] cookies=request.getCookies();
+    if (cookies!=null)
+    {
+      for (Cookie cookie:cookies)
+      { 
+        if (cookie.getName().equals(cookieName))
+        { 
+          loginCookie=cookie;
+          break;
+        }
+      }
+    }
+  }  
 }
 
