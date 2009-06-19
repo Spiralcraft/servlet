@@ -370,7 +370,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         if (debug)
         { log.fine("Creating BufferChannel for "+source.getReflector());
         }
-        bufferChannel=new BufferChannel
+        bufferChannel=new BufferChannel<Buffer>
           ((Focus<DataComposite>) parentFocus
           ,(Channel<DataComposite>) source
           );

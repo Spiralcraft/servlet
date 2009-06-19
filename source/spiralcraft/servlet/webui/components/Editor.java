@@ -825,7 +825,7 @@ public abstract class Editor
         if (debug)
         { log.fine("Creating BufferChannel for "+source.getReflector());
         }
-        bufferChannel=new BufferChannel
+        bufferChannel=new BufferChannel<Buffer>
           ((Focus<DataComposite>) parentFocus
           ,(Channel<DataComposite>) source
           );

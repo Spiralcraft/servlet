@@ -404,7 +404,7 @@ public abstract class TupleEditor
         if (debug)
         { logFine("Creating BufferChannel for "+source.getReflector());
         }
-        bufferChannel=new BufferChannel
+        bufferChannel=new BufferChannel<Buffer>
           ((Focus<DataComposite>) parentFocus
           ,(Channel<DataComposite>) source
           );
