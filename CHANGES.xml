@@ -3,6 +3,76 @@
   >
   
   <scm:Change>
+    <revision>0.3.12
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-19
+    </date>
+
+    <detail>
+    
+      <scm:Change>
+        <date>2009-06-19
+        </date>
+        
+        <notes>
+          <scm:Note>Added requireValidCookie property to SecurityFilter, 
+            which triggers a logout when the cookie is removed or no longer
+            matches the current authentication session.
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+
+      </scm:Change>   
+
+      <scm:Change>
+        <date>2009-06-19
+        </date>
+        
+        <notes>
+          <scm:Note>Generics updates related to Editors and BufferChannel
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>AggregateEditor.java
+          </URI>
+          <URI>Editor.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+        </resources>
+
+      </scm:Change>  
+      
+      <scm:Change>
+        <date>2009-06-12
+        </date>
+        
+        <notes>
+          <scm:Note>Added setter for mergeQuery
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/Redirect.java
+        </path>
+
+      </scm:Change>   
+    </detail>
+  </scm:Change>
+    
+  <scm:Change>
     <revision>0.3.11
     </revision>
     
