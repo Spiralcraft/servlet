@@ -142,15 +142,15 @@ public class Redirect
     { redirectPath=refererURI.getPath();
     }
     
-    String redirectQuery=redirectURI.getQuery();
+    String redirectQuery=redirectURI.getRawQuery();
     if (redirectQuery==null)
     { 
       if (mergeQuery)
-      { redirectQuery=refererURI.getQuery();
+      { redirectQuery=refererURI.getRawQuery();
       }
     }
-    else if (mergeQuery && refererURI.getQuery()!=null)
-    { redirectQuery=refererURI.getQuery()+"&"+redirectQuery;
+    else if (mergeQuery && refererURI.getRawQuery()!=null)
+    { redirectQuery=refererURI.getRawQuery()+"&"+redirectQuery;
     }
 
     if (refererParameter!=null)
@@ -182,7 +182,12 @@ public class Redirect
     {
       URI redirect
         =new URI
-          (redirectScheme,redirectAuthority,redirectPath,redirectQuery,null);
+          (redirectScheme
+          +"://"
+          +redirectAuthority
+          +(redirectPath!=null?redirectPath:"")
+          +(redirectQuery!=null?"?"+redirectQuery:"")
+          );
 
       if (redirect.equals(refererURI))
       { 
