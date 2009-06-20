@@ -3,6 +3,69 @@
   >
   
   <scm:Change>
+    <revision>0.3.12.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-19
+    </date>
+
+    <detail>
+    
+      <scm:Change>
+        <date>2009-06-19
+        </date>
+        
+        <notes>
+          <scm:Note>Remove usage of auto-encoding part of URI API to avoid
+            erroneous encoding and decoding of URI data.
+          </scm:Note>
+          <scm:Note>ProxyFilter no longer decodes query string part of
+            the proxyURI property
+          </scm:Note>
+          <scm:Note>RedirectFilter no longer decodes query string of request
+            URL when transferring it to the redirect URL
+          </scm:Note>
+          
+          <scm:Note>Added better debugging control to ServiceContext
+          </scm:Note>
+          <scm:Note>ServiceContext redirect computation no longer uses
+            multi-argument encoding constructors for URI
+          </scm:Note>
+          <scm:Note>Redirect component no longer decodes and encodes query 
+            string when computing redirect
+          </scm:Note>
+          <scm:Note>Login component will always write a cookie when
+            the SecurityFilter.requireValidCookie property is set, regardless of
+            the "isPersistent" property on the LoginEntry
+          </scm:Note>
+
+        </notes>
+
+        <path>/source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>autofilter/ProxyFilter.java
+          </URI>
+          <URI>autofilter/RedirectFilter.java
+          </URI>
+        
+          <URI>webui/ServletContext.java
+          </URI>
+          <URI>webui/components/Redirect.java
+          </URI>
+          <URI>webui/components/Login.java
+          </URI>
+        </resources>
+
+      </scm:Change>   
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.12
     </revision>
     
