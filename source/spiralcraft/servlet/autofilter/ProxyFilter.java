@@ -63,7 +63,7 @@ public class ProxyFilter
       this.proxyURL=ContextDictionary.substitute(url);
       URI uri=URI.create(this.proxyURL);
       absolute=uri.isAbsolute();
-      proxyQuery=uri.getQuery();
+      proxyQuery=uri.getRawQuery();
     }
     catch (ParseException x)
     { throw new IllegalArgumentException(x);
