@@ -237,7 +237,11 @@ public class Login
           );
       }
 
-      if (securityFilter!=null && state.getValue().isPersistent())
+      if (securityFilter!=null 
+          && (securityFilter.getRequireValidCookie()
+              || state.getValue().isPersistent() 
+             )
+         )
       { securityFilter.writeLoginCookie(state.getValue());
       }
       

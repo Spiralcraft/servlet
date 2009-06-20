@@ -101,6 +101,16 @@ public class SecurityFilter
   }
   
   /**
+   * Indicates whether the requireValidCookie property is set.
+   * 
+   * @see setRequireValidCookie
+   * @return
+   */
+  public boolean getRequireValidCookie()
+  { return requireValidCookie;
+  }
+  
+  /**
    * @param authenticator The authenticator which will be used to validate the
    *    login credentials.
    */
