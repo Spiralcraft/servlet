@@ -55,8 +55,8 @@ public class RedirectFilter
       url
         =requestURI.resolve
           (redirectURL
-            +(requestURI.getQuery()!=null
-              ?"?"+requestURI.getQuery()
+            +(requestURI.getRawQuery()!=null
+              ?"?"+requestURI.getRawQuery()
               :""
              )
           ).toString();
