@@ -55,6 +55,10 @@ public class ServiceContext
   private static final ClassLog log
     =ClassLog.getInstance(ServiceContext.class);
   
+  private static final Level debugLevel
+    =ClassLog.getInitialDebugLevel(ServiceContext.class,null);
+  
+  
   private ResourceSession resourceSession;
   private HttpServletRequest request;
   private HttpServletResponse response;
@@ -62,7 +66,6 @@ public class ServiceContext
   private VariableMap query;
   private CommandProcessor commandProcessor;
   private URI redirectURI;
-  private boolean debug=false;
   private UIServlet servlet;
   private List<String> queuedActions;
   private URI contextURI;
@@ -72,10 +75,7 @@ public class ServiceContext
   public ServiceContext(Writer writer,boolean stateful,StateFrame frame)
   { super(writer,stateful,frame);
   }
-    
-  public void setDebug(boolean debug)
-  { this.debug=debug;
-  }
+
   
   public UIServlet getServlet()
   { return servlet;
@@ -249,7 +249,7 @@ public class ServiceContext
     
     // Combine the specified query with any encoded parameters
     
-    String query=rawURI.getQuery();
+    String query=rawURI.getRawQuery();
     
     if (resourceSession==null)
     { throw new RuntimeException("??? null resource session "+this);
@@ -266,55 +266,47 @@ public class ServiceContext
       }
     }
     
-    if (debug)
+    if (debugLevel.canLog(Level.DEBUG))
     {
-      log.fine
+      log.debug
         ("Encoding redirect to "+rawURI
         +"  parameters="+encodedParameters
         +"  query="+query
         );
     }
     
-    
-    try
-    {
-      if (!rawURI.isAbsolute())
-      { 
-        URI requestURL=URI.create(request.getRequestURL().toString());
-        
-        // Make rawURI absolute
-        rawURI= new URI
-          (requestURL.getScheme()
-            ,requestURL.getUserInfo()
-            ,requestURL.getHost()
-            ,requestURL.getPort()
-            ,requestURL.getPath()
-            ,""
-            ,""
-          )
-          .resolve
-          ( rawURI
-          );
-      }
+
+    if (!rawURI.isAbsolute())
+    { 
+      URI requestURL=URI.create(request.getRequestURL().toString());
       
-      // Insert the combined query to complete the redirect URI
-      redirectURI= new URI
+      // Make rawURI absolute
+      rawURI= URI.create
+        (requestURL.getScheme()
+        +"://"
+        +requestURL.getRawAuthority()
+        +requestURL.getRawPath()
+        )
+        .resolve
+        ( rawURI
+        );
+    }
+      
+    // Insert the combined query to complete the redirect URI
+    redirectURI
+      = URI.create
         (rawURI.getScheme()
-        ,rawURI.getUserInfo()
-        ,rawURI.getHost()
-        ,rawURI.getPort()
-        ,rawURI.getPath()
-        ,query
-        ,rawURI.getFragment()
+        +"://"
+        +rawURI.getRawAuthority()
+        +(rawURI.getRawPath()!=null?rawURI.getRawPath():"")
+        +(query!=null?"?"+query:"")
+        +(rawURI.getRawFragment()!=null?"+"+rawURI.getRawFragment():"")
         );
       
-      if (debug)
-      { log.fine("Redirecting to "+redirectURI);
-      }
+    if (debugLevel.canLog(Level.DEBUG))
+    { log.debug("Redirecting to "+redirectURI);
     }
-    catch (URISyntaxException x)
-    { throw new ServletException("Error encoding redirect to "+rawURI,x);
-    }
+
     
   }
   
@@ -366,12 +358,10 @@ public class ServiceContext
       {
         contextURI=new URI
           (request.getScheme()
-          ,null
-          ,request.getServerName()
-          ,request.getServerPort()
-          ,request.getContextPath()+"/"
-          ,null
-          ,null
+          +"://"
+          +request.getServerName()
+          +(request.getServerPort()!=80?":"+request.getServerPort():"")
+          +request.getContextPath()+"/"
           );
       }
       catch (URISyntaxException x)
@@ -408,8 +398,8 @@ public class ServiceContext
    */
   public synchronized void queueAction(String actionName)
   { 
-    if (debug)
-    { log.fine("Queued action "+actionName);
+    if (debugLevel.canLog(Level.TRACE))
+    { log.trace("Queued action "+actionName);
     }
     if (queuedActions==null)
     { queuedActions=new LinkedList<String>();
