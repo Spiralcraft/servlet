@@ -185,7 +185,12 @@ public class SecurityFilter
     if (loginCookie!=null)
     { 
       if (debug)
-      { log.fine("Found a login cookie "+loginCookie);
+      { 
+        log.fine
+          ("Found a login cookie "
+          +loginCookie.getName()+" "
+          +loginCookie.getValue()
+          );
       }
       return readLoginCookie(entry,loginCookie);
     }
@@ -221,7 +226,11 @@ public class SecurityFilter
     else
     { 
       if (debug)
-      { log.fine("Login cookie didn't contain required data: "+cookie);
+      { 
+        log.fine
+          ("Login cookie didn't contain required data: "
+          +cookie.getName()+"="+cookie.getValue()
+          );
       }
       return false;
     }
@@ -238,7 +247,12 @@ public class SecurityFilter
     if (loginCookie!=null)
     { 
       if (debug)
-      { log.fine("revalidating login cookie "+loginCookie);
+      { 
+        log.fine
+          ("revalidating login cookie "
+          +loginCookie.getName()
+          +loginCookie.getValue()
+          );
       }
       if (!loginCookie.getValue().equals
             (authSessionChannel.get()
@@ -403,7 +417,7 @@ public class SecurityFilter
     contextLocal.set(new SecurityFilterContext(request,response,cookieName));
     
     
-    if (requireValidCookie)
+    if (requireValidCookie && authSession.isAuthenticated())
     { 
       // Make sure we check the current cookie before allowing a
       //   previously authenticated session to continue

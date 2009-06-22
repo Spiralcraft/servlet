@@ -3,6 +3,47 @@
   >
   
   <scm:Change>
+    <revision>0.3.12.2
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-06-21
+    </date>
+
+    <detail>
+    
+      <scm:Change>
+        <date>2009-06-21
+        </date>
+        
+        <notes>
+          <scm:Note>Bug fixes for cross-server login functionality
+          </scm:Note>
+          <scm:Note>Make sure Login writes a login cookie regardless of
+            persistence setting when SecurityFilter.requireValidCookie is set
+          </scm:Note>
+          <scm:Note>Only re-validate cookie when already authenticated
+          </scm:Note>
+          <scm:Note>Put cookie value into debug log
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/
+        </path>
+
+        <resources>
+          <URI>autofilter/SecurityFilter.java
+          </URI>
+          <URI>webui/components/Login.java
+          </URI>
+        </resources>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.12.1
     </revision>
     
