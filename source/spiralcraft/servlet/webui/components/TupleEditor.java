@@ -165,8 +165,8 @@ public abstract class TupleEditor
       { 
         logFine("Scattering buffer "+buffer);
       }
-      applyRequestBindings(context);
       setInitialValues(buffer);
+      applyRequestBindings(context);
     }
 
   }
