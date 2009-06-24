@@ -1,6 +1,35 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  <scm:Change>
+    <revision>0.3.12.3
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>???????????????????
+    </date>
+
+    <detail>
+    
+      <scm:Change>
+        <date>2009-06-24
+        </date>
+        
+        <notes>
+          <scm:Note>Fix- TupleEditor now sets newAssignments before
+            requestBindings, because requestBindings will dirty the Tuple
+            and prevent newAssignments from running.
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/TupleEditor.java
+        </path>
+
+      </scm:Change>
+    </detail>
+  </scm:Change>
   
   <scm:Change>
     <revision>0.3.12.2
