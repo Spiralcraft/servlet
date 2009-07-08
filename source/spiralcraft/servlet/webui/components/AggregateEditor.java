@@ -43,7 +43,6 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.util.ArrayUtil;
 
 
 /**
@@ -408,42 +407,9 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     { 
       ArrayList<String> padFieldNames
         =new ArrayList<String>();
+      
       for (Field field: contentType.getFieldSet().fieldIterable())
       {
-        Expression<?> expression=field.getDefaultExpression();
-        if (expression!=null)
-        { 
-          Assignment<?> assignment
-            =new Assignment(Expression.create(field.getName()),expression);
-          
-          if (defaultAssignments==null)
-          { defaultAssignments=new Assignment[] {assignment};
-          }
-          else
-          { 
-            defaultAssignments
-              =ArrayUtil.append(defaultAssignments,assignment);
-          }
-          
-          
-        }
-        
-        expression=field.getFixedExpression();
-        if (expression!=null)
-        {
-          Assignment<?> assignment
-            =new Assignment(Expression.create(field.getName()),expression);
-          
-          if (fixedAssignments==null)
-          { fixedAssignments=new Assignment[] {assignment};
-          }
-          else
-          { 
-            fixedAssignments
-              =ArrayUtil.prepend(fixedAssignments,assignment);
-          }
-          
-        }
         
         if (field.isRequired() 
             && !(field instanceof SequenceField)

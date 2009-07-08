@@ -1,6 +1,7 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+
   <scm:Change>
     <revision>0.3.12.3
     </revision>
@@ -13,6 +14,23 @@
 
     <detail>
     
+      <scm:Change>
+        <date>2009-07-07
+        </date>
+        
+        <notes>
+          <scm:Note>Fix- AggregateEditor no longer prepends fixedAssignments
+            and defaultAssignments defined at the Type level as these 
+            assignments are applied at the store layer. This undoes the 
+            2009-06-05 mod.
+          </scm:Note>
+        </notes>
+
+        <path>/source/spiralcraft/servlet/webui/components/AggregateEditor.java
+        </path>
+
+      </scm:Change>
+
       <scm:Change>
         <date>2009-06-24
         </date>
