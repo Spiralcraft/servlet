@@ -19,6 +19,7 @@ import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.FocusFilter;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.log.Level;
 
 
 import spiralcraft.vfs.Resource;
@@ -319,7 +320,22 @@ public class UIServlet
         serviceContext.setResponse(response);
         serviceContext.setServlet(this);
         
-        if (!localSession.isResponsive(serviceContext.getQuery()))
+        ResourceSession.RequestSyncStatus syncStatus
+          =localSession.getRequestSyncStatus(serviceContext.getQuery());
+        
+        if (syncStatus==ResourceSession.RequestSyncStatus.OUTOFSYNC)
+        { 
+          serviceContext.setCurrentFrame(localSession.nextFrame());
+          serviceContext.setOutOfSync(true);
+          // Clear any pending responsive actions for an out of sync request
+          localSession.clearActions();
+          if (debugLevel.canLog(Level.DEBUG))
+          { 
+            log.debug
+             ("Out of sync request, ignoring pending responsive actions");
+          }
+        }
+        else if (syncStatus==ResourceSession.RequestSyncStatus.INITIATED)
         { serviceContext.setCurrentFrame(localSession.nextFrame());
         }
         

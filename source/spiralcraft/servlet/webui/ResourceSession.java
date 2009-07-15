@@ -21,6 +21,14 @@ import spiralcraft.util.ListMap;
  */
 public class ResourceSession
 {
+  public static enum RequestSyncStatus
+  {
+    RESPONSIVE
+    ,INITIATED
+    ,OUTOFSYNC
+  };
+  
+  
   private static final ClassLog log
     =ClassLog.getInstance(ResourceSession.class);
   private static final Level debugLevel
@@ -64,26 +72,32 @@ public class ResourceSession
    *   
    * @param query
    */
-  boolean isResponsive(VariableMap query)
+  RequestSyncStatus getRequestSyncStatus(VariableMap query)
   {
     if (query==null)
     { 
       if (debugLevel.canLog(Level.TRACE))
       { log.trace("Request is non-resposive because query is null");
       }
-      return false;
+      return RequestSyncStatus.INITIATED;
     }
     
     String state=query.getOne("lrs");
     if (Integer.toString(sequence).equals(state))
-    { return true;
+    { return RequestSyncStatus.RESPONSIVE;
     }
     else
     { 
       if (debugLevel.canLog(Level.TRACE))
       { log.trace("Request is non-responsive- ?lrs="+state+" != "+sequence);
       }
-      return false;
+      
+      if (state==null || state.isEmpty())
+      { return RequestSyncStatus.INITIATED;
+      }
+      else
+      { return RequestSyncStatus.OUTOFSYNC;
+      }
     }
   }
   

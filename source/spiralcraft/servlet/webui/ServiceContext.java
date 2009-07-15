@@ -70,12 +70,34 @@ public class ServiceContext
   private List<String> queuedActions;
   private URI contextURI;
   private String contentType;
+  private boolean outOfSync;
   
   
   public ServiceContext(Writer writer,boolean stateful,StateFrame frame)
   { super(writer,stateful,frame);
   }
 
+  
+  /**
+   * Indicates that an old request has been resubmitted through a bookmark
+   *   or a back button and that references to actions or controls may
+   *   be stale. 
+   * 
+   * @return Whether this request is out of sync with the current state
+   */
+  public boolean getOutOfSync()
+  { return outOfSync;
+  }
+  
+  /**
+   * Indicates that an old request has been resubmitted through a bookmark
+   *   or a back button and that references to actions or controls may
+   *   be stale. 
+   * 
+   */
+  public void setOutOfSync(boolean outOfSync)
+  { this.outOfSync=outOfSync;
+  }
   
   public UIServlet getServlet()
   { return servlet;
