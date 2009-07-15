@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.lang.util.Configurator;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.UnresolvableURIException;
@@ -56,6 +57,8 @@ public class HttpServlet
 
   protected final ClassLog log=
       ClassLog.getInstance(getClass());
+  protected Level debugLevel=
+      ClassLog.getInitialDebugLevel(getClass(), null);
   
   public static final String METHOD_GET="GET";
   public static final String METHOD_HEAD="HEAD";
@@ -361,5 +364,7 @@ public class HttpServlet
     printWriter.flush();
   }
   
-  
+  public void setDebugLevel(Level debugLevel)
+  { this.debugLevel=debugLevel;
+  }
 }
