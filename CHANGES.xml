@@ -3,17 +3,56 @@
   >
 
   <scm:Change>
-    <revision>0.3.12.3
+    <revision>0.3.13
     </revision>
     
     <authorId>miketoth
     </authorId>
     
-    <date>???????????????????
+    <date>2009-07-14
     </date>
 
     <detail>
+      <scm:Change>
+        <date>2009-07-14
+        </date>
+        
+        <notes>
+          <scm:Note>Added debugLevel setting for HttpServlet
+          </scm:Note>
+        </notes>
+
+        
+        <path>/source/spiralcraft/servlet/HttpServlet.java
+        </path>
+
+      </scm:Change>
     
+      <scm:Change>
+        <date>2009-07-14
+        </date>
+        
+        <notes>
+          <scm:Note>Clear any pending responsive actions if the response is
+            out of sequence
+          </scm:Note>
+        </notes>
+
+        
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>UIServlet.java
+          </URI>
+          <URI>ResourceSession.java
+          </URI>
+          <URI>ServiceContext.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
       <scm:Change>
         <date>2009-07-07
         </date>
