@@ -1,6 +1,6 @@
 package spiralcraft.servlet.webui.textgen;
 
-import spiralcraft.servlet.webui.UIComponent;
+import spiralcraft.servlet.webui.RootComponent;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.compiler.TglUnit;
@@ -17,19 +17,19 @@ import spiralcraft.vfs.Resource;
  * @author mike
  *
  */
-public class UIUnit
+public class RootUnit
   extends DocletUnit
 {
-  public UIUnit(TglUnit parent,Resource resource)
+  public RootUnit(TglUnit parent,Resource resource)
   {
     super(parent,resource);
   }
   
   @Override
-  public UIComponent bind(Focus<?> focus)
+  public RootComponent bind(Focus<?> focus)
     throws MarkupException
   {
-    UIComponent element=new UIComponent(focus);
+    RootComponent element=new RootComponent(focus);
     
     try
     { element.bind(children);

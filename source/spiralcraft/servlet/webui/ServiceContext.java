@@ -52,6 +52,9 @@ import spiralcraft.command.CommandProcessor;
 public class ServiceContext
   extends EventContext
 {
+  public static final URI FOCUS_URI
+    =URI.create("class:/spiralcraft/servlet/webui/ServiceContext");
+  
   private static final ClassLog log
     =ClassLog.getInstance(ServiceContext.class);
   

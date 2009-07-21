@@ -7,7 +7,7 @@ import spiralcraft.vfs.Resource;
 
 
 public class UICompiler
-  extends TglCompiler<UIUnit>
+  extends TglCompiler<RootUnit>
 {
   @Override
   protected UICompiler clone()
@@ -15,7 +15,7 @@ public class UICompiler
   }
   
   @Override
-  protected UIUnit createDocletUnit(TglUnit parent,Resource resource)
-  { return new UIUnit(parent,resource);
+  protected RootUnit createDocletUnit(TglUnit parent,Resource resource)
+  { return new RootUnit(parent,resource);
   }
 }

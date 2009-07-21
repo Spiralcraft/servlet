@@ -63,7 +63,7 @@ public class Session
    * @param component
    */
   public synchronized ResourceSession
-    getResourceSession(UIComponent component)
+    getResourceSession(RootComponent component)
   {
     StateReference ref=stateMap.get(component.getContextRelativePath());
     if (ref!=null && ref.component==component)
@@ -91,7 +91,7 @@ public class Session
    * @param component
    */
   public synchronized void
-    setResourceSession(UIComponent component,ResourceSession localSession)
+    setResourceSession(RootComponent component,ResourceSession localSession)
   {
     StateReference ref=stateMap.get(component.getContextRelativePath());
     if (ref==null)
@@ -108,5 +108,5 @@ public class Session
 class StateReference
 {
   public ResourceSession localSession;
-  public UIComponent component;
+  public RootComponent component;
 }

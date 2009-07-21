@@ -192,7 +192,7 @@ public class UIServlet
 
     try
     {
-      UIComponent component=resolveComponent(request);
+      RootComponent component=resolveComponent(request);
       if (component!=null)
       { service(component,request,response);
       }
@@ -218,7 +218,7 @@ public class UIServlet
 
     try
     {
-      UIComponent component=resolveComponent(request);
+      RootComponent component=resolveComponent(request);
       if (component!=null)
       { 
         response.setStatus(200);
@@ -249,7 +249,7 @@ public class UIServlet
 
     try
     {
-      UIComponent component=resolveComponent(request);
+      RootComponent component=resolveComponent(request);
       if (component!=null)
       { service(component,request,response);
       }
@@ -268,7 +268,7 @@ public class UIServlet
   } 
   
   private void service
-    (UIComponent component
+    (RootComponent component
     ,HttpServletRequest request
     ,HttpServletResponse response
     )
@@ -394,7 +394,7 @@ public class UIServlet
    * @throws IOException
    * @throws ServletException
    */
-  private void service(UIComponent component,ServiceContext serviceContext)
+  private void service(RootComponent component,ServiceContext serviceContext)
     throws IOException,ServletException
   {
     HttpServletRequest request=serviceContext.getRequest();
@@ -526,7 +526,7 @@ public class UIServlet
    * @param context
    */
   private void handleAction
-    (UIComponent component
+    (RootComponent component
     ,ServiceContext context
     )
   {
@@ -576,7 +576,7 @@ public class UIServlet
    * @param actionName
    */
   private void fireAction
-    (UIComponent component,ServiceContext context,String actionName)
+    (RootComponent component,ServiceContext context,String actionName)
   {
     List<Action> actions
       =context.getResourceSession().getActions(actionName);
@@ -613,7 +613,7 @@ public class UIServlet
    * @throws ServletException
    */
   private void render
-    (UIComponent component
+    (RootComponent component
     ,ServiceContext serviceContext
     )
     throws IOException,ServletException
@@ -641,9 +641,9 @@ public class UIServlet
    * 
    * 
    * @param request
-   * @return The UIComponent to handle this request
+   * @return The RootComponent to handle this request
    */
-  private UIComponent resolveComponent(HttpServletRequest request)
+  private RootComponent resolveComponent(HttpServletRequest request)
     throws ServletException,IOException
   { 
     String relativePath=getContextRelativePath(request);
@@ -655,7 +655,7 @@ public class UIServlet
     
     try
     { 
-      UIComponent component=uiCache.getUI(resourcePath);
+      RootComponent component=uiCache.getUI(resourcePath);
       if (component==null)
       {
         // Look in the fallback dir?

@@ -9,7 +9,7 @@ import java.net.URI;
 import java.io.IOException;
 
 public class UIResourceUnit
-  extends ResourceUnit<UIUnit>
+  extends ResourceUnit<RootUnit>
 {
   public UIResourceUnit(URI uri)
     throws IOException
@@ -26,9 +26,9 @@ public class UIResourceUnit
   }
   
   @Override
-  public UIUnit getUnit()
+  public RootUnit getUnit()
   { 
-    return (UIUnit) super.getUnit();
+    return (RootUnit) super.getUnit();
 
   }
 }

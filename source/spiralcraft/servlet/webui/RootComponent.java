@@ -15,8 +15,11 @@
 package spiralcraft.servlet.webui;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.servlet.ServletException;
 
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
@@ -33,6 +36,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 
 
 /**
@@ -48,17 +52,17 @@ import spiralcraft.log.ClassLog;
  * @author mike
  *
  */
-public class UIComponent
+public class RootComponent
   extends Component
 {
   private static final ClassLog log 
-    = ClassLog.getInstance(UIComponent.class);
+    = ClassLog.getInstance(RootComponent.class);
   
   private Focus<?> focus;
   private String contextRelativePath;
   protected ThreadLocalChannel<ServiceContext> threadLocal;
     
-  public UIComponent(Focus<?> focus)
+  public RootComponent(Focus<?> focus)
   { 
     this.focus=focus;
     
@@ -172,7 +176,26 @@ public class UIComponent
     return ret;
   }
   
+  public Command<Void,Void> redirectCommand(final String redirectURI)
+  {
+    return new CommandAdapter<Void,Void>()
+    {
+      { name="redirect";
+      }
+          
+      @Override
+      public void run()
+      { 
+        try
+        { threadLocal.get().redirect(URI.create(redirectURI));
+        }
+        catch (ServletException x)
+        { log.log(Level.WARNING,"Threw exception on redirect",x);
+        }
+      }
   
+    };
+  } 
 
 }
 

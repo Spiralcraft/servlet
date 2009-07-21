@@ -20,7 +20,7 @@ import java.io.PrintStream;
 import spiralcraft.textgen.EventContext;
 
 public class ExceptionComponent
-    extends UIComponent
+    extends RootComponent
 {
   private Throwable exception;
   public ExceptionComponent(Throwable exception)

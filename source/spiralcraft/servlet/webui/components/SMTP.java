@@ -24,6 +24,7 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.AbstractChannel;
@@ -61,6 +62,9 @@ public class SMTP
   private Generator generator;
   private Resource templateResource;
   
+  private Expression<String> senderX;
+  private Expression<String> recipientX;
+  
   /**
    * <p>Specify the URI of the textgen email template for the message body
    * </p>
@@ -79,7 +83,14 @@ public class SMTP
     
   }
   
+  public void setSenderX(Expression<String> senderX)
+  { this.senderX=senderX;
+  }
   
+  public void setRecipientX(Expression<String> recipientX)
+  { this.recipientX=recipientX;
+  }
+
   /**
    * <p>Assignments which get executed prior to a login attempt (eg. to resolve
    *   credentials)
@@ -87,7 +98,7 @@ public class SMTP
    * 
    * @param assignments
    */
-  public void setPreAssignments(Assignment<?>[] assignments)
+  public void setPreAssignments(Assignment<Object>[] assignments)
   { this.preAssignments=assignments;
   }  
 
@@ -100,7 +111,7 @@ public class SMTP
    * 
    * @param assignments
    */
-  public void setAssignments(Assignment<?>[] assignments)
+  public void setAssignments(Assignment<Object>[] assignments)
   { this.postAssignments=assignments;
   }  
   
@@ -185,36 +196,70 @@ public class SMTP
     Setter.applyArray(preSetters);
 
     envelope.setEncodedMessage(generator.render());
-    if (envelope.getSenderMailAddress()==null)
-    { getState().addError("Missing sender address");
-    }
-    else if 
-      (envelope.getRecipients()==null || envelope.getRecipients().isEmpty())
-    { getState().addError("Missing recipients");
+    if (generator.getException()==null)
+    {
+      if (envelope.getSenderMailAddress()==null)
+      { getState().addError("Missing sender address");
+      }
+      else if 
+        (envelope.getRecipients()==null || envelope.getRecipients().isEmpty())
+      { getState().addError("Missing recipients");
+      }
+      else
+      {
+        smtpChannel.get().send(envelope);
+        Setter.applyArray(postSetters);
+        if (debug)
+        { 
+          log.fine
+            ("Sent to "+envelope.getRecipients()
+            +"\r\n"+envelope.getEncodedMessage()
+            );
+        }
+      
+      }
     }
     else
-    {
-      smtpChannel.get().send(envelope);
-      Setter.applyArray(postSetters);
-      if (debug)
-      { 
-        log.fine
-          ("Sent to "+envelope.getRecipients()
-          +"\r\n"+envelope.getEncodedMessage()
-          );
-      }
-      
+    { getState().setException(generator.getException());
     }
-      
     if (debug && getState().getErrors()!=null)
     { log.fine(ArrayUtil.format(getState().getErrors(),",",null));
     }
   }
   
+
+  @SuppressWarnings("unchecked")
+  protected void addPreAssignment(String targetX,Expression source)
+  { 
+    Assignment<?> assignment
+      =new Assignment
+        (Expression.create(targetX)
+        ,source
+        );
+    
+    preAssignments
+      =preAssignments!=null
+      ?ArrayUtil.append
+        (preAssignments
+        ,assignment
+        )
+       :new Assignment[] {assignment}
+       ;
+    
+  }
+      
   @Override
   protected Focus<?> bindExports()
     throws BindException
   {
+    if (senderX!=null)
+    { addPreAssignment("sender",senderX);
+    }
+    
+    if (recipientX!=null)
+    { addPreAssignment("recipient",recipientX);
+    }
+
     postSetters=bindAssignments(postAssignments);
     preSetters=bindAssignments(preAssignments);
     generator

@@ -3,6 +3,91 @@
   >
 
   <scm:Change>
+    <revision>0.3.14
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-07-21
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-07-21
+        </date>
+      
+        <notes>
+          <scm:Note>Renamed UIComponent to RootComponent and textgen/UIUnit to
+            RootUnit to provide a more stable name for use in webui pages
+            that wish to interact with the HTTP level machinery
+          </scm:Note>
+          <scm:Note>Added redirectCommand to RootComponent for universal
+            availability
+          </scm:Note>
+          <scm:Note>Added redirectCommand to components/Acceptor for
+            convenience. 
+          </scm:Note>
+          <scm:Note>Added FOCUS_URI static to ServiceContext to assist binding
+            to the thread-local published in RootComponent
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>UIComponent.java
+          </URI>
+          <URI>RootComponent.java
+          </URI>
+          <URI>ExceptionComponent.java
+          </URI>
+          <URI>UIServlet.java
+          </URI>
+          <URI>UICache.java
+          </URI>
+          <URI>Session.java
+          </URI>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>components/Acceptor.java
+          </URI>
+          <URI>textgen/UIUnit.java
+          </URI>
+          <URI>textgen/RootUnit.java
+          </URI>
+          <URI>textgen/UICompiler.java
+          </URI>
+          <URI>textgen/UIResourceUnit.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
+        <date>2009-07-20
+        </date>
+        
+        <notes>
+          <scm:Note>SMTP interface improvements- added senderX and recipientX
+            properties, trap template exceptions
+          </scm:Note>
+        </notes>
+
+        
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>components/SMTP.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.13
     </revision>
     

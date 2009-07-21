@@ -18,7 +18,7 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.vfs.Resource;
 
 import spiralcraft.servlet.webui.textgen.UIResourceUnit;
-import spiralcraft.servlet.webui.textgen.UIUnit;
+import spiralcraft.servlet.webui.textgen.RootUnit;
 
 
 import spiralcraft.lang.SimpleFocus;
@@ -74,12 +74,12 @@ public class UICache
    * @param contextRelativePath The path relative to the ServletContext
    *   that uniquely identifies the UI component
    *   
-   * @return The UIComponent associated with the path
+   * @return The RootComponent associated with the path
    * @throws MarkupException
    * @throws IOException
    * @throws ServletException
    */
-  public synchronized UIComponent getUI(String contextRelativePath)
+  public synchronized RootComponent getUI(String contextRelativePath)
     throws MarkupException,IOException,ServletException
   {
     UIResourceUnit resourceUnit=resolveResourceUnit(contextRelativePath);
@@ -87,7 +87,7 @@ public class UICache
     { 
       try
       {
-        UIUnit unit=resourceUnit.getUnit();
+        RootUnit unit=resourceUnit.getUnit();
       
         if (unit!=null)
         { return getComponent(contextRelativePath,unit);
@@ -171,8 +171,8 @@ public class UICache
    * @param contextRelativePath
    * @return
    */
-  private UIComponent 
-    getComponent(String contextRelativePath,UIUnit unit)
+  private RootComponent 
+    getComponent(String contextRelativePath,RootUnit unit)
     throws MarkupException
   {
     ComponentReference ref=componentMap.get(contextRelativePath);
@@ -193,6 +193,6 @@ public class UICache
 
 class ComponentReference
 {
-  public UIComponent component;
-  public UIUnit unit;
+  public RootComponent component;
+  public RootUnit unit;
 }

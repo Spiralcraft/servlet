@@ -14,6 +14,10 @@
 //
 package spiralcraft.servlet.webui.components;
 
+import java.net.URI;
+
+import javax.servlet.ServletException;
+
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.PrepareMessage;
 
@@ -22,6 +26,7 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -32,6 +37,7 @@ import spiralcraft.servlet.webui.GatherMessage;
 import spiralcraft.util.ArrayUtil;
 
 import spiralcraft.command.Command;
+import spiralcraft.command.CommandAdapter;
 
 /**
  * <p>Accepts a user input action and sequences the processing behavior of 
@@ -55,6 +61,8 @@ public abstract class Acceptor<T>
     
   private String clientPostActionName;
   private String resetActionName;
+  
+  private Channel<ServiceContext> serviceContextChannel;
 
   
   public void setOnPost(Expression<Command<?,?>> onPost)
@@ -235,8 +243,32 @@ public abstract class Acceptor<T>
     if (onPost!=null)
     { onPostChannel=getFocus().bind(onPost);
     }
+    serviceContextChannel
+      =getFocus().<ServiceContext>findFocus(ServiceContext.FOCUS_URI)
+        .getSubject();
     return null;
     
   }
+  
+  public Command<Void,Void> redirectCommand(final String redirectURI)
+  {
+    return new CommandAdapter<Void,Void>()
+    {
+      { name="redirect";
+      }
+          
+      @Override
+      public void run()
+      { 
+        try
+        { serviceContextChannel.get().redirect(URI.create(redirectURI));
+        }
+        catch (ServletException x)
+        { log.log(Level.WARNING,"Threw exception on redirect",x);
+        }
+      }
+  
+    };
+  }   
 
 }
