@@ -180,6 +180,7 @@ public class PageAction
       }
       
      
+      @SuppressWarnings("unchecked")
       @Override
       public void invoke(ServiceContext context)
       { 
