@@ -492,8 +492,7 @@ public class Login
     
     // Figure out whether the user has a login ticket
     AuthSession session=sessionChannel.get();    
-    if (inPlace 
-        && securityFilter!=null
+    if (securityFilter!=null
         && !session.isAuthenticated()
         && !state.isErrorState()
         )
