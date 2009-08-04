@@ -1,6 +1,57 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  <scm:Change>
+    <revision>0.3.14.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-08-03
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-08-03
+        </date>
+      
+        <notes>
+          <scm:Note>Fixed regression where ticket login only ran when the Login
+            was an in-place component in scatter. Ticket is now checked whether
+            or not the Login component is in-place or not.
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/Login.java
+        </path>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        <date>2009-08-03
+        </date>
+      
+        <notes>
+          <scm:Note>Warnings cleanup
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resource>
+          <URI>RequestBinding.java
+          </URI>
+          <URI>PageAction.java
+          </URI>
+        </resource>
+        
+      </scm:Change>
+    </detail>
+    </detail>
+  </scm:Change>
+
 
   <scm:Change>
     <revision>0.3.14
