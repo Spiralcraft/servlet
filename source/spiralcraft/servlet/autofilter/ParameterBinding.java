@@ -87,7 +87,7 @@ public class ParameterBinding<Tval>
   public void setTarget(Expression<Tval> target)
   { 
     this.target = target;
-    if (this.target.getRootNode() instanceof AssignmentNode)
+    if (this.target.getRootNode() instanceof AssignmentNode<?,?>)
     { assignment=true;
     }
   }
