@@ -23,46 +23,39 @@ import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractSelectControl;
 
 /**
- * <P>A standard HTML SELECT list, bound to a target and a source.
- * </P>
+ * <p>A group of radio buttons bound to a single location
+ * </p>
  * 
- * <P>The "x" (binding target) property contains an expression that references
+ * <p>The "x" (binding target) property contains an expression that references
  *   the currently selected item(s). The optional "source" property contains an 
  *   expression that provides a list of candidate values, used for generating 
- *   the set of options (see the Option class).
- * </P>
+ *   the set of options (see the RadioButton class).
+ * </p>
  *  
  * @author mike
  *
  * @param <Ttarget>
  * @param <Tvalue>
  */
-public class Select<Ttarget,Tvalue>
+public class RadioGroup<Ttarget,Tvalue>
   extends AbstractSelectControl<Ttarget,Tvalue>
 {
 
   
   private Tag tag=new Tag();
   
-  private class Tag
+  public class Tag
     extends AbstractTag
   {
+    private String tagName=null;
+    
     @Override
     protected String getTagName(EventContext context)
-    { return "select";
+    { return tagName;
     }
-
-    @SuppressWarnings("unchecked") // Generic cast
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    {   
-      ControlState<String> state=((ControlState<String>) context.getState());
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
-      if (multi)
-      { renderAttribute(context.getWriter(),"multiple",null);
-      }
-      super.renderAttributes(context);
+    
+    public void setTagName(String tagName)
+    { this.tagName=tagName;
     }
     
     @Override
@@ -73,7 +66,7 @@ public class Select<Ttarget,Tvalue>
     @Override
     protected void renderContent(EventContext context)
       throws IOException
-    { Select.super.render(context);
+    { RadioGroup.super.render(context);
     }    
     
   };

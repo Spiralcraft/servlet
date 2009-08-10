@@ -43,7 +43,7 @@ import spiralcraft.servlet.webui.components.SelectItemState;
  * @param <Ttarget>
  * @param <Tvalue>
  */
-public class Option<Ttarget,Tvalue>
+public class RadioButton<Ttarget,Tvalue>
   extends AbstractSelectItemControl<Ttarget,Tvalue>
 {
 
@@ -53,7 +53,7 @@ public class Option<Ttarget,Tvalue>
   {
     @Override
     protected String getTagName(EventContext context)
-    { return "option";
+    { return "input";
     }
 
     @SuppressWarnings("unchecked") // Generic cast
@@ -63,8 +63,12 @@ public class Option<Ttarget,Tvalue>
     {   
       SelectItemState<Tvalue> state=((SelectItemState<Tvalue>) context.getState());
 
+
+      renderAttribute(context.getWriter(),"type","radio");
+      renderAttribute
+        (context.getWriter(),"name",state.getSelectState().getVariableName());
       if (state.isSelected())
-      { renderAttribute(context.getWriter(),"selected","selected");
+      { renderAttribute(context.getWriter(),"checked","checked");
       }
       if (converter!=null)
       { 
@@ -92,7 +96,7 @@ public class Option<Ttarget,Tvalue>
     @Override
     protected void renderContent(EventContext context)
       throws IOException
-    { Option.super.render(context);
+    { RadioButton.super.render(context);
     }
     
     @Override

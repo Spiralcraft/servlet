@@ -2,6 +2,72 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.15
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-08-10
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-08-09
+        </date>
+      
+        <notes>
+          <scm:Note>Implemented RadioButton controls
+          </scm:Note>
+          <scm:Note>Factored Select and Option non HTML logic into abstract
+            base types. 
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>AbstractSelectControl.java</URI>
+          <URI>AbstractSelectItemControl.java</URI>
+          <URI>SelectItemState.java</URI>
+          <URI>SelectState.java</URI>
+          <URI>html/Select.java</URI>
+          <URI>html/Option.java</URI>
+          <URI>html/RadioButtonGroup.java</URI>
+          <URI>html/RadioButton.java</URI>
+        </resources>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        <date>2009-08-03
+        </date>
+      
+        <notes>
+          <scm:Note>Warnings cleanup
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/
+        </path>
+        
+        <resource>
+          <URI>webui/components/RequestBinding.java
+          </URI>
+          <URI>webui/components/PageAction.java
+          </URI>
+          <URI>webui/ControlState.java
+          </URI>
+          <URI>autofilter/ParameterBinding.java
+          </URI>
+        </resource>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.14.1
     </revision>
     
@@ -48,7 +114,6 @@
         </resource>
         
       </scm:Change>
-    </detail>
     </detail>
   </scm:Change>
 
