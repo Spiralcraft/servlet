@@ -155,13 +155,7 @@ public class SMTP
     { 
       @Override
       public void run()
-      { 
-        try
-        { send();
-        }
-        catch (IOException x)
-        { setException(x);
-        }
+      { send();
       }
     };
   }  
@@ -173,54 +167,53 @@ public class SMTP
       @Override
       public void run()
       { 
-        try
-        { 
-          send();
-          if (getState().getErrors()==null)
-          { successCommand.execute();
-          } 
-        }
-        catch (IOException x)
-        { setException(x);
-        }
-        
-        
+        send();
+        if (getState().getErrors()==null)
+        { successCommand.execute();
+        } 
       }
     };
   }  
   
   public void send()
-    throws IOException
   {
     Envelope envelope=getState().getValue();
     Setter.applyArray(preSetters);
 
-    envelope.setEncodedMessage(generator.render());
-    if (generator.getException()==null)
+    try
     {
-      if (envelope.getSenderMailAddress()==null)
-      { getState().addError("Missing sender address");
-      }
-      else if 
-        (envelope.getRecipients()==null || envelope.getRecipients().isEmpty())
-      { getState().addError("Missing recipients");
+      envelope.setEncodedMessage(generator.render());
+      if (generator.getException()==null)
+      {
+        if (envelope.getSenderMailAddress()==null)
+        { getState().addError("Missing sender address");
+        }
+        else if 
+          (envelope.getRecipients()==null || envelope.getRecipients().isEmpty())
+        { getState().addError("Missing recipients");
+        }
+        else
+        {
+          smtpChannel.get().send(envelope);
+          Setter.applyArray(postSetters);
+          if (debug)
+          {  
+            log.fine
+              ("Sent to "+envelope.getRecipients()
+              +"\r\n"+envelope.getEncodedMessage()
+              );
+          }
+      
+        }
       }
       else
-      {
-        smtpChannel.get().send(envelope);
-        Setter.applyArray(postSetters);
-        if (debug)
-        { 
-          log.fine
-            ("Sent to "+envelope.getRecipients()
-            +"\r\n"+envelope.getEncodedMessage()
-            );
-        }
-      
+      { getState().setException(generator.getException());
       }
     }
-    else
-    { getState().setException(generator.getException());
+    catch (IOException x)
+    { 
+      getState().addError("Unable to contact mail server");
+      log.log(Level.WARNING,"Error sending mail",x);
     }
     if (debug && getState().getErrors()!=null)
     { log.fine(ArrayUtil.format(getState().getErrors(),",",null));
