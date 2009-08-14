@@ -58,7 +58,9 @@ public class DataSessionComponent
   private ThreadLocalChannel<DataSession> dataSessionChannel;
   private CompoundFocus<DataComposite> dataFocus;
   private Assignment<?>[] defaultAssignments;
+  private Assignment<?>[] assignments;
   private Setter<?>[] defaultSetters;
+  private Setter<?>[] setters;
   private Expression<Type<DataComposite>> typeX;
 
   @SuppressWarnings("unchecked")
@@ -96,6 +98,7 @@ public class DataSessionComponent
       dataFocus.bindFocus("spiralcraft.data",dataSessionFocus);
     }
     defaultSetters=bindAssignments(defaultAssignments);
+    setters=bindAssignments(assignments);
     bindRequestAssignments();
     bindChildren(childUnits);
   }
@@ -106,14 +109,26 @@ public class DataSessionComponent
   }
  
   /**
-   * <p>Default Assignments get executed when the target value is null
-   *   in the "prepare" stage of request processing
+   * <p>Default Assignments get executed when the target value is null, when
+   *   a new state frame is being computed, either at the beginning of
+   *   a request, or after all actions have been performed.
    * </p>
    *   
    * @param assignments
    */
   public void setDefaultAssignments(Assignment<?>[] assignments)
   { defaultAssignments=assignments;
+  }
+  
+  /**
+   * <p>Assignments get executed whenever a new state frame is being
+   *   computed, either at the beginning of
+   *   a request, or after all actions have been performed.
+   * </p>
+   * @param assignments
+   */
+  public void setAssignments(Assignment<?>[] assignments)
+  { this.assignments=assignments;
   }
   
   public void setTypeX(Expression<Type<DataComposite>> typeX)
@@ -205,7 +220,7 @@ public class DataSessionComponent
     if (state.frameChanged(context.getCurrentFrame()))
     {
       applyRequestBindings(context);
-      applyDefaults();
+      applyAssignments();
       state.setRequestBindingsApplied(true);
     }
   } 
@@ -234,7 +249,7 @@ public class DataSessionComponent
     }
     state.setRequestBindingsApplied(false);
     
-    applyDefaults();
+    applyAssignments();
     publishRequestBindings(context);
   } 
 
@@ -269,8 +284,16 @@ public class DataSessionComponent
     }
   }
 
-  private void applyDefaults()
+  private void applyAssignments()
   {
+    if (setters!=null)
+    { 
+      if (debug)
+      { log.fine(toString()+": applying assignments");
+      }
+      Setter.applyArray(setters);
+    }
+
     if (defaultSetters!=null)
     { 
       if (debug)
