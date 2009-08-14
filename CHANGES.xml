@@ -2,6 +2,57 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.16
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-08-14
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-08-14
+        </date>
+      
+        <notes>
+          <scm:Note>Add Assignments (non-default) to DataSessionComponent
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>DataSessionComponent.java</URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+
+    <detail>
+      <scm:Change>
+        <date>2009-08-12
+        </date>
+      
+        <notes>
+          <scm:Note>Handle SMTP IO exception in control
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>SMTP.java</URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+  
+  <scm:Change>
     <revision>0.3.15
     </revision>
     
