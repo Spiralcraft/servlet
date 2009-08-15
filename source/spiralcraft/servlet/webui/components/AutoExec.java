@@ -146,6 +146,10 @@ public class AutoExec
     
   }  
 
+  @Override
+  public CommandState createState()
+  { return new CommandState(this);
+  }
   
 }
 
