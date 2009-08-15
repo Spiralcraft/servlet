@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import spiralcraft.command.Command;
+
 import spiralcraft.log.ClassLog;
 import spiralcraft.rules.RuleException;
 import spiralcraft.rules.Violation;
