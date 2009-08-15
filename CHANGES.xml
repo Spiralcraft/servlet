@@ -17,6 +17,43 @@
         </date>
       
         <notes>
+          <scm:Note>Factored out unnecessary log instance
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>PageAction.java</URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-08-14
+        </date>
+      
+        <notes>
+          <scm:Note>Component to fire a command automatically when a 
+            page is requested.
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>AutoExec.java</URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-08-14
+        </date>
+      
+        <notes>
           <scm:Note>Add Assignments (non-default) to DataSessionComponent
           </scm:Note>
         </notes>
@@ -29,9 +66,7 @@
         </resources>
         
       </scm:Change>
-    </detail>
 
-    <detail>
       <scm:Change>
         <date>2009-08-12
         </date>
