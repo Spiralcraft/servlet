@@ -35,7 +35,6 @@ import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.util.ArrayUtil;
 
-import spiralcraft.log.ClassLog;
 
 /**
  * <p>Registers a command to be triggered by the 'action' URI query parameter
@@ -56,9 +55,6 @@ import spiralcraft.log.ClassLog;
 public class PageAction
   extends Component
 {
-  
-  private static final ClassLog log
-    =ClassLog.getInstance(PageAction.class);
   
   private Expression<Command<?,?>> commandExpression;
   private Channel<Command<?,?>> commandChannel;  
