@@ -56,6 +56,10 @@ public abstract class AbstractTextControl<Ttarget>
   { return name;
   }
   
+  public void setConverter(StringConverter<Ttarget> converter)
+  { this.converter=converter;
+  }
+  
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
