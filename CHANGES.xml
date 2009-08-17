@@ -2,6 +2,33 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.17
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-08-17
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-08-17
+        </date>
+      
+        <notes>
+          <scm:Note>Provide setter for StringConverter
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/AbstractTextControl.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.16
     </revision>
     
