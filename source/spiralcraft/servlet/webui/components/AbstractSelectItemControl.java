@@ -64,7 +64,6 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
   
 
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
@@ -78,10 +77,7 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
     }
     value=getFocus().bind(valueExpression);
     if (converter==null && value!=null)
-    { 
-      converter=
-        (StringConverter) 
-        StringConverter.getInstance(value.getContentType());
+    { converter=value.getReflector().getStringConverter();
     }
     if (debug && target==null)
     { log.fine("Not bound to anything");

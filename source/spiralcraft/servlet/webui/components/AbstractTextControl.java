@@ -78,14 +78,12 @@ public abstract class AbstractTextControl<Ttarget>
         }
         else
         { 
+          // XXX Use better method that integrates target channel
           converter=new ArrayToString(targetClass.getComponentType());
         }
       }
       else
-      {
-        converter=
-          (StringConverter<Ttarget>) 
-          StringConverter.getInstance(target.getContentType());
+      { converter=target.getReflector().getStringConverter();
       }
     }
     if (target==null)

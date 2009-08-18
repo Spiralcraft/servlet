@@ -74,9 +74,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
     Channel<Ttarget> target=(Channel<Ttarget>) super.bindTarget(parentFocus);
     if (converter==null && target!=null)
     { 
-      converter=
-        (StringConverter<Ttarget>) 
-        StringConverter.getInstance(target.getContentType());
+      converter=target.getReflector().getStringConverter();
     }
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
@@ -91,6 +89,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   @Override
   @SuppressWarnings("unchecked")
   public Focus<?> bindExports()
+    throws BindException
   { 
     Focus<?> focus=new CompoundFocus(getFocus(),source);
     return focus; 
