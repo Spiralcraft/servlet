@@ -18,6 +18,9 @@ import java.io.IOException;
 
 
 
+import spiralcraft.data.session.Buffer;
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
@@ -88,7 +91,15 @@ public class TupleEditor
     }
   }
 
-
+  @Override
+  public Focus<Buffer> bindExports()
+    throws BindException
+  { 
+    Focus<Buffer> focus=super.bindExports();
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+    return focus;
+  } 
   
 
 }

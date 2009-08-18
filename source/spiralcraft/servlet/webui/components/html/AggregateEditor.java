@@ -20,6 +20,8 @@ import java.io.IOException;
 
 
 import spiralcraft.data.DataComposite;
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
@@ -79,6 +81,16 @@ public class AggregateEditor<T extends DataComposite>
   { return errorTag;
   }
 
+  @Override
+  public Focus<?> bindExports()
+    throws BindException
+  { 
+    Focus<?> focus=super.bindExports();
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+    return focus;
+  }
+  
   @Override
   public void render(EventContext context)
     throws IOException

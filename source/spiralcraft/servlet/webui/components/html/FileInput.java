@@ -283,6 +283,14 @@ public class FileInput
     }
   }
 
+  
+  @Override
+  public void bindSelf()
+    throws BindException
+  { 
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+  }    
 
 }
 

@@ -14,12 +14,17 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Expression;
+import spiralcraft.lang.Focus;
+import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.textgen.EventContext;
 
 import java.io.IOException;
 import java.io.Writer;
 
 import spiralcraft.text.xml.AttributeEncoder;
+import spiralcraft.util.ArrayUtil;
 
 /**
  * <p>A representation of an HTML 4.0 tag for use by components that render
@@ -51,6 +56,10 @@ public abstract class AbstractTag
     
   protected abstract String getTagName(EventContext context);
   
+  private DictionaryBinding<?>[] attributeBindings;
+  private DictionaryBinding<?>[] standardAttributeBindings;
+  
+  
   /**
    * <p>Set to false if the tag should not render. The associated
    *   control will still process input, however.
@@ -70,6 +79,10 @@ public abstract class AbstractTag
     this.attributes=attributes;
   }
 
+  public void setAttributeBindings(DictionaryBinding<?>[] attributeBindings)
+  { this.attributeBindings=attributeBindings;
+  }
+  
   protected void appendAttribute(String name,String value)
   {
     if (attributes==null)
@@ -78,9 +91,31 @@ public abstract class AbstractTag
     attributes=attributes+name+"=\""+value+"\" ";
     
   }
+  
+  @SuppressWarnings("unchecked")
+  protected void addStandardBinding(String name,Expression expr)
+  { 
+    DictionaryBinding<?> binding=new DictionaryBinding();
+    binding.setName(name);
+    binding.setTarget(expr);
+    
+    if (standardAttributeBindings!=null)
+    {
+      standardAttributeBindings
+        =ArrayUtil.append
+          (standardAttributeBindings, binding);
+    }
+    else
+    { standardAttributeBindings=new DictionaryBinding[] {binding};
+    }
+  }
 
   public void setId(String val)
   { appendAttribute("id",val);
+  }
+  
+  public void setIdX(Expression<?> expr)
+  { addStandardBinding("id",expr);
   }
 
   public void setClazz(String val)
@@ -121,6 +156,10 @@ public abstract class AbstractTag
 
   public void setOnclick(String val)
   { appendAttribute("onclick",val);
+  }
+  
+  public void setOnclickX(Expression<?> expr)
+  { addStandardBinding("onclick",expr);
   }
 
   public void setOndblclick(String val)
@@ -191,6 +230,23 @@ public abstract class AbstractTag
   { this.contentPosition=contentPosition;
   }
 
+  public void bind(Focus<?> focus)
+    throws BindException
+  { 
+    if (attributeBindings!=null)
+    {
+      for (DictionaryBinding<?> binding:attributeBindings)
+      { binding.bind(focus);
+      }
+    }
+    if (standardAttributeBindings!=null)
+    {
+      for (DictionaryBinding<?> binding:standardAttributeBindings)
+      { binding.bind(focus);
+      }
+    }
+  }
+  
   protected void renderPresentAttribute
     (Writer writer,String name,String value)
     throws IOException
@@ -229,6 +285,25 @@ public abstract class AbstractTag
   { 
     if (attributes!=null)
     { context.getWriter().write(attributes+" ");
+    }
+    if (standardAttributeBindings!=null)
+    { renderBoundAttributes(context.getWriter(),standardAttributeBindings);
+    }
+    if (attributeBindings!=null)
+    { renderBoundAttributes(context.getWriter(),attributeBindings);
+    }
+  }
+
+  protected void renderBoundAttributes
+    (Writer writer,DictionaryBinding<?>[] bindings)
+    throws IOException
+  {
+    for (DictionaryBinding<?> binding : bindings)
+    { 
+      String val=binding.get();
+      if (val!=null)
+      { renderAttribute(writer,binding.getName(),val);
+      }
     }
   }
   

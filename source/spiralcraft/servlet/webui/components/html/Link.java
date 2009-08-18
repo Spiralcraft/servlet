@@ -102,6 +102,10 @@ public class Link
     { commandChannel=parentFocus.bind(commandExpression);
     }
 
+
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+    
     bindChildren(childUnits);
     
   }

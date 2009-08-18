@@ -20,6 +20,7 @@ import spiralcraft.textgen.EventContext;
 
 //import spiralcraft.log.ClassLog;
 
+import spiralcraft.lang.BindException;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
 
@@ -112,6 +113,14 @@ public class TextArea<Ttarget>
     
     
   }
+  
+  @Override
+  public void bindSelf()
+    throws BindException
+  { 
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+  }       
   
 }
 

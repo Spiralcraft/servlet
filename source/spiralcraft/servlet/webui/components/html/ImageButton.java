@@ -25,6 +25,7 @@ import spiralcraft.servlet.webui.ServiceContext;
 
 import spiralcraft.command.Command;
 import spiralcraft.lang.AccessException;
+import spiralcraft.lang.BindException;
 import spiralcraft.net.http.VariableMap;
 
 /**
@@ -218,5 +219,12 @@ public class ImageButton
     
   }
   
+  @Override
+  public void bindSelf()
+    throws BindException
+  { 
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+  }    
 }
 

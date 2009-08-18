@@ -89,6 +89,8 @@ public class Login
     if (findElement(Form.class)==null)
     { throw new BindException("Login must be contained in a Form");
     }
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
     return super.bindExports();
   }
   

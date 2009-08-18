@@ -102,6 +102,8 @@ public class FormCommand
     if (when!=null)
     { whenChannel=getFocus().bind(when);
     }
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
   }
   
   @Override

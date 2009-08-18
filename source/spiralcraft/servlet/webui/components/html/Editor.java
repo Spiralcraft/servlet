@@ -84,7 +84,10 @@ public class Editor
     if (findElement(Form.class)==null)
     { throw new BindException("Editor must be contained in a Form");
     }
-    return super.bindExports();
+    Focus<Buffer> focus=super.bindExports();
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+    return focus;
   }
   
 

@@ -19,6 +19,8 @@ import java.io.IOException;
 
 
 import spiralcraft.textgen.EventContext;
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractSelectControl;
 
@@ -101,7 +103,15 @@ public class RadioGroup<Ttarget,Tvalue>
 //  }
   
 
-
+  @Override
+  public Focus<?> bindExports()
+    throws BindException
+  { 
+    Focus<?> focus=super.bindExports();
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+    return focus;
+  } 
 }
   
 

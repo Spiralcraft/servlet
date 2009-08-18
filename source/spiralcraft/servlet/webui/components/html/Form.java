@@ -18,6 +18,8 @@ import spiralcraft.textgen.EventContext;
 
 // import spiralcraft.log.ClassLog;
 
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.components.Acceptor;
@@ -135,5 +137,14 @@ public class Form<T>
     }
   }
   
+  @Override
+  public Focus<?> bindExports()
+    throws BindException
+  { 
+    Focus<?> focus=super.bindExports();
+    tag.bind(getFocus());
+    errorTag.bind(getFocus());
+    return focus;
+  }  
 
 }
