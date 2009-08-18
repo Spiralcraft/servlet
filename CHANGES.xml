@@ -8,21 +8,93 @@
     <authorId>miketoth
     </authorId>
     
-    <date>2009-08-17
+    <date>2009-08-18
     </date>
 
     <detail>
+      <scm:Change>
+        <date>2009-08-18
+        </date>
+      
+        <notes>
+          <scm:Note>Provide for dynamic HTML attribute generation
+          </scm:Note>
+          <scm:Note>Extend binding call to tags from all HTML components
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>AbstractTag.java
+          </URI>
+          <URI>AggregateEditor.java
+          </URI>
+          <URI>Button.java
+          </URI>
+          <URI>CheckboxInput.java
+          </URI>
+          <URI>Editor.java
+          </URI>
+          <URI>FileInput.java
+          </URI>
+          <URI>Form.java
+          </URI>
+          <URI>FormCommand.java
+          </URI>
+          <URI>HiddenInput.java
+          </URI>
+          <URI>ImageButton.java
+          </URI>
+          <URI>Link.java
+          </URI>
+          <URI>Login.java
+          </URI>
+          <URI>Option.java
+          </URI>
+          <URI>RadioButton.java
+          </URI>
+          <URI>RadioGroup.java
+          </URI>
+          <URI>Select.java
+          </URI>
+          <URI>SelectionEditor.java
+          </URI>
+          <URI>SubmitButton.java
+          </URI>
+          <URI>TextArea.java
+          </URI>
+          <URI>TextInput.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
       <scm:Change>
         <date>2009-08-17
         </date>
       
         <notes>
-          <scm:Note>Provide setter for StringConverter
+          <scm:Note>Provide setter for StringConverter 
+          </scm:Note>
+          <scm:Note>Derive StringConverter from target channel 
           </scm:Note>
         </notes>
         
-        <path>/source/spiralcraft/servlet/webui/components/AbstractTextControl.java
+        <path>/source/spiralcraft/servlet/webui/components/
         </path>
+        
+        <resources>
+          <URI>AbstractTextControl.java
+          </URI>
+          <URI>AbstractSelectControl.java
+          </URI>
+          <URI>AbstractSelectItemControl.java
+          </URI>
+        </resources>
         
       </scm:Change>
     </detail>
