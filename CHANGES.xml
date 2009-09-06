@@ -2,6 +2,40 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.18
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-09-06
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-08-18
+        </date>
+      
+        <notes>
+          <scm:Note>Add "trim" property to RequestBinding to trim whitespace 
+            from input before translating and assigning.
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>RequestBinding.java
+          </URI>
+
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>    
+  
+  <scm:Change>
     <revision>0.3.17
     </revision>
     
