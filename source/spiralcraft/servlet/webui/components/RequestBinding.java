@@ -53,6 +53,7 @@ public class RequestBinding<Tval>
   private Translator translator;
   private StringConverter<Tval> converter;
   private boolean assignment;
+  private boolean trim;
   
   private VariableMapBinding<Tval> binding;
 
@@ -72,6 +73,15 @@ public class RequestBinding<Tval>
   { this.name = name;
   }
 
+  /**
+   * Trim incoming and outgoing strings
+   * 
+   * @param trim
+   */
+  public void setTrim(boolean trim)
+  { this.trim=trim;
+  }
+  
   public Expression<Tval> getTarget()
   { return target;
   }
@@ -149,6 +159,7 @@ public class RequestBinding<Tval>
     }
     binding.setPassNull(passNull);
     binding.setDebug(debug);
+    binding.setTrim(trim);
     if (translator!=null)
     { binding.setTranslator(translator);
     }
