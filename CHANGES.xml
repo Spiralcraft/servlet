@@ -2,6 +2,46 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.19
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2009-09-08
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-09-08
+        </date>
+      
+        <notes>
+          <scm:Note>Enhance FormCommand to be useful in more situations by
+            adding a whenX condition and behaving as expected on all
+            combinations of name and whenX properties.
+          </scm:Note>
+          <scm:Note>Factored non HTML-specific behavior into AcceptorCommand
+            which will work with other Acceptor implementations.
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>html/FormCommand.java
+          </URI>
+          <URI>AcceptorCommand.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>    
+
+
+  <scm:Change>
     <revision>0.3.18
     </revision>
     
