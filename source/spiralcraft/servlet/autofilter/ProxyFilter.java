@@ -175,7 +175,9 @@ public class ProxyFilter
     { 
       proxyURL=request.getParameter(proxyURLParameter);
       if (proxyURL==null)
-      { httpResponse.sendError(404,"No proxy url");
+      { 
+        httpResponse.sendError(404,"No proxy url");
+        return;
       }
       
       absolute=URI.create(proxyURL).isAbsolute();
@@ -265,7 +267,9 @@ public class ProxyFilter
     {
       String authority=URI.create(url).getAuthority();
       if (!ArrayUtil.contains(permittedAuthorities,authority))
-      { httpResponse.sendError(500,"Unauthorized proxy URL "+url);
+      { 
+        httpResponse.sendError(403,"Forbidden proxy URL "+url);
+        return;
       }
     }
     
