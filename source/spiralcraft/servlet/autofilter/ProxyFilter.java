@@ -36,6 +36,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.html.URLEncoder;
+import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.ContextDictionary;
 // import spiralcraft.util.Path;
 // import spiralcraft.util.PathPattern;
@@ -51,10 +52,15 @@ public class ProxyFilter
   private boolean absolute;
   private boolean bound;
   private ParameterBinding<?>[] queryBindings;
+  private String[] permittedAuthorities;
+  private String proxyURLParameter;
   
   
 //  private PathPattern pattern;
 
+  /**
+   * A fixed base URL to which incoming requests will be routed. 
+   */
   public void setProxyURL(String url)
   { 
     this.proxyURL=url;
@@ -70,6 +76,25 @@ public class ProxyFilter
     }
     
     
+  }
+  
+  /**
+   * The URL query parameter which contains the encoded destination URL
+   * 
+   * @param proxyURLParameter
+   */
+  public void setProxyURLParameter(String proxyURLParameter)
+  { this.proxyURLParameter=proxyURLParameter;
+  }
+  
+  /**
+   * A list of authorities (ie. host or host:port ) that will be permitted
+   *   for forwarding.
+   * 
+   * @param authorities
+   */
+  public void setPermittedAuthorities(String[] permittedAuthorities)
+  { this.permittedAuthorities=permittedAuthorities;
   }
   
   public void setQueryBindings(ParameterBinding<?>[] queryBindings)
@@ -96,6 +121,13 @@ public class ProxyFilter
       { throw new BindException("No Focus");
       }
     }    
+    if (proxyURLParameter!=null && permittedAuthorities==null)
+    {
+      throw new BindException
+        ("permittedAuthorities must be specified when using proxyURLParameter" +
+          " to avoid unrestricted proxy"
+        );
+    }
     bound=true;
   }
   
@@ -132,10 +164,34 @@ public class ProxyFilter
     String url;
     HttpServletResponse httpResponse=(HttpServletResponse) response;
     
+    boolean absolute=this.absolute;
+    String proxyURL=this.proxyURL;
+    String queryString;
+
     String encodedRequestURI
       =URLEncoder.encode(httpRequest.getRequestURI()).substring(1);      
     
-    String queryString=httpRequest.getQueryString();
+    if (proxyURLParameter!=null)
+    { 
+      proxyURL=request.getParameter(proxyURLParameter);
+      if (proxyURL==null)
+      { httpResponse.sendError(404,"No proxy url");
+      }
+      
+      absolute=URI.create(proxyURL).isAbsolute();
+      
+      // Query is already contained in proxyURL
+      queryString=null;
+      
+    }
+    else
+    { 
+      queryString=httpRequest.getQueryString();
+
+    }
+    
+    
+    
     if (proxyQuery!=null)
     { queryString=queryString!=null?queryString+"&"+proxyQuery:proxyQuery;
     }
@@ -205,6 +261,29 @@ public class ProxyFilter
       }
     }
     
+    if (permittedAuthorities!=null)
+    {
+      String authority=URI.create(url).getAuthority();
+      if (!ArrayUtil.contains(permittedAuthorities,authority))
+      { httpResponse.sendError(500,"Unauthorized proxy URL "+url);
+      }
+    }
+    
+    doProxy(httpRequest,httpResponse,url);
+    
+    
+  }
+  
+  private void doProxy
+    (HttpServletRequest httpRequest
+    ,HttpServletResponse httpResponse
+    ,String url
+    )
+    throws IOException,ServletException
+  {
+    if (debug)
+    { log.debug("Connecting to "+url);
+    }
     URLConnection connection=new URL(url).openConnection();
     connection.setAllowUserInteraction(false);
     connection.setConnectTimeout(15000);
@@ -219,12 +298,17 @@ public class ProxyFilter
       connection.setDoInput(true);
       connection.connect();
       
-      
+      if (debug)
+      { log.debug("Connected to "+url);
+      }
       relayRequestContent(httpRequest,connection);
       
       setupResponse(httpResponse,connection);
       
       relayResponse(httpResponse,connection);
+      if (debug)
+      { log.debug("Completed "+url);
+      }
     }
     else if (httpRequest.getMethod().equals("GET"))
     {
@@ -232,13 +316,18 @@ public class ProxyFilter
       connection.setDoInput(true);
       connection.setDoOutput(false);
       connection.connect();
+      if (debug)
+      { log.debug("Connected to "+url);
+      }
       setupResponse(httpResponse,connection);
       relayResponse(httpResponse,connection);
+      if (debug)
+      { log.debug("Completed "+url);
+      }
     }
     else
     { throw new ServletException("Can't proxy a "+httpRequest.getMethod());
     }
-    
   }
 
   private void setupRequest

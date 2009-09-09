@@ -17,6 +17,42 @@
         </date>
       
         <notes>
+          <scm:Node>Added proxyURLParameter and permittedAuthorities to allow
+            client driven proxy forwarding for AJAX applications.
+          </scm:Node>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/autofilter/ProxyFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-09-08
+        </date>
+      
+        <notes>
+          <scm:Node>Made RootComponent the subject of the compound focus 
+            and made ServiceContext reachable only by URI to avoid issues 
+            caching transient ServiceContext.
+          </scm:Node>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>RootComponent.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-09-08
+        </date>
+      
+        <notes>
           <scm:Note>Enhance FormCommand to be useful in more situations by
             adding a whenX condition and behaving as expected on all
             combinations of name and whenX properties.
