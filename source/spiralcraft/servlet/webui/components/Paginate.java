@@ -27,6 +27,8 @@ import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.IterationCursor;
 import spiralcraft.lang.IterationDecorator;
+import spiralcraft.lang.ListDecorator;
+import spiralcraft.lang.Reflector;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.reflect.ArrayReflector;
 
@@ -41,7 +43,7 @@ import spiralcraft.util.ArrayUtil;
 
 
 /**
- * Provides common functionality for Editors
+ * Paginates data from a source
  * 
  * @author mike
  *
@@ -52,7 +54,10 @@ public class Paginate<Ttarget,Titem>
   private static final ClassLog log
     =ClassLog.getInstance(Login.class);
 
-  private IterationDecorator<Ttarget,Titem> decorator;
+  private IterationDecorator<Ttarget,Titem> iterationDecorator;
+  private ListDecorator<Ttarget,Titem> listDecorator;
+  private Reflector<Titem> componentReflector;
+  
   private int pageSize=10;
   
   @Override
@@ -135,20 +140,34 @@ public class Paginate<Ttarget,Titem>
     int count=0;
     
     ArrayList<Titem> list=new ArrayList<Titem>(state.getPageSize());
-    IterationCursor<Titem> cursor=decorator.iterator();
-    while (cursor.hasNext())
+
+    
+    if (listDecorator!=null)
     {
-      Titem item=cursor.next();
-      if (count>=start && count<start+state.getPageSize())
-      { list.add(item);
+      Ttarget targetList=target.get();
+      count=listDecorator.size(targetList);
+      int max=Math.min(start+state.getPageSize(),count);
+      for (int i=start;i<max;i++)
+      { list.add(listDecorator.get(targetList,i));
       }
-      count++;
+    }
+    else
+    {
+      IterationCursor<Titem> cursor=iterationDecorator.iterator();
+      while (cursor.hasNext())
+      {
+        Titem item=cursor.next();
+        if (count>=start && count<start+state.getPageSize())
+        { list.add(item);
+        }
+        count++;
+      }
     }
     state.setItemCount(count);
     Titem[] pageData
       =list.toArray
         ((Titem[]) Array.newInstance
-           (decorator.getComponentReflector().getContentType()
+           (componentReflector.getContentType()
             ,list.size()
            )
         );
@@ -182,25 +201,48 @@ public class Paginate<Ttarget,Titem>
   protected Focus<?> bindExports()
     throws BindException
   {
-    decorator
-      =((Channel<Ttarget>) getFocus().getSubject())
-        .<IterationDecorator>decorate
-          (IterationDecorator.class);
-        
-    if (decorator==null)
+    Channel<Ttarget> targetChannel=(Channel<Ttarget>) getFocus().getSubject();
+
+    
+    listDecorator
+      =targetChannel.<ListDecorator>decorate(ListDecorator.class);
+    
+    if (listDecorator!=null)
+    {
+      componentReflector
+        =listDecorator.getComponentReflector();
+
+    }
+    else
+    {
+    
+      iterationDecorator
+        =targetChannel.<IterationDecorator>decorate(IterationDecorator.class);
+    
+      if (iterationDecorator!=null)
+      {
+        componentReflector
+          =iterationDecorator.getComponentReflector();
+
+      }
+    }
+    
+    if (iterationDecorator==null && listDecorator==null)
     { 
       throw new BindException
-        ("Paginate target does not provide an IterationDecorator" +
+        ("Paginate target does not provide a ListDecorator or "
+        +" an IterationDecorator" +
         "- no means for traversing collection"
         );
     }
     if (debug)
-    { log.fine("decorator="+decorator);
+    { log.fine
+        ("decorator="+(listDecorator!=null?listDecorator:iterationDecorator));
     }
     
     Channel out
       =new AbstractChannel<Titem[]>
-      (ArrayReflector.<Titem>getInstance(decorator.getComponentReflector()))
+      (ArrayReflector.<Titem>getInstance(componentReflector))
         {
           @Override
           protected Titem[] retrieve()
