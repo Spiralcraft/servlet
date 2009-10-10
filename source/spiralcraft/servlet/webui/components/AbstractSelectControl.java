@@ -164,9 +164,9 @@ public class AbstractSelectControl<Ttarget,Tvalue>
         { log.fine("Got selection ["+val+"] for "+getVariableName());
         }
 
-        state.setValue(val);
-        if (target!=null)
-        { target.set(val);
+        
+        if (state.updateValue(val))
+        { conditionallyUpdateTarget(val);
         }
       }
       catch (AccessException x)

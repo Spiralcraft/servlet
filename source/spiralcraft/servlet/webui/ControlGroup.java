@@ -453,9 +453,8 @@ public abstract class ControlGroup<Ttarget>
     {
       try
       {
-        if (target.isWritable())
-        { target.set(state.getValue());
-        }
+        
+        conditionallyUpdateTarget(state.getValue());
         state.setDataState(DataState.GATHERED);
       } 
       catch (AccessException x)
@@ -464,6 +463,8 @@ public abstract class ControlGroup<Ttarget>
     }
 
   }
+  
+
 
   @Override
   public ControlGroupState<Ttarget> createState()

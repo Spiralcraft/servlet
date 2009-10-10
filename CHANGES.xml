@@ -2,6 +2,56 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.3.21
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>?????
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-10-10
+        </date>
+      
+        <notes>
+          <scm:Note>Conditionally update webui Control binding target only 
+            when data has changed from existing target value. "forceUpdate"
+            property to override this default behavior.
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>Control.java</URI>
+          <URI>ControlGroup.java</URI>
+          <URI>components/AbstractSelectControl.java</URI>
+          <URI>components/AbstractTextControl.java</URI>
+          <URI>components/html/CheckboxInput.java</URI>
+        
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
+        <date>2009-10-10
+        </date>
+        
+        <notes>
+          <scm:Note>Minor code consolidation for creating new buffer
+          </scm:Note>
+        </notes>
+      
+        <path>/source/spiralcraft/servlet/webui/components/Editor.java
+        </path>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.20
     </revision>
     

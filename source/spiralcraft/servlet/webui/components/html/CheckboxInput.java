@@ -170,10 +170,10 @@ public class CheckboxInput
           try
           { 
             if (!reverse)
-            { target.set(value);
+            { conditionallyUpdateTarget(value);
             }
             else
-            { target.set(!value);
+            { conditionallyUpdateTarget(!value);
             }
           }
           catch (AccessException x)

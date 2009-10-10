@@ -70,6 +70,8 @@ public abstract class Control<Ttarget>
   
   private boolean contextualizeName=true;
   
+  private boolean forceUpdate;
+  
   /**
    * <p>The binding target expression that represents the "model" that this
    *   Control provides a view for.
@@ -99,6 +101,35 @@ public abstract class Control<Ttarget>
    */
   public void setContextualizeName(boolean contextualizeName)
   { this.contextualizeName=contextualizeName;
+  }
+
+  /**
+   * <p>Instructs the control to apply the edited value to the target binding 
+   *   regardless of whether the value has changed.
+   * </p>
+   * 
+   * <p>By default, this is set to false, and the edited value is only
+   *   applied to the target binding if it is different than the current 
+   *   value of the binding. 
+   * </p>
+   * 
+   * <p>Since values are normally posted back from client
+   *   side controls whether they are edited or not, leaving this set to
+   *   false will minimize the amount of "dirty" data that must be propagated
+   *   through the system as well as reducing the chance of data
+   *   modification conflicts. 
+   * </p>
+   * 
+   * <p>Setting this to true will propagate any gathered value whether or not 
+   *   it has actually changed.
+   * </p>
+   *   
+   *   
+   *   
+   * @param forceUpdate
+   */
+  public void setForceUpdate(boolean forceUpdate)
+  { this.forceUpdate=forceUpdate;
   }
   
   /**
@@ -311,6 +342,74 @@ public abstract class Control<Ttarget>
           );
       }
     }
+    
+  }
+  
+  /**
+   * Update the bound target if the target is writable and the new value
+   *   is different from the existing target value
+   *   
+   * @param newValue
+   * @return
+   */
+  protected boolean conditionallyUpdateTarget(Ttarget newVal)
+  {
+    if (target==null)
+    { 
+      if (debug)
+      { this.logFine("Target is null, nothing to update");
+      }
+      return false;
+    }
+    else if (forceUpdate)
+    { 
+      target.set(newVal);
+      if (debug)
+      { this.logFine("Target update forced ->  "+newVal);
+      }
+      return true;
+    }
+    else if (target.isWritable())
+    { 
+      Ttarget oldVal=target.get();
+          
+      // Only update if referred-to value is different
+      if ( oldVal!=newVal
+           && (oldVal==null 
+              || newVal==null 
+              || !oldVal.equals(newVal)
+              )
+         )
+      { 
+        target.set(newVal);
+        if (debug)
+        {
+          if (oldVal!=null)
+          { this.logFine("Target value updated "+oldVal+"  ->  "+newVal);
+          }
+              
+        }
+        return true;
+      }
+      else
+      {
+        if (debug)
+        {
+          if (oldVal!=null)
+          { this.logFine("Target value not changed");
+          }
+        }
+        return false;
+      }
+    }
+    else
+    { 
+      if (debug)
+      { this.logFine("Target is not writable, not updated");
+      }
+      return false;
+    }
+    
     
   }
   

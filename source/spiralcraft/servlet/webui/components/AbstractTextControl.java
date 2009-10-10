@@ -192,7 +192,7 @@ public abstract class AbstractTextControl<Ttarget>
             { tval=(Ttarget) val;
             }
             if (inspect(tval,state))
-            { target.set(tval);
+            { conditionallyUpdateTarget(tval);
             }
           
           }
