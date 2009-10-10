@@ -444,13 +444,7 @@ public abstract class Editor
     if (type.isAggregate())
     {
       if (getState().getValue()==null)
-      {
-        // Create the aggregate buffer if none
-        getState().setValue
-          (sessionChannel.get().newBuffer(type)
-          );
-        bufferChannel.set(getState().getValue());
-
+      { newBuffer();
       }
 
       // Add a Tuple to the list
