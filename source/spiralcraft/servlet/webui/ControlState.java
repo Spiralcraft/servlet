@@ -176,9 +176,9 @@ public class ControlState<Tbuf>
   }
   
   /**
-   * <p>Update the value, resetting any error and indicating whether the value
-   *   should be propogated. If there is no change to the value (according to
-   *   a comparison using .equals()), this method will return false.
+   * <p>Update the value and indicate whether the value
+   *   should be propagated. The default implementation
+   *   always returns true.
    * </p>
    * 
    * 
@@ -190,40 +190,6 @@ public class ControlState<Tbuf>
   { 
     this.value=value;
     return true;
-    
-//    if (isErrorState())
-//    { 
-//      this.value=value;
-//      resetError();
-//      return true;
-//    }
-//    else
-//    { 
-//      if (this.value==null)
-//      {
-//        if (value!=null)
-//        { 
-//          this.value=value;
-//          return true;
-//        }
-//        else
-//        { return false;
-//        }
-//      }
-//      else if (value==null)
-//      { 
-//        this.value=null;
-//        return true;
-//      }
-//      else if (!this.value.equals(value))
-//      { 
-//        this.value=value;
-//        return true;
-//      }
-//      else
-//      { return false;
-//      }
-//    }    
   }
   
   public Tbuf getValue()
