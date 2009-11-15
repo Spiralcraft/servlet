@@ -14,7 +14,6 @@
 //
 package spiralcraft.servlet;
 
-import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.BindException;
 
@@ -56,7 +55,7 @@ import javax.servlet.http.HttpSession;
  * @author mike
  */
 public class HttpFocus<T>
-  extends CompoundFocus<T>
+  extends SimpleFocus<T>
 {
 
   private ThreadLocalChannel<ServletContext> servletContextBinding;
@@ -74,38 +73,28 @@ public class HttpFocus<T>
     
     SimpleFocus<ServletContext> servletContextFocus
       =new SimpleFocus<ServletContext>(servletContextBinding);
-    bindFocus
-      (ServletContext.class.getName()
-      ,servletContextFocus
-      );
+    addFacet(servletContextFocus);
     
     
     sessionBinding=new ThreadLocalChannel<HttpSession>
       (BeanReflector.<HttpSession>getInstance(HttpSession.class));
     SimpleFocus<HttpSession> sessionFocus
       =new SimpleFocus<HttpSession>(sessionBinding);
-    bindFocus
-      (HttpSession.class.getName()
-      ,sessionFocus
-      );
+    addFacet(sessionFocus);
     
     requestBinding=new ThreadLocalChannel<HttpServletRequest>
       (BeanReflector.<HttpServletRequest>getInstance(HttpServletRequest.class));
     SimpleFocus<HttpServletRequest> requestFocus
       =new SimpleFocus<HttpServletRequest>(requestBinding);
-    bindFocus
-      (HttpServletRequest.class.getName()
-      ,requestFocus
+    addFacet
+      (requestFocus
       );
 
     responseBinding=new ThreadLocalChannel<HttpServletResponse>
       (BeanReflector.<HttpServletResponse>getInstance(HttpServletResponse.class));
     SimpleFocus<HttpServletResponse> responseFocus
       =new SimpleFocus<HttpServletResponse>(responseBinding);
-    bindFocus
-      (HttpServletResponse.class.getName()
-      ,responseFocus
-      );
+    addFacet(responseFocus);
   }
   
   

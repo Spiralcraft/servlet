@@ -23,7 +23,7 @@ import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
-import spiralcraft.lang.CompoundFocus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.IterationCursor;
 import spiralcraft.lang.IterationDecorator;
@@ -52,11 +52,12 @@ public class Paginate<Ttarget,Titem>
   extends ControlGroup<Ttarget>
 {
   private static final ClassLog log
-    =ClassLog.getInstance(Login.class);
+    =ClassLog.getInstance(Paginate.class);
 
   private IterationDecorator<Ttarget,Titem> iterationDecorator;
   private ListDecorator<Ttarget,Titem> listDecorator;
   private Reflector<Titem> componentReflector;
+  private String resetActionName;
   
   private int pageSize=10;
   
@@ -72,6 +73,10 @@ public class Paginate<Ttarget,Titem>
   
   public int getPageSize()
   { return pageSize;
+  }
+  
+  public void setResetActionName(String resetActionName)
+  { this.resetActionName=resetActionName;
   }
   
   @Override
@@ -91,7 +96,11 @@ public class Paginate<Ttarget,Titem>
   protected Action createResetAction(EventContext context)
   {
     String actionName
-      =getClass().getName()+(getId()!=null?"."+getId():"")+".reset";
+      =resetActionName==null
+      ?getClass().getName()+(getId()!=null?"."+getId():"")+".reset"
+      :resetActionName
+      ;
+      
     if (debug)
     { log.fine("Creating action "+actionName);
     }
@@ -255,11 +264,11 @@ public class Paginate<Ttarget,Titem>
           }
         };
     
-    CompoundFocus compoundFocus
-      =new CompoundFocus(getFocus(),out);
+    SimpleFocus compoundFocus
+      =new SimpleFocus(getFocus(),out);
     
-    compoundFocus.bindFocus
-      ("spiralcraft.servlet.webui",this.getAssembly().getFocus());
+    compoundFocus.addFacet
+      (this.getAssembly().getFocus());
     
     return compoundFocus;
   }

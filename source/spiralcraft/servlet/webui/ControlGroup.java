@@ -26,8 +26,8 @@ import spiralcraft.lang.BindException;
 
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.AccessException;
+import spiralcraft.lang.SimpleFocus;
 
 import spiralcraft.lang.spi.AbstractChannel;
 
@@ -327,8 +327,8 @@ public abstract class ControlGroup<Ttarget>
           
       // Expose the expression target as the new Focus, and add the
       // assembly in as another layer
-      CompoundFocus myFocus = new CompoundFocus(parentFocus, valueBinding);
-      myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
+      SimpleFocus myFocus = new SimpleFocus(parentFocus, valueBinding);
+      myFocus.addFacet(getAssembly().getFocus());
       focus=myFocus;
       bindRules(target.getReflector(),focus);
     } 
@@ -339,8 +339,8 @@ public abstract class ControlGroup<Ttarget>
       if (debug)
       { logFine("No Channel created, using parent focus");
       }
-      CompoundFocus myFocus = new CompoundFocus(parentFocus, null);
-      myFocus.bindFocus("spiralcraft.servlet.webui", getAssembly().getFocus());
+      SimpleFocus myFocus = new SimpleFocus(parentFocus, null);
+      myFocus.addFacet(getAssembly().getFocus());
       focus=myFocus;
       bindRules
         (((Channel<Ttarget>) parentFocus.getSubject()).getReflector()

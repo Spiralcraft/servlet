@@ -30,7 +30,6 @@ import spiralcraft.time.Clock;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
@@ -81,8 +80,8 @@ public class RootComponent
     if (debug)
     { log.fine("bind");
     }
-    CompoundFocus compoundFocus
-      =new CompoundFocus
+    SimpleFocus compoundFocus
+      =new SimpleFocus
         (focus
         ,new SimpleChannel(this,true)
         );
@@ -90,8 +89,8 @@ public class RootComponent
     threadLocal 
       = new ThreadLocalChannel<ServiceContext>
         (BeanReflector.<ServiceContext>getInstance(ServiceContext.class));
-    compoundFocus.bindFocus
-      ("spiralcraft.servlet.webui", new SimpleFocus(threadLocal));
+    compoundFocus.addFacet
+      (new SimpleFocus(threadLocal));
     super.bind(childUnits);
   }
   /**

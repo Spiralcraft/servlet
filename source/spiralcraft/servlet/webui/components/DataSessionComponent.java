@@ -29,10 +29,10 @@ import spiralcraft.data.session.DataSessionFocus;
 
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 
@@ -56,7 +56,7 @@ public class DataSessionComponent
   private RequestBinding<?>[] requestBindings;
   
   private ThreadLocalChannel<DataSession> dataSessionChannel;
-  private CompoundFocus<DataComposite> dataFocus;
+  private Focus<DataComposite> dataFocus;
   private Assignment<?>[] defaultAssignments;
   private Assignment<?>[] assignments;
   private Setter<?>[] defaultSetters;
@@ -92,10 +92,10 @@ public class DataSessionComponent
     if (type!=null)
     {
       // Pull the data from the dataSession focus
-      dataFocus=new CompoundFocus
+      dataFocus=new SimpleFocus
         (dataSessionFocus,dataSessionFocus.findFocus(type.getURI()).getSubject());
     
-      dataFocus.bindFocus("spiralcraft.data",dataSessionFocus);
+      dataFocus.addFacet(dataSessionFocus);
     }
     defaultSetters=bindAssignments(defaultAssignments);
     setters=bindAssignments(assignments);

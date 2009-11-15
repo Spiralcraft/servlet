@@ -23,9 +23,9 @@ import spiralcraft.util.string.StringConverter;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
-import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.SimpleFocus;
 
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -91,7 +91,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   public Focus<?> bindExports()
     throws BindException
   { 
-    Focus<?> focus=new CompoundFocus(getFocus(),source);
+    Focus<?> focus=new SimpleFocus(getFocus(),source);
     return focus; 
   }
   

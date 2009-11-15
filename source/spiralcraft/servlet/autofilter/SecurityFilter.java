@@ -32,8 +32,8 @@ import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.CompoundFocus;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 
@@ -354,10 +354,9 @@ public class SecurityFilter
       =new ThreadLocalChannel<AuthSession>
         (BeanReflector.<AuthSession>getInstance(AuthSession.class));
     
-    CompoundFocus<AuthSession> authSessionFocus
-      =new CompoundFocus<AuthSession>(parentFocus,authSessionChannel);
-    authSessionFocus.bindFocus
-      (cookieName,new BeanFocus<SecurityFilter>(this));
+    SimpleFocus<AuthSession> authSessionFocus
+      =new SimpleFocus<AuthSession>(parentFocus,authSessionChannel);
+    authSessionFocus.addFacet(new BeanFocus<SecurityFilter>(this));
     authenticator.bind(authSessionFocus);
     return authSessionFocus;
   }

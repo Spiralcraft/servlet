@@ -28,7 +28,7 @@ import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
-import spiralcraft.lang.CompoundFocus;
+import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.security.auth.AuthSession;
@@ -65,7 +65,7 @@ public class Guard
 
   private Channel<AuthSession> sessionChannel;
   private URI loginURI;
-  private CompoundFocus<?> focus;
+  private Focus<?> focus;
 
   @Override
   public Focus<?> getFocus()
@@ -93,8 +93,8 @@ public class Guard
   { 
     Focus<?> parentFocus=getParent().getFocus();
     setupSession(parentFocus);
-    focus=new CompoundFocus(parentFocus,sessionChannel);
-    focus.bindFocus("spiralcraft.builder", getAssembly().getFocus());
+    focus=new SimpleFocus(parentFocus,sessionChannel);
+    focus.addFacet(getAssembly().getFocus());
     super.bind(childUnits);
   }  
   
