@@ -8,10 +8,63 @@
     <authorId>miketoth
     </authorId>
     
-    <date>?????
+    <date>2009-11-15
     </date>
 
     <detail>
+    
+      <scm:Change>
+        <date>2009-11-15
+        </date>
+      
+        <notes>
+          <scm:Note>Refactor off of deprecated CompoundFocus
+          </scm:Note>
+          <scm:Note>StaticsFilter is obsolete
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>HttpFocus.java
+          </URI>
+          <URI>autofilter/SecurityFilter.java
+          </URI>
+          <URI>autofilter/StaticsFilter.java
+          </URI>
+          <URI>webui/ControlGroup.java
+          </URI>
+          <URI>webui/RootComponent.java
+          </URI>
+          <URI>webui/components/AbstractSelectControl.java
+          </URI>
+          <URI>webui/components/DataSessionComponent.java
+          </URI>
+          <URI>webui/components/Guard.java
+          </URI>
+          <URI>webui/components/Paginate.java
+          </URI>
+          
+        </resources>
+      
+      </scm:Change>
+      
+      <scm:Change>
+        <date>2009-11-15
+        </date>
+      
+        <notes>
+          <scm:Note>The Paginator now has a resetActionName property.
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/Paginate.java
+        </path>
+        
+      </scm:Change>
+
       <scm:Change>
         <date>2009-10-10
         </date>
