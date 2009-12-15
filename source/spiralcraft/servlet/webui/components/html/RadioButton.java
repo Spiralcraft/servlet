@@ -49,8 +49,8 @@ public class RadioButton<Ttarget,Tvalue>
 {
 
   
-  private AbstractTag tag
-    =new AbstractTag()
+  class Tag 
+    extends AbstractTag
   {
     @Override
     protected String getTagName(EventContext context)
@@ -107,7 +107,17 @@ public class RadioButton<Ttarget,Tvalue>
     
   };
   
+  private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag(tag);
+  
+  public Tag getTag()
+  { return tag;
+  }
+  
+  public ErrorTag getErrorTag()
+  { return errorTag;
+  }
+    
   
   @Override
   @SuppressWarnings("unchecked")
