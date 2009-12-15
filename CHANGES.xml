@@ -18,6 +18,30 @@
         </date>
       
         <notes>
+          <scm:Note>Provide "dirtyNew" property so Editor triggers on-save
+            assignments even when no input was provided.
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>EditorBase.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+          <URI>AggregateEditor.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        <date>2009-12-15
+        </date>
+      
+        <notes>
           <scm:Note>Refactor Scenario and Command usage for 0.4 changes
           </scm:Note>
 
