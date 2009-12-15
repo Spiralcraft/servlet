@@ -149,9 +149,9 @@ public class SMTP
 
   }  
   
-  public Command<Envelope,Void> sendCommand()
+  public Command<Envelope,Void,Void> sendCommand()
   {     
-    return new CommandAdapter<Envelope,Void>()
+    return new CommandAdapter<Envelope,Void,Void>()
     { 
       @Override
       public void run()
@@ -160,9 +160,9 @@ public class SMTP
     };
   }  
 
-  public Command<Envelope,Void> sendCommand(final Command<?,?> successCommand)
+  public Command<Envelope,Void,Void> sendCommand(final Command<?,?,?> successCommand)
   {     
-    return new CommandAdapter<Envelope,Void>()
+    return new CommandAdapter<Envelope,Void,Void>()
     { 
       @Override
       public void run()

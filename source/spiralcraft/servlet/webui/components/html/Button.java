@@ -42,7 +42,7 @@ import spiralcraft.net.http.VariableMap;
  *
  */
 public class Button
-  extends Control<Command<?,?>>
+  extends Control<Command<?,?,?>>
 {
 
   private String name;
@@ -112,8 +112,8 @@ public class Button
   }
   
   @Override
-  public ControlState<Command<?,?>> createState()
-  { return new ControlState<Command<?,?>>(this);
+  public ControlState<Command<?,?,?>> createState()
+  { return new ControlState<Command<?,?,?>>(this);
   }
 
   @Override

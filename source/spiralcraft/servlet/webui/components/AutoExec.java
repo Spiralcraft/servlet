@@ -38,7 +38,7 @@ import spiralcraft.servlet.webui.ServiceContext;
  *
  */
 public class AutoExec
-  extends Control<Command<?,?>>
+  extends Control<Command<?,?,?>>
 {
   
 
@@ -108,7 +108,7 @@ public class AutoExec
   
     if (whenChannel==null || Boolean.TRUE.equals(whenChannel.get()))
     {
-      Command<?,?> command=target.get();
+      Command<?,?,?> command=target.get();
       if (command!=null)
       {
         if (debug)
@@ -154,7 +154,7 @@ public class AutoExec
 }
 
 class CommandState
-  extends ControlState<Command<?,?>>
+  extends ControlState<Command<?,?,?>>
 {
   private boolean bypass;
   

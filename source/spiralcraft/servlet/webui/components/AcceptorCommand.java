@@ -52,7 +52,7 @@ import spiralcraft.net.http.VariableMap;
  *
  */
 public class AcceptorCommand
-  extends Control<Command<?,?>>
+  extends Control<Command<?,?,?>>
 {
 
   private String name;
@@ -86,8 +86,8 @@ public class AcceptorCommand
   
   
   @Override
-  public ControlState<Command<?,?>> createState()
-  { return new ControlState<Command<?,?>>(this);
+  public ControlState<Command<?,?,?>> createState()
+  { return new ControlState<Command<?,?,?>>(this);
   }
   
   @Override

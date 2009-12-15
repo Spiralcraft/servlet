@@ -419,10 +419,10 @@ public abstract class Control<Ttarget>
   { 
    
     ControlState<Ttarget> state = (ControlState<Ttarget>) context.getState();
-    List<Command<Ttarget,?>> commands=state.dequeueCommands();
+    List<Command<Ttarget,?,?>> commands=state.dequeueCommands();
     if (commands!=null && commands.size()>0)
     {
-      for (Command<Ttarget,?> command : commands)
+      for (Command<Ttarget,?,?> command : commands)
       {
         log.warning
           ("Unexecuted command queued post-prepare- results may not "
@@ -622,12 +622,12 @@ public abstract class Control<Ttarget>
   {
     ControlState<Ttarget> state=((ControlState<Ttarget>) context.getState());
     
-    List<Command<Ttarget,?>> commands
+    List<Command<Ttarget,?,?>> commands
       =state.dequeueCommands();
     
     while (commands!=null)
     {
-      for (Command<Ttarget,?> command : commands)
+      for (Command<Ttarget,?,?> command : commands)
       { 
         if (debug)
         { logFine("Executing "+command.toString());

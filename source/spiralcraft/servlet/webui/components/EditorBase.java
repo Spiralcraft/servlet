@@ -115,7 +115,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
             else
             {
               // Run post-save command on ascent
-              Command<?,?> postSaveCommand=state.getPostSaveCommand();
+              Command<?,?,?> postSaveCommand=state.getPostSaveCommand();
               if (postSaveCommand!=null)
               { 
                 if (!state.isErrorState())
@@ -425,11 +425,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     return state.getValue()!=null && state.getValue().isDirty();
   }
                      
-  public Command<Tbuffer,Void> redirectCommand(final String redirectURI)
+  public Command<Tbuffer,Void,Void> redirectCommand(final String redirectURI)
   {
-    return new QueuedCommand<Tbuffer,Void>
+    return new QueuedCommand<Tbuffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Tbuffer,Void>()
+      ,new CommandAdapter<Tbuffer,Void,Void>()
         {
           { name="redirect";
           }
@@ -444,11 +444,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       );
   }
   
-  public Command<Tbuffer,Void> redirectCommand()
+  public Command<Tbuffer,Void,Void> redirectCommand()
   {
-    return new QueuedCommand<Tbuffer,Void>
+    return new QueuedCommand<Tbuffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Tbuffer,Void>()
+      ,new CommandAdapter<Tbuffer,Void,Void>()
         {
           { name="redirect";
           }
@@ -461,11 +461,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       );
   }
   
-  public Command<Tbuffer,Void> revertCommand()
+  public Command<Tbuffer,Void,Void> revertCommand()
   { 
-    return new QueuedCommand<Tbuffer,Void>
+    return new QueuedCommand<Tbuffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Tbuffer,Void>()
+      ,new CommandAdapter<Tbuffer,Void,Void>()
         {
           { name="revert";
           }
@@ -478,11 +478,12 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       );
   }
 
-  public Command<Tbuffer,Void> revertCommand(final Command<?,?> chainedCommand)
+  public Command<Tbuffer,Void,Void> 
+    revertCommand(final Command<?,?,?> chainedCommand)
   { 
-    return new QueuedCommand<Tbuffer,Void>
+    return new QueuedCommand<Tbuffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Tbuffer,Void>()
+      ,new CommandAdapter<Tbuffer,Void,Void>()
         {
           { name="revert";
           }
@@ -502,11 +503,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    * 
    * @return the Save command
    */
-  public Command<Tbuffer,Void> saveCommand()
+  public Command<Tbuffer,Void,Void> saveCommand()
   {     
-    return new QueuedCommand<Tbuffer,Void>
+    return new QueuedCommand<Tbuffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Tbuffer,Void>()
+      ,new CommandAdapter<Tbuffer,Void,Void>()
         { 
           { name="save";
           }
@@ -524,18 +525,18 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
   
   @SuppressWarnings("unchecked") // Command block doesn't care about types
-  public Command<Tbuffer,Void> saveCommand
+  public Command<Tbuffer,Void,Void> saveCommand
     (final List<Command> postSaveCommandList)
   {
     
     return saveCommand(new CommandBlock(postSaveCommandList));
   }
       
-  public Command<Tbuffer,Void> saveCommand(final Command<?,?> postSaveCommand)
+  public Command<Tbuffer,Void,Void> saveCommand(final Command<?,?,?> postSaveCommand)
   { 
-    return new QueuedCommand<Tbuffer,Void>
+    return new QueuedCommand<Tbuffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Tbuffer,Void>()
+      ,new CommandAdapter<Tbuffer,Void,Void>()
         { 
           { name="save";
           }
@@ -559,12 +560,12 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    * 
    * @return A new Command
    */
-  public Command<Tbuffer,Void> clearCommand()
+  public Command<Tbuffer,Void,Void> clearCommand()
   { 
 
-    return new QueuedCommand<Tbuffer,Void>
+    return new QueuedCommand<Tbuffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Tbuffer,Void>()
+      ,new CommandAdapter<Tbuffer,Void,Void>()
         { 
           { name="clear";
           }
@@ -579,11 +580,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
 
 
-  public Command<Tbuffer,Void> newCommand()
+  public Command<Tbuffer,Void,Void> newCommand()
   {
-    return new QueuedCommand<Tbuffer,Void>
+    return new QueuedCommand<Tbuffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Tbuffer,Void>()
+      ,new CommandAdapter<Tbuffer,Void,Void>()
         { 
           { name="new";
           }
@@ -841,7 +842,7 @@ class EditorState<T extends Buffer>
   
   private boolean redirect;
   private URI redirectURI;
-  private Command<?,?> postSaveCommand;
+  private Command<?,?,?> postSaveCommand;
   
   public EditorState(EditorBase<T> editor)
   { super(editor);
@@ -863,11 +864,11 @@ class EditorState<T extends Buffer>
   { return redirectURI;
   }
   
-  public Command<?,?> getPostSaveCommand()
+  public Command<?,?,?> getPostSaveCommand()
   { return postSaveCommand;
   }
   
-  public void setPostSaveCommand(Command<?,?> postSaveCommand)
+  public void setPostSaveCommand(Command<?,?,?> postSaveCommand)
   { this.postSaveCommand=postSaveCommand;
   }
 

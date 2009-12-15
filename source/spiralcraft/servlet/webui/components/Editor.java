@@ -255,11 +255,11 @@ public abstract class Editor
     return state.getValue()!=null && state.getValue().isDirty();
   }
                      
-  public Command<Buffer,Void> revertCommand()
+  public Command<Buffer,Void,Void> revertCommand()
   { 
-    return new QueuedCommand<Buffer,Void>
+    return new QueuedCommand<Buffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Buffer,Void>()
+      ,new CommandAdapter<Buffer,Void,Void>()
         {
           @Override
           public void run()
@@ -269,15 +269,15 @@ public abstract class Editor
       );
   }
 
-  public Command<Buffer,Void> saveCommand()
+  public Command<Buffer,Void,Void> saveCommand()
   { 
     if (phantom)
     { throw new IllegalStateException("Cannot save a phantom Editor");
     }
     
-    return new QueuedCommand<Buffer,Void>
+    return new QueuedCommand<Buffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Buffer,Void>()
+      ,new CommandAdapter<Buffer,Void,Void>()
         { 
           @Override
           public void run()
@@ -294,15 +294,15 @@ public abstract class Editor
    * 
    * @return A new Command
    */
-  public Command<Buffer,Void> saveAndClearCommand()
+  public Command<Buffer,Void,Void> saveAndClearCommand()
   { 
     if (phantom)
     { throw new IllegalStateException("Cannot save a phantom Editor");
     }
 
-    return new QueuedCommand<Buffer,Void>
+    return new QueuedCommand<Buffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Buffer,Void>()
+      ,new CommandAdapter<Buffer,Void,Void>()
         { 
           @Override
           public void run()
@@ -311,7 +311,7 @@ public abstract class Editor
             
             // Executes after the message is processed down the chain.
             getState().queueCommand
-              (new CommandAdapter<Buffer,Void>()
+              (new CommandAdapter<Buffer,Void,Void>()
               {
                 @Override
                 public void run()
@@ -334,11 +334,11 @@ public abstract class Editor
    * 
    * @return A new Command
    */
-  public Command<Buffer,Void> addAndClearCommand()
+  public Command<Buffer,Void,Void> addAndClearCommand()
   { 
-    return new QueuedCommand<Buffer,Void>
+    return new QueuedCommand<Buffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Buffer,Void>()
+      ,new CommandAdapter<Buffer,Void,Void>()
         { 
           @Override
           public void run()
@@ -351,11 +351,11 @@ public abstract class Editor
       );
   }
 
-  public Command<Buffer,Void> newCommand()
+  public Command<Buffer,Void,Void> newCommand()
   {
-    return new QueuedCommand<Buffer,Void>
+    return new QueuedCommand<Buffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Buffer,Void>()
+      ,new CommandAdapter<Buffer,Void,Void>()
         { 
           @Override
           public void run()
@@ -372,11 +372,11 @@ public abstract class Editor
       );
   }
 
-  public Command<Buffer,Void> addNewCommand()
+  public Command<Buffer,Void,Void> addNewCommand()
   {
-    return new QueuedCommand<Buffer,Void>
+    return new QueuedCommand<Buffer,Void,Void>
       (getState()
-      ,new CommandAdapter<Buffer,Void>()
+      ,new CommandAdapter<Buffer,Void,Void>()
         { 
           @Override
           public void run()

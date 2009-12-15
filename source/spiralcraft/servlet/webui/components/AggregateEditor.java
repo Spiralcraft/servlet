@@ -72,12 +72,12 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   private boolean contentRequired;
   private String contentRequiredMessage="At least one entry is required";
   
-  public Command<BufferAggregate<BufferTuple,Tcontent>,Void> 
+  public Command<BufferAggregate<BufferTuple,Tcontent>,Void,Void> 
     addNewCommand()
   {
-    return new QueuedCommand<BufferAggregate<BufferTuple,Tcontent>,Void>
+    return new QueuedCommand<BufferAggregate<BufferTuple,Tcontent>,Void,Void>
       (getState()
-      ,new CommandAdapter<BufferAggregate<BufferTuple,Tcontent>,Void>()
+      ,new CommandAdapter<BufferAggregate<BufferTuple,Tcontent>,Void,Void>()
         { 
           @Override
           public void run()

@@ -48,12 +48,12 @@ public class Link
   extends Component
 {
   
-  private Expression<Command<?,?>> commandExpression;
-  private Channel<Command<?,?>> commandChannel;
+  private Expression<Command<?,?,?>> commandExpression;
+  private Channel<Command<?,?,?>> commandChannel;
   private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag(tag);
   
-  public void setX(Expression<Command<?,?>> expression)
+  public void setX(Expression<Command<?,?,?>> expression)
   { commandExpression=expression;
   }
   
@@ -135,7 +135,7 @@ public class Link
 
     return new Action(pathString,path)
     {
-      Command<?,?> command=commandChannel!=null?commandChannel.get():null;
+      Command<?,?,?> command=commandChannel!=null?commandChannel.get():null;
       
       @Override
       public void invoke(ServiceContext context)

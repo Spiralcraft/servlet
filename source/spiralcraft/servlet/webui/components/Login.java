@@ -135,11 +135,11 @@ public class Login
     }
   }
 
-  public Command<LoginEntry,Void> loginCommand()
+  public Command<LoginEntry,Void,Void> loginCommand()
   {     
-    return new QueuedCommand<LoginEntry,Void>
+    return new QueuedCommand<LoginEntry,Void,Void>
       (getState()
-      ,new CommandAdapter<LoginEntry,Void>()
+      ,new CommandAdapter<LoginEntry,Void,Void>()
         { 
           @Override
           public void run()
@@ -149,11 +149,11 @@ public class Login
       );
   }
   
-  public Command<LoginEntry,Void> loginCommand(final Command<?,?> onSuccess)
+  public Command<LoginEntry,Void,Void> loginCommand(final Command<?,?,?> onSuccess)
   {     
-    return new QueuedCommand<LoginEntry,Void>
+    return new QueuedCommand<LoginEntry,Void,Void>
       (getState()
-      ,new CommandAdapter<LoginEntry,Void>()
+      ,new CommandAdapter<LoginEntry,Void,Void>()
         { 
           @Override
           public void run()

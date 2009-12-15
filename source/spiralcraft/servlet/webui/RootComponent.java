@@ -167,10 +167,10 @@ public class RootComponent
     }
   }
   
-  public Command<?,?> actionCommand(final String actionName)
+  public Command<?,?,?> actionCommand(final String actionName)
   {
-    Command<ServiceContext,Void> ret
-      =new CommandAdapter<ServiceContext,Void>()
+    Command<ServiceContext,Void,Void> ret
+      =new CommandAdapter<ServiceContext,Void,Void>()
       { 
         @Override
         public void run()
@@ -181,9 +181,9 @@ public class RootComponent
     return ret;
   }
   
-  public Command<Void,Void> redirectCommand(final String redirectURI)
+  public Command<Void,Void,Void> redirectCommand(final String redirectURI)
   {
-    return new CommandAdapter<Void,Void>()
+    return new CommandAdapter<Void,Void,Void>()
     {
       { name="redirect";
       }

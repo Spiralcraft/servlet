@@ -235,10 +235,10 @@ public class ServiceContext
   }
   
 
-  public Command<Void,Void> redirectCommand(final String uriString)
+  public Command<Void,Void,Void> redirectCommand(final String uriString)
   { 
     final URI uri=URI.create(uriString);
-    return new CommandAdapter<Void,Void>()
+    return new CommandAdapter<Void,Void,Void>()
     {
       @Override
       public void run()

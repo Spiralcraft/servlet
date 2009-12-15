@@ -25,26 +25,26 @@ import spiralcraft.log.ClassLog;
  * @author mike
  *
  */
-public class QueuedCommand<Ttarget,Tresult>
-  extends CommandAdapter<Ttarget,Tresult>
+public class QueuedCommand<Ttarget,Tcontext,Tresult>
+  extends CommandAdapter<Ttarget,Tcontext,Tresult>
 {
   private static final ClassLog log
     =ClassLog.getInstance(QueuedCommand.class);
   private static boolean debug;
   
   private final ControlGroupState<Ttarget> state;
-  private final Command<Ttarget,Tresult> command;
+  private final Command<Ttarget,Tcontext,Tresult> command;
   
   public QueuedCommand
     (ControlGroupState<Ttarget> state
-    ,Command<Ttarget,Tresult> command
+    ,Command<Ttarget,Tcontext,Tresult> command
     )
   { 
     this.state=state;
     this.command=command;
   }
   
-  public Command <Ttarget,Tresult> getCommand()
+  public Command <Ttarget,Tcontext,Tresult> getCommand()
   { return command;
   }
   

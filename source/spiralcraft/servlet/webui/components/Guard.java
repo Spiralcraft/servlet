@@ -112,9 +112,9 @@ public class Guard
     context.redirect(redirect);
   }
   
-  public Command<Void,Void> logoutCommand()
+  public Command<Void,Void,Void> logoutCommand()
   {     
-    return new CommandAdapter<Void,Void>()
+    return new CommandAdapter<Void,Void,Void>()
       { 
         @Override
         public void run()

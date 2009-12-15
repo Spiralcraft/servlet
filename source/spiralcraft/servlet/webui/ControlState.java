@@ -55,7 +55,7 @@ public class ControlState<Tbuf>
   private Tbuf value;
   private List<String> errors;
   private Throwable exception;
-  private ArrayList<Command<Tbuf,?>> commands;
+  private ArrayList<Command<Tbuf,?,?>> commands;
   private DataState dataState=DataState.INIT;
   private boolean presented;
   private StateFrame currentFrame;
@@ -269,23 +269,23 @@ public class ControlState<Tbuf>
    * 
    * @param command
    */
-  public synchronized void queueCommand(Command<Tbuf,?> command)
+  public synchronized void queueCommand(Command<Tbuf,?,?> command)
   { 
     if (control.isDebug())
     { log.fine(control+": Queued command "+command);
     }
     if (commands==null)
-    { commands=new ArrayList<Command<Tbuf,?>>(1);
+    { commands=new ArrayList<Command<Tbuf,?,?>>(1);
     }
-    if (command instanceof QueuedCommand<?,?>)
-    { command=((QueuedCommand<Tbuf,?>) command).getCommand();
+    if (command instanceof QueuedCommand<?,?,?>)
+    { command=((QueuedCommand<Tbuf,?,?>) command).getCommand();
     }
     commands.add(command);
   }
   
-  public List<Command<Tbuf,?>> dequeueCommands()
+  public List<Command<Tbuf,?,?>> dequeueCommands()
   { 
-    List<Command<Tbuf,?>> list=commands;
+    List<Command<Tbuf,?,?>> list=commands;
     commands=null;
     return list;
   }

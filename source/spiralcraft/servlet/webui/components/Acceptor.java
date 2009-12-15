@@ -56,8 +56,8 @@ public abstract class Acceptor<T>
   private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();
   private static final PrepareMessage PREPARE_MESSAGE=new PrepareMessage();
   
-  private Expression<Command<?,?>> onPost;
-  private Channel<Command<?,?>> onPostChannel;
+  private Expression<Command<?,?,?>> onPost;
+  private Channel<Command<?,?,?>> onPostChannel;
     
   private String clientPostActionName;
   private String resetActionName;
@@ -65,7 +65,7 @@ public abstract class Acceptor<T>
   private Channel<ServiceContext> serviceContextChannel;
 
   
-  public void setOnPost(Expression<Command<?,?>> onPost)
+  public void setOnPost(Expression<Command<?,?,?>> onPost)
   { this.onPost=onPost;
   }
   
@@ -250,9 +250,9 @@ public abstract class Acceptor<T>
     
   }
   
-  public Command<Void,Void> redirectCommand(final String redirectURI)
+  public Command<Void,Void,Void> redirectCommand(final String redirectURI)
   {
-    return new CommandAdapter<Void,Void>()
+    return new CommandAdapter<Void,Void,Void>()
     {
       { name="redirect";
       }

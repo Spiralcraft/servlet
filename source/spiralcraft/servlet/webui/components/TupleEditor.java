@@ -99,11 +99,11 @@ public abstract class TupleEditor
    * 
    * @return A new Command
    */
-  public Command<BufferTuple,Void> addAndClearCommand()
+  public Command<BufferTuple,Void,Void> addAndClearCommand()
   { 
-    return new QueuedCommand<BufferTuple,Void>
+    return new QueuedCommand<BufferTuple,Void,Void>
       (getState()
-      ,new CommandAdapter<BufferTuple,Void>()
+      ,new CommandAdapter<BufferTuple,Void,Void>()
         { 
           @Override
           public void run()
@@ -116,16 +116,16 @@ public abstract class TupleEditor
       );
   }
   
-  public Command<BufferTuple,Void> deleteCommand()
+  public Command<BufferTuple,Void,Void> deleteCommand()
   { return deleteCommand(null);
   }
   
-  public Command<BufferTuple,Void> deleteCommand
-    (final Command<?,?> chainedCommand)
+  public Command<BufferTuple,Void,Void> deleteCommand
+    (final Command<?,?,?> chainedCommand)
   { 
-    return new QueuedCommand<BufferTuple,Void>
+    return new QueuedCommand<BufferTuple,Void,Void>
       (getState()
-      ,new CommandAdapter<BufferTuple,Void>()
+      ,new CommandAdapter<BufferTuple,Void,Void>()
         {
           @Override
           public void run()

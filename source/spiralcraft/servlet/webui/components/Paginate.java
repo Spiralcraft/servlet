@@ -280,9 +280,9 @@ public class Paginate<Ttarget,Titem>
   { return new PageState<Ttarget,Titem>(this);
   }
 
-  public Command<?,?> currentPageCommand(final int num)
+  public Command<?,?,?> currentPageCommand(final int num)
   { 
-    return new CommandAdapter<PageState<Ttarget,Titem>,Object>()
+    return new CommandAdapter<PageState<Ttarget,Titem>,Object,Void>()
     {
       { setTarget(getState());
       }
@@ -294,9 +294,9 @@ public class Paginate<Ttarget,Titem>
     };
   }
   
-  public Command<?,?> resetCommand()
+  public Command<?,?,?> resetCommand()
   {
-    return new CommandAdapter<PageState<Ttarget,Titem>,Object>()
+    return new CommandAdapter<PageState<Ttarget,Titem>,Object,Void>()
     {
       { setTarget(getState());
       }

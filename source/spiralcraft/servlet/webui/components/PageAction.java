@@ -56,12 +56,12 @@ public class PageAction
   extends Component
 {
   
-  private Expression<Command<?,?>> commandExpression;
-  private Channel<Command<?,?>> commandChannel;  
+  private Expression<Command<?,?,?>> commandExpression;
+  private Channel<Command<?,?,?>> commandChannel;  
   private String actionName;
   private boolean queue=false;
 
-  public void setX(Expression<Command<?,?>> expression)
+  public void setX(Expression<Command<?,?,?>> expression)
   { commandExpression=expression;
   }
   
@@ -110,7 +110,7 @@ public class PageAction
     
     ActionState state=(ActionState) context.getState();
     
-    Command<?,?> command=state.dequeueCommand();
+    Command<?,?,?> command=state.dequeueCommand();
     if (command!=null)
     { 
       log.warning
@@ -126,7 +126,7 @@ public class PageAction
   protected void handleCommand(ServiceContext context)
   {
   
-    Command<?,?> command=((ActionState) context.getState()).dequeueCommand();
+    Command<?,?,?> command=((ActionState) context.getState()).dequeueCommand();
     if (command!=null)
     {
       if (debug)
@@ -185,7 +185,7 @@ public class PageAction
         }
         if (commandChannel!=null)
         {
-          Command<?,?> command=commandChannel.get();
+          Command<?,?,?> command=commandChannel.get();
           if (command instanceof QueuedCommand)
           { 
             if (debug)
@@ -233,17 +233,17 @@ public class PageAction
 class ActionState
   extends ElementState
 {
-  private Command<?,?> command;
+  private Command<?,?,?> command;
   
   public ActionState(PageAction comp)
   { super(comp.getChildCount());
   }
   
-  public void queueCommand(Command<?,?> command)
+  public void queueCommand(Command<?,?,?> command)
   { this.command=command;
   }
   
-  public Command<?,?> dequeueCommand()
+  public Command<?,?,?> dequeueCommand()
   { 
     try
     { return command;
