@@ -2,6 +2,82 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.0
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>????
+    </date>
+
+    <detail>
+    
+      <scm:Change>
+        <date>2009-12-15
+        </date>
+      
+        <notes>
+          <scm:Note>Refactor Scenario and Command usage for 0.4 changes
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>autofilter/SecurityFilter.java
+          </URI>
+          <URI>webui/Control.java
+          </URI>
+          <URI>webui/ControlState.java
+          </URI>
+          <URI>webui/QueuedCommand.java
+          </URI>
+          <URI>webui/RootComponent.java
+          </URI>
+          <URI>webui/ServiceContext.java
+          </URI>
+          <URI>webui/components/Acceptor.java
+          </URI>
+          <URI>webui/components/AcceptorCommand.java
+          </URI>
+          <URI>webui/components/AggregateEditor.java
+          </URI>
+          <URI>webui/components/AutoExec.java
+          </URI>
+          <URI>webui/components/Editor.java
+          </URI>
+          <URI>webui/components/EditorBase.java
+          </URI>
+          <URI>webui/components/Guard.java
+          </URI>
+          <URI>webui/components/Login.java
+          </URI>
+          <URI>webui/components/PageAction.java
+          </URI>
+          <URI>webui/components/Paginate.java
+          </URI>
+          <URI>webui/components/SMTP.java
+          </URI>
+          <URI>webui/components/TupleEditor.java
+          </URI>
+          <URI>webui/components/html/Button.java
+          </URI>
+          <URI>webui/components/html/ImageButton.java
+          </URI>
+          <URI>webui/components/html/Link.java
+          </URI>
+          <URI>webui/components/html/SubmitButton.java
+          </URI>
+        </resources>
+      
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.3.21
     </revision>
     
