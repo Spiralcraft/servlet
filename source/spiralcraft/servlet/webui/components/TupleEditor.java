@@ -228,66 +228,66 @@ public abstract class TupleEditor
     }
     
     Buffer buffer=getState().getValue();
-    if (dirtyNew && buffer.getOriginal()==null)
-    { buffer.touch();
-    }
-    
-    if (buffer!=null && buffer.isDirty())
+    if (buffer!=null)
     {
-      if (defaultSetters!=null)
-      { 
-        if (debug)
-        { logFine("applying default values");
-        }
-        for (Setter<?> setter: defaultSetters)
+      if (touchNew && buffer.getOriginal()==null)
+      { buffer.touch();
+      }
+    
+      if (buffer.isDirty())
+      {
+        if (defaultSetters!=null)
         { 
-          if (setter.getTarget().get()==null)
-          { setter.set();
+          if (debug)
+          { logFine("applying default values");
           }
-        }
+          for (Setter<?> setter: defaultSetters)
+          { 
+            if (setter.getTarget().get()==null)
+            { setter.set();
+            }
+          }
       
-      }
+        }
 
-      if (fixedSetters!=null)
-      {
-        if (debug)
-        { logFine("applying fixed values");
-        }
-        for (Setter<?> setter: fixedSetters)
-        { setter.set();
-        }
-      }
-      
-      if (inspect((BufferTuple) buffer,getState()))
-      {
-        buffer.save();
-      
-        if (publishedAssignments!=null)
+        if (fixedSetters!=null)
         {
           if (debug)
-          { logFine("applying published assignments post-save");
+          { logFine("applying fixed values");
           }
-          for (Setter<?> setter: publishedSetters)
+          for (Setter<?> setter: fixedSetters)
           { setter.set();
           }
         }
-      }
-    }
-    else
-    { 
-      if (buffer==null)
-      {
-        logWarning
-          ("No buffer exists to save- no data read- try Editor.autoCreate");
+      
+        if (inspect((BufferTuple) buffer,getState()))
+        {
+          buffer.save();
+      
+          if (publishedAssignments!=null)
+          {
+            if (debug)
+            { logFine("applying published assignments post-save");
+            }
+            for (Setter<?> setter: publishedSetters)
+            { setter.set();
+            }
+          }
+        }
       }
       else
-      {
+      { 
         if (debug)
         { logFine("Not dirty "+buffer.toString());
         }
       }
-      
     }
+    else
+    {
+      logWarning
+        ("No buffer exists to save- no data read- try Editor.autoCreate");
+    }
+      
     
   }  
 

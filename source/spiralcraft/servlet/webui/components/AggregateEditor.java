@@ -249,7 +249,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     }
     else
     {
-      if (dirtyNew && aggregate.getOriginal()==null)
+      if (touchNew && aggregate.getOriginal()==null)
       { aggregate.touch();
       }
       

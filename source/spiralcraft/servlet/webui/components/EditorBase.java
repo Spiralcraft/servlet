@@ -86,7 +86,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected boolean autoCreate;
   protected boolean autoSave;
   protected boolean retain;
-  protected boolean dirtyNew;
+  protected boolean touchNew;
 
   {
     useDefaultTarget=false;
@@ -315,11 +315,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    * New, unedited Buffers should be made dirty before saving to trigger
    *   on-save assignments. 
    * 
-   * @param dirtyNew
+   * @param touchNew
    */
-  public void setDirtyNew(boolean dirtyNew)
-  { this.dirtyNew=dirtyNew;
-    
+  public void setTouchNew(boolean touchNew)
+  { this.touchNew=touchNew;
   }
   
   /**
