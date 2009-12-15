@@ -228,6 +228,9 @@ public abstract class TupleEditor
     }
     
     Buffer buffer=getState().getValue();
+    if (dirtyNew && buffer.getOriginal()==null)
+    { buffer.touch();
+    }
     
     if (buffer!=null && buffer.isDirty())
     {

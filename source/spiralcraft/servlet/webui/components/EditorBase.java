@@ -86,6 +86,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected boolean autoCreate;
   protected boolean autoSave;
   protected boolean retain;
+  protected boolean dirtyNew;
 
   {
     useDefaultTarget=false;
@@ -308,6 +309,17 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    */
   public void setNewActionName(String name)
   { newActionName=name;
+  }
+  
+  /**
+   * New, unedited Buffers should be made dirty before saving to trigger
+   *   on-save assignments. 
+   * 
+   * @param dirtyNew
+   */
+  public void setDirtyNew(boolean dirtyNew)
+  { this.dirtyNew=dirtyNew;
+    
   }
   
   /**

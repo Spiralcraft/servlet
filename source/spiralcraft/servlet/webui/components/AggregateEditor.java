@@ -247,30 +247,37 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       { log.fine("BufferAggregate is null, not saving");
       }      
     }
-    else if (aggregate.isDirty())
+    else
     {
-
-      int saveCount=0;
-      for (int i=0;i<aggregate.size();i++)
-      { 
-        BufferTuple buffer=aggregate.get(i);
-        if (buffer.isDirty())
-        { 
-          if (saveChild(buffer))
-          { saveCount++;
-          }
-        }
+      if (dirtyNew && aggregate.getOriginal()==null)
+      { aggregate.touch();
       }
       
-      if (contentRequired && saveCount==0)
-      { throw new DataException(contentRequiredMessage);
+      if (aggregate.isDirty())
+      {
+
+        int saveCount=0;
+        for (int i=0;i<aggregate.size();i++)
+        { 
+          BufferTuple buffer=aggregate.get(i);
+          if (buffer.isDirty())
+          { 
+            if (saveChild(buffer))
+            { saveCount++;
+            }
+          }
+        }
+      
+        if (contentRequired && saveCount==0)
+        { throw new DataException(contentRequiredMessage);
+        }
+        aggregate.reset();
       }
-      aggregate.reset();
-    }
-    else
-    { 
-      if (debug)
-      { log.fine("BufferAggregate is not dirty");
+      else
+      { 
+        if (debug)
+        { log.fine("BufferAggregate is not dirty");
+        }
       }
     }
     
