@@ -8,7 +8,7 @@
     <authorId>miketoth
     </authorId>
     
-    <date>????
+    <date>2009-12-15
     </date>
 
     <detail>
@@ -18,7 +18,7 @@
         </date>
       
         <notes>
-          <scm:Note>Provide "dirtyNew" property so Editor triggers on-save
+          <scm:Note>Provide "touchNew" property so Editor triggers on-save
             assignments even when no input was provided.
           </scm:Note>
 
