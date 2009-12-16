@@ -64,6 +64,7 @@ public abstract class TupleEditor
   
   private boolean phantom;
   
+  
   /**
    * The contained buffer will not be saved by this editor. Usually used in
    *   conjunction with setDetail(true) to create an Editor that adds a new
@@ -229,10 +230,8 @@ public abstract class TupleEditor
     
     Buffer buffer=getState().getValue();
     if (buffer!=null)
-    {
-      if (touchNew && buffer.getOriginal()==null)
-      { buffer.touch();
-      }
+    { 
+      beforeCheckDirty(buffer);
     
       if (buffer.isDirty())
       {
@@ -462,7 +461,6 @@ public abstract class TupleEditor
     publishedSetters=bindAssignments(publishedAssignments);
     bindRequestAssignments(requestBindings);
     bindRequestAssignments(redirectBindings);
-    
     
     return null;
     

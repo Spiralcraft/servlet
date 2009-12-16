@@ -82,11 +82,15 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   
   private URI redirectOnSaveURI;
   private String redirectOnSaveParameter;
+
   
   protected boolean autoCreate;
   protected boolean autoSave;
   protected boolean retain;
-  protected boolean touchNew;
+
+  private boolean touchNew;
+  private Expression<Boolean> touchWhenX;
+  private Channel<Boolean> touchWhenChannel;  
 
   {
     useDefaultTarget=false;
@@ -312,13 +316,23 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
   
   /**
-   * New, unedited Buffers should be made dirty before saving to trigger
-   *   on-save assignments. 
+   * Indicate that new, unedited Buffers should be made dirty before saving to
+   *   trigger on-save assignments. 
    * 
    * @param touchNew
    */
   public void setTouchNew(boolean touchNew)
   { this.touchNew=touchNew;
+  }
+  
+  /**
+   * Indicate that the Buffer should be made dirty before saving when the
+   *   specified condition holds at the time of save.
+   * 
+   * @param touchWhenX
+   */
+  public void setTouchWhenX(Expression<Boolean> touchWhenX)
+  { this.touchWhenX=touchWhenX;
   }
   
   /**
@@ -835,6 +849,23 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     return source;
   }
   
+  /**
+   * Called immediately before the dirty check before save
+   * 
+   * @param buffer
+   */
+  protected void beforeCheckDirty(Buffer buffer)
+  {
+    if (touchNew && buffer.getOriginal()==null)
+    { buffer.touch();
+    }
+    
+    if (touchWhenChannel!=null && Boolean.TRUE.equals(touchWhenChannel.get()))
+    { buffer.touch();
+    }
+
+  }
+  
   @Override
   protected Focus<?> bindExports()
     throws BindException
@@ -843,7 +874,14 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     { throw new BindException
         ("Editor must be contained in a Form or other Acceptor");
     }
-    return super.bindExports();
+
+
+    Focus<?> ret=super.bindExports();
+    
+    if (touchWhenX!=null)
+    { touchWhenChannel=getFocus().bind(touchWhenX);
+    }
+    return ret;
   }
 }
 
