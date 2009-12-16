@@ -21,6 +21,10 @@
           <scm:Note>Provide "touchNew" property so Editor triggers on-save
             assignments even when no input was provided.
           </scm:Note>
+          <scm:Note>Provide "touchWhenX" property so Editor triggers on-save
+            assignments when the specified condition evaluates to true 
+            immediately before save.
+          </scm:Note>
 
         </notes>
         
