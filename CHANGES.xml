@@ -16,6 +16,20 @@
       <scm:Change>
         <date>2009-12-15
         </date>
+        
+        <notes>
+          <scm:Note>Exposed RadioButton html tag for customization
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/html/RadioButton.java
+        </path>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        <date>2009-12-15
+        </date>
       
         <notes>
           <scm:Note>Provide "touchNew" property so Editor triggers on-save
