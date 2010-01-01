@@ -35,8 +35,8 @@ import spiralcraft.common.LifecycleException;
 
 
 /**
- * <p>Creates a Focus from an persistent reference- ie. an object
- *   represented by a resource.
+ * <p>Creates a Focus from an persistent reference- ie. a typed object
+ *   optionally represented by an existing persistent resource.
  * </p>
  * 
  * <p>Will create one instance per unit of the specified Scope.
