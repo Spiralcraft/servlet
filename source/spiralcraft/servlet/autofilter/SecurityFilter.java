@@ -26,6 +26,7 @@ import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Authenticator;
 import spiralcraft.security.auth.LoginEntry;
 import spiralcraft.security.auth.TestAuthenticator;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 import spiralcraft.codec.text.Base64Codec;
 import spiralcraft.command.Command;

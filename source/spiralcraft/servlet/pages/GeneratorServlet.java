@@ -46,7 +46,7 @@ import spiralcraft.text.ParseException;
 
 import spiralcraft.servlet.HttpFocus;
 
-import spiralcraft.servlet.autofilter.FocusFilter;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;

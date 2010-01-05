@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui;
 
 import spiralcraft.servlet.HttpServlet;
 import spiralcraft.servlet.HttpFocus;
-import spiralcraft.servlet.autofilter.FocusFilter;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.log.Level;

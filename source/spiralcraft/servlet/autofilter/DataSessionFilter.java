@@ -27,6 +27,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 
 /**

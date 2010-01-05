@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMap;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.html.URLEncoder;
 import spiralcraft.util.ArrayUtil;

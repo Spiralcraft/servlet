@@ -28,6 +28,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.SimpleChannel;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 
 /**

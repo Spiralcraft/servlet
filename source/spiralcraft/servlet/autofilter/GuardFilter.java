@@ -28,6 +28,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 /**
  * Protects access to a resource, allowing access when a specified

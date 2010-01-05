@@ -25,6 +25,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;

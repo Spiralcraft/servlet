@@ -29,6 +29,7 @@ import spiralcraft.lang.Setter;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.net.http.VariableMap;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 
 /**

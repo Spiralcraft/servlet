@@ -31,6 +31,7 @@ import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Authenticator;
 import spiralcraft.security.auth.Credential;
 import spiralcraft.security.auth.TestAuthenticator;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.security.BasicHttpAdapter;
 import spiralcraft.servlet.security.HttpAdapter;
 
