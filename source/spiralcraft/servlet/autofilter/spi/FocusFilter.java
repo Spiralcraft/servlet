@@ -12,12 +12,15 @@
 //Unless otherwise agreed to in writing, this software is distributed on an
 //"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
-package spiralcraft.servlet.autofilter;
+package spiralcraft.servlet.autofilter.spi;
 
 import java.io.IOException;
+import java.net.URI;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.SimpleFocus;
+import spiralcraft.servlet.autofilter.AutoFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -28,13 +31,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * <p>Provides a spiralcraft.lang Expression Language Focus to servlet API
- *    request processing components. 
+ * <p>Provides a spiralcraft.lang Focus to servlet API request processing 
+ *   components. 
  * </p>
  *    
- * <P>The Focus is passed via a ServletRequest attribute. It has the
+ * <p>The Focus is passed via a ServletRequest attribute. It has the
  *    same lifecycle as the FocusFilter itself, and is permanently referenced
  *    by the FocusFilter instance.
+ * </p>
  */
 public abstract class FocusFilter<T>
   extends AutoFilter
@@ -43,6 +47,8 @@ public abstract class FocusFilter<T>
   private static final String attributeName="spiralcraft.lang.focus";
   
   private Focus<T> focus;
+  private Focus<?> exportFocus;
+  private URI alias;
   
   // Default to global, to implement Focus hierarchy
   { setGlobal(true);
@@ -73,6 +79,17 @@ public abstract class FocusFilter<T>
   }
 
   /**
+   * <p>Assign an alias to the Focus to be published to disambiguate between
+   *   multiple Foci of the same type.
+   * </p>
+   * 
+   * @param alias
+   */
+  public void setAlias(URI alias)
+  { this.alias=alias;
+  }
+  
+  /**
    * Create a new instance of the Focus that will be inserted into the Focus
    *   chain (scoped to the lifetime of the FocusFilter). This method will
    *   be called only once.
@@ -99,6 +116,29 @@ public abstract class FocusFilter<T>
    */
   protected abstract void popSubject(HttpServletRequest request);
   
+  /**
+   * Override to prepare the local context and resolve any imported
+   *   dependencies before createFocus() is called to publish the managed
+   *   object.
+   * 
+   * @param parentFocus
+   * @return
+   */
+  protected Focus<?> bindImports(Focus<?> parentFocus)
+  { return parentFocus;
+  }
+  
+  /**
+   * Override to export additional data into the Focus chain that depends on
+   *   the managed object.
+   * 
+   * @param focus
+   * @return
+   */
+  protected Focus<?> bindExports(Focus<?> focus)
+  { return focus;
+  }
+  
   @Override
   public void doFilter(ServletRequest request, ServletResponse response,
       FilterChain chain) throws IOException, ServletException
@@ -114,11 +154,21 @@ public abstract class FocusFilter<T>
       requestFocus=(Focus<?>) request.getAttribute(attributeName);
       // log.fine("Got "+requestFocus);
       
+
+      
       // Create our own Focus, using the 'parent' Focus.
       if (focus==null)
-      { 
+      {         
+        if (requestFocus==null)
+        { requestFocus=new SimpleFocus<Void>(null);
+        }
+        requestFocus=bindImports(requestFocus);
         focus=createFocus(requestFocus);
         // log.fine("Created "+focus);
+        if (alias!=null)
+        { focus.addAlias(alias);
+        }
+        exportFocus=bindExports(focus);
       }
       
       // Make sure the subject of our Focus is appropriate for this
@@ -128,7 +178,7 @@ public abstract class FocusFilter<T>
       pushed=true;
       
       // Make our Focus the next filter's parent Focus
-      request.setAttribute(attributeName,focus);
+      request.setAttribute(attributeName,exportFocus);
       // log.fine("Setting "+focus);
       
       // System.err.println("FocusFilter.doFilter");
