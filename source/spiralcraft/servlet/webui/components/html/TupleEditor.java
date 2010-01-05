@@ -21,7 +21,6 @@ import java.io.IOException;
 import spiralcraft.data.session.Buffer;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
 /**
@@ -83,7 +82,7 @@ public class TupleEditor
   public void render(EventContext context)
     throws IOException
   { 
-    if ( ((ControlState<?>) context.getState()).isErrorState())
+    if (getState(context).isErrorState())
     { errorTag.render(context);
     }
     else

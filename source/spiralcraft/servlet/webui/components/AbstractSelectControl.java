@@ -17,6 +17,7 @@ package spiralcraft.servlet.webui.components;
 import java.util.List;
 
 
+import spiralcraft.textgen.EventContext;
 import spiralcraft.util.string.StringConverter;
 
 
@@ -111,9 +112,8 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   @Override
   public void gather(ServiceContext context)
   {
-    SelectState<Ttarget,Tvalue> state
-      =((SelectState<Ttarget,Tvalue>) context.getState());
-    
+    SelectState<Ttarget,Tvalue> state=getState(context);
+     
     if (multi)
     {
       log.fine("Multiselect not implemented");
@@ -186,12 +186,10 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   }
   
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void scatter(ServiceContext context)
   {
-    SelectState<Ttarget,Tvalue> state=
-      ((SelectState<Ttarget,Tvalue>) context.getState());
+    SelectState<Ttarget,Tvalue> state=getState(context);
     if (target!=null)
     {
       try
@@ -216,6 +214,12 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   public SelectState<Ttarget,Tvalue> createState()
   { return new SelectState<Ttarget,Tvalue>(this);
   }  
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  protected SelectState<Ttarget,Tvalue> getState(EventContext context)
+  { return (SelectState<Ttarget,Tvalue>) context.getState();
+  }
 }
 
 

@@ -104,7 +104,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         public void handleMessage(EventContext context, Message message,
             boolean postOrder)
         { 
-          EditorState state=(EditorState) context.getState();
+          EditorState state=getState(context);
           if (message.getType()==SaveMessage.TYPE)
           {
             if (!postOrder)
@@ -681,21 +681,19 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
    
 
-  @SuppressWarnings("unchecked")
   @Override
   protected void gather(ServiceContext context)
   { 
     if (autoSave)
-    { ((ControlGroupState) context.getState()).queueCommand(saveCommand());
+    { getState(context).queueCommand(saveCommand());
     }
     super.gather(context);
   }
   
-  @SuppressWarnings("unchecked")
   @Override
   protected void scatter(ServiceContext context)
   { 
-    EditorState<Tbuffer> state=(EditorState<Tbuffer>) context.getState();
+    EditorState<Tbuffer> state=getState(context);
     Tbuffer lastBuffer=state.getValue();
    
     super.scatter(context);
@@ -818,7 +816,17 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     return new EditorState<Tbuffer>(this);
   }  
   
+    
+  @SuppressWarnings("unchecked")
   @Override
+  protected EditorState<Tbuffer> getState(EventContext context)
+  { return (EditorState<Tbuffer>) context.getState();
+  }
+  
+  @Override
+  /**
+   * Get state from ThreadLocal to provide command access
+   */
   public EditorState<Tbuffer> getState()
   { return (EditorState<Tbuffer>) super.getState();
   }
@@ -885,40 +893,4 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
 }
 
-class EditorState<T extends Buffer>
-  extends ControlGroupState<T>
-{
-  
-  private boolean redirect;
-  private URI redirectURI;
-  private Command<?,?,?> postSaveCommand;
-  
-  public EditorState(EditorBase<T> editor)
-  { super(editor);
-  }
-  
-  public void setRedirect(boolean redirect)
-  { this.redirect=redirect;
-  }
-    
-  public boolean isRedirect()
-  { return redirect;
-  }
-  
-  public void setRedirectURI(URI redirectURI)
-  { this.redirectURI=redirectURI;
-  }
-  
-  public URI getRedirectURI()
-  { return redirectURI;
-  }
-  
-  public Command<?,?,?> getPostSaveCommand()
-  { return postSaveCommand;
-  }
-  
-  public void setPostSaveCommand(Command<?,?,?> postSaveCommand)
-  { this.postSaveCommand=postSaveCommand;
-  }
 
-}

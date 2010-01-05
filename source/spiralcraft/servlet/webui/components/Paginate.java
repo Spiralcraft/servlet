@@ -120,7 +120,7 @@ public class Paginate<Ttarget,Titem>
             +ArrayUtil.format(getTargetPath(),".",null)
             );
         }
-        getState().setCurrentPage(0);
+        getState(context).setCurrentPage(0);
         
       }
     };
@@ -128,14 +128,12 @@ public class Paginate<Ttarget,Titem>
     
   
   @Override
-  @SuppressWarnings("unchecked") // PageState cast
   protected void handlePrepare(ServiceContext context)
   { 
     
     
     super.handlePrepare(context);
-    PageState<Ttarget,Titem> state
-      =(PageState<Ttarget,Titem>) context.getState();
+    PageState<Ttarget,Titem> state=getState(context);
     resetPageState(state);
   }
   
@@ -278,6 +276,12 @@ public class Paginate<Ttarget,Titem>
   @Override
   public PageState<Ttarget,Titem> createState()
   { return new PageState<Ttarget,Titem>(this);
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  protected PageState<Ttarget,Titem> getState(EventContext context)
+  { return (PageState<Ttarget,Titem>) context.getState();
   }
 
   public Command<?,?,?> currentPageCommand(final int num)

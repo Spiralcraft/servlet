@@ -158,7 +158,7 @@ public abstract class TupleEditor
   protected void scatter(ServiceContext context)
   {
     super.scatter(context);
-    BufferTuple buffer=getState().getValue();
+    BufferTuple buffer=getState(context).getValue();
     
     if (buffer!=null)
     {
@@ -496,7 +496,7 @@ public abstract class TupleEditor
         {
           newBuffer();
           applyRequestBindings(context);
-          setInitialValues(getState().getValue());
+          setInitialValues(getState(context).getValue());
         }
         catch (DataException x)
         { handleException(context,x);

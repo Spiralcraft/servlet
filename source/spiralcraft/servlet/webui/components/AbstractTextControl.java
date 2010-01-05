@@ -96,11 +96,11 @@ public abstract class AbstractTextControl<Ttarget>
   { return new ControlState<String>(this);
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
+  
   @Override
   public void scatter(ServiceContext context)
   {
-    ControlState<String> state=((ControlState<String>) context.getState());
+    ControlState<String> state=getState(context);
     if (target!=null)
     {
       try
@@ -138,7 +138,7 @@ public abstract class AbstractTextControl<Ttarget>
   @Override
   public void gather(ServiceContext context)
   {
-    ControlState<String> state=((ControlState<String>) context.getState());
+    ControlState<String> state=getState(context);
     //System.err.println("TextInput: readPost");
       
     // Only update if changed

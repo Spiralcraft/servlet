@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
 
 public class Login
@@ -74,7 +73,7 @@ public class Login
   public void render(EventContext context)
     throws IOException
   { 
-    if ( ((ControlState<?>) context.getState()).isErrorState())
+    if (getState(context).isErrorState())
     { errorTag.render(context);
     }
     else

@@ -63,7 +63,7 @@ public abstract class ControlGroup<Ttarget>
 
   protected ThreadLocal<ControlGroupState<Ttarget>> threadLocalState 
     = new ThreadLocal<ControlGroupState<Ttarget>>();
-
+  
   protected AbstractChannel<Ttarget> valueBinding;
 
   private Focus<?> focus;
@@ -88,8 +88,6 @@ public abstract class ControlGroup<Ttarget>
     return Integer.toString(nextVariableName++);
   }
 
-  @SuppressWarnings("unchecked")
-  // Blind cast
   @Override
   public void message(EventContext context, Message message,
       LinkedList<Integer> path)
@@ -134,8 +132,7 @@ public abstract class ControlGroup<Ttarget>
     try
     {
       
-      ControlGroupState<Ttarget> state 
-        = (ControlGroupState<Ttarget>) context.getState();
+      ControlGroupState<Ttarget> state =getState(context);
       if (threadLocalState.get() != state)
       {
 
@@ -197,7 +194,6 @@ public abstract class ControlGroup<Ttarget>
    *   and post-order ThreadLocal state pop()
    * </p>
    */
-  @SuppressWarnings("unchecked")
   // Blind cast
   @Override
   public void render(EventContext context) throws IOException
@@ -208,7 +204,7 @@ public abstract class ControlGroup<Ttarget>
     
     try
     {
-      threadLocalState.set((ControlGroupState<Ttarget>) context.getState());
+      threadLocalState.set(this.<Ttarget>getState(context));
       super.render(context);
     } 
     finally
@@ -283,7 +279,7 @@ public abstract class ControlGroup<Ttarget>
    *   state sent to the browser can be modified and retrieved reliably. 
    * </p>
    * 
-   * <p>Override bindSelf() to provide additional/different Channels to child
+   * <p>Override bindExports() to provide additional/different Channels to child
    *   components than the value stored in the State.
    * </p>
    * 
@@ -389,8 +385,6 @@ public abstract class ControlGroup<Ttarget>
     return focus;
   }
 
-  @SuppressWarnings("unchecked")
-  // Blind cast
   @Override
   /**
    * Implements "scatter" by reading the value of the the bound channel
@@ -399,8 +393,7 @@ public abstract class ControlGroup<Ttarget>
    */
   protected void scatter(ServiceContext context)
   {
-    ControlGroupState<Ttarget> state = (ControlGroupState<Ttarget>) context
-        .getState();
+    ControlGroupState<Ttarget> state = getState(context);
 
     try
     {
@@ -441,13 +434,10 @@ public abstract class ControlGroup<Ttarget>
   {
   }
   
-  @SuppressWarnings("unchecked")
-  // Blind cast
   @Override
   protected void gather(ServiceContext context)
   {
-    ControlGroupState<Ttarget> state = (ControlGroupState<Ttarget>) context
-        .getState();
+    ControlGroupState<Ttarget> state = getState(context);
 
     if (target != null)
     {
@@ -471,13 +461,17 @@ public abstract class ControlGroup<Ttarget>
   {
     return new ControlGroupState<Ttarget>(this);
   }
-
-  @Override
+  
   @SuppressWarnings("unchecked")
+  @Override
+  protected  <X> ControlGroupState<X> getState(EventContext context)
+  { return (ControlGroupState<X>) context.getState();
+  }
+  
+  @Override
   public void handleCommand(ServiceContext context)
   {
-    ControlGroupState<Ttarget> state 
-      = (ControlGroupState<Ttarget>) context.getState();
+    ControlGroupState<Ttarget> state = getState(context);
       
     while (true)
     {

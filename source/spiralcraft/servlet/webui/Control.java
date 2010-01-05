@@ -245,10 +245,9 @@ public abstract class Control<Ttarget>
   protected abstract void scatter(ServiceContext context);
 
   @Override
-  @SuppressWarnings("unchecked")
   protected void handleRequest(ServiceContext context)
   { 
-    ControlState<Ttarget> state = (ControlState) context.getState();
+    ControlState<Ttarget> state = getState(context);
     if (state.frameChanged(context.getCurrentFrame()))
     {
       if (debug)
@@ -299,10 +298,9 @@ public abstract class Control<Ttarget>
   }
   
   @Override
-  @SuppressWarnings("unchecked")
   protected void handlePrepare(ServiceContext context)
   { 
-    ControlState<Ttarget> state = (ControlState) context.getState();
+    ControlState<Ttarget> state = getState(context);
     boolean frameChanged=state.frameChanged(context.getCurrentFrame());
     
     if (frameChanged && debug)
@@ -371,6 +369,8 @@ public abstract class Control<Ttarget>
     }
     else if (target.isWritable())
     { 
+      // XXX Use state to cache oldVal and determine 'changed'- don't re-query
+      //  target!
       Ttarget oldVal=target.get();
           
       // Only update if referred-to value is different
@@ -413,12 +413,11 @@ public abstract class Control<Ttarget>
     
   }
   
-  @SuppressWarnings("unchecked")
   @Override
   protected void postPrepare(ServiceContext context)
   { 
    
-    ControlState<Ttarget> state = (ControlState<Ttarget>) context.getState();
+    ControlState<Ttarget> state = getState(context);
     List<Command<Ttarget,?,?>> commands=state.dequeueCommands();
     if (commands!=null && commands.size()>0)
     {
@@ -436,6 +435,11 @@ public abstract class Control<Ttarget>
   @Override
   public ControlState<?> createState()
   { return new ControlState<Ttarget>(this);
+  }
+  
+  @SuppressWarnings("unchecked")
+  protected <X> ControlState<X> getState(EventContext context)
+  { return (ControlState<X>) context.getState();
   }
   
   @Override
@@ -511,8 +515,8 @@ public abstract class Control<Ttarget>
   }
   
   /**
-   * <p>Inspect the value and process any Rule Violations, returning "true"
-   *   if there are no Rule Violations.
+   * <p>Called by subclasses to inspect the value and process any 
+   *   Rule Violations, returning "true" if there are no Rule Violations.
    * </p>
    * 
    * @param value
@@ -548,7 +552,6 @@ public abstract class Control<Ttarget>
     iterationStateDistance=getParent().getStateDistance(Iterate.class);
   }
   
-  @SuppressWarnings("unchecked") // State cast
   @Override
   public void message
     (EventContext context
@@ -558,9 +561,9 @@ public abstract class Control<Ttarget>
   {
 
     if (message.getType()==GatherMessage.TYPE)
-    {
+    { 
       // Reset error in pre-order, so controls can raise it if needed.
-      ((ControlState<Ttarget>) context.getState()).resetError(); 
+      getState(context).resetError(); 
     } 
     
     try
@@ -568,7 +571,7 @@ public abstract class Control<Ttarget>
     }
     catch (RuntimeException x)
     { 
-      ((ControlState<?>) context.getState()).setException(x);
+      getState(context).setException(x);
       throw x;
     }
 
@@ -616,11 +619,10 @@ public abstract class Control<Ttarget>
    * 
    * @param context
    */
-  @SuppressWarnings("unchecked")
   @Override
   protected void handleCommand(ServiceContext context)
   {
-    ControlState<Ttarget> state=((ControlState<Ttarget>) context.getState());
+    ControlState<Ttarget> state=getState(context);
     
     List<Command<Ttarget,?,?>> commands
       =state.dequeueCommands();
@@ -656,13 +658,12 @@ public abstract class Control<Ttarget>
    * </p>
    */
   @Override
-  @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
   {    
     
 
-    ControlState<Ttarget> state=(ControlState<Ttarget>) context.getState();
+    ControlState<Ttarget> state=getState(context);
     if (state.getControl()!=this)
     { throw new RuntimeException("State tree out of sync "+state+" "+this);
     }
@@ -674,6 +675,14 @@ public abstract class Control<Ttarget>
     state.setDataState(DataState.RENDERED);
   }
   
+  /**
+   * Convenience method to bind assignments managed by subclasses into the
+   *   Focus referenced by this control.
+   * 
+   * @param assignments
+   * @return
+   * @throws BindException
+   */
   protected Setter<?>[] bindAssignments(Assignment<?>[] assignments)
     throws BindException
   {
@@ -729,7 +738,7 @@ public abstract class Control<Ttarget>
     ,Exception x
     )
   {
-    ((ControlState<?>) context.getState()).setException(x);
+    getState(context).setException(x);
     logHandledException(context,x);
   }
   

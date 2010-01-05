@@ -43,16 +43,15 @@ public class HiddenInput<Ttarget>
     { return "input";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<String> state=((ControlState<String>) context.getState());
+      ControlState<Ttarget> state=getState(context);
       renderAttribute(context.getWriter(),"type","hidden");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       if (state.getValue()!=null)
-      { renderAttribute(context.getWriter(),"value",state.getValue());
+      { renderAttribute(context.getWriter(),"value",(String) state.getValue());
       }
       super.renderAttributes(context);
     }
@@ -81,14 +80,15 @@ public class HiddenInput<Ttarget>
   public void render(EventContext context)
     throws IOException
   { 
-    if ( ((ControlState<?>) context.getState()).isErrorState())
+    ControlState<?> state=getState(context);
+    if (state.isErrorState())
     { errorTag.render(context);
     }
     else
     { tag.render(context);
     }
     super.render(context);
-    ((ControlState<?>) context.getState()).setPresented(true);
+    state.setPresented(true);
     
   }
   

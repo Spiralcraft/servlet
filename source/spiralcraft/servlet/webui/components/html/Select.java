@@ -54,12 +54,11 @@ public class Select<Ttarget,Tvalue>
     { return "select";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<String> state=((ControlState<String>) context.getState());
+      ControlState<?> state=getState(context);
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       if (multi)
       { renderAttribute(context.getWriter(),"multiple",null);
@@ -92,17 +91,17 @@ public class Select<Ttarget,Tvalue>
 
   
   @Override
-  @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
   {
-    if (((ControlState<Ttarget>) context.getState()).isErrorState())
+    ControlState<?> state=getState(context);
+    if (state.isErrorState())
     { errorTag.render(context);
     }
     else
     { tag.render(context);
     }
-    ((ControlState<?>) context.getState()).setPresented(true);
+    state.setPresented(true);
   }
   
 //  void setValueConverter(StringConverter<Tvalue> converter)

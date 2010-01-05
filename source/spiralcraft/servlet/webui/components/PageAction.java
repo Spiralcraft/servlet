@@ -108,7 +108,7 @@ public class PageAction
     { context.registerAction(createAction(context));
     }
     
-    ActionState state=(ActionState) context.getState();
+    ActionState state=getState(context);
     
     Command<?,?,?> command=state.dequeueCommand();
     if (command!=null)
@@ -126,7 +126,7 @@ public class PageAction
   protected void handleCommand(ServiceContext context)
   {
   
-    Command<?,?,?> command=((ActionState) context.getState()).dequeueCommand();
+    Command<?,?,?> command=getState(context).dequeueCommand();
     if (command!=null)
     {
       if (debug)
@@ -203,8 +203,7 @@ public class PageAction
               { log.fine("Queueing "+command);
               }
               // We'll execute the command at the Command stage.
-              ((ActionState) context.getState())
-                .queueCommand(commandChannel.get());
+              getState(context).queueCommand(commandChannel.get());
             }
             else
             { 
@@ -226,6 +225,10 @@ public class PageAction
   @Override
   public ElementState createState()
   { return new ActionState(this);
+  }
+  
+  protected ActionState getState(EventContext context)
+  { return (ActionState) context.getState();
   }
   
 }

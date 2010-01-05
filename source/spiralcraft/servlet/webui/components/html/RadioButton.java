@@ -57,12 +57,11 @@ public class RadioButton<Ttarget,Tvalue>
     { return "input";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      SelectItemState<Tvalue> state=((SelectItemState<Tvalue>) context.getState());
+      SelectItemState<Tvalue> state=getState(context);
 
 
       renderAttribute(context.getWriter(),"type","radio");
@@ -120,11 +119,10 @@ public class RadioButton<Ttarget,Tvalue>
     
   
   @Override
-  @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
   { 
-    if (((SelectItemState<Tvalue>) context.getState()).isErrorState())
+    if (getState(context).isErrorState())
     { errorTag.render(context);
     }
     else

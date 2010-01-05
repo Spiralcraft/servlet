@@ -54,12 +54,11 @@ public class TextInput<Ttarget>
     { return "input";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<String> state=((ControlState<String>) context.getState());
+      ControlState<String> state=getState(context);
       if (password)
       { renderAttribute(context.getWriter(),"type","password");
       }
@@ -97,13 +96,14 @@ public class TextInput<Ttarget>
   public void render(EventContext context)
     throws IOException
   { 
-    if ( ((ControlState<?>) context.getState()).isErrorState())
+    ControlState<String> state=getState(context);
+    if (state.isErrorState())
     { errorTag.render(context);
     }
     else
     { tag.render(context);
     }
-    ((ControlState<?>) context.getState()).setPresented(true);
+    state.setPresented(true);
     super.render(context);
   }
   

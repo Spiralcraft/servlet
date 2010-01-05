@@ -58,12 +58,11 @@ public class CheckboxInput
     { return "input";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
+      ControlState<Boolean> state=getState(context);
       renderAttribute(context.getWriter(),"type","checkbox");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       renderAttribute(context.getWriter(),"value","on");
@@ -140,7 +139,7 @@ public class CheckboxInput
   public void render(EventContext context)
     throws IOException
   { 
-    if ( ((ControlState<?>) context.getState()).isErrorState())
+    if (getState(context).isErrorState())
     { errorTag.render(context);
     }
     else
@@ -149,11 +148,10 @@ public class CheckboxInput
     super.render(context);
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void gather(ServiceContext context)
   {
-    ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
+    ControlState<Boolean> state=getState(context);
     
     // Only update if changed
     if (context.getPost()!=null)
@@ -187,11 +185,10 @@ public class CheckboxInput
   }
   
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void scatter(ServiceContext context)
   {
-    ControlState<Boolean> state=((ControlState<Boolean>) context.getState());
+    ControlState<Boolean> state=getState(context);
     if (target!=null)
     {
       try

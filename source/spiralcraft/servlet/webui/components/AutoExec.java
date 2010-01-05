@@ -16,14 +16,13 @@ package spiralcraft.servlet.webui.components;
 
 
 
-import spiralcraft.command.Command;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Channel;
-import spiralcraft.lang.Expression;
+import java.io.IOException;
 
-import spiralcraft.servlet.webui.Control;
-import spiralcraft.servlet.webui.ControlState;
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
+
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.textgen.EventContext;
 
 /**
  * <p>Automatically runs a command whenever the state frame changes.
@@ -37,17 +36,16 @@ import spiralcraft.servlet.webui.ServiceContext;
  * @author mike
  *
  */
-public class AutoExec
-  extends Control<Command<?,?,?>>
+public class AutoExec<Tcontext,Tresult>
+  extends AbstractCommandControl<Tcontext,Tresult>
 {
   
 
-  private Expression<Boolean> whenX;
-  private Channel<Boolean> whenChannel; 
+  private Binding<Boolean> whenX;
   private boolean delayUntilPrepare;
   
   
-  public void setWhenX(Expression<Boolean> whenX)
+  public void setWhenX(Binding<Boolean> whenX)
   { this.whenX=whenX;
   }
   
@@ -68,7 +66,7 @@ public class AutoExec
   {
     
     // Make sure we bypass the command if we're delaying it
-    ((CommandState) context.getState()).setBypass(delayUntilPrepare);
+    getState(context).setBypass(delayUntilPrepare);
     super.handleRequest(context);
   }
   
@@ -80,7 +78,7 @@ public class AutoExec
     { 
       // If we bypassed the command on "request", make sure we don't bypass
       //   it now.
-      ((CommandState) context.getState()).setBypass(false);
+      getState(context).setBypass(false);
     }
     super.handleRequest(context);
   }
@@ -88,7 +86,7 @@ public class AutoExec
   
   @Override
   protected void scatter(ServiceContext context)
-  { runCommand(context);    
+  { tryToExec(context);    
   }
 
   
@@ -97,30 +95,20 @@ public class AutoExec
   { return null;
   }
   
-  protected void runCommand(ServiceContext context)
+  private void tryToExec(ServiceContext context)
   {
-    CommandState state=(CommandState) context.getState();
+    AutoExecState<Tcontext,Tresult> state=getState(context);
     if (state.getBypass())
     {
       // Run the command only once during a cycle
       return;
     }
   
-    if (whenChannel==null || Boolean.TRUE.equals(whenChannel.get()))
-    {
-      Command<?,?,?> command=target.get();
-      if (command!=null)
-      {
-        if (debug)
-        { log.fine("Executing AutoCommand  "+command);
-        }
-        command.execute();
-        state.setBypass(true);
-        if (command.getException()!=null)
-        { 
-          ((ControlState<?>) context.getState())
-            .setException(command.getException());
-        }
+    if (whenX==null || Boolean.TRUE.equals(whenX.get()))
+    { 
+      executeCommand(context);
+      if (state.getValue()!=null)
+      { state.setBypass(true);
       }
     }
     
@@ -134,7 +122,7 @@ public class AutoExec
     
     super.bindSelf();
     if (whenX!=null)
-    { whenChannel=getFocus().bind(whenX);
+    { whenX.bind(getFocus());
     }
   }  
 
@@ -147,18 +135,36 @@ public class AutoExec
   }  
 
   @Override
-  public CommandState createState()
-  { return new CommandState(this);
+  public AutoExecState<Tcontext,Tresult> createState()
+  { return new AutoExecState<Tcontext,Tresult>(this);
   }
   
+  @Override
+  @SuppressWarnings("unchecked")
+  protected AutoExecState<Tcontext,Tresult> getState(EventContext context)
+  { return (AutoExecState) context.getState();
+  }
+  
+    @Override
+  public void render(EventContext context)
+    throws IOException
+  { 
+    pushState(context);
+    try
+    { super.render(context);
+    }
+    finally
+    { popState(context);
+    }
+  }
 }
 
-class CommandState
-  extends ControlState<Command<?,?,?>>
+class AutoExecState<Tcontext,Tresult>
+  extends CommandState<Tcontext,Tresult>
 {
   private boolean bypass;
   
-  public CommandState(AutoExec comp)
+  public AutoExecState(AutoExec<Tcontext,Tresult> comp)
   { super(comp);
   }
   

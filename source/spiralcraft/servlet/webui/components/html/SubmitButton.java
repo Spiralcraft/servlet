@@ -18,12 +18,9 @@ import java.io.IOException;
 
 import spiralcraft.textgen.EventContext;
 
-import spiralcraft.servlet.webui.Control;
-import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
-
-import spiralcraft.command.Command;
-import spiralcraft.lang.AccessException;
+import spiralcraft.servlet.webui.components.AbstractCommandControl;
+import spiralcraft.servlet.webui.components.CommandState;
 import spiralcraft.lang.BindException;
 import spiralcraft.net.http.VariableMap;
 
@@ -39,8 +36,8 @@ import spiralcraft.net.http.VariableMap;
  * @author mike
  *
  */
-public class SubmitButton
-  extends Control<Command<?,?,?>>
+public class SubmitButton<Tcontext,Tresult>
+  extends AbstractCommandControl<Tcontext,Tresult>
 {
 
   private String name;
@@ -56,14 +53,12 @@ public class SubmitButton
     { return "input";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<Command> state=((ControlState<Command>) context.getState());
       renderAttribute(context.getWriter(),"type","submit");
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      renderAttribute(context.getWriter(),"name",getState(context).getVariableName());
       
       // Yes, we are renaming it
       renderAttribute(context.getWriter(),"value",label);
@@ -99,30 +94,33 @@ public class SubmitButton
   public String getVariableName()
   { return name;
   }
-  
-  @Override
-  public ControlState<Command<?,?,?>> createState()
-  { return new ControlState<Command<?,?,?>>(this);
-  }
 
   @Override
   public void render(EventContext context)
     throws IOException
   { 
-    if (((ControlState<?>) context.getState()).isErrorState())
-    { errorTag.render(context);
+    pushState(context);
+    try
+    { 
+    
+      if (getState(context).isErrorState())
+      { errorTag.render(context);
+      }
+      else
+      { tag.render(context);
+      }
+      super.render(context);    
+
     }
-    else
-    { tag.render(context);
+    finally
+    { popState(context);
     }
-    super.render(context);
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void gather(ServiceContext context)
   {
-    ControlState<Command> state=((ControlState<Command>) context.getState());
+    CommandState<Tcontext,Tresult> state=getState(context);
     VariableMap post=context.getPost();
     boolean gotPost=false;
     if (post!=null)
@@ -130,36 +128,7 @@ public class SubmitButton
     }
 
     if (gotPost)
-    {
-      if (target!=null)
-      { 
-        try
-        { 
-          Command command=state.getValue();
-          if (command==null)
-          { 
-            // Might be a default binding
-            Object oCommand=target.get();
-            if (oCommand instanceof Command)
-            { command=(Command) oCommand;
-            }
-            
-          }
-          
-          if (command!=null)
-          {
-            // Queueing should be decided by the Command, which should
-            //   interact with WebUI api to coordinate- controller role.
-            command.execute();
-            if (command.getException()!=null)
-            { handleException(context,command.getException());
-            }
-          }
-        }
-        catch (AccessException x)
-        { handleException(context,x);
-        }
-      }
+    { executeCommand(context);
     }
     
     

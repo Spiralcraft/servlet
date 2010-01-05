@@ -123,12 +123,11 @@ public class Form<T>
   { new ErrorTag(tag).render(context);
   }  
   
-  @SuppressWarnings("unchecked")
   @Override
   public void render(EventContext context)
     throws IOException
   { 
-    ControlGroupState<T> state=((ControlGroupState<T>) context.getState());
+    ControlGroupState<T> state=getState(context);
     if (state.isErrorState())
     { errorTag.render(context);
     }

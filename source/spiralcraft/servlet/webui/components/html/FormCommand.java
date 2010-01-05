@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import spiralcraft.textgen.EventContext;
 
-import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AcceptorCommand;
 
 import spiralcraft.lang.BindException;
@@ -46,8 +45,8 @@ import spiralcraft.lang.BindException;
  * @author mike
  *
  */
-public class FormCommand
-  extends AcceptorCommand
+public class FormCommand<Tcontext,Tresult>
+  extends AcceptorCommand<Tcontext,Tresult>
 {
 
   
@@ -91,7 +90,7 @@ public class FormCommand
   public void render(EventContext context)
     throws IOException
   { 
-    if (((ControlState<?>) context.getState()).isErrorState())
+    if (getState(context).isErrorState())
     { errorTag.render(context);
     }
     else

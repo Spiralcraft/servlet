@@ -85,11 +85,10 @@ public class RadioGroup<Ttarget,Tvalue>
 
   
   @Override
-  @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
   {
-    if (((ControlState<Ttarget>) context.getState()).isErrorState())
+    if (getState(context).isErrorState())
     { errorTag.render(context);
     }
     else

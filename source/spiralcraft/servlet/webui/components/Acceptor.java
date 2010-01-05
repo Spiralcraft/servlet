@@ -174,7 +174,6 @@ public abstract class Acceptor<T>
       { this.responsive=isClearable;
       }
       @Override
-      @SuppressWarnings("unchecked") // Blind cast
       public void invoke(ServiceContext context)
       { 
         if (debug)
@@ -185,8 +184,7 @@ public abstract class Acceptor<T>
             );
         }
 
-        ControlGroupState<T> formState
-          =(ControlGroupState<T>) context.getState();
+        ControlGroupState<T> formState=getState(context);
         
         if (wasActioned(context))
         {

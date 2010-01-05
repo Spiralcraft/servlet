@@ -14,15 +14,13 @@
 //
 package spiralcraft.servlet.webui.components;
 
+import java.io.IOException;
 import java.util.List;
 
 
-import spiralcraft.servlet.webui.Control;
-import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.textgen.EventContext;
 
-import spiralcraft.command.Command;
-import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
@@ -51,8 +49,8 @@ import spiralcraft.net.http.VariableMap;
  * @author mike
  *
  */
-public class AcceptorCommand
-  extends Control<Command<?,?,?>>
+public class AcceptorCommand<Tcontext,Tresult>
+  extends AbstractCommandControl<Tcontext,Tresult>
 {
 
   private String name;
@@ -86,25 +84,20 @@ public class AcceptorCommand
   
   
   @Override
-  public ControlState<Command<?,?,?>> createState()
-  { return new ControlState<Command<?,?,?>>(this);
-  }
-  
-  @Override
   protected void bindSelf()
     throws BindException
   {
+    super.bindSelf();
     if (when!=null)
     { whenChannel=getFocus().bind(when);
     }
   }
 
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void gather(ServiceContext context)
   {
-    ControlState<Command> state=((ControlState<Command>) context.getState());
+    CommandState<Tcontext,Tresult> state=getState(context);
     boolean triggered=false;
     
     if (name!=null)
@@ -143,36 +136,7 @@ public class AcceptorCommand
     }
     
     if (triggered)
-    {
-      if (target!=null)
-      { 
-        try
-        { 
-          Command command=state.getValue();
-          if (command==null)
-          { 
-            // Might be a default binding
-            Object oCommand=target.get();
-            if (oCommand instanceof Command)
-            { command=(Command) oCommand;
-            }
-            
-          }
-          
-          if (command!=null)
-          {
-            // Queueing should be decided by the Command, which should
-            //   interact with WebUI api to coordinate- controller role.
-            command.execute();
-            if (command.getException()!=null)
-            { handleException(context,command.getException());
-            }
-          }
-        }
-        catch (AccessException x)
-        { handleException(context,x);
-        }
-      }
+    { executeCommand(context);
     }
     
     
@@ -190,6 +154,18 @@ public class AcceptorCommand
   { 
   }
 
+  @Override
+  public void render(EventContext context)
+    throws IOException
+  { 
+    pushState(context);
+    try
+    { super.render(context);
+    }
+    finally
+    { popState(context);
+    }
+  }  
 
 }
 

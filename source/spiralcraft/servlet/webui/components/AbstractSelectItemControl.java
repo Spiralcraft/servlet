@@ -20,6 +20,7 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.util.string.StringConverter;
 
+import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.lang.BindException;
@@ -94,7 +95,11 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
   { return new SelectItemState<Tvalue>(this);
   }
   
-
+  @SuppressWarnings("unchecked")
+  @Override
+  protected SelectItemState<Tvalue> getState(EventContext context)
+  { return (SelectItemState<Tvalue>) context.getState();
+  }
   
   @Override
   public void gather(ServiceContext context)

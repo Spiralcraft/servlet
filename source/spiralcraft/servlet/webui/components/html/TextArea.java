@@ -48,13 +48,14 @@ public class TextArea<Ttarget>
   public void render(EventContext context)
     throws IOException
   { 
-    if ( ((ControlState<?>) context.getState()).isErrorState())
+    ControlState<?> state=getState(context);
+    if (state.isErrorState())
     { errorTag.render(context);
     }
     else
     { tag.render(context);
     }
-    ((ControlState<?>) context.getState()).setPresented(true);
+    state.setPresented(true);
   }  
 
   public class Tag
@@ -65,12 +66,11 @@ public class TextArea<Ttarget>
     { return "textarea";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<String> state=((ControlState<String>) context.getState());
+      ControlState<?> state=getState(context);
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       super.renderAttributes(context);
     }
@@ -80,12 +80,11 @@ public class TextArea<Ttarget>
     { return true;
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     protected void renderContent(EventContext context)
       throws IOException
     { 
-      String value=((ControlState<String>) context.getState()).getValue();
+      String value=TextArea.this.<String>getState(context).getValue();
       if (value!=null)
       {  context.getWriter().write(value);
       }

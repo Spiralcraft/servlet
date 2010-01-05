@@ -57,12 +57,11 @@ public class Option<Ttarget,Tvalue>
     { return "option";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      SelectItemState<Tvalue> state=((SelectItemState<Tvalue>) context.getState());
+      SelectItemState<Tvalue> state=getState(context);
 
       if (state.isSelected())
       { renderAttribute(context.getWriter(),"selected","selected");
@@ -106,11 +105,10 @@ public class Option<Ttarget,Tvalue>
   private ErrorTag errorTag=new ErrorTag(tag);
   
   @Override
-  @SuppressWarnings("unchecked")
   public void render(EventContext context)
     throws IOException
   { 
-    if (((SelectItemState<Tvalue>) context.getState()).isErrorState())
+    if (getState(context).isErrorState())
     { errorTag.render(context);
     }
     else

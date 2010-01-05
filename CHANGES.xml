@@ -2,6 +2,162 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-01-05
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2009-12-31
+        </date>
+        
+        <notes>
+          <scm:Note>WebUI component inheritance hierarchy enhancements
+          </scm:Note>
+          <scm:Note>Provide hooks in webui.Component for subclasses to
+            bracket a call to "message()" with a context insertion. Allows
+            controls that don't inherit from ControlGroup a way to publish
+            context to children.
+          </scm:Note>
+          <scm:Note>Provide an appropriately typed getState(EventContext) 
+            method to clean up many ugly State casts inside just about
+            every component. Required making most State classes publicly 
+            visible.
+          </scm:Note>
+          <scm:Note>Abstracted functionality for Command processing controls
+            into AbstractCommandControl.java
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>Component.java
+          </URI>
+          <URI>Control.java
+          </URI>
+          <URI>ControlGroup.java
+          </URI>
+          <URI>components/AbstractCommandControl.java
+          </URI>
+          <URI>components/AbstractSelectControl.java
+          </URI>
+          <URI>components/AbstractSelectItemControl.java
+          </URI>
+          <URI>components/AbstractTextControl.java
+          </URI>
+          <URI>components/Acceptor.java
+          </URI>
+          <URI>components/AcceptorCommand.java
+          </URI>
+          <URI>components/AutoExec.java
+          </URI>
+          <URI>components/CommandState.java
+          </URI>
+          <URI>components/DataSessionComponent.java
+          </URI>
+          <URI>components/EditorBase.java
+          </URI>
+          <URI>components/EditorState.java
+          </URI>
+          <URI>components/Login.java
+          </URI>
+          <URI>components/LoginState.java
+          </URI>
+          <URI>components/PageAction.java
+          </URI>
+          <URI>components/Paginate.java
+          </URI>
+          <URI>components/TupleEditor.java
+          </URI>
+          <URI>components/DataSession.assy.xml
+          </URI>
+          <URI>components/html/AggregateEditor.java
+          </URI>
+          <URI>components/html/Button.java
+          </URI>
+          <URI>components/html/CheckboxInput.java
+          </URI>
+          <URI>components/html/Editor.java
+          </URI>
+          <URI>components/html/FileInput.java
+          </URI>
+          <URI>components/html/Form.java
+          </URI>
+          <URI>components/html/FormCommand.java
+          </URI>
+          <URI>components/html/HiddenInput.java
+          </URI>
+          <URI>components/html/ImageButton.java
+          </URI>
+          <URI>components/html/Login.java
+          </URI>
+          <URI>components/html/Option.java
+          </URI>
+          <URI>components/html/RadioButton.java
+          </URI>
+          <URI>components/html/RadioGroup.java
+          </URI>
+          <URI>components/html/Select.java
+          </URI>
+          <URI>components/html/SelectionEditor.java
+          </URI>
+          <URI>components/html/SubmitButton.java
+          </URI>
+          <URI>components/html/TextArea.java
+          </URI>
+          <URI>components/html/TextInput.java
+          </URI>
+          <URI>components/html/TupleEditor.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    
+      <scm:Change>
+        <date>2009-12-31
+        </date>
+        
+        <notes>
+          <scm:Note>Move AutoFilter abstract components to their own package.
+             Many artifacts trivially affected by package change not itemized. 
+          </scm:Note>
+          <scm:Note>Provide abstractions for 
+            Filters that publish arbitrary session or request scoped objects
+            into an  application.
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>autofilter/FocusFilter.java
+          </URI>
+          <URI>autofilter/spi/FocusFilter.java
+          </URI>
+          <URI>autofilter/spi/RequestFocusFilter.java
+          </URI>
+          <URI>autofilter/spi/SessionFocusFilter.java
+          </URI>
+          <URI>pages/GeneratorServlet.java
+          </URI>
+          <URI>webui/UIServlet.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.0
     </revision>
     

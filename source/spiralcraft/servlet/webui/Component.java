@@ -100,45 +100,74 @@ public abstract class Component
     { log.fine(this.toString()+" message "+message);
     }
     
-    if (message.getType()==RequestMessage.TYPE)
-    { handleRequest((ServiceContext) context);
-    }
-    else if (message.getType()==ActionMessage.TYPE)
+    try
     {
-      if (((ActionMessage) message).getAction().getTargetPath()
-           ==context.getState().getPath()
-         )
-      { 
-        handleAction
-          ((ServiceContext) context
-          ,((ActionMessage) message).getAction()
-          );
+      preMessage(context,message);
+    
+      if (message.getType()==RequestMessage.TYPE)
+      { handleRequest((ServiceContext) context);
       }
-    }
-    else if (message.getType()==CommandMessage.TYPE)
-    { handleCommand((ServiceContext) context);
-    }
-    else if (message.getType()==PrepareMessage.TYPE)
-    { 
-      handlePrepare((ServiceContext) context);
-    }
-    else if (message.getType()==InitializeMessage.TYPE)
-    { handleInitialize((ServiceContext) context);
-    }
-    
-    
-    super.message(context,message,path);
+      else if (message.getType()==ActionMessage.TYPE)
+      {
+        if (((ActionMessage) message).getAction().getTargetPath()
+            ==context.getState().getPath()
+        )
+        { 
+          handleAction
+          ((ServiceContext) context
+              ,((ActionMessage) message).getAction()
+          );
+        }
+      }
+      else if (message.getType()==CommandMessage.TYPE)
+      { handleCommand((ServiceContext) context);
+      }
+      else if (message.getType()==PrepareMessage.TYPE)
+      { 
+        handlePrepare((ServiceContext) context);
+      }
+      else if (message.getType()==InitializeMessage.TYPE)
+      { handleInitialize((ServiceContext) context);
+      }
 
-    if (message.getType()==PrepareMessage.TYPE)
-    { postPrepare((ServiceContext) context);
-    }
+
+      super.message(context,message,path);
+
+      if (message.getType()==PrepareMessage.TYPE)
+      { postPrepare((ServiceContext) context);
+      }
+
+      if (message.getType()==CommandMessage.TYPE)
+      { handleCommand((ServiceContext) context);
+      }
     
-    if (message.getType()==CommandMessage.TYPE)
-    { handleCommand((ServiceContext) context);
+    }
+    finally
+    { postMessage(context,message);
     }
 
   }
   
+  /**
+   * Called on entry to message()
+   * 
+   * @param context
+   * @param message
+   */
+  protected void preMessage(EventContext context,Message message)
+  {
+  }
+
+  /**
+   * Called before exit from message(), guaranteed via try/finally
+   * 
+   * @param context
+   * @param message
+   */
+  protected void postMessage(EventContext context,Message message)
+  {
+  }
+      
   public void destroy()
   {
   }
@@ -203,6 +232,7 @@ public abstract class Component
   { }
 
 
+  
   
   @Override
   public void render(EventContext context)

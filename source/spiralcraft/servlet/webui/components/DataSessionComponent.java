@@ -152,7 +152,7 @@ public class DataSessionComponent
 
     try
     {
-      DataSessionState state=(DataSessionState) context.getState();
+      DataSessionState state=getState(context);
       
       dataSessionChannel.push(state.get());
       if (!state.isInitialized())
@@ -180,7 +180,7 @@ public class DataSessionComponent
 
     try
     {
-      DataSessionState state=(DataSessionState) context.getState();
+      DataSessionState state=getState(context);
       dataSessionChannel.push(state.get());
       if (!state.isInitialized())
       { 
@@ -193,7 +193,7 @@ public class DataSessionComponent
       if (debug)
       { 
         log.fine
-          (((DataSessionState) context.getState()).get().getData().toString());
+          (getState(context).get().getData().toString());
       }
     } 
     finally
@@ -210,10 +210,14 @@ public class DataSessionComponent
       (dataSessionFocus.newDataSession(),getChildCount());
   }
   
+  protected DataSessionState getState(EventContext context)
+  { return (DataSessionState) context.getState();
+  }
+  
   @Override
   public void handleRequest(ServiceContext context)
   { 
-		DataSessionState state=(DataSessionState) context.getState();
+		DataSessionState state=getState(context);
 		
     // Leave the session object alone until handlePrepare()
     //   for a responsive request
@@ -228,7 +232,7 @@ public class DataSessionComponent
   @Override
   public void handlePrepare(ServiceContext context)
   { 
-    DataSessionState state=(DataSessionState) context.getState();
+    DataSessionState state=getState(context);
     if (state.frameChanged(context.getCurrentFrame()))
     { 
     	if (!state.getRequestBindingsApplied())

@@ -38,9 +38,9 @@ import spiralcraft.security.auth.LoginEntry;
 
 import spiralcraft.servlet.autofilter.SecurityFilter;
 import spiralcraft.servlet.webui.ControlGroup;
-import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.textgen.EventContext;
 import spiralcraft.util.ArrayUtil;
 
 
@@ -174,6 +174,12 @@ public class Login
   public LoginState createState()
   {
     return new LoginState(this);
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  protected LoginState getState(EventContext context)
+  { return (LoginState) context.getState();
   }
 
   private boolean login(boolean interactive)
@@ -324,7 +330,7 @@ public class Login
   protected void handlePrepare(ServiceContext context)
   { 
     
-    LoginState state=(LoginState) context.getState();
+    LoginState state=getState(context);
     computeReferer(context,state);
     super.handlePrepare(context);
     
@@ -475,18 +481,18 @@ public class Login
   @Override
   protected void scatter(ServiceContext context)
   { 
-    LoginState state=(LoginState) context.getState();
-    LoginEntry lastEntry=getState().getValue();
+    LoginState state=getState(context);
+    LoginEntry lastEntry=state.getValue();
    
     super.scatter(context);
-    computeReferer(context,(LoginState) getState());
-    if (getState().getValue()==null)
+    computeReferer(context,state);
+    if (state.getValue()==null)
     { 
       if (lastEntry==null)
       { newEntry();
       }
       else
-      { getState().setValue(lastEntry);
+      { state.setValue(lastEntry);
       }
     }
     
@@ -514,22 +520,5 @@ public class Login
   
 }
 
-class LoginState
-  extends ControlGroupState<LoginEntry>
-{
-  private String referer;
-  
-  public LoginState(Login login)
-  { super(login);
-  }
-  
-  public void setReferer(String referer)
-  { this.referer=referer;
-  }
-  
-  public String getReferer()
-  { return referer;
-  }
 
-}
 

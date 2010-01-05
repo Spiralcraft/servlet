@@ -57,12 +57,11 @@ public class FileInput
     { return "input";
     }
 
-    @SuppressWarnings("unchecked") // Generic cast
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      ControlState<URI> state=((ControlState<URI>) context.getState());
+      ControlState<URI> state=getState(context);
       renderAttribute(context.getWriter(),"type","file");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
       super.renderAttributes(context);
@@ -135,7 +134,7 @@ public class FileInput
   public void render(EventContext context)
     throws IOException
   { 
-    if ( ((ControlState<?>) context.getState()).isErrorState())
+    if ( getState(context).isErrorState())
     { errorTag.render(context);
     }
     else
@@ -144,14 +143,14 @@ public class FileInput
     super.render(context);
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
+
   @Override
   public void gather(ServiceContext context)
   {
     if (debug)
     { log.fine(context.getRequest().getContentType());
     }
-    ControlState<URI> state=((ControlState<URI>) context.getState());
+    ControlState<URI> state=getState(context);
    
     // Only update if changed
     if (context.getPost()!=null)
@@ -258,11 +257,10 @@ public class FileInput
     return prefix+suffix;
   }
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void scatter(ServiceContext context)
   {
-    ControlState<URI> state=((ControlState<URI>) context.getState());
+    ControlState<URI> state=getState(context);
     if (target!=null)
     {
       try
