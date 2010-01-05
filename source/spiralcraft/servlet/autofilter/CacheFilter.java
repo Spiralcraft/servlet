@@ -25,6 +25,13 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import spiralcraft.time.Clock;
 
+
+/**
+ * Adds caching policy headers for resources handled by this filter
+ * 
+ * @author mike
+ *
+ */
 public class CacheFilter
     extends AutoFilter
 {
