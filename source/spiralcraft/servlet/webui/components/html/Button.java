@@ -160,6 +160,7 @@ public class Button<Tcontext,Tresult>
   public void bindSelf()
     throws BindException
   { 
+    super.bindSelf();
     tag.bind(getFocus());
     errorTag.bind(getFocus());
   }  

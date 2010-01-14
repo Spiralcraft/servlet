@@ -150,6 +150,7 @@ public class SubmitButton<Tcontext,Tresult>
   public void bindSelf()
     throws BindException
   { 
+    super.bindSelf();
     tag.bind(getFocus());
     errorTag.bind(getFocus());
   }     

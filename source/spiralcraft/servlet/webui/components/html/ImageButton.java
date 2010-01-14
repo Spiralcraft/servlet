@@ -194,6 +194,7 @@ public class ImageButton<Tcontext,Tresult>
   public void bindSelf()
     throws BindException
   { 
+    super.bindSelf();
     tag.bind(getFocus());
     errorTag.bind(getFocus());
   }    
