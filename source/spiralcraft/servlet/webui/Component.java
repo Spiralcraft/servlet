@@ -100,9 +100,7 @@ public abstract class Component
     { log.fine(this.toString()+" message "+message);
     }
     
-    try
-    {
-      preMessage(context,message);
+
     
       if (message.getType()==RequestMessage.TYPE)
       { handleRequest((ServiceContext) context);
@@ -140,33 +138,10 @@ public abstract class Component
       if (message.getType()==CommandMessage.TYPE)
       { handleCommand((ServiceContext) context);
       }
-    
-    }
-    finally
-    { postMessage(context,message);
-    }
+
 
   }
-  
-  /**
-   * Called on entry to message()
-   * 
-   * @param context
-   * @param message
-   */
-  protected void preMessage(EventContext context,Message message)
-  {
-  }
 
-  /**
-   * Called before exit from message(), guaranteed via try/finally
-   * 
-   * @param context
-   * @param message
-   */
-  protected void postMessage(EventContext context,Message message)
-  {
-  }
       
   public void destroy()
   {

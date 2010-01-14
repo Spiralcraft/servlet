@@ -16,6 +16,8 @@ package spiralcraft.servlet.webui.components;
 
 
 
+import java.util.LinkedList;
+
 import spiralcraft.command.Command;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Binding;
@@ -42,6 +44,22 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   
   protected Focus<?> focus;
   
+  @Override
+  public void message
+    (EventContext context,Message message,LinkedList<Integer> path)
+  { 
+    try
+    { 
+      pushState(context);
+      
+      super.message(context,message,path);
+    
+    }
+    finally
+    { popState(context);
+    }
+  }
+      
   public void setContextX(Binding<Tcontext> contextX)
   { this.contextX=contextX;
   }
@@ -120,19 +138,6 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   { return new CommandState<Tcontext,Tresult>(this);
   }  
   
-  @Override
-  protected void preMessage(EventContext context,Message message)
-  { 
-    pushState(context);
-    super.postMessage(context,message);
-  }
-  
-  @Override
-  protected void postMessage(EventContext context,Message message)
-  { 
-    super.postMessage(context,message);
-    popState(context);
-  }
 
   @SuppressWarnings("unchecked")
   @Override
