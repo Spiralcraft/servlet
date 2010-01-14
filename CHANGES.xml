@@ -2,6 +2,71 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.2
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-01-13
+    </date>
+
+    <detail>
+      <scm:Change>
+        <date>2010-01-13
+        </date>
+        
+        <notes>
+          <scm:Note>Removed preMessage() and postMessage() bracketing call
+            in Component because it did not provide significant benefits over 
+            simply overriding message() in subclasses. Reverted 
+            AbstractCommandContol to use message() override to push 
+            command context.
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>Component.java
+          </URI>
+          <URI>components/AbstractCommandControl.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <date>2010-01-13
+        </date>
+        
+        <notes>
+          <scm:Note>Make sure that html extensions of AbstractCommandControl
+            call super.bindSelf() from bindSelf()
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/html/
+        </path>
+        
+        <resources>
+          <URI>Button.java
+          </URI>
+          <URI>ImageButton.java
+          </URI>
+          <URI>SubmitButton.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.1
     </revision>
     
