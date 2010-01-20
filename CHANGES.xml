@@ -2,6 +2,35 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.2.2
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-01-19
+    </date>
+
+    <detail>
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Updated to reflect refactored Authenticator from 
+            spiralcraft-core and incorporate passive credentials by calling
+            authenticate() when session is started and by calling refresh()
+            on every request.
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+  
+  <scm:Change>
     <revision>0.4.2
     </revision>
     
