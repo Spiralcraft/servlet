@@ -272,11 +272,11 @@ public class SecurityFilter
             )
          )
       { 
-        authSessionChannel.get().logout();
+        authSessionChannel.get().clearCredentials();
         if (debug)
         {
           log.fine
-            ("auto-logout because cookie doesn't match: "
+            ("clearing credentials because cookie doesn't match: "
               +loginCookie.getValue()
               +" != "
               +authSessionChannel.get()
@@ -288,9 +288,9 @@ public class SecurityFilter
     else
     { 
       if (debug)
-      { log.fine("auto-logout because no login cookie");
+      { log.fine("clearing credentials because no login cookie");
       }
-      authSessionChannel.get().logout();
+      authSessionChannel.get().clearCredentials();
     }
     
     
