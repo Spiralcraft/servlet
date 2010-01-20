@@ -72,12 +72,23 @@ public class SecurityFilter
   private int minutesToPersist;
   private boolean requireValidCookie;
 
+  private boolean preAuthenticate;
   /**
    * The amount of time a login should persist. Setting this enables
    *   persistent login cookies.
    */
   public void setMinutesToPersist(int minutesToPersist)
   { this.minutesToPersist=minutesToPersist;
+  }
+  
+  /**
+   * Attempt to authenticate the session as soon as it is created to
+   *   enable automatic login based on contextual credentials 
+   * 
+   * @param preAuthenticate
+   */
+  public void setPreAuthenticate(boolean preAuthenticate)
+  { this.preAuthenticate=true;
   }
   
   /**
@@ -384,6 +395,7 @@ public class SecurityFilter
       // To avoid race condition of 2 threads associated with the same
       //   session where one overwrites the in-use auth session with
       //   an empty one.
+      boolean isNew=false;
       synchronized (session)
       {
         authSession
@@ -396,9 +408,9 @@ public class SecurityFilter
             log.fine
               ("Creating a new AuthSession for HTTP Session "+session.getId());
           }
-          
           authSession=authenticator.createSession();
           session.setAttribute(attributeName,authSession);
+          isNew=true;
         }
         else
         {
@@ -411,9 +423,18 @@ public class SecurityFilter
           }
         }
       }
+      if (isNew)
+      {
+        if (preAuthenticate)
+        { authSession.authenticate();
+        }
+      }
+      
     }
     
+    authSession.refresh();
     authSessionChannel.push(authSession);
+    
     contextLocal.set(new SecurityFilterContext(request,response,cookieName));
     
     
