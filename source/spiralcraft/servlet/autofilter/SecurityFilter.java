@@ -73,6 +73,12 @@ public class SecurityFilter
   private boolean requireValidCookie;
 
   private boolean preAuthenticate;
+  private String ticketAuthModuleName="local";
+  
+  public void setTicketAuthModuleName(String ticketAuthModuleName)
+  { this.ticketAuthModuleName=ticketAuthModuleName;
+  }
+  
   /**
    * The amount of time a login should persist. Setting this enables
    *   persistent login cookies.
@@ -252,12 +258,25 @@ public class SecurityFilter
   { return minutesToPersist>0 || requireValidCookie; 
   }
   
+  /**
+   * <p>Called in the request half of the filter when we get a ticket, and 
+   *   we're already authenticated. Make sure it is the same ticket we gave out 
+   *   when we authenticated an old ticket for this login session.
+   * </p>
+   * 
+   */
   private void revalidateCookieLogin()
   { 
     Cookie loginCookie=contextLocal.get().getLoginCookie();      
-      
+    
     if (loginCookie!=null)
     { 
+      // This is set to the base64 encoded form of the "remember" token written
+      //   after a successful login
+      String sessionCookie=
+        authSessionChannel.get()
+              .getAttribute(AUTH_SESSION_COOKIE_ATTRIBUTE);
+
       if (debug)
       { 
         log.fine
@@ -266,12 +285,15 @@ public class SecurityFilter
           +loginCookie.getValue()
           );
       }
+      
+      
+      
       if (!loginCookie.getValue().equals
-            (authSessionChannel.get()
-              .getAttribute(AUTH_SESSION_COOKIE_ATTRIBUTE)
+            (sessionCookie
             )
          )
       { 
+        
         authSessionChannel.get().clearCredentials();
         if (debug)
         {
@@ -279,11 +301,13 @@ public class SecurityFilter
             ("clearing credentials because cookie doesn't match: "
               +loginCookie.getValue()
               +" != "
-              +authSessionChannel.get()
-               .getAttribute(AUTH_SESSION_COOKIE_ATTRIBUTE)
+              +sessionCookie
+              
             );
+            
         }
       }
+      
     }
     else
     { 
@@ -438,11 +462,19 @@ public class SecurityFilter
     contextLocal.set(new SecurityFilterContext(request,response,cookieName));
     
     
-    if (requireValidCookie && authSession.isAuthenticated())
+    if (requireValidCookie 
+        && authSession.isAuthenticated(ticketAuthModuleName)
+        )
     { 
+      
+      // XXX Note, we now have multi-provider login.
+      //   
+      
       // Make sure we check the current cookie before allowing a
       //   previously authenticated session to continue
       revalidateCookieLogin();
+      
+      
     }
     
   }
