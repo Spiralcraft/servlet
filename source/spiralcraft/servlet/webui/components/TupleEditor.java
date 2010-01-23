@@ -31,6 +31,7 @@ import spiralcraft.data.session.BufferTuple;
 import spiralcraft.data.session.BufferType;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
@@ -59,6 +60,7 @@ public abstract class TupleEditor
   private Setter<?>[] defaultSetters;
   private Setter<?>[] newSetters;
   private Setter<?>[] publishedSetters;
+  private Binding<?> onSave;
 
   private Channel<BufferAggregate<Buffer,?>> aggregateChannel;
   
@@ -272,6 +274,14 @@ public abstract class TupleEditor
             { setter.set();
             }
           }
+          
+          if (onSave!=null)
+          { 
+            Object result=onSave.get();
+            if (debug)
+            { log.fine("onSave returned "+result);
+            }
+          }
         }
       }
       else
@@ -290,6 +300,10 @@ public abstract class TupleEditor
     
   }  
 
+  public void setOnSave(Binding<?> onSave)
+  { this.onSave=onSave;
+  }
+  
   /**
    * <p>Adds a buffer to a parent AggregateBuffer
    * </p>
@@ -461,7 +475,9 @@ public abstract class TupleEditor
     publishedSetters=bindAssignments(publishedAssignments);
     bindRequestAssignments(requestBindings);
     bindRequestAssignments(redirectBindings);
-    
+    if (onSave!=null)
+    { onSave.bind(getFocus());
+    }
     return null;
     
   }
