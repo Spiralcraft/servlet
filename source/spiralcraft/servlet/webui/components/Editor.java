@@ -836,11 +836,7 @@ public abstract class Editor
           
     }
     
-    Focus sessionFocus=parentFocus.findFocus(DataSession.FOCUS_URI);
-    if (sessionFocus!=null)
-    { sessionChannel=sessionFocus.getSubject();
-    }
-    
+    sessionChannel=DataSession.findChannel(parentFocus);
     return bufferChannel;
   }
   

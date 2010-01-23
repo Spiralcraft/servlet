@@ -231,12 +231,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     throws DataException;
   
   protected void setupSession(Focus<?> parentFocus)
-  {
-    Focus<DataSession> sessionFocus
-      =parentFocus.<DataSession>findFocus(DataSession.FOCUS_URI);
-    if (sessionFocus!=null)
-    { sessionChannel=sessionFocus.getSubject();
-    }
+  { sessionChannel=DataSession.findChannel(parentFocus);
   }
   
   protected boolean writeToModel(Tbuffer buffer)
