@@ -1,6 +1,51 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  
+  <scm:Change>
+    <revision>0.4.3
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>????
+    </date>
+
+    <detail>
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Updated Editor components to find the contextual
+            DataSession in a more concise manner.
+          </scm:Note>
+          <scm:Note>TupleEditor now provides an onSave property to evaluate
+            an expression after a successful save.
+          </scm:Note>
+          <scm:Note>Login now supports an onLogin binding property to evaluate
+            an expression after a successful login.
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>Editor.java
+          </URI>
+          <URI>EditorBase.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+          <URI>Login.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
   <scm:Change>
     <revision>0.4.2.2
     </revision>
