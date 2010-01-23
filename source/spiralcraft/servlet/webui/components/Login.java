@@ -26,6 +26,7 @@ import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
@@ -83,6 +84,7 @@ public class Login
   
   
   private SecurityFilter securityFilter;
+  private Binding<?> onLoginX;
   
 //  private boolean silent;
 
@@ -261,7 +263,15 @@ public class Login
         { setter.set();
         }
       }            
-
+      
+      if (onLoginX!=null)
+      {
+        Object val=onLoginX.get();
+        if (debug)
+        { log.fine(toString()+": onLogin returned "+val);
+        }
+      }
+      
       state.setValue(null);
       newEntry();
       return true;
@@ -416,14 +426,35 @@ public class Login
    * <p>Assignments which get executed immediately after a successful login
    * </p>
    * 
-   * <p>XXX refactor to setPostAssignments()
+   * 
+   * @param assignments
+   * @Deprecated: Use setPostAssignments()
+   */
+  @Deprecated
+  public void setAssignments(Assignment<?>[] assignments)
+  { 
+    log.fine("Login.assignments is deprecated. Use Login.postAssignments");
+    this.postAssignments=assignments;
+  }  
+  
+  /**
+   * An expression to be evaluated after a successful login
+   * 
+   * @param x
+   */
+  public void onLogin(Binding<?> onLoginX)
+  { this.onLoginX=onLoginX;
+  }
+  
+  /**
+   * <p>Assignments which get executed immediately after a successful login
    * </p>
    * 
    * @param assignments
    */
-  public void setAssignments(Assignment<?>[] assignments)
+  public void setPostAssignments(Assignment<?>[] assignments)
   { this.postAssignments=assignments;
-  }  
+  }
   
   protected void newEntry()
   { 
@@ -474,6 +505,9 @@ public class Login
   {
     postSetters=bindAssignments(postAssignments);
     preSetters=bindAssignments(preAssignments);
+    if (onLoginX!=null)
+    { onLoginX.bind(getFocus());
+    }
     return super.bindExports();
     
   }
