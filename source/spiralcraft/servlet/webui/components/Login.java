@@ -266,9 +266,18 @@ public class Login
       
       if (onLoginX!=null)
       {
-        Object val=onLoginX.get();
-        if (debug)
-        { log.fine(toString()+": onLogin returned "+val);
+        try
+        {
+          Object val=onLoginX.get();
+          if (debug)
+          { log.fine(toString()+": onLogin returned "+val);
+          }
+        }
+        catch (RuntimeException x)
+        { 
+          state.setException(x);
+          log.log(Level.WARNING,"Login.onLogin threw exception",x);
+          throw x;
         }
       }
       
@@ -442,7 +451,7 @@ public class Login
    * 
    * @param x
    */
-  public void onLogin(Binding<?> onLoginX)
+  public void setOnLogin(Binding<?> onLoginX)
   { this.onLoginX=onLoginX;
   }
   
