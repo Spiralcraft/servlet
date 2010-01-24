@@ -33,6 +33,7 @@ import spiralcraft.data.session.Buffer;
 
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -76,6 +77,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected Assignment<?>[] defaultAssignments;
   protected Assignment<?>[] newAssignments;
   protected Assignment<?>[] publishedAssignments;
+  protected Assignment<?>[] postAssignments;
   protected RequestBinding<?>[] requestBindings;
   protected RequestBinding<?>[] redirectBindings;
 
@@ -89,8 +91,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected boolean retain;
 
   private boolean touchNew;
-  private Expression<Boolean> touchWhenX;
-  private Channel<Boolean> touchWhenChannel;  
+  private Binding<Boolean> touchWhenX;
 
   {
     useDefaultTarget=false;
@@ -326,7 +327,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    * 
    * @param touchWhenX
    */
-  public void setTouchWhenX(Expression<Boolean> touchWhenX)
+  public void setTouchWhenX(Binding<Boolean> touchWhenX)
   { this.touchWhenX=touchWhenX;
   }
   
@@ -381,6 +382,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   /**
    * <p>Default Assignments get executed immediately before storing, if
    *   the Tuple is dirty already, and the existing field data is null.
+   * </p>
    *   
    * @param assignments
    */
@@ -399,6 +401,19 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   { fixedAssignments=assignments;
   }
 
+  /**
+   * <p>postAssignments get executed when a buffer save has been requested,
+   *   before evaluation of the state of the buffer and before any 
+   *   defaultAssignments or fixedAssignments are executed.
+   *   
+   * </p>
+   * 
+   * @param assignments
+   */
+  public void setPostAssignments(Assignment<?>[] postAssignments)
+  { this.postAssignments=postAssignments;
+  }
+  
   /**
    * <p>Published assignments get executed on the Prepare message, which 
    *   occurs before rendering. This permits publishing of data to
@@ -838,9 +853,13 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     if (source==null && type!=null)
     { 
       if (debug)
-      { logFine("No source: Binding NullChannel for type "+type);
+      { logFine
+          ("No source: Binding NullChannel for type "
+          +type+" and turning autoCreate on"
+          );
       }
       source=new NullChannel(DataReflector.getInstance(type));
+      autoCreate=true;
     }
     else
     { 
@@ -863,7 +882,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     { buffer.touch();
     }
     
-    if (touchWhenChannel!=null && Boolean.TRUE.equals(touchWhenChannel.get()))
+    if (touchWhenX!=null && Boolean.TRUE.equals(touchWhenX.get()))
     { buffer.touch();
     }
 
@@ -882,7 +901,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     Focus<?> ret=super.bindExports();
     
     if (touchWhenX!=null)
-    { touchWhenChannel=getFocus().bind(touchWhenX);
+    { touchWhenX.bind(getFocus());
     }
     return ret;
   }

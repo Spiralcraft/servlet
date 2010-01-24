@@ -60,6 +60,7 @@ public abstract class TupleEditor
   private Setter<?>[] defaultSetters;
   private Setter<?>[] newSetters;
   private Setter<?>[] publishedSetters;
+  private Setter<?>[] postSetters;
   private Binding<?> onSave;
 
   private Channel<BufferAggregate<Buffer,?>> aggregateChannel;
@@ -233,32 +234,33 @@ public abstract class TupleEditor
     Buffer buffer=getState().getValue();
     if (buffer!=null)
     { 
+      if (postSetters!=null)
+      { 
+        if (debug)
+        { logFine("applying postAssignments");
+        }
+        Setter.applyArray(postSetters);
+      }
+
       beforeCheckDirty(buffer);
-    
+
       if (buffer.isDirty())
       {
+
         if (defaultSetters!=null)
         { 
           if (debug)
-          { logFine("applying default values");
+          { logFine("applying defaultAssignments");
           }
-          for (Setter<?> setter: defaultSetters)
-          { 
-            if (setter.getTarget().get()==null)
-            { setter.set();
-            }
-          }
-      
+          Setter.applyArrayIfNull(defaultSetters);
         }
-
+        
         if (fixedSetters!=null)
         {
           if (debug)
-          { logFine("applying fixed values");
+          { logFine("applying fixedAssignments");
           }
-          for (Setter<?> setter: fixedSetters)
-          { setter.set();
-          }
+          Setter.applyArray(fixedSetters);
         }
       
         if (inspect((BufferTuple) buffer,getState()))
@@ -473,6 +475,7 @@ public abstract class TupleEditor
     newSetters=bindAssignments(newAssignments);
     initialSetters=bindAssignments(initialAssignments);
     publishedSetters=bindAssignments(publishedAssignments);
+    postSetters=bindAssignments(postAssignments);
     bindRequestAssignments(requestBindings);
     bindRequestAssignments(redirectBindings);
     if (onSave!=null)

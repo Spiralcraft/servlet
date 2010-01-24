@@ -68,6 +68,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   private Setter<?>[] initialSetters;
   private Setter<?>[] defaultSetters;
   private Setter<?>[] newSetters;
+  private Setter<?>[] postSetters;
   
   private boolean contentRequired;
   private String contentRequiredMessage="At least one entry is required";
@@ -249,6 +250,25 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     }
     else
     {
+      if (postSetters!=null)
+      {
+        for (int i=0;i<aggregate.size();i++)
+        { 
+          BufferTuple buffer=aggregate.get(i);
+          childChannel.push(buffer);
+          try 
+          { 
+            if (debug)
+            { log.fine(toString()+": applying postAssignments to "+buffer);
+            }
+            Setter.applyArray(postSetters);
+          }
+          finally
+          { childChannel.pop();
+          }
+        }
+      }
+
       beforeCheckDirty(aggregate);
       
       if (aggregate.isDirty())
@@ -287,18 +307,13 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     childChannel.push(child);
     try
     {
+      
       if (defaultSetters!=null)
       { 
         if (debug)
         { log.fine(toString()+": applying default values to "+child);
         }
-        for (Setter<?> setter: defaultSetters)
-        { 
-          if (setter.getTarget().get()==null)
-          { setter.set();
-          }
-        }
-      
+        Setter.applyArrayIfNull(defaultSetters);      
       }
 
       if (fixedSetters!=null)
@@ -306,9 +321,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         if (debug)
         { log.fine(toString()+": applying fixed values to "+child);
         }
-        for (Setter<?> setter: fixedSetters)
-        { setter.set();
-        }
+        Setter.applyArray(fixedSetters);
       }
       
       if (isPadChannel==null 
@@ -435,6 +448,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       defaultSetters=bindAssignments(defaultAssignments);
       newSetters=bindAssignments(newAssignments);
       initialSetters=bindAssignments(initialAssignments);
+      postSetters=bindAssignments(postAssignments);
       bindRequestAssignments(requestBindings);
       bindRequestAssignments(redirectBindings);
       
