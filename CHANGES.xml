@@ -22,6 +22,10 @@
           <scm:Note>TupleEditor now provides an onSave property to evaluate
             an expression after a successful save.
           </scm:Note>
+          <scm:Note>Editors now provide a "postAssignments" property to
+            unconditionally update data immediately after a save request is
+            received.
+          </scm:Note>
           <scm:Note>Login now supports an onLogin binding property to evaluate
             an expression after a successful login.
           </scm:Note>
@@ -37,6 +41,8 @@
           <URI>EditorBase.java
           </URI>
           <URI>TupleEditor.java
+          </URI>
+          <URI>AggregateEditor.java
           </URI>
           <URI>Login.java
           </URI>
