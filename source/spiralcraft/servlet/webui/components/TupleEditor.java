@@ -30,6 +30,7 @@ import spiralcraft.data.session.BufferChannel;
 import spiralcraft.data.session.BufferTuple;
 import spiralcraft.data.session.BufferType;
 
+import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
@@ -169,8 +170,15 @@ public abstract class TupleEditor
       { 
         logFine("Scattering buffer "+buffer);
       }
-      setInitialValues(buffer);
-      applyRequestBindings(context);
+      try
+      {  
+        setInitialValues(buffer);
+        applyRequestBindings(context);
+      }
+      catch (AccessException x)
+      { getState(context).setException(x);
+      }
+    
     }
 
   }
