@@ -14,8 +14,8 @@
 //
 package spiralcraft.servlet;
 
+import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
-import spiralcraft.lang.BindException;
 
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.lang.reflect.BeanReflector;
@@ -63,8 +63,14 @@ public class HttpFocus<T>
   private ThreadLocalChannel<HttpServletRequest> requestBinding;
   private ThreadLocalChannel<HttpServletResponse> responseBinding;
 
-  public void init()
-    throws BindException
+  
+  public HttpFocus(Focus<?> focusChain)
+  { 
+    this();
+    setParentFocus(focusChain);
+  }
+  
+  public HttpFocus()
   {
     // addNamespaceAlias("http");
     
@@ -112,12 +118,12 @@ public class HttpFocus<T>
    * @param response
    */
   public void push
-    (HttpServlet servlet
+    (ServletContext context
     ,HttpServletRequest request
     ,HttpServletResponse response
     )
   {
-    servletContextBinding.push(servlet.getServletConfig().getServletContext());
+    servletContextBinding.push(context);
     sessionBinding.push(request.getSession(false));
     requestBinding.push(request);
     responseBinding.push(response);
