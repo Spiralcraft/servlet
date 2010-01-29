@@ -30,6 +30,7 @@ import spiralcraft.time.Clock;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
@@ -58,10 +59,30 @@ public class RootComponent
   private static final ClassLog log 
     = ClassLog.getInstance(RootComponent.class);
   
+  public static final URI FOCUS_URI
+    =URI.create("class:/spiralcraft/servlet/webui/RootComponent");
+
+  /**
+   * Find the nearest RootComponent in context
+   * 
+   * @param focus
+   * @return
+   */
+  public static final Channel<RootComponent> findChannel(Focus<?> focus)
+  {
+    Focus<RootComponent> rcf=focus.findFocus(FOCUS_URI);
+    if (rcf!=null)
+    { return rcf.getSubject();
+    }
+    else
+    { return null;
+    }
+  }
+
   private Focus<?> focus;
-  private String contextRelativePath;
+  private String instancePath;
   protected ThreadLocalChannel<ServiceContext> threadLocal;
-    
+
   public RootComponent(Focus<?> focus)
   { 
     this.focus=focus;
@@ -96,10 +117,11 @@ public class RootComponent
   /**
    * 
    * @param contextRelativePath The path of this UIComponent relative
-   *   to the containing ServletContext
+   *   to the containing ServletContext, used to differentiate between
+   *   multiple components read from the same WebUI file.
    */
-  void setContextRelativePath(String contextRelativePath)
-  { this.contextRelativePath=contextRelativePath;
+  void setInstancePath(String contextRelativePath)
+  { this.instancePath=contextRelativePath;
   }
   
   /**
@@ -107,8 +129,8 @@ public class RootComponent
    * @return The path of this UIComponent relative
    *   to the containing ServletContext
    */
-  public String getContextRelativePath()
-  { return contextRelativePath;
+  public String getInstancePath()
+  { return instancePath;
   }
   
   @Override
