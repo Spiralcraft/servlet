@@ -54,6 +54,17 @@ public abstract class FocusFilter<T>
   { setGlobal(true);
   }
   
+  { super.setPattern("*");
+  }
+  
+  public void setPattern(String pattern)
+  { 
+    throw new IllegalArgumentException
+      ("Cannot change Filter pattern: Filter class "+getClass().getName()
+      +" must always be in the request chain"
+      );
+  }
+  
   /**
    * <p>Obtain the Focus associated with the deepest FocusFilter in the
    *   stack.
@@ -106,7 +117,7 @@ public abstract class FocusFilter<T>
    */
   protected abstract void pushSubject
     (HttpServletRequest request,HttpServletResponse response)
-    throws BindException;
+    throws BindException,ServletException;
   
   /**
    * Restore the subject of the Focus with the object it referenced for this
@@ -125,6 +136,7 @@ public abstract class FocusFilter<T>
    * @return
    */
   protected Focus<?> bindImports(Focus<?> parentFocus)
+    throws BindException
   { return parentFocus;
   }
   
@@ -136,6 +148,7 @@ public abstract class FocusFilter<T>
    * @return
    */
   protected Focus<?> bindExports(Focus<?> focus)
+    throws BindException
   { return focus;
   }
   
@@ -182,7 +195,11 @@ public abstract class FocusFilter<T>
       // log.fine("Setting "+focus);
       
       // System.err.println("FocusFilter.doFilter");
-      chain.doFilter(request,response);
+      doChain
+        (chain
+        ,(HttpServletRequest) request
+        ,(HttpServletResponse) response
+        );
     }
     catch (BindException x)
     { 
@@ -204,16 +221,15 @@ public abstract class FocusFilter<T>
 //    log.fine("/doFilter()");
     
   }
-
-
-  @Override
-  public Class<? extends AutoFilter> getCommonType()
-  { return FocusFilter.class;
+  
+  protected void doChain
+    (FilterChain chain
+    ,HttpServletRequest request
+    ,HttpServletResponse response
+    )
+    throws ServletException,IOException
+  { chain.doFilter(request,response);
   }
+  
 
-
-  @Override
-  public void setGeneralInstance(AutoFilter generalInstance)
-  {    
-  }
 }

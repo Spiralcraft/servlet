@@ -14,6 +14,7 @@
 //
 package spiralcraft.servlet.autofilter.spi;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,14 +38,23 @@ public abstract class RequestFocusFilter<T>
 {
   
   
-  private ThreadLocalChannel<T> channel;
+  protected ThreadLocalChannel<T> channel;
   private Reflector<T> reflector;
   
   
-  protected abstract Reflector<T> resolveReflector(Focus<?> parentFocus);
+  protected abstract Reflector<T> resolveReflector(Focus<?> parentFocus)
+    throws BindException;
   
   protected abstract T createValue
-    (HttpServletRequest request,HttpServletResponse response);
+    (HttpServletRequest request,HttpServletResponse response)
+      throws ServletException;
+
+  /**
+   * Called right before the value is released from ThreadLocal storage
+   */
+  protected  void releaseValue()
+  {
+  }
 
   
 
@@ -76,14 +86,16 @@ public abstract class RequestFocusFilter<T>
   
   @Override
   protected void popSubject(HttpServletRequest request)
-  { channel.pop();
+  { 
+    releaseValue();
+    channel.pop();
   }
   
   
   @Override
   protected void pushSubject
     (HttpServletRequest request,HttpServletResponse response) 
-    throws BindException
+    throws BindException,ServletException
   {
     T value=createValue(request,response);
     channel.push(value);
