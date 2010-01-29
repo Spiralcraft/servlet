@@ -1,6 +1,162 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  <scm:Change>
+    <revision>0.4.3.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>??????
+    </date>
+
+    <detail>
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Factored WebUI resolution and sequencing logic out of
+            UIServlet into UIService so it can be shared with new UIFilter 
+            to create filter based WebUI interfaces.
+          </scm:Note>
+          <scm:Note>RootComponent.contextRelativePath is now 
+            RootComponent.instancePath for better clarity. Multiple instances
+            of the same RootComponent will be bound into different
+            paths in the application context tree. Each "instance" may have
+            an arbitrary number of sessions associated with it.
+          </scm:Note>
+          <scm:Note>UICache identifies a bound RootComponent instance by an
+            instancePath, which is derived from the ServletContext. This
+            identification is independent of the actual webui resource,
+            which is passed in as a parameter.
+          </scm:Note>
+          <scm:Note>Moved Session resolution and creation to static method
+            in Session from UIServlet
+          </scm:Note>
+          <scm:Note>FileInput updated to accept tag properties.
+          </scm:Note>
+          <scm:Note>ServiceContext no longer references UIServlet- references
+            the ServletContext root Resource instead. This only affects
+            FileInput.
+          </scm:Note>
+          <scm:Note>RootComponent.findChannel(Focus) static method
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>RootComponent.java
+          </URI>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>Session.java
+          </URI>
+          <URI>UICache.java
+          </URI>
+          <URI>UIFilter.java
+          </URI>
+          <URI>UIService.java
+          </URI>
+          <URI>components/html/FileInput.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Factor Servlet/Filter ServletContext relationship into
+            new ContextAdapter to simplify supporting both Servlet and
+            Filter constructs in the the same code.
+          </scm:Note>
+          <scm:Note>Removed Servlet reference from HttpFocus and explicitly
+            pass ServletContext to HttpFocus can work with filters. Removed
+            init() method in favor of constructor based init.
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>AbstractFilter.java
+          </URI>
+          <URI>HttpServlet.java
+          </URI>
+          <URI>ContextAdapter.java
+          </URI>
+          <URI>pages/GeneratorServlet.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Factored common AutoFilter code into base class to clean
+            up unnecessary boilerplate abstract method implementations.
+          </scm:Note>
+
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>autofilter/AutoFilter.java
+          </URI>
+          <URI>autofilter/AuthenticateFilter.java
+          </URI>
+          <URI>autofilter/CacheFilter.java
+          </URI>
+          <URI>autofilter/ErrorFilter.java
+          </URI>
+          <URI>autofilter/GuardFilter.java
+          </URI>
+          <URI>autofilter/ProxyFilter.java
+          </URI>
+          <URI>autofilter/RedirectFilter.java
+          </URI>
+          <URI>autofilter/TranslationFilter.java
+          </URI>
+          <URI>autofilter/spi/FocusFilter.java
+          </URI>
+          <URI>gzip/GZipFilter.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        <notes>
+          <scm:Note>FocusFilter prevents pattern restriction due to requirement
+            that it always be in the chain and available for binding. Supports
+            override point to run code in the thread context.
+          </scm:Note>
+          <scm:Note>RequestFocusFilter adds releaseValue() override to allow
+            subtypes to reliably provide additional thread context.
+          </scm:Note>
+        </notes>
+        
+        <path>/source/spiralcraft/servlet/autofilter/spi
+        </path>
+        
+        <resources>
+          <URI>FocusFilter.java
+          </URI>
+          <URI>RequestFocusFilter.java
+          </URI>
+        </resources>
+      
+      </scm:Change>
+      
+    </detail>
+  </scm:Change>
   
   <scm:Change>
     <revision>0.4.3
