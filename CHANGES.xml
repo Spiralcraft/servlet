@@ -59,6 +59,8 @@
           </URI>
           <URI>UIService.java
           </URI>
+          <URI>UIServlet.java
+          </URI>
           <URI>components/html/FileInput.java
           </URI>
         </resources>
