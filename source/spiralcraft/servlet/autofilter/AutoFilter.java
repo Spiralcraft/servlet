@@ -65,6 +65,7 @@ public abstract class AutoFilter
   protected boolean debug;
   protected String pattern;
   protected AutoFilter parent;
+  protected AutoFilter generalInstance;
   
 
   
@@ -237,13 +238,17 @@ public abstract class AutoFilter
   }
   
   /**
-   * Called when a more general Filter already applies that
-   *   this filter adds to or overrides. If this filter overrides the
-   *   parent filter, 
+   * Called when a more general Filter of the same common type already applies
+   *   that this filter adds to or overrides. 
+   *   
    */
-  public abstract void setGeneralInstance(AutoFilter parentInstance);
+  public void setGeneralInstance(AutoFilter parentInstance)
+  { this.generalInstance=parentInstance;
+  }
   
-  public abstract Class<? extends AutoFilter> getCommonType();
+  public Class<? extends AutoFilter> getCommonType()
+  { return getClass();
+  }
 
   /**
    * 

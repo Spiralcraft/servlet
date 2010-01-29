@@ -141,14 +141,4 @@ public class GuardFilter
   { return "guard";
   }
 
-  @Override
-  public void setGeneralInstance(AutoFilter parentInstance)
-  {
-
-  }
-
-  @Override
-  public Class<? extends AutoFilter> getCommonType()
-  { return GuardFilter.class;
-  }
 }

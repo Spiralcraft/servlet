@@ -225,15 +225,5 @@ public class AuthenticateFilter
         
     }
   }
-  
-  @Override
-  public void setGeneralInstance(AutoFilter parentInstance)
-  {
-  }
-  
-  @Override
-  public Class<? extends AutoFilter> getCommonType()
-  { return AuthenticateFilter.class;
-  }
 
 }

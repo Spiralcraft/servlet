@@ -58,17 +58,6 @@ public class CacheFilter
   { return "redirect";
   }
 
-  @Override
-  public void setGeneralInstance(AutoFilter parentInstance)
-  {
-
-  }
-
-  @Override
-  public Class<? extends AutoFilter> getCommonType()
-  { return CacheFilter.class;
-  }
-
   
   
   class CacheWrapper

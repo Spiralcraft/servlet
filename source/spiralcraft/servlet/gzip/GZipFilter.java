@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import spiralcraft.servlet.autofilter.AutoFilter;
-import spiralcraft.servlet.autofilter.RedirectFilter;
 
 
 public class GZipFilter
@@ -92,15 +91,4 @@ public class GZipFilter
     
   }
 
-
-  @Override
-  public void setGeneralInstance(AutoFilter parentInstance)
-  {
-
-  }
-
-  @Override
-  public Class<? extends AutoFilter> getCommonType()
-  { return RedirectFilter.class;
-  }
 }

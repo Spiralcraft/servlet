@@ -58,14 +58,4 @@ public class ErrorFilter
   { return "error";
   }
 
-  @Override
-  public void setGeneralInstance(AutoFilter parentInstance)
-  {
-
-  }
-
-  @Override
-  public Class<? extends AutoFilter> getCommonType()
-  { return ErrorFilter.class;
-  }
 }
