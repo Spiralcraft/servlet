@@ -49,7 +49,6 @@ import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.BindException;
 
 
 /**
@@ -94,17 +93,8 @@ public class GeneratorServlet
       // Initialize the local HTTP Focus with its parent that's always passed
       //   via the request
       
-      try
-      {
-        HttpFocus<?> focus=new HttpFocus<Void>();
-        focus.init();
-        focus.setParentFocus(FocusFilter.getFocusChain(request));
-        log.fine("HTTPFocus parent="+FocusFilter.getFocusChain(request));
-        httpFocus=focus;
-      }
-      catch (BindException x)
-      { throw new ServletException(x.toString(),x);
-      }
+      httpFocus
+        =new HttpFocus<Void>(FocusFilter.getFocusChain(request));
     }
     else
     {
@@ -116,7 +106,12 @@ public class GeneratorServlet
     
     try
     {
-      httpFocus.push(this,request,response);
+      httpFocus.push
+        (this.getServletConfig().getServletContext()
+        ,request
+        ,response
+        );
+      
       ResourceEntry entry=getEntry(request);
       if (entry==null)
       { 
