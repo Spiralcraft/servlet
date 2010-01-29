@@ -14,11 +14,19 @@
 //
 package spiralcraft.servlet.webui;
 
+import spiralcraft.data.persist.PersistenceException;
+import spiralcraft.data.persist.XmlAssembly;
 import spiralcraft.lang.Focus;
+import spiralcraft.vfs.Resource;
+import spiralcraft.vfs.UnresolvableURIException;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * <p>Contains the state of a UI (a set of resources in a directory mapped
@@ -38,14 +46,129 @@ import javax.servlet.ServletException;
  */
 public class Session
 {
+
+  
+  /**
+   * <p>Return the webui Session associated with this request.
+   * </p>
+   * 
+   * <p>The session is scoped to the servletPath of the request, and is
+   *   created from the Session.assy.xml assembly class in the servlet
+   *   path.
+   * </p>
+   * 
+   * <p>It is intended for the servletPath to indicate the request directory
+   *   and the pathInfo to resolve the specific UI resource.
+   * </p>
+   * 
+   * @param request The current HttpServletRequest
+   * @param contextResource The VFS Container (directory) associated with 
+   *   this session
+   * @param defaultSessionTypeURI The type of session to create
+   * @param parentFocus The Focus chain
+   * @param create Whether to create a new Session if none exists
+   * @return
+   * @throws ServletException
+   */
+  @SuppressWarnings("unchecked") // Cast result from session.getAttribute()
+  public static Session get
+    (HttpServletRequest request
+    ,Resource contextResource
+    ,String sessionPath
+    ,URI defaultSessionTypeURI
+    ,Focus<?> parentFocus
+    ,boolean create
+    )
+    throws ServletException,IOException
+  {
+    HttpSession session=request.getSession(create);
+    if (session==null)
+    { return null;
+    }
+    
+    HashMap<String,XmlAssembly<Session>> sessionCache
+      =(HashMap<String,XmlAssembly<Session>>) 
+        session.getAttribute("spiralcraft.servlet.webui.sessionCache");
+    
+    if (sessionCache==null)
+    { 
+      synchronized (session)
+      {
+        sessionCache
+          =(HashMap<String,XmlAssembly<Session>>) 
+            session.getAttribute("spiralcraft.servlet.webui.sessionCache");  
+        if (sessionCache==null)
+        {
+          sessionCache=new HashMap<String,XmlAssembly<Session>>();
+          session.setAttribute
+            ("spiralcraft.servlet.webui.sessionCache",sessionCache);
+        }
+      }
+    }
+    
+    XmlAssembly<Session> uiSessionXmlAssembly
+      =sessionCache.get(sessionPath);
+    
+    if (uiSessionXmlAssembly==null && create)
+    { 
+      uiSessionXmlAssembly
+        =createUiSessionXmlAssembly(contextResource,defaultSessionTypeURI);
+      uiSessionXmlAssembly.get().init(parentFocus);
+      sessionCache.put(sessionPath, uiSessionXmlAssembly);
+    }
+    
+    if (uiSessionXmlAssembly!=null)
+    { return uiSessionXmlAssembly.get();
+    }
+    else
+    { return null;
+    }
+  }
+  
+  private static XmlAssembly<Session> 
+    createUiSessionXmlAssembly
+      (Resource containerResource
+      ,URI defaultSessionTypeURI
+      )
+  throws ServletException,IOException
+  {
+    if (containerResource.asContainer()==null)
+    { containerResource=containerResource.getParent();
+    }
+    Resource sessionResource=null;
+    try
+    { 
+      sessionResource
+      =containerResource.asContainer().getChild("Session.assy.xml");
+    }
+    catch (UnresolvableURIException x)
+    { throw new ServletException(x.toString(),x);
+    }
+
+    URI typeURI;
+    if (sessionResource.exists())
+    { typeURI=containerResource.getURI().resolve("Session.assy");
+    }
+    else
+    { typeURI=defaultSessionTypeURI;
+    }
+
+    try
+    { return new XmlAssembly<Session>(typeURI,null);
+    }
+    catch (PersistenceException x)
+    { 
+      throw new ServletException
+      ("Error loading webui Session from ["+typeURI+"]:"+x,x);
+    }
+
+  }  
+  
   
   // Holds a map from resource paths relative to the ServletContext
   //   to resource state.  
   private final HashMap<String,StateReference> stateMap
     =new HashMap<String,StateReference>();
-  
-  
-
 
   /**
    * 
@@ -65,14 +188,14 @@ public class Session
   public synchronized ResourceSession
     getResourceSession(RootComponent component)
   {
-    StateReference ref=stateMap.get(component.getContextRelativePath());
+    StateReference ref=stateMap.get(component.getInstancePath());
     if (ref!=null && ref.component==component)
     { return ref.localSession;
     }
     else if (ref==null)
     {
       ref=new StateReference();
-      stateMap.put(component.getContextRelativePath(),ref);
+      stateMap.put(component.getInstancePath(),ref);
     }
     else
     {
@@ -93,11 +216,11 @@ public class Session
   public synchronized void
     setResourceSession(RootComponent component,ResourceSession localSession)
   {
-    StateReference ref=stateMap.get(component.getContextRelativePath());
+    StateReference ref=stateMap.get(component.getInstancePath());
     if (ref==null)
     { 
       ref=new StateReference();
-      stateMap.put(component.getContextRelativePath(), ref);
+      stateMap.put(component.getInstancePath(), ref);
     }
     ref.component=component;
     ref.localSession=localSession;
