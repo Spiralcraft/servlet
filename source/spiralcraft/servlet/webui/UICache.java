@@ -21,11 +21,8 @@ import spiralcraft.servlet.webui.textgen.UIResourceUnit;
 import spiralcraft.servlet.webui.textgen.RootUnit;
 
 
-import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
-
-import spiralcraft.lang.spi.SimpleChannel;
 
 
 import java.io.IOException;
@@ -52,21 +49,15 @@ public class UICache
   private final HashMap<String,ComponentReference> componentMap
     =new HashMap<String,ComponentReference>();
   
-  private final SimpleFocus<UIServlet> focus;
-  private final UIServlet servlet;
+  private final Focus<?> focus;
 
   private int resourceCheckFrequencyMs=5000;
 
   /**
    * Create a new UI Cache with components bound to the specified Focus
    */
-  public UICache(UIServlet servlet,Focus<?> parentFocus)
-  { 
-    this.servlet=servlet;
-    focus=new SimpleFocus<UIServlet>();
-    focus.setParentFocus(parentFocus);
-    focus.setSubject(new SimpleChannel<UIServlet>(servlet,true));
-
+  public UICache(Focus<?> parentFocus)
+  { this.focus=parentFocus;
   }  
   
   /**
@@ -79,10 +70,12 @@ public class UICache
    * @throws IOException
    * @throws ServletException
    */
-  public synchronized RootComponent getUI(String contextRelativePath)
+  public synchronized RootComponent getUI
+    (Resource resource,String instancePath)
     throws MarkupException,IOException,ServletException
   {
-    UIResourceUnit resourceUnit=resolveResourceUnit(contextRelativePath);
+    UIResourceUnit resourceUnit
+      =resolveResourceUnit(resource,instancePath);
     if (resourceUnit!=null)
     { 
       try
@@ -90,7 +83,7 @@ public class UICache
         RootUnit unit=resourceUnit.getUnit();
       
         if (unit!=null)
-        { return getComponent(contextRelativePath,unit);
+        { return getComponent(instancePath,unit);
         }
         else
         { 
@@ -140,16 +133,15 @@ public class UICache
    * @throws ServletException
    * @throws IOException
    */
-  private UIResourceUnit resolveResourceUnit(String contextRelativePath)
+  private UIResourceUnit resolveResourceUnit(Resource resource,String instancePath)
     throws ServletException,IOException
   {
-    UIResourceUnit resourceUnit=textgenCache.get(contextRelativePath);
+    UIResourceUnit resourceUnit=textgenCache.get(instancePath);
     
     if (resourceUnit!=null)
     { return resourceUnit;
     }
     
-    Resource resource=servlet.getResource(contextRelativePath);
     if (!resource.exists())
     { return null;
     }
@@ -160,30 +152,30 @@ public class UICache
     
     resourceUnit=new UIResourceUnit(resource);
     resourceUnit.setCheckFrequencyMs(resourceCheckFrequencyMs);
-    textgenCache.put(contextRelativePath,resourceUnit);
+    textgenCache.put(instancePath,resourceUnit);
     return resourceUnit;
   }
   
   /**
-   * Get the component that is identified by the specified path
+   * Get the component instance that is identified by the specified path
    *   relative to the ServletContext
    * 
    * @param contextRelativePath
    * @return
    */
   private RootComponent 
-    getComponent(String contextRelativePath,RootUnit unit)
+    getComponent(String instancePath,RootUnit unit)
     throws MarkupException
   {
-    ComponentReference ref=componentMap.get(contextRelativePath);
+    ComponentReference ref=componentMap.get(instancePath);
     if (ref!=null && ref.unit==unit)
     { return ref.component;
     }
     ref=new ComponentReference();
     ref.unit=unit;
     ref.component=unit.bind(focus);
-    ref.component.setContextRelativePath(contextRelativePath);
-    componentMap.put(contextRelativePath,ref);
+    ref.component.setInstancePath(instancePath);
+    componentMap.put(instancePath,ref);
     return ref.component;
     
   }
