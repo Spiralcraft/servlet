@@ -15,86 +15,29 @@
 package spiralcraft.servlet.webui;
 
 import spiralcraft.servlet.HttpServlet;
-import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 import spiralcraft.lang.BindException;
-import spiralcraft.log.Level;
+//import spiralcraft.lang.Channel;
+import spiralcraft.lang.Focus;
+import spiralcraft.lang.spi.SimpleChannel;
 
 
-import spiralcraft.vfs.Resource;
-import spiralcraft.vfs.UnresolvableURIException;
 import spiralcraft.vfs.NotStreamableException;
 
 import spiralcraft.text.markup.MarkupException;
 
-import spiralcraft.textgen.ElementState;
-import spiralcraft.textgen.InitializeMessage;
-import spiralcraft.textgen.Message;
-import spiralcraft.textgen.PrepareMessage;
-import spiralcraft.textgen.StateFrame;
-
-import spiralcraft.data.persist.XmlAssembly;
-import spiralcraft.data.persist.PersistenceException;
-
-import spiralcraft.net.http.VariableMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletConfig;
 
 import java.io.IOException;
-
-import java.net.URI;
-
-import java.util.HashMap;
-import java.util.List;
-
-import java.util.LinkedList;
 
 /**
  * <p>A Servlet which serves a WebUI Component tree.
  * </p>
  * 
- * <h3>Request processing stages
- * </h3>
- * 
- * <ul>
- *   <li><h4>Resource Session Initialization (at beginning of new session)</h4>
- *     <p>Provides all components in the tree with an opportunity to set up their
- *        initial session-state and register any permanent actions.
- *     </p>
- *   </li>
- *   
- *   <li><h4>Action processing</h4>
- *     <p>Registers user/client actions encoded in the incoming HTTP request,
- *       some of which may be in response to the UI state rendered in the
- *       previous cycle. Actions in response to a previously rendered
- *       UI state will complete any triggered activities. "Incoming" actions
- *       not associated with the previous state will enqueue any triggered
- *       commands for completion during the Command stage.
- *     </p>
- *   </li>
- *   
- *   <li><h4>Preparation of new state</h4>
- *     <p>Provides all components in the tree with an opportunity to reset
- *       their state for command processing and UI rendering.
- *     </p>
- *   </li>
- *   
- *   <li><h4>Command processing</h4>
- *     <p>Executes any queued commands to perform computations before rendering.
- *     </p>
- *   </li>
- *   
- *   <li><h4>Rendering</h4>
- *     <p>Components generate UI elements and register UI callback actions.
- *     </p>
- *   </li>
- * </ul>
  * 
  * <h3>Configuration</h3>
  * 
@@ -120,11 +63,6 @@ import java.util.LinkedList;
 public class UIServlet
   extends HttpServlet
 {
-  
-  private static final Message INITIALIZE_MESSAGE=new InitializeMessage();
-  private static final Message PREPARE_MESSAGE=new PrepareMessage();
-  private static final Message COMMAND_MESSAGE=new CommandMessage();
-  private static final Message REQUEST_MESSAGE=new RequestMessage();
 
   /**
    * Return whether objects of the specifed type are valid from
@@ -141,48 +79,41 @@ public class UIServlet
       || HttpServletResponse.class.isAssignableFrom(clazz)
       ;
   }
-  
-  private String defaultResourceName="default.webui";
-  private UICache uiCache;
-  
-  private URI defaultSessionTypeURI
-    =URI.create("class:/spiralcraft/servlet/webui/Session.assy");
-  
-  private HttpFocus<?> httpFocus;
-  
-  
-  @Override
-  public void init(ServletConfig config)
-    throws ServletException
-  { 
-    super.init(config);
-  }
-  
  
-  
+//  private Channel<RootComponent> dynamicComponent;
+  private UIService uiServant;
+  private volatile boolean started;
+  private String defaultResourceName="default.webui";  
   
   private void checkInit(HttpServletRequest request)
     throws ServletException
   {
-    if (httpFocus==null)
-    {
-      // Initialize the local HTTP Focus with its parent that's always passed
-      //   via the request
-      
-      try
+    if (!started)
+    { 
+      synchronized(this)
       {
-        HttpFocus<?> focus=new HttpFocus<Void>();
-        focus.init();
-        focus.setParentFocus(FocusFilter.getFocusChain(request));
-        httpFocus=focus;
+        if (!started)
+        {
+          try
+          {
+            Focus<?> focus=FocusFilter.getFocusChain(request);
+//            dynamicComponent=RootComponent.findChannel(focus);
+
+            focus=focus.chain(new SimpleChannel<UIServlet>(this,true));
+            uiServant=new UIService(contextAdapter);
+            focus=uiServant.bind(focus);
+          
+            started=true;
+          }
+          catch (BindException x)
+          { throw new ServletException(x.toString(),x);
+          }
+        }
       }
-      catch (BindException x)
-      { throw new ServletException(x.toString(),x);
-      }
-      uiCache=new UICache(this,httpFocus);
     }
   }
-  
+    
+        
   @Override
   protected void doGet(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
@@ -194,7 +125,14 @@ public class UIServlet
     {
       RootComponent component=resolveComponent(request);
       if (component!=null)
-      { service(component,request,response);
+      { 
+        uiServant.service
+          (component
+          ,request.getServletPath()
+          ,getServletConfig().getServletContext()
+          ,request
+          ,response
+          );
       }
       else
       { response.sendError(404,"Not Found");
@@ -251,7 +189,14 @@ public class UIServlet
     {
       RootComponent component=resolveComponent(request);
       if (component!=null)
-      { service(component,request,response);
+      { 
+        uiServant.service
+          (component
+          ,request.getServletPath()
+          ,getServletConfig().getServletContext()
+          ,request
+          ,response
+          );
       }
       else
       { response.sendError(404,"Not Found");
@@ -267,377 +212,11 @@ public class UIServlet
     }
   } 
   
-  private void service
-    (RootComponent component
-    ,HttpServletRequest request
-    ,HttpServletResponse response
-    )
-    throws IOException,ServletException
-  {
-    
-    httpFocus.push(this, request, response);
-
-    // Move to UIServlet from parameter in this page 
-    response.setBufferSize(16384);
-    
-    ServiceContext serviceContext=null;
-    
-    try
-    {
-      Session session=getUiSession(request,true);
-
-      boolean interactive=true;
-      if (interactive)
-      {
-        // Interactive mode maintains a session scoped state for a resource
-        //   which must be synchronized.
-        
-        ResourceSession localSession=session.getResourceSession(component);
-      
-        if (localSession==null)
-        { 
-        
-          synchronized (session)
-          {
-            localSession=session.getResourceSession(component);
-            if (localSession==null)
-            {
-              localSession=new ResourceSession();
-              localSession.setLocalURI
-                (request.getRequestURI()
-                );
-              session.setResourceSession(component,localSession);
-            }
-          }
-        }
-
-        // Set up the ServiceContext with the last frame used.
-        serviceContext
-          =new ServiceContext
-            (response.getWriter(),true,localSession.currentFrame());
-
-        serviceContext.setRequest(request);
-        serviceContext.setResponse(response);
-        serviceContext.setServlet(this);
-        
-        ResourceSession.RequestSyncStatus syncStatus
-          =localSession.getRequestSyncStatus(serviceContext.getQuery());
-        
-        if (syncStatus==ResourceSession.RequestSyncStatus.OUTOFSYNC)
-        { 
-          serviceContext.setCurrentFrame(localSession.nextFrame());
-          serviceContext.setOutOfSync(true);
-          // Clear any pending responsive actions for an out of sync request
-          localSession.clearActions();
-          if (debugLevel.canLog(Level.DEBUG))
-          { 
-            log.debug
-             ("Out of sync request, ignoring pending responsive actions");
-          }
-        }
-        else if (syncStatus==ResourceSession.RequestSyncStatus.INITIATED)
-        { serviceContext.setCurrentFrame(localSession.nextFrame());
-        }
-        
-
-        serviceContext.setResourceSession(localSession);
-      
-        synchronized (localSession)
-        { 
-          // Resource state is not multi-threaded
-          service(component,serviceContext);
-        }
-      }
-      else
-      {
-        // Non-interactive mode doesn't have to synchronize on the local
-        //   resource session and does not maintain session state for the
-        //   resource.
-        ResourceSession localSession=new ResourceSession();
-
-        serviceContext
-          =new ServiceContext(response.getWriter(),true,new StateFrame());
-      
-        serviceContext.setRequest(request);
-        serviceContext.setResponse(response);
-        serviceContext.setServlet(this);
-        
-        localSession.setLocalURI
-          (request.getRequestURI()
-          );
-        serviceContext.setResourceSession(localSession);
-        service(component,serviceContext);
-        
-      }
-      
-      
-    }
-    finally
-    { 
-      httpFocus.pop();
-      if (serviceContext!=null)
-      {
-        serviceContext.release();
-        serviceContext=null;
-      }
-    }
-  }
   
   /**
-   * <p>Service a request on a given component with the specified
-   *    serviceContext, which has already been associated with a request,
-   *    response and a local ResourceSession.
-   * </p>
-   * 
-   * @param component
-   * @param serviceContext
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void service(RootComponent component,ServiceContext serviceContext)
-    throws IOException,ServletException
-  {
-    HttpServletRequest request=serviceContext.getRequest();
-    HttpServletResponse response=serviceContext.getResponse();
-    ResourceSession localSession=serviceContext.getResourceSession();
-
-    ElementState oldState=localSession.getRootState();
-    if (oldState==null)
-    { 
-      // Initialize a fresh state
-      serviceContext.setState(component.createState());
-      // Set up state structure and register "initial" events
-      component.message(serviceContext,INITIALIZE_MESSAGE,null);
-    }
-    else
-    { 
-      // Restore state
-      serviceContext.setState(oldState);
-    }
-      
-    if (request.getContentLength()>0)
-    {
-    
-    }
-
-    boolean done=false;
-    
-    //
-    // REQUEST
-    //
-    component.message(serviceContext,REQUEST_MESSAGE,null);
-    done=processRedirect(serviceContext);
-    
-    if (!done)
-    {
-     
-      //
-      // ACTION
-      //
-      handleAction(component,serviceContext);
-
-      localSession.clearActions();
-      done=processRedirect(serviceContext);
-    }
-    
-    
-    
-    serviceContext.setCurrentFrame(localSession.nextFrame());
-    
-    if (!done)
-    {
-
-      //
-      // PREPARE
-      //
-      component.message(serviceContext,PREPARE_MESSAGE,null);
-      done=processRedirect(serviceContext);
-    }
-    
-    if (!done)
-    {
-      // XXX: A command may change the internal state, but components
-      //  will not pick it up unless the command triggers a state change, but
-      //  if a command triggers a state change at this point, not all
-      //  components will pick up that change before render.
-      // 
-      // Therefore all page modifying state needs to take place before the
-      //   completion of "prepare". 
-       
-      //
-      // COMMAND
-      //
-      component.message(serviceContext,COMMAND_MESSAGE,null);
-      done=processRedirect(serviceContext);
-    }
-
-    
-    if (!done)
-    { 
-      //
-      // RENDER
-      //
-      render(component,serviceContext);
-      done=processRedirect(serviceContext);
-      
-    }
-      
-    ElementState newState=serviceContext.getState();
-    if (newState!=oldState)
-    { 
-      // Cache the state for the next iteratio
-      localSession.setRootState(newState);
-    }
-      
-    response.getWriter().flush();
-    response.flushBuffer();
-  }
-  
-  /**
-   * <p>Check to see whether a redirect needs to be performed. If so,
-   *   perform the redirect and return true, otherwise return false
-   * </p>
-   * @param serviceContext
-   * @return
-   * @throws ServletException
-   * @throws IOException
-   */
-  private boolean processRedirect(ServiceContext serviceContext)
-    throws ServletException,IOException
-  {
-    if (serviceContext.getRedirectURI()!=null)
-    {
-      HttpServletResponse response=serviceContext.getResponse();
-
-      response.sendRedirect
-        (response.encodeRedirectURL
-          (serviceContext.getRedirectURI().toString())
-        );
-      return true;
-    }
-    return false;
-  }
-  
-  /**
-   * <p>Handle any actions invoked by this request.
-   * </p>
-   * 
-   * @param component
-   * @param context
-   */
-  private void handleAction
-    (RootComponent component
-    ,ServiceContext context
-    )
-  {
-    // long time=System.nanoTime();
-
-    // Fire any actions referenced in the URI "action" parameter
-    VariableMap vars=context.getQuery();
-    if (vars!=null)
-    {
-
-      List<String> actionNames=vars.get("action");
-
-//      log.fine("action="+actionNames);
-      if (actionNames!=null)
-      {
-        for (String actionName:actionNames)
-        { 
-          fireAction(component,context,actionName);
-        }
-      }
-    }
-    
-    // Dequeue and fire any actions that have been subsequently queued
-    List<String> actionNames=context.dequeueActions();
-    while (actionNames!=null)
-    {
-      for (String actionName:actionNames)
-      { fireAction(component,context,actionName);
-      }
-      actionNames=context.dequeueActions();
-    }
-
-
-    // System.err.println("UIServler.handleAction: "+(System.nanoTime()-time));
-  }
-  
-  /**
-   * <p>Fire an individual action by name.
-   * </p>
-   * 
-   * <p>Firing an action may indirectly result in other actions being
-   *   queued.
-   * </p>
-   * 
-   * @param component
-   * @param context
-   * @param actionName
-   */
-  private void fireAction
-    (RootComponent component,ServiceContext context,String actionName)
-  {
-    List<Action> actions
-      =context.getResourceSession().getActions(actionName);
-    if (actions!=null && !actions.isEmpty())
-    {
-      for (Action action:actions)
-      {
-        LinkedList<Integer> path=new LinkedList<Integer>();
-
-        for (int i:action.getTargetPath())
-        { path.add(i);
-        }
-        component.message
-        (context
-            ,new ActionMessage(action)
-        ,path
-        );
-      }
-    }
-    else
-    { log.warning("Unknown action "+actionName);
-    }
-    
-  }
-      
-  /**
-   * <p>Send all relevant response headers and call
-   *   component.render(serviceContext)
-   * </p>
-   * 
-   * @param component
-   * @param serviceContext
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void render
-    (RootComponent component
-    ,ServiceContext serviceContext
-    )
-    throws IOException,ServletException
-  {
-    if (serviceContext.getContentType()!=null)
-    { 
-      serviceContext.getResponse().setContentType
-        (serviceContext.getContentType());
-    }
-    else
-    { serviceContext.getResponse().setContentType(component.getContentType());
-    }
-    
-    serviceContext.getResponse().setStatus(200);
-    serviceContext.getResponse().addHeader("Cache-Control","no-cache");
-    component.render(serviceContext);
-    
-    
-  }
-  
-  /**
-   * <P>Resolve the UI component associated with this request, applying any
+   * <p>Resolve the UI component associated with this request, applying any
    *   applicable resource mappings
-   * </P>
+   * </p>
    * 
    * 
    * @param request
@@ -646,16 +225,31 @@ public class UIServlet
   private RootComponent resolveComponent(HttpServletRequest request)
     throws ServletException,IOException
   { 
+    // Run the dynamic component instead of the default behavior for this
+    //   request
+//    if (dynamicComponent!=null)
+//    {
+//      RootComponent component=dynamicComponent.get();
+//      if (component!=null)
+//      { return component;
+//      }
+//    }
+    
+    
     String relativePath=getContextRelativePath(request);
     if (relativePath.endsWith("/"))
     { relativePath=relativePath.concat(defaultResourceName);
     }
    
-    String resourcePath=relativePath;
     
     try
     { 
-      RootComponent component=uiCache.getUI(resourcePath);
+      RootComponent component
+        =uiServant.getRootComponent
+          (getResource(relativePath)
+          ,relativePath
+          );
+      
       if (component==null)
       {
         // Look in the fallback dir?
@@ -673,99 +267,6 @@ public class UIServlet
 
 
   
-  /**
-   * <p>Return the webui Session associated with this request.
-   * </p>
-   * 
-   * <p>The session is scoped to the servletPath of the request, and is
-   *   created from the Session.assy.xml assembly class in the servlet
-   *   path.
-   * </p>
-   * 
-   * <p>It is intended for the servletPath to indicate the request directory
-   *   and the pathInfo to resolve the specific UI resource.
-   * </p>
-   * 
-   * @param request The current HttpServletRequest
-   * @param create Whether to create a new Session if none exists
-   * @return
-   * @throws ServletException
-   */
-  @SuppressWarnings("unchecked") // Cast result from session.getAttribute()
-  private synchronized Session getUiSession
-    (HttpServletRequest request
-    ,boolean create
-    )
-    throws ServletException,IOException
-  {
-    HttpSession session=request.getSession(create);
-    if (session==null)
-    { return null;
-    }
-    
-    HashMap<String,XmlAssembly<Session>> sessionCache
-      =(HashMap<String,XmlAssembly<Session>>) 
-        session.getAttribute("spiralcraft.servlet.webui.sessionCache");
-    
-    if (sessionCache==null)
-    { 
-      sessionCache=new HashMap<String,XmlAssembly<Session>>();
-      session.setAttribute
-        ("spiralcraft.servlet.webui.sessionCache",sessionCache);
-    }
-    
-    XmlAssembly<Session> uiSessionXmlAssembly
-      =sessionCache.get(request.getServletPath());
-    
-    if (uiSessionXmlAssembly==null && create)
-    { 
-      uiSessionXmlAssembly
-        =createUiSessionXmlAssembly(request.getServletPath());
-      uiSessionXmlAssembly.get().init(httpFocus);
-      sessionCache.put(request.getServletPath(), uiSessionXmlAssembly);
-    }
-    
-    if (uiSessionXmlAssembly!=null)
-    { return uiSessionXmlAssembly.get();
-    }
-    else
-    { return null;
-    }
-  }
 
-  private XmlAssembly<Session> createUiSessionXmlAssembly(String resourcePath)
-    throws ServletException,IOException
-  {
-    Resource containerResource=getResource(resourcePath);
-    if (containerResource.asContainer()==null)
-    { containerResource=containerResource.getParent();
-    }
-    Resource sessionResource=null;
-    try
-    { 
-      sessionResource
-        =containerResource.asContainer().getChild("Session.assy.xml");
-    }
-    catch (UnresolvableURIException x)
-    { throw new ServletException(x.toString(),x);
-    }
-    
-    URI typeURI;
-    if (sessionResource.exists())
-    { typeURI=containerResource.getURI().resolve("Session.assy");
-    }
-    else
-    { typeURI=defaultSessionTypeURI;
-    }
-    
-    try
-    { return new XmlAssembly<Session>(typeURI,null);
-    }
-    catch (PersistenceException x)
-    { 
-      throw new ServletException
-        ("Error loading webui Session from ["+typeURI+"]:"+x,x);
-    }
-    
-  }
+
 }
