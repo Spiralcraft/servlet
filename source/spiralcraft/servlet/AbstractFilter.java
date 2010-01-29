@@ -42,13 +42,14 @@ public abstract class AbstractFilter
   protected Set<String> recognizedParameters;
   protected boolean autoConfigure=true;
   private Configurator<?> configurator;
-  
+  protected ContextAdapter contextAdapter;
 
   @SuppressWarnings("unchecked")
   public void init(FilterConfig config)
     throws ServletException
   { 
     this.config=config;
+    this.contextAdapter=new ContextAdapter(config.getServletContext());    
     
     Enumeration<String> names=config.getInitParameterNames();
     if (names!=null)

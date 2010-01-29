@@ -14,14 +14,9 @@
 //
 package spiralcraft.servlet;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.net.URI;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.Set;
 
@@ -38,11 +33,6 @@ import spiralcraft.lang.util.Configurator;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.vfs.Resource;
-import spiralcraft.vfs.Resolver;
-import spiralcraft.vfs.UnresolvableURIException;
-
-import spiralcraft.vfs.file.FileResource;
-import spiralcraft.vfs.url.URLResource;
 
 
 
@@ -72,6 +62,7 @@ public class HttpServlet
   protected Set<String> recognizedParameters;
   protected boolean autoConfigure;
   protected Configurator<?> configurator;
+  protected ContextAdapter contextAdapter;
   
 
   @SuppressWarnings("unchecked")
@@ -79,6 +70,7 @@ public class HttpServlet
     throws ServletException
   { 
     this.config=config;
+    this.contextAdapter=new ContextAdapter(config.getServletContext());
     
     Enumeration<String> names=config.getInitParameterNames();
     while (names.hasMoreElements())
@@ -274,16 +266,9 @@ public class HttpServlet
    *   concatenates the servletPath+pathInfo
    */
   protected String getContextRelativePath(HttpServletRequest request)
-  { 
-    String servletPath=request.getServletPath();
-    String pathInfo=request.getPathInfo();
-    
-    String combinedPath=servletPath==null?"":servletPath;
-    if (pathInfo!=null)
-    { combinedPath=servletPath+pathInfo;
-    }
-    return combinedPath;
+  { return contextAdapter.getRelativePath(request);
   }
+
   
   /**
    * <p>Return a spiralcraft.vfs.Resource that provides access to a
@@ -292,63 +277,7 @@ public class HttpServlet
    */
   public Resource getResource(String contextRelativePath)
     throws ServletException
-  {
-    
-    String path
-      =getServletConfig()
-        .getServletContext()
-          .getRealPath(contextRelativePath);
-    
-    if (path!=null)
-    { return new FileResource(new File(path).getAbsoluteFile());
-    }
-    
-    // Fallback case: Use getResource()
-    //
-    // Sometimes web servers will not return a URL from getResource()
-    //   if the resource doesn't exist already
-    //
-    
-    URL url=null;
-    try
-    {
-      url
-        =getServletConfig()
-          .getServletContext()
-            .getResource(contextRelativePath);
-    }
-    catch (MalformedURLException x)
-    { 
-      throwServletException
-        ("Error getting resource ["+contextRelativePath+"]:"+x,x);
-    }
-    
-    if (url==null)
-    { 
-      throw new ServletException
-        ("ServletContext returned null for getResource() called with "
-        +"'"+contextRelativePath+"'"
-        );
-    }
-    
-    URI uri=null;
-    try
-    { uri=url.toURI();
-    }
-    catch (URISyntaxException x)
-    {
-      throwServletException
-        ("Error getting resource ["+contextRelativePath+"]:"+x,x);
-    }
-    
-    try
-    { return Resolver.getInstance().resolve(uri);
-    }
-    catch (UnresolvableURIException x)
-    {
-      // Fallback for unknown schemes, etc.
-      return new URLResource(url);
-    }
+  { return contextAdapter.getResource(contextRelativePath);
   }
   
   public void sendError(ServletResponse servletResponse,Throwable x)
