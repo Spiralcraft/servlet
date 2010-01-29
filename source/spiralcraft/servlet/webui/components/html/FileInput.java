@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import javax.servlet.ServletException;
-
 import spiralcraft.text.markup.MarkupException;
-
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.compiler.TglUnit;
@@ -31,6 +28,7 @@ import spiralcraft.vfs.Resource;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
+import spiralcraft.lang.Binding;
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Control;
@@ -46,11 +44,11 @@ public class FileInput
     =ClassLog.getInstance(TextInput.class);
   
   private String name;
-  private String contextRelativeRoot;
-  
+  private String contextRelativeRoot;  
+  private Binding<URI> rootUriX;
 
-  private AbstractTag tag
-    =new AbstractTag()
+  public class Tag
+    extends AbstractTag
   {
     @Override
     protected String getTagName(EventContext context)
@@ -74,28 +72,50 @@ public class FileInput
     
   };
   
+  private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag(tag);
+  
   
   public void setName(String name)
   { this.name=name;
   }
   
   /**
-   * The context-relative path which serves as the root of the file
-   *   repository.  
+   * <p>The context-relative path which serves as the root of the file
+   *   repository.
+   * </p>
+   * 
+   *  <p>This value will be resolved with respect to the servlet context
+   *    root directory (root of the web application). Leading "/" are
+   *    stripped.
+   *  </p>
+   * 
    * 
    * @param contextRelativeRoot
+   * @Deprecated Use setRootUriX
    */
   public void setContextRelativeRoot(String contextRelativeRoot)
   { 
-    if (contextRelativeRoot!=null && !contextRelativeRoot.startsWith("/"))
-    { contextRelativeRoot="/"+contextRelativeRoot;
+    while (contextRelativeRoot!=null && contextRelativeRoot.startsWith("/"))
+    { contextRelativeRoot=contextRelativeRoot.substring(1);
     }
     this.contextRelativeRoot=contextRelativeRoot;
   }
   
-  public AbstractTag getTag()
+  /**
+   * The URI which represents the root of the repository.
+   * @param rootUriX
+   */
+  public void setRootUriX(Binding<URI> rootUriX)
+  { this.rootUriX=rootUriX;
+  }
+  
+  public Tag getTag()
   { return tag;
+  }
+
+  public ErrorTag getErrorTag()
+  { return errorTag;
   }
 
 
@@ -105,11 +125,15 @@ public class FileInput
     throws BindException,MarkupException
   { 
     super.bind(childUnits);
+    if (rootUriX!=null)
+    { rootUriX.bind(getFocus());
+    }
     Form form=findElement(Form.class);
     if (form!=null)
     { form.setMimeEncoded(true);
     }
     
+
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
     }
@@ -171,13 +195,27 @@ public class FileInput
             log.fine("Got uri "+temporaryURI);
           }
           Resource tempResource=Resolver.getInstance().resolve(temporaryURI);
+          
+          URI rootURI=null;
+          
+          if (rootUriX!=null)
+          { rootURI=rootUriX.get();
+          }
+          else
+          { rootURI=context.getContextRoot().getURI();
+          }
+          
+          if (contextRelativeRoot!=null)
+          { rootURI=rootURI.resolve(contextRelativeRoot);
+          }
+            
           Resource rootResource
-            =context.getServlet().getResource(contextRelativeRoot);
+            =Resolver.getInstance().resolve(rootURI);
           
           if (rootResource==null)
           { 
             throw new IllegalArgumentException
-              ("Resource "+contextRelativeRoot+" not found");
+              ("Resource "+rootURI+" not found");
           }
 
           Container rootContainer=rootResource.asContainer();
@@ -207,9 +245,6 @@ public class FileInput
           }
           state.setValue(fileURI);
                     
-        }
-        catch (ServletException x)
-        { handleException(context,x);
         }
         catch (IOException x)
         { handleException(context,x);
