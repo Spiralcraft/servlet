@@ -57,6 +57,7 @@ public abstract class FocusFilter<T>
   { super.setPattern("*");
   }
   
+  @Override
   public void setPattern(String pattern)
   { 
     throw new IllegalArgumentException

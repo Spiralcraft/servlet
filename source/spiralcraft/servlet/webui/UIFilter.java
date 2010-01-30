@@ -164,6 +164,7 @@ public class UIFilter<Tcontext>
     }
   }
   
+  @Override
   public void doChain
     (FilterChain chain
     ,HttpServletRequest request
@@ -187,6 +188,7 @@ public class UIFilter<Tcontext>
     }
   }
   
+  @Override
   protected void releaseValue()
   { pop();
   }
