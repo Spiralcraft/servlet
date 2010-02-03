@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,96 +28,82 @@ import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Reflector;
 import spiralcraft.lang.reflect.BeanReflector;
-import spiralcraft.lang.spi.ThreadLocalChannel;
 
-import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.spi.RequestFocusFilter;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 
 /**
- * <p>Maps an expression to a WebUI RootComponent that will be presented
- *   by the UIServlet
+ * <p>Puts a an arbitrary contextual object in the Focus chain and 
+ *   provides a WebUI interface based on it. 
  * </p>
  * 
  * @author mike
  *
  */
 public class UIFilter<Tcontext>
-  extends RequestFocusFilter<RootComponent>
+  extends RequestFocusFilter<Tcontext>
 {
 
-  // TODO: Inject an HTTP focus if needed
-  // TODO: Provide for a "when" expression so filter doesn't do processing
-  //          all the time
-  // TODO: Provide for exporting an arbitrary set of objects or performing
-  //          actions when a component path is resolved.
-
   protected Binding<Tcontext> x;
-  protected ThreadLocalChannel<Tcontext> xLocal;
-  protected Binding<Boolean> whenX;
   protected Binding<String> resourceX;
   protected UIService uiServant;
-//  private Channel<RootComponent> dynamicComponent;
-  protected HttpFocus<?> httpFocus;
+  
+  { setUsesRequest(true);
+  }
+  
+  @Override
+  public void init(FilterConfig config)
+    throws ServletException
+  { 
+    super.init(config);
+    
+  }
   
   public void setX(Binding<Tcontext> x)
   { this.x=x;
   }
-  
-  public void setWhenX(Binding<Boolean> whenX)
-  { this.whenX=whenX;
-  }
+
   
   public void setResourceX(Binding<String> resourceX)
   { this.resourceX=resourceX;
   }
   
   @Override
-  protected RootComponent createValue(
+  protected Tcontext createValue(
     HttpServletRequest request,
     HttpServletResponse response)
     throws ServletException
-  {
+  { 
     
-//    if (dynamicComponent!=null)
-//    {
-//      RootComponent component
-//        =dynamicComponent.get();
-//      if (component!=null)
-//      { return component;
-//      }
-//    }
-    
-    if (httpFocus!=null)
-    { httpFocus.push(config.getServletContext(),request,response);
-    }
     
     if (x!=null)
-    { xLocal.push();
+    { return x.get();
+    }
+    else
+    { return null;
     }
 
-
-    
-    try
-    {
-      if (whenX!=null && !(Boolean.TRUE.equals(whenX.get())))
-      { 
-        if (debug)
-        { log.fine("whenX is false: "+whenX.getText());
-        }
-        return null;
-      }
-
-      String sourceLoc=null;
-      if (resourceX!=null)
-      { sourceLoc=resourceX.get();
-      }
+  }
+  
+  @Override
+  public void doChain
+    (FilterChain chain
+    ,HttpServletRequest request
+    ,HttpServletResponse response
+    )
+    throws ServletException,IOException
+  { 
+    String sourceLoc=null;
+    if (resourceX!=null)
+    { sourceLoc=resourceX.get();
+    }
       
-      if (sourceLoc==null)
-      { return null;
-      }
+    RootComponent component=null;
+    
+    if (sourceLoc!=null)
+    {
 
       URI uri=URI.create(sourceLoc);
       Resource resource;
@@ -135,11 +122,10 @@ public class UIFilter<Tcontext>
             ("Resource "+resource.getURI()+" does not exist");
         }
 
-        RootComponent component
+        component
           =uiServant.getRootComponent
             (resource, contextAdapter.getRelativePath(request));
 
-        return component;
       }
       catch (MarkupException x)
       { 
@@ -152,27 +138,8 @@ public class UIFilter<Tcontext>
           ("Error loading webui Component for ["+uri+"]:"+x,x);
       }
     }
-    catch (ServletException x)
-    { 
-      pop();
-      throw x;
-    }
-    catch (RuntimeException x)
-    { 
-      pop();
-      throw x;
-    }
-  }
-  
-  @Override
-  public void doChain
-    (FilterChain chain
-    ,HttpServletRequest request
-    ,HttpServletResponse response
-    )
-    throws ServletException,IOException
-  { 
-    RootComponent component=channel.get();
+
+    
     if (component!=null)
     { 
       uiServant.service
@@ -188,44 +155,17 @@ public class UIFilter<Tcontext>
     }
   }
   
-  @Override
-  protected void releaseValue()
-  { pop();
-  }
   
-  protected void pop()
-  {
-    if (xLocal!=null)
-    { xLocal.pop();
-    }
-    if (httpFocus!=null)
-    { httpFocus.pop();
-    }
-  }
-
+  @SuppressWarnings("unchecked")
   @Override
-  public Focus<?> bindImports(Focus<?> focus)
-    throws BindException
-  {
+  protected Reflector<Tcontext> resolveReflector(Focus<?> focus)
+      throws BindException
+  { 
 
-    if (focus.findFocus
-        (URI.create("class:/javax/servlet/http/HttpServletRequest")
-        ) ==null
-       )
-    { 
-      httpFocus=new HttpFocus<Void>(focus);
-      focus=httpFocus;
-    }
-    
     if (x!=null)
     { 
       x.bind(focus);
-      xLocal=new ThreadLocalChannel<Tcontext>(x,true);
       focus=focus.chain(x);
-    }
-
-    if (whenX!=null)
-    { whenX.bind(focus);
     }
 
     if (resourceX!=null)
@@ -234,21 +174,13 @@ public class UIFilter<Tcontext>
     
     uiServant=new UIService(contextAdapter);    
     uiServant.bind(focus);
-    return focus;
-  }
-  
-  @Override
-  protected Reflector<RootComponent> resolveReflector(
-    Focus<?> parentFocus)
-      throws BindException
-  { 
-
-//    dynamicComponent
-//      =RootComponent.findChannel(parentFocus);
-
-    uiServant.bind(parentFocus);
-
-    return BeanReflector.<RootComponent>getInstance(RootComponent.class);
+    
+    if (x!=null)
+    { return x.getReflector();
+    }
+    else
+    { return (Reflector<Tcontext>) BeanReflector.<Void>getInstance(Void.class);
+    }
   }
   
   
