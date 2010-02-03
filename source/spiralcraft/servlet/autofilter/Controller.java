@@ -357,21 +357,24 @@ public class Controller
             Resource errorResource=resource.asContainer().getChild(controlFileName+".err");
             try
             {
-              OutputStream out=errorResource.getOutputStream();
               if (filterSet.exception==null)
-              { out.write("Successfully processed control file".getBytes());
+              {
+                if (errorResource.exists())
+                { errorResource.delete();
+                }
               }
               else
               { 
+                OutputStream out=errorResource.getOutputStream();
                 PrintStream pout=new PrintStream(out);
                 pout.println("Error processing filter definitions");
                 pout.println(filterSet.exception.toString());
                 pout.println("Stack trace ----------------------------------------");
                 filterSet.exception.printStackTrace(pout);
                 pout.flush();
+                out.flush();
+                out.close();
               }
-              out.flush();
-              out.close();
             }
             catch (IOException y)
             { System.err.println("Controller: error writing contol file success: "+y);
