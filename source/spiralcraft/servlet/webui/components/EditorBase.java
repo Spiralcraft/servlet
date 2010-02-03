@@ -77,7 +77,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected Assignment<?>[] defaultAssignments;
   protected Assignment<?>[] newAssignments;
   protected Assignment<?>[] publishedAssignments;
-  protected Assignment<?>[] postAssignments;
+  protected Assignment<?>[] preSaveAssignments;
   protected RequestBinding<?>[] requestBindings;
   protected RequestBinding<?>[] redirectBindings;
 
@@ -402,7 +402,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
 
   /**
-   * <p>postAssignments get executed when a buffer save has been requested,
+   * <p>presSaveAssignments get executed when a buffer save has been requested,
    *   before evaluation of the state of the buffer and before any 
    *   defaultAssignments or fixedAssignments are executed.
    *   
@@ -410,8 +410,8 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    * 
    * @param assignments
    */
-  public void setPostAssignments(Assignment<?>[] postAssignments)
-  { this.postAssignments=postAssignments;
+  public void setPreSaveAssignments(Assignment<?>[] preSaveAssignments)
+  { this.preSaveAssignments=preSaveAssignments;
   }
   
   /**

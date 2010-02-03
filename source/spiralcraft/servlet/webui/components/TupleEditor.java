@@ -61,7 +61,7 @@ public abstract class TupleEditor
   private Setter<?>[] defaultSetters;
   private Setter<?>[] newSetters;
   private Setter<?>[] publishedSetters;
-  private Setter<?>[] postSetters;
+  private Setter<?>[] preSaveSetters;
   private Binding<?> onSave;
 
   private Channel<BufferAggregate<Buffer,?>> aggregateChannel;
@@ -242,12 +242,12 @@ public abstract class TupleEditor
     Buffer buffer=getState().getValue();
     if (buffer!=null)
     { 
-      if (postSetters!=null)
+      if (preSaveSetters!=null)
       { 
         if (debug)
         { logFine("applying postAssignments");
         }
-        Setter.applyArray(postSetters);
+        Setter.applyArray(preSaveSetters);
       }
 
       beforeCheckDirty(buffer);
@@ -483,7 +483,7 @@ public abstract class TupleEditor
     newSetters=bindAssignments(newAssignments);
     initialSetters=bindAssignments(initialAssignments);
     publishedSetters=bindAssignments(publishedAssignments);
-    postSetters=bindAssignments(postAssignments);
+    preSaveSetters=bindAssignments(preSaveAssignments);
     bindRequestAssignments(requestBindings);
     bindRequestAssignments(redirectBindings);
     if (onSave!=null)

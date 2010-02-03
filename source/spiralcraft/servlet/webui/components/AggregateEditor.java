@@ -68,7 +68,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   private Setter<?>[] initialSetters;
   private Setter<?>[] defaultSetters;
   private Setter<?>[] newSetters;
-  private Setter<?>[] postSetters;
+  private Setter<?>[] preSaveSetters;
   
   private boolean contentRequired;
   private String contentRequiredMessage="At least one entry is required";
@@ -250,7 +250,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     }
     else
     {
-      if (postSetters!=null)
+      if (preSaveSetters!=null)
       {
         for (int i=0;i<aggregate.size();i++)
         { 
@@ -259,9 +259,9 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
           try 
           { 
             if (debug)
-            { log.fine(toString()+": applying postAssignments to "+buffer);
+            { log.fine(toString()+": applying preSaveAssignments to "+buffer);
             }
-            Setter.applyArray(postSetters);
+            Setter.applyArray(preSaveSetters);
           }
           finally
           { childChannel.pop();
@@ -448,7 +448,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       defaultSetters=bindAssignments(defaultAssignments);
       newSetters=bindAssignments(newAssignments);
       initialSetters=bindAssignments(initialAssignments);
-      postSetters=bindAssignments(postAssignments);
+      preSaveSetters=bindAssignments(preSaveAssignments);
       bindRequestAssignments(requestBindings);
       bindRequestAssignments(redirectBindings);
       
