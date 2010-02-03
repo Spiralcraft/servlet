@@ -135,18 +135,22 @@ public class Session
     if (containerResource.asContainer()==null)
     { containerResource=containerResource.getParent();
     }
+    
     Resource sessionResource=null;
-    try
-    { 
-      sessionResource
-      =containerResource.asContainer().getChild("Session.assy.xml");
-    }
-    catch (UnresolvableURIException x)
-    { throw new ServletException(x.toString(),x);
+    if (containerResource!=null && containerResource.asContainer()!=null)
+    {
+      try
+      { 
+        sessionResource
+          =containerResource.asContainer().getChild("Session.assy.xml");
+      }
+      catch (UnresolvableURIException x)
+      { throw new ServletException(x.toString(),x);
+      }
     }
 
     URI typeURI;
-    if (sessionResource.exists())
+    if (sessionResource!=null && sessionResource.exists())
     { typeURI=containerResource.getURI().resolve("Session.assy");
     }
     else
