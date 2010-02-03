@@ -27,8 +27,14 @@ import spiralcraft.lang.spi.ThreadLocalChannel;
 
 /**
  * <p>An abstract class for publishing arbitrary objects into the 
- *   focus request chain.
+ *   web application Focus chain.
  * </p>
+ * 
+ * <p>The published value will be visible to all downstream 
+ *   components including the supplied Renderer (via the 
+ *   FocusFilter base class). 
+ * </p>
+ *   
  * 
  * @author mike
  *
