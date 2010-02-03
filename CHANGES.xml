@@ -2,7 +2,7 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
-    <revision>0.4.3.1
+    <revision>0.4.4
     </revision>
     
     <authorId>miketoth
@@ -13,8 +13,89 @@
 
     <detail>
       <scm:Change>
+        <notes>
+          <scm:Note>Renamed "postAssignments" to "preSaveAssignments" for
+            clarity.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>CommandFilter.java
+          </URI>
+          <URI>ExpressionFilter.java
+          </URI>
+          <URI>ParameterBinding.java
+          </URI>
+          <URI>spi/FocusFilter.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+
+      <scm:Change>
+        <notes>
+          <scm:Note>AutoFilter Controller now removes error file when no
+            errors are present. 
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Moved FileServlet from legacy httpd
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/vfs/FileServlet.java
+        </path>
+        
+      </scm:Change>
+    
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>New CommandFilter executes a Command and publishes the
+            executed command in the Focus chain. Functions as the basis of
+            a REST or RPC based web service.
+          </scm:Note>
+          <scm:Note>New ExpressionFilter to publish the result of an Expression
+            into the Focus chain.
+          </scm:Note>
+          <scm:Note>Added Renderer and conditional execution and rendering support
+            to FocusFilter.  
+          </scm:Note>
+          <scm:Note>Added constructors to ParameterBinding
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>CommandFilter.java
+          </URI>
+          <URI>ExpressionFilter.java
+          </URI>
+          <URI>ParameterBinding.java
+          </URI>
+          <URI>spi/FocusFilter.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
         
         <notes>
+          <scm:Note>UIFilter dynamically resolves WebUI resource to present
+            based on context value.
+          </scm:Note>
           <scm:Note>Factored WebUI resolution and sequencing logic out of
             UIServlet into UIService so it can be shared with new UIFilter 
             to create filter based WebUI interfaces.
@@ -78,7 +159,9 @@
             pass ServletContext to HttpFocus can work with filters. Removed
             init() method in favor of constructor based init.
           </scm:Note>
-
+          <scm:Note>HttpFocus now provides a Void subject if it is the
+            root.
+          </scm:Note>
         </notes>
         
         <path>/source/spiralcraft/servlet/
@@ -88,6 +171,8 @@
           <URI>AbstractFilter.java
           </URI>
           <URI>HttpServlet.java
+          </URI>
+          <URI>HttpFocus.java
           </URI>
           <URI>ContextAdapter.java
           </URI>
