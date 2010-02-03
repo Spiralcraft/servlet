@@ -14,9 +14,11 @@
 //
 package spiralcraft.servlet;
 
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 
+import spiralcraft.lang.spi.NullChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.lang.reflect.BeanReflector;
 
@@ -64,10 +66,21 @@ public class HttpFocus<T>
   private ThreadLocalChannel<HttpServletResponse> responseBinding;
 
   
+  @SuppressWarnings("unchecked")
   public HttpFocus(Focus<?> focusChain)
   { 
     this();
     setParentFocus(focusChain);
+    if (focusChain!=null)
+    { setSubject( (Channel<T>) focusChain.getSubject());
+    }
+    else
+    { 
+      setSubject
+        ( (Channel<T>) new NullChannel<Void>
+            (BeanReflector.<Void>getInstance(Void.class))
+        );
+    }
   }
   
   public HttpFocus()
