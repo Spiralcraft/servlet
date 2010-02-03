@@ -206,17 +206,12 @@ public class HttpServlet
   {
   }
 
-  /**
-   * <p>Provides a default implementation of service(request,response) which
-   *   delegates handling to different methods according to the HTTP request
-   *   method.
-   * </p>
-   */
-  public void service(ServletRequest request,ServletResponse response)
+  protected void service
+    (HttpServletRequest httpRequest
+    ,HttpServletResponse httpResponse
+    )
     throws ServletException,IOException
   {
-    HttpServletRequest httpRequest=(HttpServletRequest) request;
-    HttpServletResponse httpResponse=(HttpServletResponse) response;
     String method=httpRequest.getMethod().intern();
 
     if (method==METHOD_GET)
@@ -240,6 +235,19 @@ public class HttpServlet
     else if (method==METHOD_DELETE)
     { doDelete(httpRequest,httpResponse);
     }
+  
+  }
+  
+  /**
+   * <p>Provides a default implementation of service(request,response) which
+   *   delegates handling to different methods according to the HTTP request
+   *   method.
+   * </p>
+   */
+  public void service(ServletRequest request,ServletResponse response)
+    throws ServletException,IOException
+  {
+    service((HttpServletRequest) request,(HttpServletResponse) response);
     
   }
 
@@ -291,6 +299,10 @@ public class HttpServlet
 
     x.printStackTrace(printWriter);
     printWriter.flush();
+  }
+  
+  public void setDebug()
+  { this.debugLevel=Level.DEBUG;
   }
   
   public void setDebugLevel(Level debugLevel)
