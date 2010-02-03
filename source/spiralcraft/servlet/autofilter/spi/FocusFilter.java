@@ -17,10 +17,14 @@ package spiralcraft.servlet.autofilter.spi;
 import java.io.IOException;
 import java.net.URI;
 
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.FocusChainObject;
 import spiralcraft.lang.SimpleFocus;
+import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.AutoFilter;
+import spiralcraft.text.Renderer;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -31,13 +35,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * <p>Provides a spiralcraft.lang Focus to servlet API request processing 
- *   components. 
+ * <p>Exposes arbitrary context via a spiralcraft.lang Focus to servlet API
+ *   request processing components (eg. Filters, Servlets).
  * </p>
  *    
  * <p>The Focus is passed via a ServletRequest attribute. It has the
  *    same lifecycle as the FocusFilter itself, and is permanently referenced
  *    by the FocusFilter instance.
+ * </p>
+ * 
+ * <p>Provides for conditional execution via the "whenX" property.</p>
+ * 
+ * <p>Optionally renders output via a Renderer set with the "renderer"
+ *   property instead of running the rest of the Focus chain, controlled
+ *   via the renderWhenX property.
+ * </p>
+ * 
+ * <p>Ensures that HttpServletRequest, HttpServletResponse and ServletContext
+ *   are published in the Focus chain when required via the "usesRequest"
+ *   property.
+ * </p>
+ *
+ * <p>Permits differentiation between multiple Filters that publish the same
+ *   type via the "alias" property.
  * </p>
  */
 public abstract class FocusFilter<T>
@@ -45,10 +65,39 @@ public abstract class FocusFilter<T>
 {
   
   private static final String attributeName="spiralcraft.lang.focus";
+
+  /**
+   * <p>Obtain the Focus associated with the deepest FocusFilter in the
+   *   stack.
+   * </p>
+   * 
+   * <p>XXX If we are building context duration, this should always return the
+   *   same Focus, because the Filter object is also context duration. Perhaps
+   *   the filter should just get the Focus from its parent.
+   *   
+   *   2008-08-06 This really needs to be done, along with integrating Focus
+   *     into the "webapp" model.
+   *   2010-02-03 Putting the Focus in ThreadLocal may be the most
+   *     portable solution
+   * </p>
+   * 
+   * @param request 
+   * @return The Focus
+   */
+  public static Focus<?> getFocusChain(HttpServletRequest request)
+  { return (Focus<?>) request.getAttribute(attributeName);
+  }
+
   
+  private HttpFocus<?> httpFocus;
+  private Binding<Boolean> whenX;
+  private Binding<Boolean> renderWhenX;
+  private boolean usesRequest;
   private Focus<T> focus;
   private Focus<?> exportFocus;
   private URI alias;
+  private Renderer renderer;
+  
   
   // Default to global, to implement Focus hierarchy
   { setGlobal(true);
@@ -62,29 +111,38 @@ public abstract class FocusFilter<T>
   { 
     throw new IllegalArgumentException
       ("Cannot change Filter pattern: Filter class "+getClass().getName()
-      +" must always be in the request chain"
+      +" must always be in the request chain. Use whenX property to control"
+      +" when filter is active"
       );
   }
   
   /**
-   * <p>Obtain the Focus associated with the deepest FocusFilter in the
-   *   stack.
-   * </p>
+   * A Boolean Expression which controls when this filter will be run.
    * 
-   * <p>XXX If we are building context duration, this should always return the
-   *   same Focus, because the Filter object is also context duration. Perhaps
-   *   the filter should just get the Focus from its parent.
-   *   
-   *   2008-08-06 This really needs to be done, along with integrating Focus
-   *     into the "webapp" model.
-   * </p>
-   * 
-   * @param request 
-   * @return The Focus
+   * @param whenX
    */
-  public static Focus<?> getFocusChain(HttpServletRequest request)
-  { return (Focus<?>) request.getAttribute(attributeName);
+  public void setWhenX(Binding<Boolean> whenX)
+  { this.whenX=whenX;
   }
+  
+  public void setRenderWhenX(Binding<Boolean> renderWhenX)
+  { this.renderWhenX=renderWhenX;
+  }
+  
+  /**
+   * <p>An optional Renderer to render  output from this Filter to
+   *   the HTTP client in lieu of executing the rest of the Filter chain
+   * </p>
+   * 
+   * <p>If a renderer is present, the rest of the filter chain will not
+   *   be executed.
+   * </p>
+   * 
+   * @param renderer
+   */
+  public void setRenderer(Renderer renderer)
+  { this.renderer=renderer;
+  }  
 
   public Focus<T> getFocus()
   { return focus;
@@ -99,6 +157,18 @@ public abstract class FocusFilter<T>
    */
   public void setAlias(URI alias)
   { this.alias=alias;
+  }
+  
+  /**
+   * <p>Indicate that this FocusFilter contains Expressions which bind to
+   *   the HttpServletRequest or the ServletContext, and that these items
+   *   should be made available on every request.
+   * </p>
+   * 
+   * @param usesRequest
+   */
+  public void setUsesRequest(boolean usesRequest)
+  { this.usesRequest=usesRequest;
   }
   
   /**
@@ -157,6 +227,7 @@ public abstract class FocusFilter<T>
   public void doFilter(ServletRequest request, ServletResponse response,
       FilterChain chain) throws IOException, ServletException
   {
+    boolean httpPushed=false;
     // XXX Implement a pattern include and exclude list
     
     // log.fine("doFilter()");
@@ -176,6 +247,19 @@ public abstract class FocusFilter<T>
         if (requestFocus==null)
         { requestFocus=new SimpleFocus<Void>(null);
         }
+        
+        if (usesRequest 
+            && requestFocus.findFocus
+              (URI.create("class:/javax/servlet/http/HttpServletRequest")
+              ) ==null
+           )
+        { 
+          httpFocus=new HttpFocus<Void>(requestFocus);
+          requestFocus=httpFocus;
+        }
+        if (whenX!=null)
+        { whenX.bind(requestFocus);
+        }
         requestFocus=bindImports(requestFocus);
         focus=createFocus(requestFocus);
         // log.fine("Created "+focus);
@@ -183,24 +267,58 @@ public abstract class FocusFilter<T>
         { focus.addAlias(alias);
         }
         exportFocus=bindExports(focus);
+        
+        if (renderWhenX!=null)
+        { renderWhenX.bind(exportFocus);
+        }
+        if (renderer!=null && renderer instanceof FocusChainObject)
+        { ((FocusChainObject) renderer).bind(focus);
+        }        
       }
-      
-      // Make sure the subject of our Focus is appropriate for this
-      //   Thread's service operation for this request
-      pushSubject((HttpServletRequest) request,(HttpServletResponse) response);
-      
-      pushed=true;
-      
       // Make our Focus the next filter's parent Focus
       request.setAttribute(attributeName,exportFocus);
-      // log.fine("Setting "+focus);
       
-      // System.err.println("FocusFilter.doFilter");
-      doChain
-        (chain
-        ,(HttpServletRequest) request
-        ,(HttpServletResponse) response
-        );
+      if (httpFocus!=null)
+      { 
+        httpFocus.push
+          (config.getServletContext()
+          ,(HttpServletRequest) request
+          ,(HttpServletResponse) response
+          );
+        httpPushed=true;
+      }
+      
+      
+      if (whenX==null || Boolean.TRUE.equals(whenX.get()))
+      {
+        // Perform the filter function
+        
+        // Make sure the subject of our Focus is appropriate for this
+        //   Thread's service operation for this request
+        pushSubject((HttpServletRequest) request,(HttpServletResponse) response);
+      
+        pushed=true;
+      
+        if (renderer!=null
+            && (renderWhenX==null || Boolean.TRUE.equals(renderWhenX.get())
+               )
+           )
+        { renderer.render(response.getWriter());
+        }
+        else
+        { 
+          doChain
+            (chain
+            ,(HttpServletRequest) request
+            ,(HttpServletResponse) response
+            );
+        }
+      }
+      else
+      { 
+        // Bypass the filter function
+        chain.doFilter(request,response);
+      }
     }
     catch (BindException x)
     { 
@@ -215,14 +333,26 @@ public abstract class FocusFilter<T>
         // If we changed this Thread's Focus subject, put it back
         popSubject((HttpServletRequest) request);
       }
-//      log.fine("Restoring "+requestFocus);
+      if (httpFocus!=null && httpPushed)
+      { httpFocus.pop();
+      }
+      
       // Put the original focus back
       request.setAttribute(attributeName,requestFocus);
     }
-//    log.fine("/doFilter()");
     
   }
   
+  /**
+   * Override to perform additional operations in context and control 
+   *   the execution of the rest of the filter.
+   * 
+   * @param chain
+   * @param request
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */
   protected void doChain
     (FilterChain chain
     ,HttpServletRequest request

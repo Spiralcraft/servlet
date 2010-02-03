@@ -56,6 +56,14 @@ public class ParameterBinding<Tval>
   
   private VariableMapBinding<Tval> binding;
 
+  public ParameterBinding()
+  {
+  }
+  
+  public ParameterBinding(String targetExpression)
+  { this.target=Expression.create(targetExpression);
+  }
+  
   public String getName()
   { return name;
   }
