@@ -109,11 +109,14 @@ public abstract class FocusFilter<T>
   @Override
   public void setPattern(String pattern)
   { 
-    throw new IllegalArgumentException
-      ("Cannot change Filter pattern: Filter class "+getClass().getName()
-      +" must always be in the request chain. Use whenX property to control"
-      +" when filter is active"
-      );
+    if (!pattern.equals("*"))
+    {
+      throw new IllegalArgumentException
+        ("Cannot change Filter pattern: Filter class "+getClass().getName()
+        +" must always be in the request chain. Use whenX property to control"
+        +" when filter is active"
+        );
+    }
   }
   
   /**
