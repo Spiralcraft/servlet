@@ -284,6 +284,9 @@ public class Controller
   {
     ContextDictionary.pushInstance(contextDictionary);
     contextResourceMap.push();
+    if (scheduler==null)
+    { scheduler=new Scheduler();
+    }
     Scheduler.push(scheduler);
   }
   
