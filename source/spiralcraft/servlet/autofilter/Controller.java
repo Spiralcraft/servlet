@@ -43,6 +43,7 @@ import spiralcraft.data.persist.XmlBean;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.time.Clock;
+import spiralcraft.time.Scheduler;
 import spiralcraft.util.ContextDictionary;
 import spiralcraft.util.Path;
 import spiralcraft.util.tree.PathTree;
@@ -101,6 +102,9 @@ public class Controller
   private URI dataURI=URI.create("WEB-INF/data/");
   private URI configURI=URI.create("WEB-INF/config/");
   
+  private Scheduler scheduler;
+  
+  
 
   /**
    * <p>The URI where modifiable persistent data is kept.
@@ -156,20 +160,20 @@ public class Controller
     initContextResourceMap(context);
     initContextDictionary(context);
     
-    ContextDictionary.pushInstance(contextDictionary);
-    contextResourceMap.push();
     if (config.getInitParameter("updateIntervalMs")!=null)
     { 
       updateIntervalMs
         =Integer.parseInt(config.getInitParameter("updateIntervalMs"));
     }
+    
+    scheduler=new Scheduler();
+    
+    push();
     try
     { updateConfig();
     }
     finally
-    { 
-      contextResourceMap.pop();
-      ContextDictionary.popInstance();
+    { pop();
     }
     
   }
@@ -237,8 +241,7 @@ public class Controller
     throws ServletException,IOException
   {
     
-    ContextDictionary.pushInstance(contextDictionary);
-    contextResourceMap.push();
+    push();
     try
     {
     
@@ -271,11 +274,24 @@ public class Controller
       log.log(Level.WARNING,"Exception handling request",x);
     }
     finally
-    { 
-      contextResourceMap.pop();
-      ContextDictionary.popInstance();
+    { pop();
     }
     
+  }
+  
+  
+  protected void push()
+  {
+    ContextDictionary.pushInstance(contextDictionary);
+    contextResourceMap.push();
+    Scheduler.push(scheduler);
+  }
+  
+  protected void pop()
+  {
+    Scheduler.pop();
+    contextResourceMap.pop();
+    ContextDictionary.popInstance();
   }
   
   /**
