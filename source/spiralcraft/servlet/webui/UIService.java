@@ -114,6 +114,7 @@ public class UIService
     throws BindException
   {
     httpFocus=new HttpFocus<Void>(focusChain);
+    focusChain=httpFocus;
     uiCache=new UICache(focusChain);
     return httpFocus;
   }
