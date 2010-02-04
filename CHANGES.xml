@@ -8,8 +8,15 @@
     <authorId>miketoth
     </authorId>
     
-    <date>??????
+    <date>2010-02-03
     </date>
+    
+    <notes>
+      <scm:Note>Greatly enhanced RPC capabilities using CommandFilter. 
+        Provide dynamic UI mapping via UIFilter, which can dynamically resolve
+        a WebUI resource based on data from the request. 
+      </scm:Note>
+    </notes>
 
     <detail>
       <scm:Change>
