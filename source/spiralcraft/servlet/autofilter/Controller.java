@@ -166,8 +166,6 @@ public class Controller
         =Integer.parseInt(config.getInitParameter("updateIntervalMs"));
     }
     
-    scheduler=new Scheduler();
-    
     push();
     try
     { updateConfig();
