@@ -229,6 +229,10 @@ public class SecurityFilter
    */
   private boolean readLoginCookie(LoginEntry entry,Cookie cookie)
   {
+    // XXX We need to read a non-secret Challenge value,
+    //   perhaps by using the expiry time at a minimum, to ensure the
+    //   uniqueness of each ticket.
+    
     VariableMap map=VariableMap.fromUrlEncodedString(cookie.getValue());
     String username=map.getOne("username");
     String ticketBase64=map.getOne("ticket");
@@ -323,6 +327,11 @@ public class SecurityFilter
   
   public void writeLoginCookie(LoginEntry entry)
   {
+    // XXX We need to re-hash the password digest with a non-secret Challenge
+    //   to provide a basis for ticket forgery prevention, perhaps by using
+    //   the expiry time at a minimum, to ensure the uniqueness of each
+    //   Ticket
+    
     if (!usingCookies())
     { return;
     }
@@ -335,7 +344,9 @@ public class SecurityFilter
     {
       byte[] ticket=digest;
       if (password!=null)
-      { ticket=authSessionChannel.get().opaqueDigest(username+password);
+      { 
+        ticket=authSessionChannel.get()
+          .saltedDigest(username.toLowerCase()+password);
       }
       map.add("username", username);
       map.add("ticket", Base64Codec.encodeBytes(ticket));

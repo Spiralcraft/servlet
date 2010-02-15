@@ -2,6 +2,32 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.5
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>????
+    </date>
+    
+    <notes>
+      <scm:Note>Track updates to spiralcraft.security package in 
+        spiralcraft-core-0.4.5.
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/servlet
+    </path>
+    
+    <resources>
+      <URI>autofilter/SecurityFilter.java
+      </URI>
+    </resources>
+    
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.4.1
     </revision>
     
