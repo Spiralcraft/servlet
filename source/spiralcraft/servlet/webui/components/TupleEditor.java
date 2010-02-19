@@ -245,7 +245,7 @@ public abstract class TupleEditor
       if (preSaveSetters!=null)
       { 
         if (debug)
-        { logFine("applying postAssignments");
+        { logFine("applying preSaveAssignments");
         }
         Setter.applyArray(preSaveSetters);
       }
