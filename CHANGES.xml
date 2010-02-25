@@ -2,6 +2,31 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.5.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-02-24
+    </date>
+    
+    <notes>
+      <scm:Note>Added defaultAssignments to Login
+      </scm:Note>
+    </notes>
+    
+    <path>/source/spiralcraft/servlet
+    </path>
+    
+    <resources>
+      <URI>webui/components/Login.java
+      </URI>
+    </resources>
+    
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.5
     </revision>
     

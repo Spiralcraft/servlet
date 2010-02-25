@@ -2,12 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="source"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/spiralcraft-core.jar" sourcepath="/spiralcraft-modules-core/source"/>
-	<classpathentry kind="lib" path="lib/spiralcraft-net.jar" sourcepath="/spiralcraft-modules-net/source"/>
-	<classpathentry kind="lib" path="lib/spiralcraft-textgen.jar" sourcepath="/spiralcraft-modules-textgen/source"/>
-	<classpathentry kind="lib" path="lib/servlet-api-2.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spiralcraft-modules-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spiralcraft-modules-net"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spiralcraft-modules-textgen"/>
+	<classpathentry kind="lib" path="lib/servlet-api-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
