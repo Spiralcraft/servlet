@@ -78,6 +78,9 @@ public class Login
   private Assignment<?>[] preAssignments;
   private Setter<?>[] preSetters;
 
+  private Assignment<?>[] defaultAssignments;
+  private Setter<?>[] defaultSetters;
+
   private boolean inPlace;
   private String failureMessage
     ="Login failed, username/password combination not recognized";
@@ -418,6 +421,15 @@ public class Login
   
 
   
+  /**
+   * <p>Assignments which get executed when a new LoginEntry is created
+   * </p>
+   * 
+   * @param assignments
+   */
+  public void setDefaultAssignments(Assignment<?>[] assignments)
+  { this.defaultAssignments=assignments;
+  }  
   
   
   /**
@@ -468,6 +480,9 @@ public class Login
   protected void newEntry()
   { 
     getState().setValue(new LoginEntry(sessionChannel));
+    if (defaultSetters!=null)
+    { Setter.applyArrayIfNull(defaultSetters);
+    }
   }
    
 
@@ -514,6 +529,7 @@ public class Login
   {
     postSetters=bindAssignments(postAssignments);
     preSetters=bindAssignments(preAssignments);
+    defaultSetters=bindAssignments(defaultAssignments);
     if (onLoginX!=null)
     { onLoginX.bind(getFocus());
     }
