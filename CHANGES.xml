@@ -2,6 +2,90 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.6
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>????
+    </date>
+    
+    <notes>
+      <scm:Note>Track spiralcraft-core 0.4.6 re. LoginEntry changes to
+        support password hash authentication
+      </scm:Note>
+      <scm:Note>Update state mechanism to ensure that target channels
+        are queried and updated no more than absolutely required.
+      </scm:Note>
+    </notes>
+    
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>Update state mechanism to ensure that target channels
+            are queried and updated no more than absolutely required.
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+    
+        <resources>
+          <URI>Control.java
+          </URI>
+          <URI>ControlGroup.java
+          </URI>
+          <URI>ControlState.java
+          </URI>
+          <URI>components/AbstractCommandControl.java
+          </URI>
+          <URI>components/AbstractSelectControl.java
+          </URI>
+          <URI>components/AbstractSelectItemControl.java
+          </URI>
+          <URI>components/AbstractTextControl.java
+          </URI>
+          <URI>components/AggregateEditor.java
+          </URI>
+          <URI>components/Editor.java
+          </URI>
+          <URI>components/EditorBase.java
+          </URI>
+          <URI>components/TupleEditor.java
+          </URI>
+          <URI>components/html/CheckboxInput.java
+          </URI>
+          <URI>components/html/FileInput.java
+          </URI>
+          <URI>components/html/HiddenInput.java
+          </URI>
+        </resources>
+      </scm:Change>    
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Track spiralcraft-core 0.4.6 re. LoginEntry changes to
+            support password hash authentication
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet
+        </path>
+    
+        <resources>
+          <URI>spiralcraft/servlet/autofilter/SecurityFilter.java
+          </URI>
+        </resources>
+      </scm:Change>    
+      
+    </detail>
+    
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.5.1
     </revision>
     
