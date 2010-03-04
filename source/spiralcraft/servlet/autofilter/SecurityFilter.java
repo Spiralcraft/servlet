@@ -239,7 +239,7 @@ public class SecurityFilter
     if (username!=null && ticketBase64!=null)
     {
       entry.setUsername(username);
-      entry.setOpaqueDigest(Base64Codec.decodeBytes(ticketBase64));
+      entry.setSaltedDigest(Base64Codec.decodeBytes(ticketBase64));
       if (debug)
       { log.fine("Read login info from cookie for user "+username);
       }
@@ -339,7 +339,7 @@ public class SecurityFilter
     VariableMap map=new VariableMap();
     String username=authSessionChannel.get().getPrincipal().getName();
     String password=entry.getPasswordCleartext();
-    byte[] digest=entry.getOpaqueDigest();
+    byte[] digest=entry.getSaltedDigest();
     if (username!=null && (password!=null || digest!=null))
     {
       byte[] ticket=digest;
