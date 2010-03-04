@@ -117,7 +117,7 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
     {
       try
       { 
-        state.setValue(value.get());
+        state.updateValue(value.get());
         state.setSelected(state.getSelectState().isSelected(state.getValue()));
       }
       catch (AccessException x)

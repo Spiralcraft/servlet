@@ -317,7 +317,7 @@ public abstract class Editor
                 public void run()
                 { 
                   if (!getState().isErrorState())
-                  { getState().setValue(null);
+                  { getState().updateValue(null);
                   }
                 }
               }
@@ -345,7 +345,7 @@ public abstract class Editor
           { 
             addToParent();
             // XXX Should validate here
-            getState().setValue(null);
+            getState().updateValue(null);
           }
         }
       );
@@ -464,7 +464,7 @@ public abstract class Editor
   protected void newBuffer()
     throws DataException
   {
-    getState().setValue
+    getState().updateValue
     (sessionChannel.get().newBuffer(type)
     );
     bufferChannel.set(getState().getValue());

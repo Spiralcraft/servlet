@@ -526,9 +526,6 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     BufferAggregate<BufferTuple,Tcontent> aggregate
       =(BufferAggregate<BufferTuple,Tcontent>) 
         getDataSession().newBuffer(getType());
-    getState().setValue
-      (aggregate
-      );
     writeToModel(aggregate);
     return aggregate;
   }

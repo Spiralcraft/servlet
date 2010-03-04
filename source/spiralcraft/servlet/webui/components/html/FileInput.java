@@ -240,10 +240,14 @@ public class FileInput
           // XXX Incorporate dynamic path element as well
           URI fileURI=URI.create(URLEncoder.encode(filename));
           
+
+          state.setValue(fileURI);
           if (!target.set(fileURI))
           { log.fine("target.set() returned false: "+target+" with "+fileURI);
           }
-          state.setValue(fileURI);
+          else
+          { state.valueUpdated();
+          }
                     
         }
         catch (IOException x)
@@ -301,13 +305,7 @@ public class FileInput
       try
       {
         URI val=target.get();
-        
-        if (val!=null)
-        { state.setValue(val);
-        }
-        else
-        { state.setValue(null);
-        }
+        state.updateValue(val);
       }
       catch (AccessException x)
       { handleException(context,x);

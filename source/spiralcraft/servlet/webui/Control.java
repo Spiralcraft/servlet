@@ -344,58 +344,53 @@ public abstract class Control<Ttarget>
   }
   
   /**
-   * Update the bound target if the target is writable and the new value
-   *   is different from the existing target value
+   * <p>Update the bound target if the target is writable and the new value
+   *   is different from the previous value.
+   * </p>
    *   
    * @param newValue
-   * @return
+   * @return false, if the update failed, true otherwise
    */
-  protected boolean conditionallyUpdateTarget(Ttarget newVal)
+  protected boolean conditionallyUpdateTarget
+    (Ttarget newVal,Ttarget previousVal)
   {
     if (target==null)
     { 
       if (debug)
       { this.logFine("Target is null, nothing to update");
       }
-      return false;
+      return true;
     }
     else if (forceUpdate)
     { 
-      target.set(newVal);
+      boolean ret=target.set(newVal);
       if (debug)
       { this.logFine("Target update forced ->  "+newVal);
       }
-      return true;
+      return ret;
     }
     else if (target.isWritable())
     { 
-      // XXX Use state to cache oldVal and determine 'changed'- don't re-query
-      //  target!
-      Ttarget oldVal=target.get();
           
       // Only update if referred-to value is different
-      if ( oldVal!=newVal
-           && (oldVal==null 
+      if ( previousVal!=newVal
+           && (previousVal==null 
               || newVal==null 
-              || !oldVal.equals(newVal)
+              || !previousVal.equals(newVal)
               )
          )
       { 
-        target.set(newVal);
+        boolean ret=target.set(newVal);
         if (debug)
-        {
-          if (oldVal!=null)
-          { this.logFine("Target value updated "+oldVal+"  ->  "+newVal);
-          }
-              
+        { this.logFine("Target value updated "+previousVal+"  ->  "+newVal);
         }
-        return true;
+        return ret;
       }
       else
       {
         if (debug)
         {
-          if (oldVal!=null)
+          if (previousVal!=null)
           { this.logFine("Target value not changed");
           }
         }

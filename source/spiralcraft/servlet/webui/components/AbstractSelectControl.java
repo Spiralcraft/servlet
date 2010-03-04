@@ -32,14 +32,14 @@ import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
 
 /**
- * <P>A standard HTML SELECT list, bound to a target and a source.
- * </P>
+ * <p>Controls the selection of one or multiple values 
+ * </p>
  * 
- * <P>The "x" (binding target) property contains an expression that references
+ * <p>The "x" (binding target) property contains an expression that references
  *   the currently selected item(s). The optional "source" property contains an 
  *   expression that provides a list of candidate values, used for generating 
  *   the set of options (see the Option class).
- * </P>
+ * </p>
  *  
  * @author mike
  *
@@ -164,9 +164,9 @@ public class AbstractSelectControl<Ttarget,Tvalue>
         { log.fine("Got selection ["+val+"] for "+getVariableName());
         }
 
-        
-        if (state.updateValue(val))
-        { conditionallyUpdateTarget(val);
+        state.setValue(val);
+        if (conditionallyUpdateTarget(val,state.getPreviousValue()))
+        { state.valueUpdated();
         }
       }
       catch (AccessException x)

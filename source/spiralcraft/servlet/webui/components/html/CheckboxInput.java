@@ -157,28 +157,29 @@ public class CheckboxInput
     if (context.getPost()!=null)
     {
       String post=context.getPost().getOne(state.getVariableName());
-      boolean value=post!=null && post.equals("on");
+
+      Boolean value=post!=null && post.equals("on");
+      Boolean previousValue=Boolean.TRUE.equals(state.getPreviousValue());
       
-      if (state.updateValue(value))
-      {
-    
-        if (target!=null)
-        {
-        
-          try
-          { 
-            if (!reverse)
-            { conditionallyUpdateTarget(value);
-            }
-            else
-            { conditionallyUpdateTarget(!value);
-            }
-          }
-          catch (AccessException x)
-          { handleException(context,x);
+      state.setValue(value);
+      
+      try
+      { 
+        if (!reverse)
+        { 
+          if (conditionallyUpdateTarget(value,previousValue))
+          { state.valueUpdated();
           }
         }
-
+        else
+        { 
+          if (conditionallyUpdateTarget(!value,!previousValue))
+          { state.valueUpdated();
+          }
+        }
+      }
+      catch (AccessException x)
+      { handleException(context,x);
       }
     }
 
@@ -201,7 +202,7 @@ public class CheckboxInput
         if (debug)
         { log.fine(toString()+" scattering "+val);
         }
-        state.setValue(val);
+        state.updateValue(val);
       }
       catch (AccessException x)
       { handleException(context,x);

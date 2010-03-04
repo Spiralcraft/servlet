@@ -236,7 +236,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
   
   protected boolean writeToModel(Tbuffer buffer)
-  { return bufferChannel.set(buffer);
+  { 
+    getState().updateValue(buffer);
+    return bufferChannel.set(buffer);
   }
   
   protected DataSession getDataSession()
@@ -607,7 +609,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           
           @Override
           public void run()
-          { getState().setValue(null);
+          { getState().updateValue(null);
           }
         }
       );
@@ -650,11 +652,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   @SuppressWarnings("unchecked")
   protected void newBuffer()
     throws DataException
-  {
-    getState().setValue
-    ((Tbuffer) sessionChannel.get().newBuffer(type)
-    );
-    writeToModel(getState().getValue());
+  { writeToModel((Tbuffer) sessionChannel.get().newBuffer(type));
   }
   
   

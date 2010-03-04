@@ -34,6 +34,7 @@ public class HiddenInput<Ttarget>
   
   
   private Tag tag=new Tag();
+  protected boolean password;
   
   class Tag 
     extends AbstractTag
@@ -50,7 +51,7 @@ public class HiddenInput<Ttarget>
       ControlState<Ttarget> state=getState(context);
       renderAttribute(context.getWriter(),"type","hidden");
       renderAttribute(context.getWriter(),"name",state.getVariableName());
-      if (state.getValue()!=null)
+      if (state.getValue()!=null && !password)
       { renderAttribute(context.getWriter(),"value",(String) state.getValue());
       }
       super.renderAttributes(context);
@@ -75,6 +76,15 @@ public class HiddenInput<Ttarget>
   { return errorTag;
   }
 
+  /**
+   * Password mode will not render output
+   * 
+   * @param password
+   * @return
+   */
+  public void setPassword(boolean password)
+  { this.password=password;
+  }
   
   @Override
   public void render(EventContext context)

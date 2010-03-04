@@ -115,7 +115,7 @@ public abstract class TupleEditor
           { 
             addToParent();
             // XXX Should validate here
-            getState().setValue(null);
+            getState().updateValue(null);
           }
         }
       );

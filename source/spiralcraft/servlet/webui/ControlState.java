@@ -53,6 +53,7 @@ public class ControlState<Tbuf>
   protected final Control<?> control;
   private String variableName;
   private Tbuf value;
+  private Tbuf previousValue;
   private List<String> errors;
   private Throwable exception;
   private ArrayList<Command<Tbuf,?,?>> commands;
@@ -176,26 +177,43 @@ public class ControlState<Tbuf>
   }
   
   /**
-   * <p>Update the value and indicate whether the value
-   *   should be propagated. The default implementation
-   *   always returns true.
+   * <p>Update the value and the record of the previous value
    * </p>
    * 
    * 
    * @param value
-   * @return true, if the value should be propogated, ie. when the value
-   *   changes or when an error state is updated.
    */
-  public boolean updateValue(Tbuf value)
+  public void updateValue(Tbuf value)
   { 
     this.value=value;
-    return true;
+    this.previousValue=value;
+  }
+  
+  /**
+   * Indicate that the model value is up-to-date by copying the current value
+   *   to the record of the previousValue.
+   */
+  public void valueUpdated()
+  { this.previousValue=value;
   }
   
   public Tbuf getValue()
   { return value;
   }
   
+  public Tbuf getPreviousValue()
+  { return previousValue;
+  }
+  
+  /**
+   * <p>Update the value, without updating the record of the previous value
+   * </p>
+   * 
+   * <p>Use when storing an intermediate value that is not synchronized
+   *   with the model.
+   * </p>
+   * @param value
+   */
   public void setValue(Tbuf value)
   { this.value=value;
   }

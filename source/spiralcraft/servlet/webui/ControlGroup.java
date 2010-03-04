@@ -308,6 +308,9 @@ public abstract class ControlGroup<Ttarget>
         }
 
         @Override
+        /**
+         * Buffer the value updated by any child objects
+         */
         public boolean store(Ttarget val)
         {
           // log.fine("Store "+threadLocalState.get()+":"+val);
@@ -399,7 +402,7 @@ public abstract class ControlGroup<Ttarget>
     {
       if (target != null)
       {
-        state.setValue(target.get());
+        state.updateValue(target.get());
         if (debug)
         { 
           String valueString
@@ -444,7 +447,11 @@ public abstract class ControlGroup<Ttarget>
       try
       {
         
-        conditionallyUpdateTarget(state.getValue());
+        if (conditionallyUpdateTarget
+              (state.getValue(),state.getPreviousValue())
+           )
+        { state.valueUpdated();
+        }
         state.setDataState(DataState.GATHERED);
       } 
       catch (AccessException x)

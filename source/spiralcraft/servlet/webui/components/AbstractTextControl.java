@@ -78,8 +78,28 @@ public abstract class AbstractTextControl<Ttarget>
         }
         else
         { 
-          // XXX Use better method that integrates target channel
-          converter=new ArrayToString(targetClass.getComponentType());
+          converter=target.getReflector().getStringConverter();
+          if (converter==null)
+          {
+            if (targetClass.getComponentType().isPrimitive())
+            { 
+              throw new BindException
+                ("No automatic conversion from text to "
+                  +targetClass.getComponentType()+" is defined. Converter"
+                  +" must be provided for form field "+getVariableName()
+                );
+            }
+            else
+            {
+              // XXX Use better method that integrates target channel
+              converter=new ArrayToString(targetClass.getComponentType());
+              log.info
+                ("Using default comma delimited format to translate array for "
+                +"form field "+getVariableName()+" of type "
+                +target.getReflector().getTypeURI()
+                );
+            }
+          }
         }
       }
       else
@@ -113,14 +133,14 @@ public abstract class AbstractTextControl<Ttarget>
         {
           
           if (converter!=null)
-          { state.setValue(converter.toString(val));
+          { state.updateValue(converter.toString(val));
           }
           else
-          { state.setValue(val.toString());
+          { state.updateValue(val.toString());
           }
         }
         else
-        { state.setValue(null);
+        { state.updateValue(null);
         }
       }
       catch (AccessException x)
@@ -174,39 +194,49 @@ public abstract class AbstractTextControl<Ttarget>
         }
         state.addError("Input required");
       }
-      else if (state.updateValue(postVal))
+      else 
       {
-        if (target!=null)
+        state.setValue(postVal);
+        try
         {
           
-          try
-          {
-          
-            String val=state.getValue();
-          
-            Ttarget tval=null;
-            if (converter!=null && val!=null)
-            { tval=converter.fromString(val);
+          String val=state.getValue();
+        
+          Ttarget tval=null;
+          if (converter!=null && val!=null)
+          { tval=converter.fromString(val);
+          }
+          else
+          { tval=(Ttarget) val;
+          }
+            
+          String previousVal=state.getPreviousValue();
+          Ttarget tpreviousVal=null;
+          if (converter!=null && previousVal!=null)
+          { tpreviousVal=converter.fromString(previousVal);
+          }
+          else
+          { tpreviousVal=(Ttarget) previousVal;
+          }
+            
+          if (inspect(tval,state))
+          { 
+            if (conditionallyUpdateTarget(tval,tpreviousVal))
+            { state.valueUpdated();
             }
-            else
-            { tval=(Ttarget) val;
-            }
-            if (inspect(tval,state))
-            { conditionallyUpdateTarget(tval);
-            }
+          }
           
-          }
-          catch (AccessException x)
-          { handleException(context,x);
-          }
-          catch (NumberFormatException x)
-          { handleException(context,x);
-          }
-          catch (IllegalArgumentException x)
-          { handleException(context,x);
-          }
-
         }
+        catch (AccessException x)
+        { handleException(context,x);
+        }
+        catch (NumberFormatException x)
+        { handleException(context,x);
+        }
+        catch (IllegalArgumentException x)
+        { handleException(context,x);
+        }
+
       }
     }
 
