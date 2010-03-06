@@ -118,6 +118,23 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   protected void bindSelf()
     throws BindException
   {
+    if (!(Command.class.isAssignableFrom(target.getContentType()))
+        && ((Class<?>) target.getContentType())!=Void.class
+       )
+    { 
+      throw new BindException
+        ("Channel does not provide a command: "
+        +target.getReflector().getTypeURI()
+        );
+    }
+    else if (target==null)
+    { 
+      throw new BindException
+        ("Command must be provided via 'x' property or by "
+        +" containing component"
+        );
+    }
+    
     Focus<?> focusChain=super.getFocus();
     if (contextX!=null)
     { contextX.bind(focusChain);
