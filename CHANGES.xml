@@ -8,7 +8,7 @@
     <authorId>miketoth
     </authorId>
     
-    <date>????
+    <date>2010-03-05
     </date>
     
     <notes>
@@ -27,6 +27,11 @@
         <notes>
           <scm:Note>Update state mechanism to ensure that target channels
             are queried and updated no more than absolutely required.
+          </scm:Note>
+          <scm:Note>Fix ClassCastException: Make sure Command targets provide 
+            Commands
+          </scm:Note>
+          <scm:Note>Fix NPE in debug message for AcceptorCommand
           </scm:Note>
         </notes>
     
