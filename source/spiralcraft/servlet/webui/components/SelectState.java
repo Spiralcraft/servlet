@@ -20,6 +20,14 @@ import java.util.List;
 import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.util.ArrayUtil;
 
+/**
+ * Represents the state of a single or multiple selection
+ * 
+ * @author mike
+ *
+ * @param <Ttarget>
+ * @param <Tvalue>
+ */
 public class SelectState<Ttarget,Tvalue>
   extends ControlGroupState<Ttarget>
 {

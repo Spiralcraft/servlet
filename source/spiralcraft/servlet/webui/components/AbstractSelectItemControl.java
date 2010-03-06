@@ -32,19 +32,23 @@ import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ServiceContext;
 
 /**
- * <P>Manages an OPTION as part of a SELECT list.
- * </P>
+ * <p>Manages an single selection from an AbstractSelectControl
+ * </p>
  * 
- * <P>Specify an expression for "value" property to define the "key" that
- *   gets sent back to the target of the SELECT list. This OPTION will
- *   render as selected when appropriate.
- * </P>
+ * <p>Specify an expression for "value" property to define the key that
+ *   gets sent back to the target of the AbstractSelectControl. This expression
+ *   is defined with respect to the target "x" property, which is usually an
+ *   item from the collection defined in the AbstractSelectControl "source" 
+ *   property.
+ *   
+ * </p>
  * 
- * <P>The entry presented to
- *   the user is defined within the content of this Control. 
- *   Specify the optional "x" target property to provide a specific Focus
- *   in the chain for the display content of the option.
- * </P>
+ * <p>The entry presented to the user is defined in a child control or subtype. 
+ *   This control will export the value of the "x" target property, which is
+ *   usually an item from the collection defined in the AbstractSelectControl
+ *   "source" property. Specify the the optional "x" target property to provide
+ *   an alternate / more specific choice representation.
+ * </p>
  * 
  * @author mike
  *
