@@ -97,7 +97,6 @@ public class AcceptorCommand<Tcontext,Tresult>
   @Override
   public void gather(ServiceContext context)
   {
-    CommandState<Tcontext,Tresult> state=getState(context);
     boolean triggered=false;
     
     if (name!=null)
@@ -136,17 +135,26 @@ public class AcceptorCommand<Tcontext,Tresult>
     }
     
     if (triggered)
-    { executeCommand(context);
-    }
-    
-    
-    if (debug)
     { 
-      log.fine
-        ("SubmitButton: readPost- "+state.getVariableName()+"="
-            +context.getPost().getOne(state.getVariableName())
-        );
+      
+      if (debug)
+      { 
+        log.fine
+          ("Command triggered"
+          );
+      }
+      
+      executeCommand(context);
+      
     }
+    else
+    {
+      if (debug)
+      { log.fine("Not triggered");
+      }
+    }
+    
+    
   }
   
   @Override
