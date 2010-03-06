@@ -36,11 +36,27 @@ import spiralcraft.servlet.webui.ServiceContext;
  * </p>
  * 
  * <p>The "x" (binding target) property contains an expression that references
- *   the currently selected item(s). The optional "source" property contains an 
+ *   the currently selected item(s).
+ * </p>
+ * 
+ * <p>The optional "source" property contains an 
  *   expression that provides a list of candidate values, used for generating 
- *   the set of options (see the Option class).
+ *   the set of options (see the Option class). If a source is provided,
+ *   it will be exported to child components via the Focus chain.
+ *   
+ * </p>
+ * 
+ * <p>In the single-select case, the gather method expects a single post 
+ *   variable that represents the selected value, to be converted from
+ *   a string by the specified converter object.
  * </p>
  *  
+ * <p>In the multi-select case, the gather method expects a post variable
+ *   with multiple values that represents the selected values, where 
+ *   each value is converted from a string by the specified converter
+ *   object.
+ * </p>
+ * 
  * @author mike
  *
  * @param <Ttarget>
@@ -52,7 +68,6 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   
   private String name;
   private StringConverter<Ttarget> converter;
-//  private StringConverter<Tvalue> valueConverter;
   private Channel<?> source;
   private Expression<?> sourceExpression;
   protected boolean multi=false;
