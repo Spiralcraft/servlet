@@ -9,7 +9,7 @@
     
   <dependencies>
 
-    <dependency org="spiralcraft" name="core" rev="[0.4.5,0.5]"/>
+    <dependency org="spiralcraft" name="core" rev="[0.4.6,0.5]"/>
 
     <dependency org="spiralcraft" name="net" rev="[0.4.4,0.5]"/>
 
