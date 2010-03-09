@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * <p>A Servlet which serves a WebUI Component tree.
@@ -81,29 +82,35 @@ public class UIServlet
   }
  
 //  private Channel<RootComponent> dynamicComponent;
-  private UIService uiServant;
-  private volatile boolean started;
+  
+  private final HashMap<String,UIService> pathMap
+    =new HashMap<String,UIService>();
+  
   private String defaultResourceName="default.webui";  
   
-  private void checkInit(HttpServletRequest request)
+  private UIService ensureContext(HttpServletRequest request)
     throws ServletException
   {
-    if (!started)
-    { 
-      synchronized(this)
+    String contextPath=getContextRelativePath(request);
+    contextPath=contextPath.substring(0,contextPath.lastIndexOf("/")+1);
+    
+    UIService uiServant=pathMap.get(contextPath);
+    if (uiServant==null)
+    {
+      synchronized(pathMap)
       {
-        if (!started)
+        uiServant=pathMap.get(contextPath);
+        if (uiServant==null)
         {
           try
           {
+            
             Focus<?> focus=FocusFilter.getFocusChain(request);
-//            dynamicComponent=RootComponent.findChannel(focus);
 
             focus=focus.chain(new SimpleChannel<UIServlet>(this,true));
             uiServant=new UIService(contextAdapter);
             focus=uiServant.bind(focus);
-          
-            started=true;
+            pathMap.put(contextPath,uiServant);
           }
           catch (BindException x)
           { throw new ServletException(x.toString(),x);
@@ -111,6 +118,7 @@ public class UIServlet
         }
       }
     }
+    return uiServant;
   }
     
         
@@ -118,12 +126,12 @@ public class UIServlet
   protected void doGet(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
-    checkInit(request);
+    UIService uiServant=ensureContext(request);
     
 
     try
     {
-      RootComponent component=resolveComponent(request);
+      RootComponent component=resolveComponent(request,uiServant);
       if (component!=null)
       { 
         uiServant.service
@@ -152,11 +160,11 @@ public class UIServlet
   protected void doHead(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
-    checkInit(request);
+    UIService uiServant=ensureContext(request);
 
     try
     {
-      RootComponent component=resolveComponent(request);
+      RootComponent component=resolveComponent(request,uiServant);
       if (component!=null)
       { 
         response.setStatus(200);
@@ -183,11 +191,11 @@ public class UIServlet
   protected void doPost(HttpServletRequest request,HttpServletResponse response)
     throws ServletException,IOException
   {
-    checkInit(request);
+    UIService uiServant=ensureContext(request);
 
     try
     {
-      RootComponent component=resolveComponent(request);
+      RootComponent component=resolveComponent(request,uiServant);
       if (component!=null)
       { 
         uiServant.service
@@ -222,7 +230,7 @@ public class UIServlet
    * @param request
    * @return The RootComponent to handle this request
    */
-  private RootComponent resolveComponent(HttpServletRequest request)
+  private RootComponent resolveComponent(HttpServletRequest request,UIService uiServant)
     throws ServletException,IOException
   { 
     // Run the dynamic component instead of the default behavior for this
