@@ -1,6 +1,59 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+
+  <scm:Change>
+    <revision>0.4.6.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-03-09
+    </date>
+    
+    <notes>
+      <scm:Note>Fix UIServlet issue with Focus resolution in subdirectory 
+        contexts.
+      </scm:Note>
+      <scm:Note>Fix SelectionEditor breaking FocusChain for child editor
+      </scm:Note>
+    </notes>
+    
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix UIServlet issue with Focus resolution in subdirectory 
+            contexts. 
+          </scm:Note>
+          <scm:Note>UIServlet now keeps one resource cache per subdirectory
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/webui/
+        </path>
+    
+        <resources>
+          <URI>UIServlet.java
+          </URI>
+        </resources>
+      </scm:Change>    
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix SelectionEditor breaking FocusChain for child editor
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/webui/components/SelectionEditor.java
+        </path>
+
+      </scm:Change>    
+    </detail>
+  </scm:Change>
+
   <scm:Change>
     <revision>0.4.6
     </revision>
