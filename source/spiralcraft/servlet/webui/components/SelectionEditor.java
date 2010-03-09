@@ -27,7 +27,6 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.util.ArrayUtil;
@@ -225,17 +224,14 @@ public class SelectionEditor
         ("SelectionEditor.selectionKey: Expression must be specified");
     }
     keyChannel=childFocus.bind(key);
-    if (ret!=null)
+    if (ret==null)
     { ret=getFocus();
     }
     
     Class keyClass=keyChannel.getContentType();
     Class arrayClass=Array.newInstance(keyClass, 0).getClass();
     
-    SimpleFocus selectionFocus
-      =new SimpleFocus
-        (ret,new SelectionChannel(arrayClass));
-    return selectionFocus;
+    return ret.chain(new SelectionChannel(arrayClass));
   }
   
   class SelectionChannel
