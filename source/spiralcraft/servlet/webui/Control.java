@@ -18,7 +18,6 @@ import spiralcraft.rules.Inspector;
 import spiralcraft.rules.Rule;
 import spiralcraft.rules.RuleSet;
 import spiralcraft.rules.Violation;
-import spiralcraft.servlet.webui.ControlState.DataState;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
@@ -180,6 +179,23 @@ public abstract class Control<Ttarget>
   public void setScatterOnPrepare(boolean val)
   { this.scatterOnPrepare=val;
   }  
+  
+  /**
+   * <p>Prepare the control to receive data from the input context via its
+   *   child controls.
+   * </p>
+   * 
+   * <p>preGather() is normally called from message() in pre-order, ie.
+   *   before all children have been gather()ed, which ensures that the
+   *   Control and any model references are in a consistent state for
+   *   the child element to apply data read from the input context.
+   * </p>
+   *
+   * @param context
+   */
+  protected void preGather(ServiceContext context)
+  {
+  }
   
   /**
    * <p>Read the value of the control from the input context and apply it 
@@ -555,10 +571,12 @@ public abstract class Control<Ttarget>
     )
   {
 
+    
     if (message.getType()==GatherMessage.TYPE)
     { 
       // Reset error in pre-order, so controls can raise it if needed.
-      getState(context).resetError(); 
+      getState(context).resetError();
+      preGather((ServiceContext) context);
     } 
     
     try
@@ -667,7 +685,6 @@ public abstract class Control<Ttarget>
     }
     
     super.render(context);
-    state.setDataState(DataState.RENDERED);
   }
   
   /**

@@ -31,8 +31,6 @@ import spiralcraft.lang.SimpleFocus;
 
 import spiralcraft.lang.spi.AbstractChannel;
 
-
-import spiralcraft.servlet.webui.ControlState.DataState;
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
@@ -420,7 +418,6 @@ public abstract class ControlGroup<Ttarget>
         }
       }
       state.resetError();
-      state.setDataState(DataState.SCATTERED);
     }
     catch (AccessException x)
     { handleException(context,x);
@@ -452,7 +449,6 @@ public abstract class ControlGroup<Ttarget>
            )
         { state.valueUpdated();
         }
-        state.setDataState(DataState.GATHERED);
       } 
       catch (AccessException x)
       { handleException(context,x);

@@ -37,15 +37,7 @@ import spiralcraft.textgen.StateFrame;
  */
 public class ControlState<Tbuf>
   extends ElementState
-{
-  public enum DataState
-  {INIT
-  ,GATHERED
-  ,PROCESSED
-  ,SCATTERED
-  ,RENDERED
-  }
-  
+{  
   protected static final ClassLog log=ClassLog.getInstance(ControlState.class);
 
   
@@ -57,7 +49,7 @@ public class ControlState<Tbuf>
   private List<String> errors;
   private Throwable exception;
   private ArrayList<Command<Tbuf,?,?>> commands;
-  private DataState dataState=DataState.INIT;
+//  private DataState dataState=DataState.INIT;
   private boolean presented;
   private StateFrame currentFrame;
   
@@ -306,19 +298,6 @@ public class ControlState<Tbuf>
     List<Command<Tbuf,?,?>> list=commands;
     commands=null;
     return list;
-  }
-
-  
-  public DataState getDataState()
-  { return dataState;
-  }
-    
-  public void setDataState(DataState state)
-  { 
-    if (control.isDebug())
-    { log.fine(control.toString()+" state="+state);
-    }
-    this.dataState=state;
   }
   
   public Control<?> getControl()
