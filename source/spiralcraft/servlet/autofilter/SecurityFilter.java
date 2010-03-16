@@ -238,11 +238,13 @@ public class SecurityFilter
     String ticketBase64=map.getOne("ticket");
     if (username!=null && ticketBase64!=null)
     {
+      entry.reset();
       entry.setUsername(username);
       entry.setSaltedDigest(Base64Codec.decodeBytes(ticketBase64));
       if (debug)
       { log.fine("Read login info from cookie for user "+username);
       }
+      entry.update();
       return true;
     }
     else

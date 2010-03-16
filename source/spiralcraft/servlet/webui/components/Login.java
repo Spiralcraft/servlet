@@ -190,6 +190,7 @@ public class Login
   private boolean login(boolean interactive)
   {
     LoginState state=(LoginState) getState();
+    
     if (debug)
     { 
       log.fine
@@ -215,6 +216,7 @@ public class Login
     
     synchronized (session)
     {
+      
       authenticated=session.authenticate();
       if (authenticated)
       { username=session.getPrincipal().getName(); 
@@ -535,6 +537,33 @@ public class Login
     }
     return super.bindExports();
     
+  }
+  
+  @Override
+  protected void preGather(ServiceContext context)
+  { 
+    super.preGather(context);
+    if (debug)
+    { log.fine("Resetting LoginEntry");
+    }
+    LoginState state=getState(context);
+    if (state.getValue()!=null)
+    { state.getValue().reset();
+    }
+    
+  }
+  
+  @Override
+  protected void gather(ServiceContext context)
+  {
+    LoginState state=getState(context);
+    if (state.getValue()!=null)
+    { 
+      if (debug)
+      { log.fine("Updating LoginEntry");
+      }
+      state.getValue().update();
+    }
   }
   
   @Override
