@@ -3,6 +3,56 @@
   >
 
   <scm:Change>
+    <revision>0.4.7
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-03-16
+    </date>
+    
+    <notes>
+      <scm:Note>Update authentication code to clear LoginEntry and avoid
+        stray credentials interfering with authentication
+      </scm:Note>
+    </notes>
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>Update authentication code to clear LoginEntry and avoid
+            stray credentials interfering with authentication
+          </scm:Note>
+          <scm:Note>Added preGather method to Control to allow Control to
+            to reset data in pre-order before child controls are gathered.
+          </scm:Note>
+          <scm:Note>Removed unused ControlState "dataState" tracking mechanism 
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/
+        </path>
+    
+        <resources>
+          <URI>autofilter/SecurityFilter.java
+          </URI>
+          <URI>webui/Control.java
+          </URI>
+          <URI>webui/ControlState.java
+          </URI>
+          <URI>webui/ControlGroup.java
+          </URI>
+          <URI>webui/components/Login.java
+          </URI>
+        </resources>
+      </scm:Change>    
+    </detail>
+    
+  </scm:Change>
+  
+  <scm:Change>
     <revision>0.4.6.1
     </revision>
     
