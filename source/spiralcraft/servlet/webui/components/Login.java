@@ -190,6 +190,12 @@ public class Login
   private boolean login(boolean interactive)
   {
     LoginState state=(LoginState) getState();
+    if (interactive)
+    { 
+      // Make sure we take into account anything that's been updated
+      //   since we gathered.
+      state.getValue().update();
+    }
     
     if (debug)
     { 
@@ -556,6 +562,7 @@ public class Login
   @Override
   protected void gather(ServiceContext context)
   {
+    super.gather(context);
     LoginState state=getState(context);
     if (state.getValue()!=null)
     { 
@@ -564,6 +571,7 @@ public class Login
       }
       state.getValue().update();
     }
+    
   }
   
   @Override
