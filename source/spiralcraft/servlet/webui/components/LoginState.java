@@ -21,6 +21,7 @@ public class LoginState
   extends ControlGroupState<LoginEntry>
 {
   private String referer;
+  private boolean actioned;
   
   public LoginState(Login login)
   { super(login);
@@ -32,6 +33,14 @@ public class LoginState
   
   public String getReferer()
   { return referer;
+  }
+  
+  public void setActioned(boolean actioned)
+  { this.actioned=actioned;
+  }
+  
+  public boolean getActioned()
+  { return actioned;
   }
 
 }

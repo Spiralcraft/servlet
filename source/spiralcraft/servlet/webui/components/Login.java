@@ -190,6 +190,7 @@ public class Login
   private boolean login(boolean interactive)
   {
     LoginState state=(LoginState) getState();
+    state.setActioned(true);
     if (interactive)
     { 
       // Make sure we take into account anything that's been updated
@@ -299,12 +300,6 @@ public class Login
       
   }
  
-  @Override
-  protected void handleInitialize(ServiceContext context)
-  {
-    super.handleInitialize(context);
-    // Set up a LoginEntry?
-  }
   
   private void computeReferer(ServiceContext context,LoginState state)
   {
@@ -384,7 +379,7 @@ public class Login
       }
       if (!inPlace)
       {
-        if (state.getValue().getUsername()!=null)
+        if (state.getActioned())
         {
           if (debug)
           { log.fine("Redirecting to "+state.getReferer());
@@ -415,6 +410,7 @@ public class Login
       { log.fine("Session is not authenticated "+session);
       }
     }
+    state.setActioned(false);
     
   }
 
