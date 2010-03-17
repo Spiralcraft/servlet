@@ -384,12 +384,11 @@ public class Login
       }
       if (!inPlace)
       {
-        if (debug)
-        { log.fine("Redirecting to "+state.getReferer());
-        }
-        
         if (state.getValue().getUsername()!=null)
         {
+          if (debug)
+          { log.fine("Redirecting to "+state.getReferer());
+          }          
           // Only the form that got the credentials will have a
           //   username and trigger the redirect
           try
@@ -397,6 +396,15 @@ public class Login
           }
           catch (ServletException x)
           { handleException(context,x);
+          }
+        }
+        else
+        {
+          if (debug)
+          { 
+            log.fine("Inactive Login component- NOT redirecting to "
+              +state.getReferer()
+              );
           }
         }
       }
