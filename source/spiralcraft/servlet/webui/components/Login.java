@@ -387,11 +387,17 @@ public class Login
         if (debug)
         { log.fine("Redirecting to "+state.getReferer());
         }
-        try
-        { context.redirect(URI.create(state.getReferer()));
-        }
-        catch (ServletException x)
-        { handleException(context,x);
+        
+        if (state.getValue().getUsername()!=null)
+        {
+          // Only the form that got the credentials will have a
+          //   username and trigger the redirect
+          try
+          { context.redirect(URI.create(state.getReferer()));
+          }
+          catch (ServletException x)
+          { handleException(context,x);
+          }
         }
       }
     }
