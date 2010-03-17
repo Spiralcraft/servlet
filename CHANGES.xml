@@ -16,6 +16,10 @@
       <scm:Note>Update authentication code to clear LoginEntry and avoid
         stray credentials interfering with authentication
       </scm:Note>
+      <scm:Note>In the case where multiple Login components appear on a page,
+        ensure that only the one that got the credentials invokes the
+        redirect.
+      </scm:Note>
     </notes>
     
     <detail>
