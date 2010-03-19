@@ -1,6 +1,39 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  <scm:Change>
+    <revision>0.4.7.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-03-19
+    </date>
+    
+    <notes>
+      <scm:Note>Fix issue where filter would rebind on every request
+      </scm:Note>
+
+    </notes>
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix issue where filter would rebind on every request
+          </scm:Note>
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/autofilter/AuthenticateFilter
+        </path>
+    
+        <resources>
+        </resources>
+      </scm:Change>    
+    </detail>
+    
+  </scm:Change>
 
   <scm:Change>
     <revision>0.4.7
