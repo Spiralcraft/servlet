@@ -56,6 +56,7 @@ public class AuthenticateFilter
   private HttpAdapter httpAdapter;
   private String sessionName;
   private boolean useSession;
+  private boolean bound;
     
   
   { 
@@ -110,11 +111,15 @@ public class AuthenticateFilter
 
     try
     {
-      Focus<?> focus=FocusFilter.getFocusChain(httpRequest);
-      authenticator.bind(focus);
+      if (!bound)
+      {
+        Focus<?> focus=FocusFilter.getFocusChain(httpRequest);
+        authenticator.bind(focus);
+        bound=true;
+      }
     }
     catch (BindException x)
-    { throw new ServletException("Error binding uthenticator",x);
+    { throw new ServletException("Error binding authenticator",x);
     }
         
     if (isAuthenticated(httpRequest,httpResponse))
