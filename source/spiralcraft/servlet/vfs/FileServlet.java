@@ -1,5 +1,5 @@
 //
-// Copyright (c) 1998,2009 Michael Toth
+// Copyright (c) 1998,2010 Michael Toth
 // Spiralcraft Inc., All Rights Reserved
 //
 // This package is part of the Spiralcraft project and is licensed under
@@ -32,24 +32,32 @@ import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.Path;
 import spiralcraft.util.PathPattern;
 import spiralcraft.util.string.StringUtil;
+
 import spiralcraft.vfs.Resolver;
+import spiralcraft.vfs.ResourceFilter;
 import spiralcraft.vfs.StreamUtil;
 import spiralcraft.vfs.Resource;
 
+import spiralcraft.vfs.Container;
+import spiralcraft.vfs.UnresolvableURIException;
+
 import java.text.SimpleDateFormat;
 
-
 import java.io.File;
-import java.io.FilenameFilter;
+//import java.io.FilenameFilter;
 
 import java.util.Date;
 
 import java.io.OutputStream;
 import java.io.InputStream;
+import java.net.URI;
 
 import spiralcraft.net.http.Headers;
 import spiralcraft.net.http.RangeHeader;
 
+/**
+ * Serves a contextual VFS resource
+ */
 public class FileServlet
   extends HttpServlet
 {
@@ -109,12 +117,38 @@ public class FileServlet
     }
   }
 
+  
+  public Resource translatePath(String relativePath)
+    throws UnresolvableURIException,IOException
+  { 
+
+    Resource mappedResource
+      =Resolver.getInstance().resolve(URI.create("context:"+relativePath));
+    if (mappedResource!=null && mappedResource.exists())
+    { 
+      if (debugLevel.canLog(Level.DEBUG))
+      { log.debug("FileServlet mapped "+relativePath+" to "+mappedResource.getURI());
+      }
+      return mappedResource;
+    }
+    else
+    {
+      if (debugLevel.canLog(Level.DEBUG))
+      { log.debug("context:"+relativePath+" did not resolve");
+      }
+    }
+    
+    String filePath=getServletConfig().getServletContext()
+      .getRealPath(relativePath);
+    return Resolver.getInstance().resolve(new File(filePath).toURI());
+  }
+    
   @Override
   public void service(HttpServletRequest request,HttpServletResponse response)
     throws IOException,ServletException
   {
     if (debugLevel.canLog(Level.DEBUG))
-    { log.log(Level.DEBUG,"Servicing request for "+request.getRequestURI());
+    { log.debug("Servicing request for "+request.getRequestURI());
     }
     
     if (hidden(request.getServletPath()))
@@ -123,11 +157,9 @@ public class FileServlet
       return;
     }
     
-    String path
-      =getServletConfig().getServletContext()
-        .getRealPath(request.getServletPath());
+    String contextPath=getContextRelativePath(request);
     
-    if (path==null)
+    if (contextPath==null)
     { 
       // Send an error, because the URI could not be translated into
       //   a real path (malformed URI or illegal path)
@@ -141,31 +173,32 @@ public class FileServlet
       
     }
 
-    File file=new File(path);
+    Resource resource=translatePath(contextPath);
     if (debugLevel.canLog(Level.DEBUG))
-    { log.log(Level.DEBUG,"File Servlet serving "+path);
+    { log.log(Level.DEBUG,"File Servlet serving "+contextPath);
     }
     
     if (request.getRequestURI().endsWith("/"))
     {
-      if (!isDirectory(file))
+      Container container=resource.asContainer();
+      if (container==null)
       { 
         send404(request,response);
         return;
       }
       else
       {
-        path=findDefaultFile(file);
-        if (path!=null)
+        Resource defaultResource=findDefaultFile(container);
+        if (defaultResource!=null)
         { 
           if (request.getMethod().equals("GET"))
-          { sendFile(request,response,path);
+          { sendFile(request,response,defaultResource);
           }
           else if (request.getMethod().equals("HEAD"))
-          { sendHead(request,response,path);
+          { sendHead(request,response,defaultResource);
           }
           else if (request.getMethod().equals("PUT"))
-          { putFile(request,response,path);
+          { putFile(request,response,defaultResource);
           }
           else
           { 
@@ -178,7 +211,7 @@ public class FileServlet
           if (_permitDirListing)
           { 
             if (request.getMethod().equals("GET"))
-            { sendDirectory(request,response,file);
+            { sendDirectory(request,response,container);
             }
             else
             { 
@@ -203,19 +236,19 @@ public class FileServlet
     }
     else
     { 
-      if (isDirectory(file))
+      if (resource.asContainer()!=null)
       { 
         response.sendRedirect
           (response.encodeRedirectURL(request.getRequestURI()+"/"));
       }
       else if (request.getMethod().equals("GET"))
-      { sendFile(request,response,path);
+      { sendFile(request,response,resource);
       }
       else if (request.getMethod().equals("HEAD"))
-      { sendHead(request,response,path);
+      { sendHead(request,response,resource);
       }
       else if (request.getMethod().equals("PUT"))
-      { putFile(request,response,path);
+      { putFile(request,response,resource);
       }
       else
       { response.sendError(405);
@@ -238,12 +271,26 @@ public class FileServlet
    * Returns the default file for a directory, or
    *   null if none of the default files can be found
    */
-  private String findDefaultFile(File dir)
+  private Resource findDefaultFile(Container dir)
   {
     for (int i=0;i<_defaultFiles.length;i++)
     { 
-      if (exists(dir,_defaultFiles[i]))
-      { return new File(dir,_defaultFiles[i]).getPath();
+      try
+      {
+        Resource child=dir.getChild(_defaultFiles[i]);
+        if (child.exists())
+        { return child;
+        }
+      }
+      catch (UnresolvableURIException x)
+      { 
+        log.log
+          (Level.WARNING,"Error checking for default file "+_defaultFiles[i],x);
+      }
+      catch (IOException x)
+      {
+        log.log
+          (Level.WARNING,"Error checking for default file "+_defaultFiles[i],x);
       }
     }
     return null;
@@ -267,7 +314,7 @@ public class FileServlet
   private void putFile
     (HttpServletRequest request
     ,HttpServletResponse response
-    ,String path
+    ,Resource resource
     )
     throws IOException
   {
@@ -281,7 +328,6 @@ public class FileServlet
       }
       int contentLength=Integer.parseInt(contentLengthString);
 
-      Resource resource=Resolver.getInstance().resolve(new File(path).toURI());
       OutputStream out=resource.getOutputStream();
       try
       {
@@ -358,13 +404,12 @@ public class FileServlet
   private void sendHead
     (HttpServletRequest request
     ,HttpServletResponse response
-    ,String path
+    ,Resource resource
     )
     throws IOException
   {
     try
     {
-      Resource resource=Resolver.getInstance().resolve(new File(path).toURI());
       if (!resource.exists())
       { 
         send404(request,response);
@@ -423,7 +468,7 @@ public class FileServlet
       {
         log.log
           (Level.WARNING
-          ,"IOException retrieving "+path+": "+x.toString()
+          ,"IOException retrieving "+resource.getURI()+": "+x.toString()
           );
       }
 
@@ -440,7 +485,7 @@ public class FileServlet
   private void sendFile
     (HttpServletRequest request
     ,HttpServletResponse response
-    ,String path
+    ,Resource resource
     )
     throws IOException
   {
@@ -451,7 +496,6 @@ public class FileServlet
     
     try
     {
-      Resource resource=Resolver.getInstance().resolve(new File(path).toURI());
       long lastModified=floorToSecond(resource.getLastModified());
       try
       { 
@@ -553,7 +597,7 @@ public class FileServlet
       {
         log.log
           (Level.WARNING
-          ,"IOException retrieving "+path+": "+x.toString()
+          ,"IOException retrieving "+resource.getURI()+": "+x.toString()
           );
       }
 
@@ -570,12 +614,12 @@ public class FileServlet
   private void sendDirectory
     (HttpServletRequest request
     ,HttpServletResponse response
-    ,File dir
+    ,Container container
     )
     throws IOException
   {
     if (log.canLog(Level.DEBUG))
-    { log.log(Level.DEBUG,"Listing "+dir.getPath());
+    { log.log(Level.DEBUG,"Listing "+container.asResource().getURI());
     }
 
     String host=request.getHeader("Host");
@@ -608,12 +652,12 @@ public class FileServlet
       out.append("\">Parent Directory</A>\r\n");
     }
 
-    String[] dirs
-      =dir.list
-        (new FilenameFilter()
+    Resource[] dirs
+      =container.listChildren
+        (new ResourceFilter()
           {
-            public boolean accept(File dir,String name)
-            { return new File(dir,name).isDirectory();
+            public boolean accept(Resource resource)
+            { return resource.asContainer()!=null;
             }
           }
         );
@@ -631,12 +675,14 @@ public class FileServlet
     {
       for (int i=0;i<dirs.length;i++)
       { 
-        File subdir=new File(dir,dirs[i]);
-        if (!hidden(subdir.toURI().getPath()))
+        Resource subdir=dirs[i];
+        if (!hidden(subdir.getURI().getPath()))
         {
+          String dirname=dirs[i].getLocalName();
+          
           out.append("<TR>");
           out.append("<TD align=\"left\"><TT>");
-          out.append(_fileDateFormat.format(new Date(subdir.lastModified())));
+          out.append(_fileDateFormat.format(new Date(subdir.getLastModified())));
           out.append("</TT></TD>");
 
           out.append("<TD>");
@@ -647,9 +693,9 @@ public class FileServlet
           out.append(request.getScheme()+"://");
           out.append(host);
           out.append(uri);
-          out.append(dirs[i]);
+          out.append(dirname);
           out.append("/\">");
-          out.append(dirs[i]);
+          out.append(dirname);
           out.append("/</A>");
           out.append("</TT></TD>");
           out.append("</TR>\r\n");
@@ -657,12 +703,12 @@ public class FileServlet
       }
     }
 
-    String[] files
-      =dir.list
-        (new FilenameFilter()
+    Resource[] files
+      =container.listChildren
+        (new ResourceFilter()
           {
-            public boolean accept(File dir,String name)
-            { return !(new File(dir,name).isDirectory());
+            public boolean accept(Resource resource)
+            { return resource.asContainer()==null;
             }
           }
         );
@@ -671,17 +717,18 @@ public class FileServlet
     {
       for (int i=0;i<files.length;i++)
       { 
-        File file=new File(dir,files[i]);
-        if (!hidden(file.toURI().getPath()))
+        Resource file=files[i];
+        if (!hidden(file.getURI().getPath()))
         {
+          String fileName=file.getLocalName();
           out.append("<TR>");
 
           out.append("<TD  align=\"left\"><TT>");
-          out.append(_fileDateFormat.format(new Date(file.lastModified())));
+          out.append(_fileDateFormat.format(new Date(file.getLastModified())));
           out.append("</TT></TD>");
 
           out.append("<TD align=\"right\"><TT>");
-          out.append(file.length());
+          out.append(file.getSize());
           out.append("</TT></TD>");
 
           out.append("<TD><TT>");
@@ -689,9 +736,9 @@ public class FileServlet
           out.append(request.getScheme()+"://");
           out.append(host);
           out.append(uri);
-          out.append(files[i]);
+          out.append(fileName);
           out.append("\">");
-          out.append(files[i]);
+          out.append(fileName);
           out.append("</A>");
           out.append("</TT></TD>");
           out.append("</TR>\r\n");
@@ -707,18 +754,5 @@ public class FileServlet
     response.getOutputStream().flush();
 
   }
-
-  private boolean isDirectory(File file)
-  {
-    // XXX Potentially real slow
-    return file.isDirectory();
-  }
-
-  private boolean exists(File dir,String name)
-  {
-    // XXX Potentially real slow
-    return new File(dir,name).exists();
-  }
-  
 
 }
