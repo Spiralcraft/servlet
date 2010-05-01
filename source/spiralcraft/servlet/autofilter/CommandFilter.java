@@ -54,6 +54,8 @@ public class CommandFilter
   
   private Binding<Command> x;
   
+  private boolean ignoreException=false;
+  
   { setUsesRequest(true);
   }
   
@@ -65,6 +67,15 @@ public class CommandFilter
   public void setX(Binding<Command> x)
   { this.x=x;
   }
+  
+  /**
+   * Do not write the exception to the log or return an error response
+   *   in the event of a command exception
+   */
+  public void setIgnoreException(boolean ignoreException)
+  { this.ignoreException=ignoreException;
+  }
+  
   
   /**
    * Specify assignments that will be performed after any queryBindings
@@ -146,6 +157,12 @@ public class CommandFilter
       }
       Setter.applyArray(contextSetters);
       commandLocal.get().execute();
+      
+      if (commandLocal.get().getException()!=null && !ignoreException)
+      {
+        throw new RuntimeException
+          ("Error executing command",commandLocal.get().getException());
+      }
     }
     catch (RuntimeException x)
     { 
