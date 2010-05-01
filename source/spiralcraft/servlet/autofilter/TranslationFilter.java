@@ -159,12 +159,19 @@ public class TranslationFilter
         // Send the translated response
         
         InputStream in = translation.getInputStream();
-        OutputStream out = response.getOutputStream();
+        try
+        {
+          OutputStream out = response.getOutputStream();
         
-        StreamUtil.copyRaw(in,out,8192);
-        in.close();
+          StreamUtil.copyRaw(in,out,8192);
+
+          out.flush();
+
+        }
+        finally
+        { in.close();
+        }
         
-        out.flush();
       }
       else
       { 
