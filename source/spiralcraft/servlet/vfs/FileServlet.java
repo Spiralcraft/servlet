@@ -118,7 +118,7 @@ public class FileServlet
   }
 
   
-  public Resource translatePath(String relativePath)
+  private Resource translatePath(String relativePath)
     throws UnresolvableURIException,IOException
   { 
 
