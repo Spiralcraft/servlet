@@ -46,6 +46,7 @@ import spiralcraft.time.Clock;
 import spiralcraft.time.Scheduler;
 import spiralcraft.util.ContextDictionary;
 import spiralcraft.util.Path;
+import spiralcraft.util.URIUtil;
 import spiralcraft.util.tree.PathTree;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.context.ContextResourceMap;
@@ -127,7 +128,7 @@ public class Controller
    * @param dataURI
    */
   public void setDataURI(URI dataURI)
-  { this.dataURI=dataURI;
+  { this.dataURI=cleanURI("dataURI",dataURI);
   }
       
   /**
@@ -149,7 +150,7 @@ public class Controller
    * @param dataURI
    */
   public void setConfigURI(URI configURI)
-  { this.configURI=configURI;
+  { this.configURI=cleanURI("configURI",configURI);
   }
       
   /**
@@ -170,7 +171,7 @@ public class Controller
    * @param dataURI
    */
   public void setFilesURI(URI filesURI)
-  { this.filesURI=filesURI;
+  { this.filesURI=cleanURI("filesURI",filesURI);
   }
   
   /**
@@ -182,7 +183,7 @@ public class Controller
    * @param codeURI
    */
   public void setCodeURI(URI codeURI)
-  { this.codeURI=codeURI;
+  { this.codeURI=cleanURI("codeURI",codeURI);
   }
   
   /**
@@ -221,6 +222,21 @@ public class Controller
     
   }
 
+  private URI cleanURI(String propName,URI uri)
+  { 
+    if (!uri.getPath().endsWith("/"))
+    { 
+      log.warning
+        ("URI "+uri+" must end with '/' for property '"+propName
+        +"'. Automatically correcting for non-canonical directory syntax."
+        );
+      return URIUtil.ensureTrailingSlash(uri);
+    }
+    else
+    { return uri;
+    }
+  }
+  
   @SuppressWarnings("unchecked")
   private void initContextDictionary(ServletContext context)
   {
