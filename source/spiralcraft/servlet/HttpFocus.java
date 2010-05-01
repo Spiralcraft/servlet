@@ -74,8 +74,8 @@ public class HttpFocus<T>
     if (focusChain!=null)
     { setSubject( (Channel<T>) focusChain.getSubject());
     }
-    else
-    { 
+    if (getSubject()==null)
+    {
       setSubject
         ( (Channel<T>) new NullChannel<Void>
             (BeanReflector.<Void>getInstance(Void.class))
@@ -83,7 +83,7 @@ public class HttpFocus<T>
     }
   }
   
-  public HttpFocus()
+  private HttpFocus()
   {
     // addNamespaceAlias("http");
     
