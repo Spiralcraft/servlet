@@ -36,7 +36,8 @@
             in addition to the default context resource
           </scm:Note>
           <scm:Note>Add context:// authorities "files" and "code" to 
-            contextualize standard resource usage.
+            contextualize standard resource usage, and clean all URIs to
+            ensure trailing slash.
           </scm:Note>
           <scm:Note>Always make sure HttpFocus has a subject, even a "void" one
           </scm:Note>
