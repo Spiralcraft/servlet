@@ -1,6 +1,73 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  
+  <scm:Change>
+    <revision>0.4.8
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-05-01
+    </date>
+    
+    <notes>
+      <scm:Note>Sync with core 0.4.8
+      </scm:Note>
+      <scm:Note>Support VFS file mappings based on servlet path for
+        FileServlet.
+      </scm:Note>
+      <scm:Note>Minor fixes and enhancements 
+      </scm:Note>
+    </notes>
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>FileServlet is now based on spiralcraft.vfs instead of 
+            java.io.File
+          </scm:Note>
+          <scm:Note>VfsFilter class accepts a FileSpace to configure
+            the contextual vfs resource space.
+          </scm:Note>
+          <scm:Note>UIServlet loads code resources from context://code 
+            in addition to the default context resource
+          </scm:Note>
+          <scm:Note>Add context:// authorities "files" and "code" to 
+            contextualize standard resource usage.
+          </scm:Note>
+          <scm:Note>Always make sure HttpFocus has a subject, even a "void" one
+          </scm:Note>
+          <scm:Note>Allow CommandFilter to ignore an Exception instead of
+            throwing and logging it so that it may be handled by the 
+            implementation logic.
+          </scm:Note>                 
+        </notes>
+    
+        <path>/source/spiralcraft/servlet/
+        </path>
+    
+        <resources>
+          <URI>HttpFocus.java
+          </URI>
+          <URI>autofilter/Controller.java
+          </URI>
+          <URI>autofilter/CommandFilter.java
+          </URI>
+          <URI>vfs/FileServlet.java
+          </URI>
+          <URI>vfs/VfsFilter.java
+          </URI>
+        </resources>
+        
+      </scm:Change>   
+            
+    </detail>
+    
+  </scm:Change>
+  
   <scm:Change>
     <revision>0.4.7.1
     </revision>
