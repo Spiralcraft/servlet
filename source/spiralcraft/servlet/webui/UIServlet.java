@@ -24,6 +24,7 @@ import spiralcraft.lang.spi.SimpleChannel;
 
 
 import spiralcraft.vfs.NotStreamableException;
+import spiralcraft.vfs.Resolver;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -111,6 +112,7 @@ public class UIServlet
             uiServant=new UIService(contextAdapter);
             focus=uiServant.bind(focus);
             pathMap.put(contextPath,uiServant);
+            log.debug("Starting UIServlet for path ["+contextPath+"]");
           }
           catch (BindException x)
           { throw new ServletException(x.toString(),x);
@@ -260,7 +262,12 @@ public class UIServlet
       
       if (component==null)
       {
-        // Look in the fallback dir?
+        // Find it in the code overlay 
+        component
+          =uiServant.getRootComponent
+            (Resolver.getInstance().resolve("context://code"+relativePath)
+            ,relativePath
+            );        
       }
       return component;
     }
