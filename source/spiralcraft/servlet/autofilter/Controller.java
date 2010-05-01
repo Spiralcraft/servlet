@@ -101,14 +101,21 @@ public class Controller
   
   private URI dataURI=URI.create("WEB-INF/data/");
   private URI configURI=URI.create("WEB-INF/config/");
+  private URI filesURI=URI.create("WEB-INF/files/");
+  private URI codeURI=URI.create("");
   
   private Scheduler scheduler;
   
   
 
   /**
-   * <p>The URI where modifiable persistent data is kept.
+   * <p>The root URI where modifiable persistent data is kept. This is
+   *   normally replicated at a higher level than the filesystem
    * </p>
+   *
+   * <p>This is resolvable via the "context://data/" URI
+   * </p>
+   *
    * 
    * <p>If a relative URI is specified, it will be relative to the context
    *   root.
@@ -124,13 +131,18 @@ public class Controller
   }
       
   /**
-   * <p>The URI where modifiable persistent data is kept.
+   * <p>The root URI where application configuration artifacts are kept. This
+   *   is normally non-writable private data that has a relationship to the
+   *   deployment.
    * </p>
    * 
    * <p>If a relative URI is specified, it will be relative to the context
    *   root.
    * </p>
    * 
+   * <p>This is resolvable via the "context://config/" URI
+   * </p>
+   *
    * <p>defaults to WEB-INF/config/
    * </p>
    * 
@@ -140,6 +152,39 @@ public class Controller
   { this.configURI=configURI;
   }
       
+  /**
+   * <p>The root URI of the main directory for dynamic file storage. This
+   *   is where data replication is handled by VFS. 
+   * </p>
+   * 
+   * <p>If a relative URI is specified, it will be relative to the context
+   *   root.
+   * </p>
+   * 
+   * <p>This is resolvable via the "context://files/" URI
+   * </p>
+   *
+   * <p>defaults to WEB-INF/files/
+   * </p>
+   * 
+   * @param dataURI
+   */
+  public void setFilesURI(URI filesURI)
+  { this.filesURI=filesURI;
+  }
+  
+  /**
+   * <p>The root URI for the context://code/ authority where server executable
+   *   code artifacts can be found. It is usually a non-public "look-aside"
+   *   tree that can map functionality into a context.
+   * </p>
+   * 
+   * @param codeURI
+   */
+  public void setCodeURI(URI codeURI)
+  { this.codeURI=codeURI;
+  }
+  
   /**
    * Filter.init()
    */
@@ -225,6 +270,8 @@ public class Controller
     contextResourceMap.putDefault(contextURI);
     contextResourceMap.put("data",contextURI.resolve(dataURI));
     contextResourceMap.put("config",contextURI.resolve(configURI));
+    contextResourceMap.put("files",contextURI.resolve(filesURI));
+    contextResourceMap.put("code",contextURI.resolve(codeURI));
     
   }
   
@@ -578,7 +625,7 @@ public class Controller
     throws IOException
   {
     HttpServletResponse response=(HttpServletResponse) servletResponse;
-    response.setStatus(501);
+    response.setStatus(500);
 
     PrintWriter printWriter=new PrintWriter(response.getWriter());
     printWriter.write(x.toString()+"\r\n");
