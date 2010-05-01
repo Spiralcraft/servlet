@@ -15,8 +15,9 @@
 package spiralcraft.servlet.webui;
 
 /**
- * A potential user input directed at a specific webui Component associated
- *   with 
+ * <p>A potential user input directed at a specific webui Component instance
+ *   or Component State instance
+ * </p>
  * 
  * @author mike
  *

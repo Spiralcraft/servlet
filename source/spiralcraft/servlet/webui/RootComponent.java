@@ -44,8 +44,8 @@ import spiralcraft.log.Level;
  * <p>Represents the root of a WebUI component tree
  * </p>
  * 
- * <p>The UiComponent is the Component which is addressed directly via the HTTP
- *   client and provides the UI with some control over the HTTP interaction.
+ * <p>The RootComponent is the Component which is addressed directly via the
+ *   HTTP client and provides the UI with some control over the HTTP interaction.
  * </p>
  * 
  * 
