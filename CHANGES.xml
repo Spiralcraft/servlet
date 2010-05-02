@@ -45,6 +45,8 @@
             throwing and logging it so that it may be handled by the 
             implementation logic.
           </scm:Note>                 
+          <scm:Note>Fix double-checked locking in FocusFilter
+          </scm:Note>                 
         </notes>
     
         <path>/source/spiralcraft/servlet/
@@ -56,6 +58,8 @@
           <URI>autofilter/Controller.java
           </URI>
           <URI>autofilter/CommandFilter.java
+          </URI>
+          <URI>autofilter/spi/FocusFilter.java
           </URI>
           <URI>vfs/FileServlet.java
           </URI>
