@@ -97,6 +97,7 @@ public abstract class FocusFilter<T>
   private Focus<?> exportFocus;
   private URI alias;
   private Renderer renderer;
+  private volatile boolean initialized;
   
   
   // Default to global, to implement Focus hierarchy
@@ -242,42 +243,18 @@ public abstract class FocusFilter<T>
       requestFocus=(Focus<?>) request.getAttribute(attributeName);
       // log.fine("Got "+requestFocus);
       
+      if (!initialized)
+      { 
+        synchronized (this)
+        { 
+          if (!initialized)
+          { init(requestFocus);
+          }
+        }
+      }
+      
 
       
-      // Create our own Focus, using the 'parent' Focus.
-      if (focus==null)
-      {         
-        if (requestFocus==null)
-        { requestFocus=new SimpleFocus<Void>(null);
-        }
-        
-        if (usesRequest 
-            && requestFocus.findFocus
-              (URI.create("class:/javax/servlet/http/HttpServletRequest")
-              ) ==null
-           )
-        { 
-          httpFocus=new HttpFocus<Void>(requestFocus);
-          requestFocus=httpFocus;
-        }
-        if (whenX!=null)
-        { whenX.bind(requestFocus);
-        }
-        requestFocus=bindImports(requestFocus);
-        focus=createFocus(requestFocus);
-        // log.fine("Created "+focus);
-        if (alias!=null)
-        { focus.addAlias(alias);
-        }
-        exportFocus=bindExports(focus);
-        
-        if (renderWhenX!=null)
-        { renderWhenX.bind(exportFocus);
-        }
-        if (renderer!=null && renderer instanceof FocusChainObject)
-        { ((FocusChainObject) renderer).bind(focus);
-        }        
-      }
       // Make our Focus the next filter's parent Focus
       request.setAttribute(attributeName,exportFocus);
       
@@ -365,5 +342,46 @@ public abstract class FocusFilter<T>
   { chain.doFilter(request,response);
   }
   
-
+  
+  private void init(Focus<?> requestFocus)
+    throws BindException
+  {
+  
+    
+    // Create our own Focus, using the 'parent' Focus.
+    if (focus==null)
+    {         
+      if (requestFocus==null)
+      { requestFocus=new SimpleFocus<Void>(null);
+      }
+      
+      if (usesRequest 
+          && requestFocus.findFocus
+            (URI.create("class:/javax/servlet/http/HttpServletRequest")
+            ) ==null
+         )
+      { 
+        httpFocus=new HttpFocus<Void>(requestFocus);
+        requestFocus=httpFocus;
+      }
+      if (whenX!=null)
+      { whenX.bind(requestFocus);
+      }
+      requestFocus=bindImports(requestFocus);
+      focus=createFocus(requestFocus);
+      // log.fine("Created "+focus);
+      if (alias!=null)
+      { focus.addAlias(alias);
+      }
+      exportFocus=bindExports(focus);
+      
+      if (renderWhenX!=null)
+      { renderWhenX.bind(exportFocus);
+      }
+      if (renderer!=null && renderer instanceof FocusChainObject)
+      { ((FocusChainObject) renderer).bind(focus);
+      }        
+    }    
+  }
+  
 }
