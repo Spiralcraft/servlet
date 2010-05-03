@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.FocusChainObject;
+import spiralcraft.lang.Contextual;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
@@ -83,7 +83,7 @@ import spiralcraft.vfs.Resource;
  * 
  */
 public class UIService
-  implements FocusChainObject
+  implements Contextual
 {
 
   private static final ClassLog log

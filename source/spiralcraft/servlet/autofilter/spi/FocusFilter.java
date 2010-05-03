@@ -20,7 +20,7 @@ import java.net.URI;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
-import spiralcraft.lang.FocusChainObject;
+import spiralcraft.lang.Contextual;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.AutoFilter;
@@ -343,7 +343,7 @@ public abstract class FocusFilter<T>
   }
   
   
-  private void init(Focus<?> requestFocus)
+  private final void init(Focus<?> requestFocus)
     throws BindException
   {
   
@@ -378,10 +378,10 @@ public abstract class FocusFilter<T>
       if (renderWhenX!=null)
       { renderWhenX.bind(exportFocus);
       }
-      if (renderer!=null && renderer instanceof FocusChainObject)
-      { ((FocusChainObject) renderer).bind(focus);
+      if (renderer!=null && renderer instanceof Contextual)
+      { ((Contextual) renderer).bind(focus);
       }        
-    }    
+    }
   }
   
 }
