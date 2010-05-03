@@ -29,9 +29,6 @@
           <scm:Note>FileServlet is now based on spiralcraft.vfs instead of 
             java.io.File
           </scm:Note>
-          <scm:Note>VfsFilter class accepts a FileSpace to configure
-            the contextual vfs resource space.
-          </scm:Note>
           <scm:Note>UIServlet loads code resources from context://code 
             in addition to the default context resource
           </scm:Note>
@@ -47,6 +44,9 @@
           </scm:Note>                 
           <scm:Note>Fix double-checked locking in FocusFilter
           </scm:Note>                 
+          <scm:Note>spiralcraft.lang.FocusChainObject is now
+            spiralcraft.lang.Contextual
+          </scm:Note>
         </notes>
     
         <path>/source/spiralcraft/servlet/
@@ -63,7 +63,7 @@
           </URI>
           <URI>vfs/FileServlet.java
           </URI>
-          <URI>vfs/VfsFilter.java
+          <URI>servlet/webui/UIService.java
           </URI>
         </resources>
         
