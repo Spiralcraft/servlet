@@ -133,6 +133,7 @@ public class GuardFilter
           httpResponse.setContentType("text/plain");
           httpResponse.setContentLength(message.length());
           response.getWriter().write(message);
+          response.getWriter().flush();
         }
       }
     }
