@@ -138,7 +138,7 @@ public class SecurityFilter
   }
 
   /**
-   * Specify the cookie name for persistent logins
+   * Specify the cookie name for persistent logins. Defaults to "login"
    * 
    * @param cookieName
    */
@@ -167,6 +167,11 @@ public class SecurityFilter
     }
   }
   
+  /**
+   * Specify the absolute URI path to use for the cookie. Defaults to "/".
+   * 
+   * @param cookiePath
+   */
   public void setCookiePath(String cookiePath)
   { this.cookiePath=cookiePath;
   }
