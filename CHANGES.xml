@@ -3,6 +3,36 @@
   >
   
   <scm:Change>
+    <revision>0.4.8.1
+    </revision>
+    
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-06-11
+    </date>
+    
+    <notes>
+      <scm:Note>Allow cookie path to be set in SecurityFilter
+      </scm:Note>
+    </notes>
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>Allow cookie path to be set in SecurityFilter
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+      </scm:Change>
+    </detail>
+  
+  </scm:Change>
+  
+  <scm:Change>
     <revision>0.4.8
     </revision>
     
