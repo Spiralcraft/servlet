@@ -545,6 +545,9 @@ public class SecurityFilter
     if (cookieDomain!=null)
     { cookie.setDomain(cookieDomain);
     }
+    if (cookiePath!=null)
+    { cookie.setPath(cookiePath);
+    }
     writeLoginCookie(cookie);
     contextLocal.get().logoutPending=true;
   }  
