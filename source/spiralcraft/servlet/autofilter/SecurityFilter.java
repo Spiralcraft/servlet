@@ -69,6 +69,7 @@ public class SecurityFilter
   private Authenticator authenticator;
   private String cookieName="login";
   private String cookieDomain;
+  private String cookiePath="/";
   private int minutesToPersist;
   private boolean requireValidCookie;
 
@@ -164,6 +165,10 @@ public class SecurityFilter
     else
     { this.cookieDomain=cookieDomain;
     }
+  }
+  
+  public void setCookiePath(String cookiePath)
+  { this.cookiePath=cookiePath;
   }
   
   /**
@@ -363,6 +368,9 @@ public class SecurityFilter
       cookie.setMaxAge(minutesToPersist>0?minutesToPersist*60:-1);
       if (cookieDomain!=null)
       { cookie.setDomain(cookieDomain);
+      }
+      if (cookiePath!=null)
+      { cookie.setPath(cookiePath);
       }
       writeLoginCookie(cookie);
       if (debug)
