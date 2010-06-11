@@ -122,9 +122,13 @@ public class GuardFilter
         
       HttpServletResponse httpResponse=(HttpServletResponse) response;
       httpResponse.setStatus(responseCode);
-    
+      
+
+     
       if (messageChannel!=null)
-      { response.getWriter().write(messageChannel.get());
+      { 
+        httpResponse.setContentType("text/plain");
+        response.getWriter().write(messageChannel.get());
       }
     }
     else
