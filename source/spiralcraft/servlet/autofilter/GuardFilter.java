@@ -127,8 +127,13 @@ public class GuardFilter
      
       if (messageChannel!=null)
       { 
-        httpResponse.setContentType("text/plain");
-        response.getWriter().write(messageChannel.get());
+        String message=messageChannel.get();
+        if (message!=null)
+        {
+          httpResponse.setContentType("text/plain");
+          httpResponse.setContentLength(message.length());
+          response.getWriter().write(message);
+        }
       }
     }
     else
