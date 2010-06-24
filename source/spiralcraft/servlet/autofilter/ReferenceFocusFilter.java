@@ -21,8 +21,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
+import spiralcraft.lang.ThreadContextual;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
@@ -58,8 +60,10 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   private Type<?> type;
   private Scope scope=Scope.APPLICATION;
   private ThreadLocalChannel<Tfocus> transientBinding;
+  private Channel<Tfocus> subject;
   private Focus<?> parentFocus;
   private String attributeName;
+  private boolean threaded=false;
 
   
   public void setTypeURI(URI typeURI)
@@ -119,16 +123,29 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
       =this.getPath().format("/")+"!"+attributeURI;
     
     this.parentFocus=parentFocus;
+    
+    Focus<Tfocus> focus;
+    
     switch (scope)
     {
       case CONSTANT:
-        return createConstantFocus(parentFocus);
+        focus=createConstantFocus(parentFocus);
+        break;
       case APPLICATION:
-        return createStableFocus(parentFocus);
+        focus=createStableFocus(parentFocus);
+        break;
       case SESSION:
-        return createTransientFocus(parentFocus);
+        focus=createTransientFocus(parentFocus);
+        break;
+      default:
+        throw new BindException("Unknown scope "+scope);
     }
-    throw new BindException("Unknown scope "+scope);
+    
+    threaded
+      =ThreadContextual.class.isAssignableFrom
+        (focus.getSubject().getContentType());
+    subject=focus.getSubject();
+    return focus;
   }
 
   private Focus<Tfocus> createConstantFocus(Focus<?> parentFocus)
@@ -142,6 +159,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
         ,true
         );
     
+    subject=constantChannel;
     if (parentFocus!=null)
     { return parentFocus.chain(constantChannel);
     }
@@ -159,7 +177,10 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     if (debug)
     { log.fine(stableFocusHolder.getFocus().toString());
     }
+    
+    subject=stableFocusHolder.getFocus().getSubject();
     return stableFocusHolder.getFocus();
+    
 
   
   }
@@ -173,7 +194,8 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     transientBinding
       =new ThreadLocalChannel<Tfocus>
         (targetFocusHolder.getFocus().getSubject().getReflector());
-
+    subject=transientBinding;
+    
     return new SimpleFocus<Tfocus>
       (parentFocus,transientBinding);
     
@@ -229,6 +251,9 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   @Override
   protected void popSubject(HttpServletRequest request)
   {
+    if (threaded)
+    { ((ThreadContextual) subject.get()).pop();
+    }
     if (scope==Scope.SESSION)
     { transientBinding.pop();
     }
@@ -292,9 +317,12 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
           }
         }
       }
-      transientBinding.push(targetFocusHolder.getFocus().getSubject().get());      
+      transientBinding.push(targetFocusHolder.getFocus().getSubject().get()); 
+      
     }
-    
+    if (threaded)
+    { ((ThreadContextual) subject.get()).push();
+    }
   }
 
 
