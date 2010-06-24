@@ -3,6 +3,28 @@
   >
   
   <scm:Change>
+    <revision>0.4.8.2
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-06-23
+    </date>
+    
+    <notes>
+      <scm:Note>ReferenceFocusFilter needs to call ThreadContextual
+        push()/pop() methods.
+      </scm:Note>
+    </notes>
+    
+    <path>source/spiralcraft/servlet/autofilter/ReferenceFocusFilter
+    </path>
+    
+  </scm:Change>
+  
+  
+  <scm:Change>
     <revision>0.4.8.1
     </revision>
     
@@ -27,8 +49,17 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/servlet/autofilter/GuardFilter.java
+        <path>source/spiralcraft/servlet/autofilter/
         </path>
+        
+        <resources>
+        
+          <URI>GuardFilter.java
+          </URI>
+          <URI>SecurityFilter.java
+          </URI>
+        </resources>
+        
       </scm:Change>
     </detail>
   
