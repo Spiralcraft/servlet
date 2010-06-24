@@ -42,6 +42,7 @@ public abstract class AbstractTextControl<Ttarget>
   private String name;
   private StringConverter<Ttarget> converter;
   private boolean required;
+//  private boolean ignoreEmptyInput;
   
   public void setName(String name)
   { this.name=name;
@@ -59,6 +60,15 @@ public abstract class AbstractTextControl<Ttarget>
   public void setConverter(StringConverter<Ttarget> converter)
   { this.converter=converter;
   }
+  
+//  /**
+//   * Ignores empty input
+//   * 
+//   * @param ignoreEmptyInput
+//   */
+//  public void setIgnoreEmptyInput(boolean ignoreEmptyInput)
+//  { this.ignoreEmptyInput=ignoreEmptyInput;
+//  }
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
