@@ -40,6 +40,8 @@ import spiralcraft.text.html.URLEncoder;
 public class FileInput
   extends Control<URI>
 {
+  private static final URI CONTEXT_ROOT=URI.create("context:/");
+  
   private static final ClassLog log
     =ClassLog.getInstance(TextInput.class);
   
@@ -202,7 +204,7 @@ public class FileInput
           { rootURI=rootUriX.get();
           }
           else
-          { rootURI=context.getContextRoot().getURI();
+          { rootURI=CONTEXT_ROOT;
           }
           
           if (contextRelativeRoot!=null)

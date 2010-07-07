@@ -207,7 +207,6 @@ public class UIService
 
         serviceContext.setRequest(request);
         serviceContext.setResponse(response);
-        serviceContext.setContextRoot(context.getResource("/"));
 
         ResourceSession.RequestSyncStatus syncStatus
         =localSession.getRequestSyncStatus(serviceContext.getQuery());
@@ -249,7 +248,6 @@ public class UIService
 
         serviceContext.setRequest(request);
         serviceContext.setResponse(response);
-        serviceContext.setContextRoot(context.getResource("/"));
 
         localSession.setLocalURI
         (request.getRequestURI()

@@ -36,7 +36,6 @@ import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.net.http.MultipartVariableMap;
 
-import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.StreamUtil;
 
 import spiralcraft.command.Command;
@@ -74,7 +73,6 @@ public class ServiceContext
   private URI contextURI;
   private String contentType;
   private boolean outOfSync;
-  private Resource contextRoot;
   
   
   public ServiceContext(Writer writer,boolean stateful,StateFrame frame)
@@ -103,13 +101,6 @@ public class ServiceContext
   { this.outOfSync=outOfSync;
   }
   
-  public Resource getContextRoot()
-  { return contextRoot;
-  }
-  
-  void setContextRoot(Resource contextRoot)
-  { this.contextRoot=contextRoot;
-  }
   
   @Override
   public String getLogPrefix()
