@@ -3,6 +3,65 @@
   >
   
   <scm:Change>
+    <revision>0.4.9
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>????
+    </date>
+    
+    
+    <notes>
+      <scm:Note>FileInput now uses VFS context mappings instead of 
+        hardcoded contextRoot property of ServiceContext, which has
+        been removed.
+      </scm:Note>
+      <scm:Note>Fix for ProxyFilter request path propogation double-encoding
+      </scm:Note>
+    </notes>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix for ProxyFilter request path propogation double-encoding
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/ProxyFilter.java
+        </path>
+        
+      </scm:Change> 
+          
+      <scm:Change>
+        <notes>
+          <scm:Note>FileInput now uses VFS context mappings instead of 
+            hardcoded contextRoot property of ServiceContext, which has
+            been removed.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+        
+          <URI>UIService.java
+          </URI>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>components/html/FileInput.java
+          </URI>
+        </resources>
+        
+      </scm:Change>    
+    </detail>
+    
+    
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.8.2
     </revision>
 
