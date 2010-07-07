@@ -101,14 +101,14 @@ public class ProxyFilter
   { this.queryBindings=queryBindings;
   }
   
-//  /**
-//   * Adds the entire path of the incoming request to the specified proxy URL.
-//   *    
-//   * @param useRequestURI
-//   */
-//  public void setUseRequestPath(boolean useRequestPath)
-//  { this.useRequestURI=useRequestPath;
-//  }
+  /**
+   * Adds the entire path of the incoming request to the specified proxy URL.
+   *    
+   * @param useRequestURI
+   */
+  public void setUseRequestPath(boolean useRequestPath)
+  { this.useRequestPath=useRequestPath;
+  }
   
 //  public void setPattern(PathPattern pattern)
 //  { this.pattern=pattern;
@@ -178,7 +178,7 @@ public class ProxyFilter
     String queryString;
 
     String requestPath
-      =httpRequest.getRequestURI().substring(1);      
+      =httpRequest.getRequestURI();      
     
     if (proxyURLParameter!=null)
     { 
@@ -244,7 +244,7 @@ public class ProxyFilter
       url
         =requestURL.resolve
           (proxyURL
-            +(useRequestPath?"/"+requestPath:"")
+            +(useRequestPath?requestPath:"")
             +(queryString!=null
               ?"?"+queryString
               :""
@@ -261,7 +261,7 @@ public class ProxyFilter
       
       url=
         proxyURL
-        +(useRequestPath?"/"+requestPath:"")
+        +(useRequestPath?requestPath:"")
         +(queryString!=null
          ?"?"+queryString
          :""
