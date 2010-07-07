@@ -36,7 +36,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.text.ParseException;
-import spiralcraft.text.html.URLEncoder;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.ContextDictionary;
 // import spiralcraft.util.Path;
@@ -49,7 +48,7 @@ public class ProxyFilter
 
   private String proxyURL;
   private String proxyQuery;
-  private boolean useRequestURI=false;
+  private boolean useRequestPath=false;
   private boolean absolute;
   private boolean bound;
   private ParameterBinding<?>[] queryBindings;
@@ -101,6 +100,15 @@ public class ProxyFilter
   public void setQueryBindings(ParameterBinding<?>[] queryBindings)
   { this.queryBindings=queryBindings;
   }
+  
+//  /**
+//   * Adds the entire path of the incoming request to the specified proxy URL.
+//   *    
+//   * @param useRequestURI
+//   */
+//  public void setUseRequestPath(boolean useRequestPath)
+//  { this.useRequestURI=useRequestPath;
+//  }
   
 //  public void setPattern(PathPattern pattern)
 //  { this.pattern=pattern;
@@ -169,8 +177,8 @@ public class ProxyFilter
     String proxyURL=this.proxyURL;
     String queryString;
 
-    String encodedRequestURI
-      =URLEncoder.encode(httpRequest.getRequestURI()).substring(1);      
+    String requestPath
+      =httpRequest.getRequestURI().substring(1);      
     
     if (proxyURLParameter!=null)
     { 
@@ -236,7 +244,7 @@ public class ProxyFilter
       url
         =requestURL.resolve
           (proxyURL
-            +(useRequestURI?"/"+encodedRequestURI:"")
+            +(useRequestPath?"/"+requestPath:"")
             +(queryString!=null
               ?"?"+queryString
               :""
@@ -253,7 +261,7 @@ public class ProxyFilter
       
       url=
         proxyURL
-        +(useRequestURI?"/"+encodedRequestURI:"")
+        +(useRequestPath?"/"+requestPath:"")
         +(queryString!=null
          ?"?"+queryString
          :""
