@@ -41,8 +41,10 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   protected Binding<Tcontext> contextX;
   protected ThreadLocalChannel
     <Command<?,Tcontext,Tresult>>commandLocal;
-  
+  protected Binding<Void> onSuccess;
+  protected Binding<Void> onError;
   protected Focus<?> focus;
+  
   
   @Override
   public void message
@@ -64,6 +66,14 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   { this.contextX=contextX;
   }
   
+  public void setOnSuccess(Binding<Void> onSuccess)
+  { this.onSuccess=onSuccess;
+  }
+  
+  public void setOnError(Binding<Void> onError)
+  { this.onError=onError;
+  }
+
   /**
    * <p>Obtain a new Command instance from the target channel or other source,
    *   apply any specified contextual parameters, execute the command, 
@@ -104,7 +114,17 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
         command.execute();
       
         if (command.getException()!=null)
-        { handleException(context,command.getException());
+        { 
+          if (onError!=null)
+          { onError.get();
+          }
+          handleException(context,command.getException());
+        }
+        else
+        { 
+          if (onSuccess!=null)
+          { onSuccess.get();
+          }
         }
       }
     }
@@ -143,6 +163,12 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
       =new ThreadLocalChannel<Command<?,Tcontext,Tresult>>
         (target.getReflector());
     this.focus=focusChain.chain(commandLocal);
+    if (onSuccess!=null)
+    { onSuccess.bind(focus);
+    }
+    if (onError!=null)
+    { onError.bind(focus);
+    }
   }
   
   @Override
