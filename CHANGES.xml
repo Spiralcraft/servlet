@@ -9,7 +9,7 @@
     <authorId>miketoth
     </authorId>
     
-    <date>2010-07-11
+    <date>2010-07-12
     </date>
     
     
@@ -19,6 +19,8 @@
         been removed.
       </scm:Note>
       <scm:Note>Fix for ProxyFilter request path propogation double-encoding
+      </scm:Note>
+      <scm:Note>Added onSuccess and onError expressions to command controls
       </scm:Note>
     </notes>
     
@@ -30,6 +32,17 @@
         </notes>
         
         <path>source/spiralcraft/servlet/autofilter/ProxyFilter.java
+        </path>
+        
+      </scm:Change> 
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Added onSuccess and onError expressions to command controls
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/AbstractCommandControl.java
         </path>
         
       </scm:Change> 
