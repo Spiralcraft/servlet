@@ -302,7 +302,18 @@ public abstract class ControlGroup<Ttarget>
         public Ttarget retrieve()
         {
           // log.fine(threadLocalState.get().toString());
-          return threadLocalState.get().getValue();
+          final ControlGroupState<Ttarget> state=threadLocalState.get();
+          if (state!=null)
+          { return state.getValue();
+          }
+          else
+          { 
+            throw new IllegalStateException
+              ("Not in context: "
+              +ControlGroup.this.toString()
+              +": "+ControlGroup.this.getErrorContext()
+              );
+          }
         }
 
         @Override
