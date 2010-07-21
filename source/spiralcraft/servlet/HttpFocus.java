@@ -69,22 +69,14 @@ public class HttpFocus<T>
   @SuppressWarnings("unchecked")
   public HttpFocus(Focus<?> focusChain)
   { 
-    this();
-    setParentFocus(focusChain);
-    if (focusChain!=null)
-    { setSubject( (Channel<T>) focusChain.getSubject());
-    }
-    if (getSubject()==null)
-    {
-      setSubject
-        ( (Channel<T>) new NullChannel<Void>
-            (BeanReflector.<Void>getInstance(Void.class))
-        );
-    }
-  }
+    super
+      (focusChain
+      ,focusChain!=null
+        ?(Channel<T>) focusChain.getSubject()
+        :(Channel<T>) new NullChannel<Void>
+          (BeanReflector.<Void>getInstance(Void.class))
+      );
   
-  private HttpFocus()
-  {
     // addNamespaceAlias("http");
     
     servletContextBinding=new ThreadLocalChannel<ServletContext>
