@@ -3,6 +3,48 @@
   >
   
   <scm:Change>
+    <revision>0.4.10
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-07-21
+    </date>
+    
+    
+    
+    <notes>
+      <scm:Note>Sync with core 0.4.10
+      </scm:Note>
+      <scm:Note>Focus requires reference to parent in constructor
+      </scm:Note>
+      <scm:Note>Removed spiralcraft.registry package and all dependencies
+      </scm:Note>
+      <scm:Note>Qualify cookie name with realm name in Security filter to
+        prevent localhost applications from interfering with each other
+      </scm:Note>
+      <scm:Note>Fail fast when a ControlGroup is accessed out of context by
+        throwing an Exception instead of returning null.
+      </scm:Note>
+    </notes>
+    
+    <path>source/spiralcraft/servlet
+    </path>
+    
+    <resources>
+      <URI>HttpFocus.java
+      </URI>
+      <URI>autofilter/ReferenceFocusFilter.java
+      </URI>
+      <URI>autofilter/SecurityFilter.java
+      </URI>
+      <URI>webui/ControlGroup.java
+      </URI>
+    </resources>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.9
     </revision>
 
