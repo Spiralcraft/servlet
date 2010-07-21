@@ -68,6 +68,7 @@ public class SecurityFilter
   private String attributeName;  
   private Authenticator authenticator;
   private String cookieName="login";
+  private String qualifiedCookieName;
   private String cookieDomain;
   private String cookiePath="/";
   private int minutesToPersist;
@@ -75,6 +76,7 @@ public class SecurityFilter
 
   private boolean preAuthenticate;
   private String ticketAuthModuleName="local";
+  private boolean qualifyCookieName=true;
   
   public void setTicketAuthModuleName(String ticketAuthModuleName)
   { this.ticketAuthModuleName=ticketAuthModuleName;
@@ -146,6 +148,16 @@ public class SecurityFilter
   { this.cookieName=cookieName;
   }
 
+  /**
+   * Specify whether the realm name should be prepended to the cookie name
+   *   to differentiate realms on the same host
+   * 
+   * @param cookieName
+   */
+  public void setQualifyCookieName(Boolean qualifyCookieName)
+  { this.qualifyCookieName=qualifyCookieName;
+  }
+  
   /**
    * Specify the RFC2109 cookie domain to use the cookie across multiple
    *   servers in the domain
@@ -367,7 +379,9 @@ public class SecurityFilter
       authSessionChannel.get().setAttribute
         (AUTH_SESSION_COOKIE_ATTRIBUTE,data);
       
-      Cookie cookie=new Cookie(cookieName,data);
+
+      
+      Cookie cookie=new Cookie(qualifiedCookieName,data);
       
       // Compute seconds, or session level persistence
       cookie.setMaxAge(minutesToPersist>0?minutesToPersist*60:-1);
@@ -393,6 +407,8 @@ public class SecurityFilter
       }
     }
   }
+  
+
   
   private void writeLoginCookie(Cookie cookie)
   { contextLocal.get().response.addCookie(cookie);
@@ -448,6 +464,16 @@ public class SecurityFilter
       boolean isNew=false;
       synchronized (session)
       {
+        if (qualifiedCookieName==null
+            && qualifyCookieName
+            && authenticator.getRealmName()!=null
+           )
+        { qualifiedCookieName=authenticator.getRealmName()+"."+cookieName;
+        }
+        else
+        { qualifiedCookieName=cookieName;
+        }
+        
         authSession
           =(AuthSession) session.getAttribute(attributeName);      
       
@@ -485,7 +511,7 @@ public class SecurityFilter
     authSession.refresh();
     authSessionChannel.push(authSession);
     
-    contextLocal.set(new SecurityFilterContext(request,response,cookieName));
+    contextLocal.set(new SecurityFilterContext(request,response,qualifiedCookieName));
     
     
     if (requireValidCookie 
@@ -541,7 +567,7 @@ public class SecurityFilter
     authSessionChannel.get().logout();
     // Delete the login cookie
     
-    Cookie cookie=new Cookie(cookieName,"");
+    Cookie cookie=new Cookie(qualifiedCookieName,"");
     if (cookieDomain!=null)
     { cookie.setDomain(cookieDomain);
     }
