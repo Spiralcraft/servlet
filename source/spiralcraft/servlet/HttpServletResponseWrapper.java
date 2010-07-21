@@ -53,6 +53,7 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @SuppressWarnings("deprecation")
   @Deprecated
   public String encodeRedirectUrl(String url)
   { return delegate.encodeRedirectUrl(url);
@@ -61,6 +62,7 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @SuppressWarnings("deprecation")
   @Deprecated
   public String encodeUrl(String url)
   { return delegate.encodeUrl(url);
@@ -106,6 +108,7 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @SuppressWarnings("deprecation")
   @Deprecated
   public void setStatus(int code,String message)
   { delegate.setStatus(code,message);
