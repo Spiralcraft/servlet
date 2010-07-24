@@ -652,7 +652,12 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   @SuppressWarnings("unchecked")
   protected void newBuffer()
     throws DataException
-  { writeToModel((Tbuffer) sessionChannel.get().newBuffer(type));
+  { 
+    Tbuffer buffer=(Tbuffer) sessionChannel.get().newBuffer(type);
+    if (debug)
+    { buffer.setDebug(debug);
+    }
+    writeToModel(buffer);
   }
   
   

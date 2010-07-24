@@ -464,10 +464,15 @@ public abstract class Editor
   protected void newBuffer()
     throws DataException
   {
+    Buffer buffer=sessionChannel.get().newBuffer(type);
     getState().updateValue
-    (sessionChannel.get().newBuffer(type)
+    ( buffer
     );
     bufferChannel.set(getState().getValue());
+    if (buffer!=null && debug)
+    { buffer.setDebug(true);
+    }
+    
   }
   
   

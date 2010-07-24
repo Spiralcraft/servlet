@@ -273,6 +273,9 @@ public abstract class TupleEditor
       
         if (inspect((BufferTuple) buffer,getState()))
         {
+          if (debug)
+          { logFine("Saving buffer "+buffer);
+          }
           buffer.save();
       
           if (publishedAssignments!=null)
@@ -293,11 +296,18 @@ public abstract class TupleEditor
             }
           }
         }
+        else
+        {
+          if (debug)
+          { logFine("Inspection failed for "+buffer);
+          }
+        } 
+        
       }
       else
       { 
         if (debug)
-        { logFine("Not dirty "+buffer.toString());
+        { logFine("Not dirty "+buffer);
         }
       }
     }
@@ -360,8 +370,12 @@ public abstract class TupleEditor
   {
     if (aggregateChannel!=null)
     {
+      Buffer buffer=getDataSession().newBuffer(getType().getContentType());
+      if (debug)
+      { buffer.setDebug(true);
+      }
       aggregateChannel.get()
-        .add(getDataSession().newBuffer(getType().getContentType()));
+        .add(buffer);
     }
   }  
 

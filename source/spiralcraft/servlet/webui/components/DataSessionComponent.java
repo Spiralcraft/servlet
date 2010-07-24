@@ -89,6 +89,10 @@ public class DataSessionComponent
     dataSessionFocus
       =new DataSessionFocus(parentFocus,dataSessionChannel,type);
   
+    if (debug)
+    { dataSessionFocus.setDebug(true);
+    }
+    
     if (type!=null)
     {
       // Pull the data from the dataSession focus
@@ -193,7 +197,7 @@ public class DataSessionComponent
       if (debug)
       { 
         log.fine
-          (getState(context).get().getData().toString());
+          ("Data: "+getState(context).get().getData());
       }
     } 
     finally
