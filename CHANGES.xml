@@ -9,7 +9,7 @@
     <authorId>miketoth
     </authorId>
     
-    <date>2010-07-21
+    <date>2010-07-25
     </date>
     
     
@@ -27,6 +27,9 @@
       <scm:Note>Fail fast when a ControlGroup is accessed out of context by
         throwing an Exception instead of returning null.
       </scm:Note>
+      <scm:Note>Permit debugging of DAL activity through editors and
+        DataSessionComponent
+      </scm:Note>
     </notes>
     
     <path>source/spiralcraft/servlet
@@ -40,6 +43,14 @@
       <URI>autofilter/SecurityFilter.java
       </URI>
       <URI>webui/ControlGroup.java
+      </URI>
+      <URI>webui/components/DataSessionComponent.java
+      </URI>
+      <URI>webui/components/Editor.java
+      </URI>
+      <URI>webui/components/EditorBase.java
+      </URI>
+      <URI>webui/components/TupleEditor.java
       </URI>
     </resources>
   </scm:Change>
