@@ -169,15 +169,16 @@ public class ControlState<Tbuf>
   }
   
   /**
-   * <p>Update the value and the record of the previous value
+   * <p>Update the value and the record of the previous value. Calls
+   *   setValue(value) to allow subtype to update dependent data.
    * </p>
    * 
    * 
    * @param value
    */
-  public void updateValue(Tbuf value)
+  public final void updateValue(Tbuf value)
   { 
-    this.value=value;
+    setValue(value);
     this.previousValue=value;
   }
   
@@ -202,7 +203,11 @@ public class ControlState<Tbuf>
    * </p>
    * 
    * <p>Use when storing an intermediate value that is not synchronized
-   *   with the model.
+   *   with the model. Called by updateValue() when it synchronizes the 
+   *   internal value with the model.
+   * </p>
+   * 
+   * <p>Override to ensure that any dependent data gets updated
    * </p>
    * @param value
    */

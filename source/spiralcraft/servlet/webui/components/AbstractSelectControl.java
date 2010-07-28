@@ -209,7 +209,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
     {
       try
       {
-        state.setValue(target.get());
+        state.updateValue(target.get());
         
       }
       catch (AccessException x)

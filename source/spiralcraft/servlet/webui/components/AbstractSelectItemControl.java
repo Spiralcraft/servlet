@@ -119,9 +119,15 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
     SelectItemState<Tvalue> state=((SelectItemState<Tvalue>) context.getState());
     if (value!=null)
     {
+
+      
       try
       { 
-        state.updateValue(value.get());
+        Tvalue val=value.get();
+        if (debug)
+        { log.fine(getLogPrefix()+" scattering "+val);
+        }
+        state.updateValue(val);
         state.setSelected(state.getSelectState().isSelected(state.getValue()));
       }
       catch (AccessException x)
@@ -132,8 +138,7 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
       }
 
       
-    }
-    
+    }    
     
   }
   
