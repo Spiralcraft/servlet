@@ -1,6 +1,49 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  <scm:Change>
+    <revision>0.4.10.1
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-07-28
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>
+            [SCPUBLIC-16] Regression- Select lists may not register input when
+              same data is entered for new target
+          </scm:Note>
+          <scm:Note>
+            ControlState calls setValue() from updateValue() to 
+              involve subtype
+          </scm:Note>
+          <scm:Note>
+            AbstractSelectControl now calls updateValue on scatter
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ControlState.java
+          </URI>
+          <URI>components/AbstractSelectControl.java
+          </URI>
+          <URI>components/AbstractSelectItem.java
+          </URI>
+        
+        </resources>
+      </scm:Change>
+    
+    </detail>
+  </scm:Change>
+
   
   <scm:Change>
     <revision>0.4.10
