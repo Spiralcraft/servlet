@@ -98,7 +98,11 @@ public class Controller
   private boolean debug=false;
   
   private final ContextDictionary contextDictionary
-    =new ContextDictionary(ContextDictionary.getInstance());
+    =new ContextDictionary
+      (ContextDictionary.getInstance()
+      ,new HashMap<String,String>()
+      ,true
+      );
   
   private URI dataURI=URI.create("WEB-INF/data/");
   private URI configURI=URI.create("WEB-INF/config/");
