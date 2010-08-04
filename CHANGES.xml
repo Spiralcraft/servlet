@@ -2,6 +2,34 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.10.2
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-08-04
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>
+            [SCPUBLIC-22] Servlet context init parameters should take 
+              precedence over existing properties
+          </scm:Note>
+          <scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+        
+      </scm:Change>
+    
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.10.1
     </revision>
 
