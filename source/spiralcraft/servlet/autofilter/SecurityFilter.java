@@ -258,9 +258,10 @@ public class SecurityFilter
     VariableMap map=VariableMap.fromUrlEncodedString(cookie.getValue());
     String username=map.getOne("username");
     String ticketBase64=map.getOne("ticket");
-    byte[] ticket=Base64Codec.decodeBytes(ticketBase64);
     if (username!=null && ticketBase64!=null)
     {
+
+      byte[] ticket=Base64Codec.decodeBytes(ticketBase64);
       entry.reset();
       entry.setUsername(username);
       entry.setSaltedDigest(ticket);
