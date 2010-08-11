@@ -2,6 +2,34 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.10.3
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-08-11
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>
+            [SCPUBLIC-23] Regression: Login fails after bad password
+          </scm:Note>
+          <scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Login.java
+        </path>
+        
+      </scm:Change>
+    
+    </detail>
+  </scm:Change>
+
+
+  <scm:Change>
     <revision>0.4.10.2
     </revision>
 
