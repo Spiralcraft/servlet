@@ -258,11 +258,12 @@ public class SecurityFilter
     VariableMap map=VariableMap.fromUrlEncodedString(cookie.getValue());
     String username=map.getOne("username");
     String ticketBase64=map.getOne("ticket");
+    byte[] ticket=Base64Codec.decodeBytes(ticketBase64);
     if (username!=null && ticketBase64!=null)
     {
       entry.reset();
       entry.setUsername(username);
-      entry.setSaltedDigest(Base64Codec.decodeBytes(ticketBase64));
+      entry.setSaltedDigest(ticket);
       if (debug)
       { log.fine("Read login info from cookie for user "+username);
       }
