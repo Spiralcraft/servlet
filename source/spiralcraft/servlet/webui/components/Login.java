@@ -23,14 +23,13 @@ import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 
 
-import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
-import spiralcraft.lang.spi.AbstractChannel;
+import spiralcraft.lang.spi.NullChannel;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.log.ClassLog;
 
@@ -503,20 +502,8 @@ public class Login
     }
     
     setupSession(parentFocus);
-    return new AbstractChannel<LoginEntry>
-      (BeanReflector.<LoginEntry>getInstance(LoginEntry.class))
-        {
-          @Override
-          protected LoginEntry retrieve()
-          { return null;
-          }
-
-          @Override
-          protected boolean store(LoginEntry val) throws AccessException
-          { return false;
-          }
-        };
-        
+    return new NullChannel<LoginEntry>
+      (BeanReflector.<LoginEntry>getInstance(LoginEntry.class));     
 
   }
   
@@ -534,19 +521,19 @@ public class Login
     
   }
   
-  @Override
-  protected void preGather(ServiceContext context)
-  { 
-    super.preGather(context);
-    if (debug)
-    { log.fine("Resetting LoginEntry");
-    }
-    LoginState state=getState(context);
-    if (state.getValue()!=null)
-    { state.getValue().reset();
-    }
-    
-  }
+//  @Override
+//  protected void preGather(ServiceContext context)
+//  { 
+//    super.preGather(context);
+//    if (debug)
+//    { log.fine("Resetting LoginEntry");
+//    }
+//    LoginState state=getState(context);
+//    if (state.getValue()!=null)
+//    { state.getValue().reset();
+//    }
+//    
+//  }
   
   @Override
   protected void gather(ServiceContext context)
@@ -581,6 +568,9 @@ public class Login
       }
     }
     
+    LoginEntry currentEntry=state.getValue();
+    String username=currentEntry.getUsername();
+    
     // Figure out whether the user has a login ticket
     AuthSession session=sessionChannel.get();    
     if (securityFilter!=null
@@ -588,19 +578,33 @@ public class Login
         && !state.isErrorState()
         )
     { 
-      // Only process a login cookie if we are persisting logins
       if (debug)
       { log.fine("Not authenticated- checking cookie");
       }
       
-      if (securityFilter.readLoginCookie(state.getValue()))
+      if (securityFilter.readLoginCookie(currentEntry))
       {
+        // SecurityFilter only processes a login cookie if we are persisting
+        //   logins
+        
         if (debug)
         { log.fine("Logging in from cookie");
         }
-        login(false);
+
+        if (!login(false))
+        { 
+          if (debug)
+          { log.fine("Resetting LoginEntry for "+username);
+          }
+          // Don't keep around failed credentials from ticket, but preserve
+          //   interactive username
+          currentEntry.reset();
+          currentEntry.setUsername(username);
+        }
       }      
     }
+    
+    
   } 
   
 }
