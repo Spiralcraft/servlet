@@ -431,65 +431,8 @@ public class Controller
 //            );
               
           dirty=true;
-          filterSet=new FilterSet();
-          try
-          { 
-            filterSet.loadResource(controlResource,node.getPath());
-            node.set(filterSet);
-            filterSet.node=node;
-            
-            Resource errorResource=resource.asContainer().getChild(controlFileName+".err");
-            try
-            {
-              if (filterSet.exception==null)
-              {
-                if (errorResource.exists())
-                { errorResource.delete();
-                }
-              }
-              else
-              { 
-                OutputStream out=errorResource.getOutputStream();
-                PrintStream pout=new PrintStream(out);
-                pout.println("Error processing filter definitions");
-                pout.println(filterSet.exception.toString());
-                pout.println("Stack trace ----------------------------------------");
-                filterSet.exception.printStackTrace(pout);
-                pout.flush();
-                out.flush();
-                out.close();
-              }
-            }
-            catch (IOException y)
-            { System.err.println("Controller: error writing contol file success: "+y);
-            }
-            
-          }
-          catch (Throwable x)
-          { 
-            
-            Resource errorResource=resource.asContainer().getChild(controlFileName+".err");
-            try
-            {
-              PrintStream out=new PrintStream(errorResource.getOutputStream());
-              out.println("Uncaught error processing filter definitions");
-              out.println(x.toString());
-              out.println("Stack trace ----------------------------------------");
-              x.printStackTrace(out);
-              out.flush();
-              out.close();
-            }
-            catch (IOException y)
-            { System.err.println("Controller: error writing contol file error: "+y);
-            }
-            
-            filterSet.loadError(node.getPath(), x);
-            
-          }
+          filterSet=new FilterSet(resource,node.getPath(),node);          
         }
-//        else
-//        { System.err.println("Controller.updateRecursive(): No "+controlResource.getURI());
-//        }
       }
       
       if (dirty && filterSet!=null)
@@ -697,6 +640,70 @@ public class Controller
     Throwable exception;
 
     PathTree<FilterSet> node;
+    
+    public FilterSet(Resource containerResource,Path path,PathTree<FilterSet> node)
+      throws IOException
+    { 
+      try
+      { 
+        loadResource
+          (containerResource.asContainer().getChild(controlFileName)
+          ,node.getPath()
+          );
+        node.set(this);
+        this.node=node;
+        
+        Resource errorResource
+          =containerResource.asContainer().getChild(controlFileName+".err");
+        try
+        {
+          if (exception==null)
+          {
+            if (errorResource.exists())
+            { errorResource.delete();
+            }
+          }
+          else
+          { 
+            OutputStream out=errorResource.getOutputStream();
+            PrintStream pout=new PrintStream(out);
+            pout.println("Error processing filter definitions");
+            pout.println(exception.toString());
+            pout.println("Stack trace ----------------------------------------");
+            exception.printStackTrace(pout);
+            pout.flush();
+            out.flush();
+            out.close();
+          }
+        }
+        catch (IOException y)
+        { System.err.println("Controller: error writing contol file success: "+y);
+        }
+        
+      }
+      catch (Throwable x)
+      { 
+        
+        Resource errorResource
+          =containerResource.asContainer().getChild(controlFileName+".err");
+        try
+        {
+          PrintStream out=new PrintStream(errorResource.getOutputStream());
+          out.println("Uncaught error processing filter definitions");
+          out.println(x.toString());
+          out.println("Stack trace ----------------------------------------");
+          x.printStackTrace(out);
+          out.flush();
+          out.close();
+        }
+        catch (IOException y)
+        { System.err.println("Controller: error writing contol file error: "+y);
+        }
+        
+        loadError(node.getPath(), x);
+        
+      }      
+    }
     
     /**
      * Check to see if a Resource has been modified
