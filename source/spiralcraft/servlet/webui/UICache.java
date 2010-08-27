@@ -93,7 +93,7 @@ public class UICache
             ExceptionComponent component
               =new ExceptionComponent(resourceUnit.getException());
             try
-            { component.bind(null);
+            { component.bind(null,null);
             }
             catch (BindException x)
             { throw new ServletException(x);
@@ -109,7 +109,7 @@ public class UICache
         ExceptionComponent component
           =new ExceptionComponent(x);
         try
-        { component.bind(null);
+        { component.bind(null,null);
         }
         catch (BindException y)
         { throw new ServletException(y);
@@ -173,7 +173,7 @@ public class UICache
     }
     ref=new ComponentReference();
     ref.unit=unit;
-    ref.component=unit.bind(focus);
+    ref.component=unit.bindRoot(focus);
     ref.component.setInstancePath(instancePath);
     componentMap.put(instancePath,ref);
     return ref.component;

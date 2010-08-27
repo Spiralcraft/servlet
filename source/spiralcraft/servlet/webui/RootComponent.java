@@ -79,23 +79,14 @@ public class RootComponent
     }
   }
 
-  private Focus<?> focus;
   private String instancePath;
   protected ThreadLocalChannel<ServiceContext> threadLocal;
 
-  public RootComponent(Focus<?> focus)
-  { 
-    this.focus=focus;
-    
-    
-    
-
-  }
   
   @Override
   @SuppressWarnings("unchecked")
   // Not using generic versions
-  public final void bind(List<TglUnit> childUnits) 
+  public final void bind(Focus<?> focus,List<TglUnit> childUnits) 
     throws BindException,MarkupException
   {
     if (debug)
@@ -112,7 +103,7 @@ public class RootComponent
         (BeanReflector.<ServiceContext>getInstance(ServiceContext.class));
     compoundFocus.addFacet
       (new SimpleFocus(threadLocal));
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
   }
   /**
    * 
@@ -133,10 +124,6 @@ public class RootComponent
   { return instancePath;
   }
   
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
-  }
   
   /**
    * @return The mime type of the content returned by this

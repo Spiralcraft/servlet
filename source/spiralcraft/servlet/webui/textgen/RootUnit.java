@@ -25,14 +25,13 @@ public class RootUnit
     super(parent,resource);
   }
   
-  @Override
-  public RootComponent bind(Focus<?> focus)
+  public RootComponent bindRoot(Focus<?> focus)
     throws MarkupException
   {
-    RootComponent element=new RootComponent(focus);
+    RootComponent element=new RootComponent();
     
     try
-    { element.bind(children);
+    { element.bind(focus,children);
     }
     catch (BindException x)
     { throw new MarkupException(x.toString(),getPosition());

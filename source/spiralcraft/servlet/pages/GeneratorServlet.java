@@ -237,7 +237,7 @@ class ResourceEntry
     try
     { 
       unit=new TglCompiler<DocletUnit>().compile(resource.getURI());
-      element=unit.bind(focus);
+      element=unit.bind(focus,null);
       exception=null;
     }
     catch (IOException x)
