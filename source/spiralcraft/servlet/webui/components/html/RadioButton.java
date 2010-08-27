@@ -21,6 +21,7 @@ import spiralcraft.textgen.EventContext;
 
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.components.AbstractSelectItemControl;
 import spiralcraft.servlet.webui.components.SelectItemState;
 
@@ -131,12 +132,14 @@ public class RadioButton<Ttarget,Tvalue>
   }
   
   @Override
-  public void bindSelf()
+  public Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   { 
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
-  }     
+    focus=super.bindSelf(focus);
+    tag.bind(focus);
+    errorTag.bind(focus);
+    return focus;
+  }   
 }
 
 

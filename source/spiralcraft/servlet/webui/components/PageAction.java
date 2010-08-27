@@ -141,16 +141,14 @@ public class PageAction
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    
-    Focus<?> parentFocus=getParent().getFocus();
     if (commandExpression!=null)
-    { commandChannel=parentFocus.bind(commandExpression);
+    { commandChannel=focus.bind(commandExpression);
     }
 
-    bindChildren(childUnits);
+    bindChildren(focus,childUnits);
   }  
   
   /**

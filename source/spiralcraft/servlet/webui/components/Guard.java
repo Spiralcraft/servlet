@@ -28,7 +28,6 @@ import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
-import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.security.auth.AuthSession;
@@ -65,12 +64,8 @@ public class Guard
 
   private Channel<AuthSession> sessionChannel;
   private URI loginURI;
-  private Focus<?> focus;
 
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
-  }
+
 
   public void setLoginURI(URI uri)
   { loginURI=uri;
@@ -87,15 +82,13 @@ public class Guard
   }
 
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=getParent().getFocus();
-    setupSession(parentFocus);
-    focus=new SimpleFocus(parentFocus,sessionChannel);
+    setupSession(focus);
+    focus=focus.chain(sessionChannel);
     focus.addFacet(getAssembly().getFocus());
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
   }  
   
 

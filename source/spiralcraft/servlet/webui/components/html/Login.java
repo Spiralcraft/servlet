@@ -82,15 +82,15 @@ public class Login
   }
 
   @Override
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
     if (findElement(Form.class)==null)
     { throw new BindException("Login must be contained in a Form");
     }
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
-    return super.bindExports();
+    tag.bind(focus);
+    errorTag.bind(focus);
+    return super.bindExports(focus);
   }
   
 

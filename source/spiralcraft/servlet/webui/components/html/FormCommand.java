@@ -21,6 +21,7 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.servlet.webui.components.AcceptorCommand;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 
 /**
  * <p>Triggers Command execution during the GATHER phase of an Acceptor,
@@ -78,12 +79,13 @@ public class FormCommand<Tcontext,Tresult>
   
   
   @Override
-  protected void bindSelf()
+  protected Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   {
-    super.bindSelf();
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
+    focus=super.bindSelf(focus);
+    tag.bind(focus);
+    errorTag.bind(focus);
+    return focus;
   }
   
   @Override

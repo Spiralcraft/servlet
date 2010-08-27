@@ -24,9 +24,7 @@ public class ExceptionComponent
 {
   private Throwable exception;
   public ExceptionComponent(Throwable exception)
-  { 
-    super(null);
-    this.exception=exception;
+  { this.exception=exception;
   }
   
   @Override

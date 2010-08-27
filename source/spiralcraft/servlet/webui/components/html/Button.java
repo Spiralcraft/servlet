@@ -23,6 +23,7 @@ import spiralcraft.servlet.webui.components.AbstractCommandControl;
 import spiralcraft.servlet.webui.components.CommandState;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMap;
 
 /**
@@ -157,12 +158,13 @@ public class Button<Tcontext,Tresult>
   }
 
   @Override
-  public void bindSelf()
+  public Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   { 
-    super.bindSelf();
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
+    focus=super.bindSelf(focus);
+    tag.bind(focus);
+    errorTag.bind(focus);
+    return focus;
   }  
 
 }

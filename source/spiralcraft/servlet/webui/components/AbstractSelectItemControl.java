@@ -14,19 +14,16 @@
 //
 package spiralcraft.servlet.webui.components;
 
-import java.util.List;
-
-import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.util.string.StringConverter;
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
+import spiralcraft.lang.Focus;
 
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -67,12 +64,11 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
   { this.valueExpression=valueExpression;
   }
   
-
+  
   @Override
-  public void bind(List<TglUnit> childUnits)
-    throws BindException,MarkupException
-  { 
-    super.bind(childUnits);
+  public Focus<?> bindSelf(Focus<?> focus)
+    throws BindException
+  {
     if (valueExpression==null)
     { 
       throw new BindException
@@ -80,13 +76,14 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
         +": 'value' property must be assigned an expression"
         );
     }
-    value=getFocus().bind(valueExpression);
+    value=focus.bind(valueExpression);
     if (converter==null && value!=null)
     { converter=value.getReflector().getStringConverter();
     }
     if (debug && target==null)
     { log.fine("Not bound to anything");
     }
+    return focus;
   }
   
   @Override

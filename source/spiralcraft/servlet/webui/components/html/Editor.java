@@ -76,18 +76,18 @@ public class Editor
     }
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  protected Focus<Buffer> bindExports()
+  protected Focus<Buffer> bindExports(Focus<?> focus)
     throws BindException
   {
     if (findElement(Form.class)==null)
     { throw new BindException("Editor must be contained in a Form");
     }
-    Focus<Buffer> focus=super.bindExports();
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
-    return focus;
+    focus=super.bindExports(focus);
+    tag.bind(focus);
+    errorTag.bind(focus);
+    return (Focus<Buffer>) focus;
   }
   
-
 }

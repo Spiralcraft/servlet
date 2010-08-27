@@ -137,12 +137,12 @@ public class Form<T>
   }
   
   @Override
-  public Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   { 
-    Focus<?> focus=super.bindExports();
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
+    focus=super.bindExports(focus);
+    tag.bind(focus);
+    errorTag.bind(focus);
     return focus;
   }  
 

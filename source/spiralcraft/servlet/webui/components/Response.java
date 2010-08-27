@@ -50,7 +50,6 @@ public class Response
   private List<Assignment<?>> assignments
     =new ArrayList<Assignment<?>>();
 
-  private Focus<ServiceContext> focus;
   
   private List<Setter<?>> setters
     =new ArrayList<Setter<?>>();
@@ -91,14 +90,13 @@ public class Response
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=getParent().getFocus();
 
-    this.focus=
-      (parentFocus.chain
-        (parentFocus.bind
+    focus=
+      (focus.chain
+        (focus.bind
            (Expression.<ServiceContext>create
              ("[:class:/spiralcraft/servlet/webui/ServiceContext]")
            )
@@ -108,13 +106,10 @@ public class Response
     for (Assignment<?> assignment: assignments)
     { setters.add(assignment.bind(focus));
     }
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
   }  
   
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
-  }
+
 
 
 }

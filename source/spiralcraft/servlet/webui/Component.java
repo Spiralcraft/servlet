@@ -14,8 +14,6 @@
 //
 package spiralcraft.servlet.webui;
 
-import spiralcraft.lang.BindException;
-import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.Element;
 import spiralcraft.textgen.EventContext;
@@ -23,12 +21,9 @@ import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.textgen.Message;
-import spiralcraft.textgen.compiler.TglUnit;
-
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * <p>A Component is a unit of web user interface composition. 
@@ -60,7 +55,7 @@ import java.util.List;
 public abstract class Component
   extends Element
 {
-  private Component parentComponent;
+//  private Component parentComponent;
   
 //  private Expression<?> beforeRequest;
 //  private Expression<?> afterRequest;
@@ -71,22 +66,22 @@ public abstract class Component
 //  private Expression<?> beforeRender;
 //  private Expression<?> afterRender;
   
-  public Component getParentComponent()
-  { return parentComponent;
-  }
+//  public Component getParentComponent()
+//  { return parentComponent;
+//  }
   
 
-  @Override
-  public void setParent(Element parentElement)
-  {
-    super.setParent(parentElement);
-    if (parentElement!=null)
-    { 
-      this.parentComponent
-        =parentElement.<Component>findElement(Component.class);
-    }
-
-  }
+//  @Override
+//  protected void setParent(Element parentElement)
+//  {
+//    super.setParent(parentElement);
+//    if (parentElement!=null)
+//    { 
+//      this.parentComponent
+//        =parentElement.<Component>findElement(Component.class);
+//    }
+//
+//  }
 
   @Override
   public void message
@@ -215,10 +210,4 @@ public abstract class Component
   { renderChildren(context);
   }
   
-  @Override
-  public void bind(List<TglUnit> childUnits)
-    throws BindException,MarkupException
-  { 
-    bindChildren(childUnits);
-  }
 }

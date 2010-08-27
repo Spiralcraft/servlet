@@ -90,14 +90,15 @@ public class TupleEditor
     }
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Focus<Buffer> bindExports()
+  protected Focus<Buffer> bindExports(Focus<?> focus)
     throws BindException
   { 
-    Focus<Buffer> focus=super.bindExports();
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
-    return focus;
+    focus=super.bindExports(focus);
+    tag.bind(focus);
+    errorTag.bind(focus);
+    return (Focus<Buffer>) focus;
   } 
   
 

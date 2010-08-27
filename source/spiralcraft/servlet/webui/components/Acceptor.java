@@ -235,16 +235,16 @@ public abstract class Acceptor<T>
   
   
   @Override
-  public Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
     if (onPost!=null)
-    { onPostChannel=getFocus().bind(onPost);
+    { onPostChannel=focus.bind(onPost);
     }
     serviceContextChannel
-      =getFocus().<ServiceContext>findFocus(ServiceContext.FOCUS_URI)
+      =focus.<ServiceContext>findFocus(ServiceContext.FOCUS_URI)
         .getSubject();
-    return null;
+    return focus;
     
   }
   

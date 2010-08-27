@@ -469,12 +469,12 @@ public abstract class TupleEditor
   
   @Override
   @SuppressWarnings("unchecked")
-  protected Focus<Buffer> bindExports()
+  protected Focus<Buffer> bindExports(Focus<?> focus)
     throws BindException
   {
-    super.bindExports();
+    focus=super.bindExports(focus);
     DataReflector<Buffer> reflector
-    =(DataReflector<Buffer>) getFocus().getSubject().getReflector();
+    =(DataReflector<Buffer>) focus.getSubject().getReflector();
   
     Type<?> type=reflector.getType();
 
@@ -492,18 +492,18 @@ public abstract class TupleEditor
       }
     }
     
-    fixedSetters=bindAssignments(fixedAssignments);
-    defaultSetters=bindAssignments(defaultAssignments);
-    newSetters=bindAssignments(newAssignments);
-    initialSetters=bindAssignments(initialAssignments);
-    publishedSetters=bindAssignments(publishedAssignments);
-    preSaveSetters=bindAssignments(preSaveAssignments);
-    bindRequestAssignments(requestBindings);
-    bindRequestAssignments(redirectBindings);
+    fixedSetters=bindAssignments(focus,fixedAssignments);
+    defaultSetters=bindAssignments(focus,defaultAssignments);
+    newSetters=bindAssignments(focus,newAssignments);
+    initialSetters=bindAssignments(focus,initialAssignments);
+    publishedSetters=bindAssignments(focus,publishedAssignments);
+    preSaveSetters=bindAssignments(focus,preSaveAssignments);
+    bindRequestAssignments(focus,requestBindings);
+    bindRequestAssignments(focus,redirectBindings);
     if (onSave!=null)
-    { onSave.bind(getFocus());
+    { onSave.bind(focus);
     }
-    return null;
+    return (Focus<Buffer>) focus;
     
   }
   
@@ -548,7 +548,7 @@ public abstract class TupleEditor
   }   
   
   @SuppressWarnings("unchecked")
-  private void bindRequestAssignments(RequestBinding[] bindings)
+  private void bindRequestAssignments(Focus<?> focus,RequestBinding[] bindings)
     throws BindException
   {
     if (bindings==null)
@@ -560,7 +560,7 @@ public abstract class TupleEditor
       if (debug)
       { binding.setDebug(true);
       }
-      binding.bind(getFocus());
+      binding.bind(focus);
     }
   }
 

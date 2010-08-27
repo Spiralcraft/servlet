@@ -24,6 +24,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
+import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Control;
@@ -106,10 +107,10 @@ public class CheckboxInput
   }
 
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
     
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
@@ -216,12 +217,13 @@ public class CheckboxInput
   }
   
   @Override
-  public void bindSelf()
+  public Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   { 
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
-  }    
+    tag.bind(focus);
+    errorTag.bind(focus);
+    return focus;
+  }  
 
 }
 

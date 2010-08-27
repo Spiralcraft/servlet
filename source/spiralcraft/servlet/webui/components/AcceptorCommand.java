@@ -24,6 +24,7 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
+import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMap;
 
 /**
@@ -84,13 +85,14 @@ public class AcceptorCommand<Tcontext,Tresult>
   
   
   @Override
-  protected void bindSelf()
+  protected Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   {
-    super.bindSelf();
+    focus=super.bindSelf(focus);
     if (when!=null)
-    { whenChannel=getFocus().bind(when);
+    { whenChannel=focus.bind(when);
     }
+    return focus;
   }
 
   

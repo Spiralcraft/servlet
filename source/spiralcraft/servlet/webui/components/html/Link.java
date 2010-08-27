@@ -93,20 +93,18 @@ public class Link
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    
-    Focus<?> parentFocus=getParent().getFocus();
     if (commandExpression!=null)
-    { commandChannel=parentFocus.bind(commandExpression);
+    { commandChannel=focus.bind(commandExpression);
     }
 
 
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
+    tag.bind(focus);
+    errorTag.bind(focus);
     
-    bindChildren(childUnits);
+    bindChildren(focus,childUnits);
     
   }
   

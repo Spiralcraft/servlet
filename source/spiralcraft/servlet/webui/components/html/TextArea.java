@@ -21,6 +21,7 @@ import spiralcraft.textgen.EventContext;
 //import spiralcraft.log.ClassLog;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
 
@@ -114,11 +115,13 @@ public class TextArea<Ttarget>
   }
   
   @Override
-  public void bindSelf()
+  public Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   { 
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
+    focus=super.bindSelf(focus);
+    tag.bind(focus);
+    errorTag.bind(focus);
+    return focus;
   }       
   
 }

@@ -242,7 +242,7 @@ public class SMTP
   }
       
   @Override
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
     if (senderX!=null)
@@ -253,12 +253,12 @@ public class SMTP
     { addPreAssignment("recipient",recipientX);
     }
 
-    postSetters=bindAssignments(postAssignments);
-    preSetters=bindAssignments(preAssignments);
+    postSetters=bindAssignments(focus,postAssignments);
+    preSetters=bindAssignments(focus,preAssignments);
     generator
       =new Generator
         (templateResource
-        ,getFocus()
+        ,focus
         );      
     if (generator.getException()!=null)
     { 
@@ -268,7 +268,7 @@ public class SMTP
         ,generator.getException()
         );
     }
-    return super.bindExports();
+    return super.bindExports(focus);
     
   }
   

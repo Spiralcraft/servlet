@@ -90,17 +90,16 @@ public class Redirect
   }
   
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    Focus<?> parentFocus=getParent().getFocus();
     if (when!=null)
-    { whenChannel=parentFocus.bind(when);
+    { whenChannel=focus.bind(when);
     }
     if (locationX!=null)
-    { locationChannel=parentFocus.bind(locationX);
+    { locationChannel=focus.bind(locationX);
     }
-    super.bind(childUnits);
+    super.bind(focus,childUnits);
   }  
   
 

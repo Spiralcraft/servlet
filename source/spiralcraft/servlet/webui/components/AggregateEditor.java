@@ -31,13 +31,11 @@ import spiralcraft.data.session.BufferChannel;
 import spiralcraft.data.session.BufferTuple;
 import spiralcraft.data.session.BufferType;
 
-import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
-import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
@@ -412,12 +410,12 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   
   @Override
   @SuppressWarnings("unchecked")
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
-    super.bindExports();
+    focus=super.bindExports(focus);
     DataReflector<Buffer> reflector
-      =(DataReflector<Buffer>) getFocus().getSubject().getReflector();
+      =(DataReflector<Buffer>) focus.getSubject().getReflector();
   
     Type<?> contentType=reflector.getType().getContentType();
 
@@ -442,13 +440,13 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       childChannel=new ThreadLocalChannel<BufferTuple>
         (DataReflector.<BufferTuple>getInstance(contentType));
 
-      childFocus=new SimpleFocus(getFocus(),childChannel);
+      childFocus=focus.chain(childChannel);
       
-      fixedSetters=bindAssignments(fixedAssignments);
-      defaultSetters=bindAssignments(defaultAssignments);
-      newSetters=bindAssignments(newAssignments);
-      initialSetters=bindAssignments(initialAssignments);
-      preSaveSetters=bindAssignments(preSaveAssignments);
+      fixedSetters=bindAssignments(childFocus,fixedAssignments);
+      defaultSetters=bindAssignments(childFocus,defaultAssignments);
+      newSetters=bindAssignments(childFocus,newAssignments);
+      initialSetters=bindAssignments(childFocus,initialAssignments);
+      preSaveSetters=bindAssignments(childFocus,preSaveAssignments);
       bindRequestAssignments(requestBindings);
       bindRequestAssignments(redirectBindings);
       
@@ -480,27 +478,10 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     
     
     
-    return null;
+    return focus;
     
   }
   
-    
-  @Override
-  protected Setter<?>[] bindAssignments(Assignment<?>[] assignments)
-    throws BindException
-  {
-    if (assignments!=null)
-    {
-      Setter<?>[] setters=new Setter<?>[assignments.length];
-      int i=0;
-      for (Assignment<?> assignment: assignments)
-      { setters[i++]=assignment.bind(childFocus);
-      }
-      return setters;
-    }
-    return null;
-  }
- 
   @SuppressWarnings("unchecked")
   private void bindRequestAssignments(RequestBinding[] bindings)
     throws BindException

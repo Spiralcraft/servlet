@@ -214,24 +214,22 @@ public class SelectionEditor
   
   @Override
   @SuppressWarnings("unchecked")
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
-    Focus<?> ret=super.bindExports();
+    focus=super.bindExports(focus);
     if (key==null)
     { 
       throw new BindException
         ("SelectionEditor.selectionKey: Expression must be specified");
     }
     keyChannel=childFocus.bind(key);
-    if (ret==null)
-    { ret=getFocus();
-    }
+
     
     Class keyClass=keyChannel.getContentType();
     Class arrayClass=Array.newInstance(keyClass, 0).getClass();
     
-    return ret.chain(new SelectionChannel(arrayClass));
+    return focus.chain(new SelectionChannel(arrayClass));
   }
   
   class SelectionChannel

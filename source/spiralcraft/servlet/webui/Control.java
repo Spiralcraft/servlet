@@ -455,35 +455,33 @@ public abstract class Control<Ttarget>
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    
-    Focus<?> parentFocus=getParent().getFocus();
     if (expression!=null)
     { 
-      target=parentFocus.bind(expression);
+      target=focus.bind(expression);
     }
     else
     { 
-      target=(Channel<Ttarget>) parentFocus.getSubject();
+      target=(Channel<Ttarget>) focus.getSubject();
       if (target==null)
-      { target=(Channel<Ttarget>) parentFocus.getContext();
+      { target=(Channel<Ttarget>) focus.getContext();
       }
     }
     computeDistances();
-    bindSelf();
+    focus=bindSelf(focus);
     if (target!=null)
-    { bindRules(target.getReflector(),getFocus());
+    { bindRules(target.getReflector(),focus);
     }
-    else if (getFocus().getSubject()!=null)
+    else if (focus.getSubject()!=null)
     { 
       bindRules
-        ((Reflector<Ttarget>) getFocus().getSubject().getReflector()
-        ,getFocus()
+        ((Reflector<Ttarget>) focus.getSubject().getReflector()
+        ,focus
         );
     }
-    bindChildren(childUnits);
+    bindChildren(focus,childUnits);
     
   }
   
@@ -493,9 +491,10 @@ public abstract class Control<Ttarget>
    * </p>
    * @throws BindException
    */
-  protected void bindSelf()
+  protected Focus<?> bindSelf(Focus<?> focus)
     throws BindException
-  { }
+  { return focus;
+  }
   
   protected void bindRules(Reflector<Ttarget> reflector,Focus<?> focus)
     throws BindException
@@ -695,7 +694,7 @@ public abstract class Control<Ttarget>
    * @return
    * @throws BindException
    */
-  protected Setter<?>[] bindAssignments(Assignment<?>[] assignments)
+  protected Setter<?>[] bindAssignments(Focus<?> focus,Assignment<?>[] assignments)
     throws BindException
   {
     if (assignments!=null)
@@ -704,7 +703,7 @@ public abstract class Control<Ttarget>
       int i=0;
       for (Assignment<?> assignment: assignments)
       { 
-        setters[i]=assignment.bind(getFocus());
+        setters[i]=assignment.bind(focus);
         if (debug)
         { setters[i].setDebug(true);
         }

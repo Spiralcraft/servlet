@@ -65,16 +65,14 @@ public class DataSessionComponent
 
   @SuppressWarnings("unchecked")
   @Override
-  public void bind(List<TglUnit> childUnits)
+  public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
-    
-    Focus<?> parentFocus=getParent().getFocus();
     if (debug)
-    { log.fine("DataSession.bind() "+parentFocus);
+    { log.fine("DataSession.bind() "+focus);
     }
     if (type==null && typeX!=null)
-    { type=parentFocus.bind(typeX).get();
+    { type=focus.bind(typeX).get();
     }
 //    if (type==null)
 //    { throw new BindException("No type specified "+getErrorContext());
@@ -87,7 +85,7 @@ public class DataSessionComponent
         ,true
         );
     dataSessionFocus
-      =new DataSessionFocus(parentFocus,dataSessionChannel,type);
+      =new DataSessionFocus(focus,dataSessionChannel,type);
   
     if (debug)
     { dataSessionFocus.setDebug(true);
@@ -101,17 +99,20 @@ public class DataSessionComponent
     
       dataFocus.addFacet(dataSessionFocus);
     }
-    defaultSetters=bindAssignments(defaultAssignments);
-    setters=bindAssignments(assignments);
-    bindRequestAssignments();
-    bindChildren(childUnits);
+    
+    focus=dataFocus!=null?dataFocus:dataSessionFocus;
+    defaultSetters=Assignment.bindArray(defaultAssignments,focus);
+    setters=Assignment.bindArray(assignments,focus);
+    bindRequestAssignments(focus);
+    bindChildren(focus,childUnits);
   }
   
-  @Override
-  public Focus<?> getFocus()
-  { return dataFocus!=null?dataFocus:dataSessionFocus;
-  }
- 
+//  @Override
+//  public Focus<?> getFocus()
+//  { return dataFocus!=null?dataFocus:dataSessionFocus;
+//  }
+// 
+
   /**
    * <p>Default Assignments get executed when the target value is null, when
    *   a new state frame is being computed, either at the beginning of
@@ -262,7 +263,7 @@ public class DataSessionComponent
   } 
 
   @SuppressWarnings("unchecked")
-  private void bindRequestAssignments()
+  private void bindRequestAssignments(Focus<?> focus)
     throws BindException
   {
     if (requestBindings==null)
@@ -274,7 +275,7 @@ public class DataSessionComponent
       if (debug)
       { binding.setDebug(true);
       }
-      binding.bind(getFocus());
+      binding.bind(focus);
     }
   }
   
@@ -328,20 +329,7 @@ public class DataSessionComponent
   { requestBindings=bindings;
   }
   
-  private Setter<?>[] bindAssignments(Assignment<?>[] assignments)
-    throws BindException
-  {
-    if (assignments!=null)
-    {
-      Setter<?>[] setters=new Setter<?>[assignments.length];
-      int i=0;
-      for (Assignment<?> assignment: assignments)
-      { setters[i++]=assignment.bind(getFocus());
-      }
-      return setters;
-    }
-    return null;
-  }
+
 
   
 }

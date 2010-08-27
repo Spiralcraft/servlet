@@ -64,8 +64,6 @@ public abstract class ControlGroup<Ttarget>
   
   protected AbstractChannel<Ttarget> valueBinding;
 
-  private Focus<?> focus;
-
   private String variableName;
   
   protected boolean useDefaultTarget=true;
@@ -256,9 +254,9 @@ public abstract class ControlGroup<Ttarget>
    *   exported
    * @throws BindException 
    */
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
-  { return null;
+  { return focus;
   }
 
   @Override
@@ -285,15 +283,14 @@ public abstract class ControlGroup<Ttarget>
    */
   @SuppressWarnings("unchecked")
   // Not using generic versions
-  public final void bind(List<TglUnit> childUnits) throws BindException,
+  public final void bind(Focus<?> focus,List<TglUnit> childUnits) throws BindException,
       MarkupException
   {
     if (debug)
     { logFine(" bind():expression=" + expression);
     }
-    Focus<?> parentFocus = getParent().getFocus();
 
-    target = (Channel<Ttarget>) bindTarget(parentFocus);
+    target = (Channel<Ttarget>) bindTarget(focus);
     if (target != null)
     {
       valueBinding = new AbstractChannel<Ttarget>(target.getReflector())
@@ -335,7 +332,7 @@ public abstract class ControlGroup<Ttarget>
           
       // Expose the expression target as the new Focus, and add the
       // assembly in as another layer
-      SimpleFocus myFocus = new SimpleFocus(parentFocus, valueBinding);
+      SimpleFocus myFocus = new SimpleFocus(focus, valueBinding);
       myFocus.addFacet(getAssembly().getFocus());
       focus=myFocus;
       bindRules(target.getReflector(),focus);
@@ -347,12 +344,14 @@ public abstract class ControlGroup<Ttarget>
       if (debug)
       { logFine("No Channel created, using parent focus");
       }
-      SimpleFocus myFocus = new SimpleFocus(parentFocus, null);
+      SimpleFocus myFocus = new SimpleFocus(focus, null);
       myFocus.addFacet(getAssembly().getFocus());
-      focus=myFocus;
+
+
+      focus=myFocus;      
       bindRules
-        (((Channel<Ttarget>) parentFocus.getSubject()).getReflector()
-        ,parentFocus
+        (((Channel<Ttarget>) focus.getSubject()).getReflector()
+        ,focus
         );
     }
     if (variableName == null && getParent()!=null)
@@ -372,11 +371,9 @@ public abstract class ControlGroup<Ttarget>
       }
     }
     computeDistances();
-    Focus<?> newFocus=bindExports();
-    if (newFocus!=null)
-    { focus=newFocus;
-    }
-    bindChildren(childUnits);
+    focus=bindExports(focus);
+
+    bindChildren(focus,childUnits);
   }
 
   /**
@@ -391,11 +388,7 @@ public abstract class ControlGroup<Ttarget>
   { this.variableName=variableName;
   }
   
-  @Override
-  public Focus<?> getFocus()
-  {
-    return focus;
-  }
+
 
   @Override
   /**
@@ -441,8 +434,8 @@ public abstract class ControlGroup<Ttarget>
    * <p>Finalized as unused because bind() is overridden
    * </p>
    */
-  protected final void bindSelf()
-  {
+  protected final Focus<?> bindSelf(Focus<?> focus)
+  { return focus;
   }
   
   @Override

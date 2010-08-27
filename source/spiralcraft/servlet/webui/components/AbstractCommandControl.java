@@ -135,7 +135,7 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   }
   
   @Override
-  protected void bindSelf()
+  protected Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   {
     if (!(Command.class.isAssignableFrom(target.getContentType()))
@@ -155,26 +155,23 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
         );
     }
     
-    Focus<?> focusChain=super.getFocus();
     if (contextX!=null)
-    { contextX.bind(focusChain);
+    { contextX.bind(focus);
     }
     commandLocal
       =new ThreadLocalChannel<Command<?,Tcontext,Tresult>>
         (target.getReflector());
-    this.focus=focusChain.chain(commandLocal);
+    focus=focus.chain(commandLocal);
     if (onSuccess!=null)
     { onSuccess.bind(focus);
     }
     if (onError!=null)
     { onError.bind(focus);
     }
+    return focus;
   }
   
-  @Override
-  public Focus<?> getFocus()
-  { return focus;
-  }
+
   
   @Override
   public CommandState<Tcontext,Tresult> createState()

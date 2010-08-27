@@ -14,15 +14,13 @@
 //
 package spiralcraft.servlet.webui.components;
 
-import java.util.List;
 
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.text.markup.MarkupException;
-import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.util.string.ArrayToString;
 import spiralcraft.util.string.StringArrayToString;
 import spiralcraft.util.string.StringConverter;
@@ -72,10 +70,9 @@ public abstract class AbstractTextControl<Ttarget>
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(List<TglUnit> childUnits)
-    throws BindException,MarkupException
+  public Focus<?> bindSelf(Focus<?> focus)
+    throws BindException
   { 
-    super.bind(childUnits);
     if (converter==null && target!=null)
     { 
       Class targetClass=target.getContentType();
@@ -119,6 +116,7 @@ public abstract class AbstractTextControl<Ttarget>
     if (target==null)
     { log.fine(getLogPrefix()+"Not bound to anything (formvar name="+name+")");
     }
+    return focus;
   }
   
   @Override

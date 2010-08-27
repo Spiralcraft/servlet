@@ -892,7 +892,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   }
   
   @Override
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
     if (findElement(Acceptor.class)==null)
@@ -901,12 +901,12 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     }
 
 
-    Focus<?> ret=super.bindExports();
+    focus=super.bindExports(focus);
     
     if (touchWhenX!=null)
-    { touchWhenX.bind(getFocus());
+    { touchWhenX.bind(focus);
     }
-    return ret;
+    return focus;
   }
 }
 

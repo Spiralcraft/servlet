@@ -205,10 +205,10 @@ public class Paginate<Ttarget,Titem>
 
   @Override
   @SuppressWarnings("unchecked") // Issues with genericizing decorate method
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
-    Channel<Ttarget> targetChannel=(Channel<Ttarget>) getFocus().getSubject();
+    Channel<Ttarget> targetChannel=(Channel<Ttarget>) focus.getSubject();
 
     
     listDecorator
@@ -263,7 +263,7 @@ public class Paginate<Ttarget,Titem>
         };
     
     SimpleFocus compoundFocus
-      =new SimpleFocus(getFocus(),out);
+      =new SimpleFocus(focus,out);
     
     compoundFocus.addFacet
       (this.getAssembly().getFocus());

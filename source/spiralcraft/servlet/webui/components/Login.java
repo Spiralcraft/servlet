@@ -508,16 +508,16 @@ public class Login
   }
   
   @Override
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
-    postSetters=bindAssignments(postAssignments);
-    preSetters=bindAssignments(preAssignments);
-    defaultSetters=bindAssignments(defaultAssignments);
+    postSetters=bindAssignments(focus,postAssignments);
+    preSetters=bindAssignments(focus,preAssignments);
+    defaultSetters=bindAssignments(focus,defaultAssignments);
     if (onLoginX!=null)
-    { onLoginX.bind(getFocus());
+    { onLoginX.bind(focus);
     }
-    return super.bindExports();
+    return super.bindExports(focus);
     
   }
   

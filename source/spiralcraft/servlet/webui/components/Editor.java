@@ -847,11 +847,11 @@ public abstract class Editor
   
   @Override
   @SuppressWarnings("unchecked")
-  protected Focus<Buffer> bindExports()
+  protected Focus<Buffer> bindExports(Focus<?> focus)
     throws BindException
   {
     DataReflector<Buffer> reflector
-    =(DataReflector<Buffer>) getFocus().getSubject().getReflector();
+    =(DataReflector<Buffer>) focus.getSubject().getReflector();
   
     Type<?> type=reflector.getType();
 
@@ -861,22 +861,22 @@ public abstract class Editor
       
     }
     
-    fixedSetters=bindAssignments(fixedAssignments);
-    defaultSetters=bindAssignments(defaultAssignments);
-    newSetters=bindAssignments(newAssignments);
-    initialSetters=bindAssignments(initialAssignments);
-    publishedSetters=bindAssignments(publishedAssignments);
-    bindRequestAssignments();
+    fixedSetters=bindAssignments(focus,fixedAssignments);
+    defaultSetters=bindAssignments(focus,defaultAssignments);
+    newSetters=bindAssignments(focus,newAssignments);
+    initialSetters=bindAssignments(focus,initialAssignments);
+    publishedSetters=bindAssignments(focus,publishedAssignments);
+    bindRequestAssignments(focus);
     
     
-    return null;
+    return (Focus<Buffer>) focus;
     
   }
   
 
  
   @SuppressWarnings("unchecked")
-  private void bindRequestAssignments()
+  private void bindRequestAssignments(Focus<?> focus)
     throws BindException
   {
     if (requestBindings==null)
@@ -888,7 +888,7 @@ public abstract class Editor
       if (debug)
       { binding.setDebug(true);
       }
-      binding.bind(getFocus());
+      binding.bind(focus);
     }
   }
 

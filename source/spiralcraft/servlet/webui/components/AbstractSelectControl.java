@@ -26,7 +26,6 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.SimpleFocus;
 
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -103,12 +102,9 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   }
   
   @Override
-  @SuppressWarnings("unchecked")
-  public Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
-  { 
-    Focus<?> focus=new SimpleFocus(getFocus(),source);
-    return focus; 
+  { return focus.chain(source);
   }
   
   

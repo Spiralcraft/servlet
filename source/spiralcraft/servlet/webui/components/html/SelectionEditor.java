@@ -86,15 +86,15 @@ public class SelectionEditor<TorigContent extends DataComposite,TselectItem>
   }
 
   @Override
-  protected Focus<?> bindExports()
+  protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
     if (findElement(Form.class)==null)
     { throw new BindException("Editor must be contained in a Form");
     }
-    Focus<?> focus=super.bindExports();
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
+    focus=super.bindExports(focus);
+    tag.bind(focus);
+    errorTag.bind(focus);
     return focus;
   }
 

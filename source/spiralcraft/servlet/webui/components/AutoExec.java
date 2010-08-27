@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
+import spiralcraft.lang.Focus;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.EventContext;
@@ -116,14 +117,15 @@ public class AutoExec<Tcontext,Tresult>
   
   
   @Override
-  public void bindSelf()
+  public Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   { 
     
-    super.bindSelf();
+    focus=super.bindSelf(focus);
     if (whenX!=null)
-    { whenX.bind(getFocus());
+    { whenX.bind(focus);
     }
+    return focus;
   }  
 
   @Override
