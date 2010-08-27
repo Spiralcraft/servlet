@@ -2,6 +2,159 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.11
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-08-26
+    </date>
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>FileInput component now accepts "dirUriX" and "createDirs" 
+            properties to allow for the dynamic selection of a target directory 
+            for the uploaded file.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/FileInput.java
+        </path>
+        
+      </scm:Change>
+          
+      <scm:Change>
+        <notes>
+          <scm:Note>Textgen binding call tree refactored to transmit Focus
+            through bind() method.
+          </scm:Note>
+          <scm:Note>Binding logic for "root" components simplified
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>webui/Component.java
+          </URI>
+          <URI>webui/Control.java
+          </URI>
+          <URI>webui/ControlGroup.java
+          </URI>
+          <URI>webui/ExceptionComponent.java
+          </URI>
+          <URI>webui/components/AbstractCommandControl.java
+          </URI>
+          <URI>webui/components/AbstractSelectControl.java
+          </URI>
+          <URI>webui/components/AbstractSelectItemControl.java
+          </URI>
+          <URI>webui/components/AbstractTextControl.java
+          </URI>
+          <URI>webui/components/Acceptor.java
+          </URI>
+          <URI>webui/components/AcceptorCommand.java
+          </URI>
+          <URI>webui/components/AggregateEditor.java
+          </URI>
+          <URI>webui/components/AutoExec.java
+          </URI>
+          <URI>webui/components/DataSessionComponent.java
+          </URI>
+          <URI>webui/components/Editor.java
+          </URI>
+          <URI>webui/components/EditorBase.java
+          </URI>
+          <URI>webui/components/Guard.java
+          </URI>
+          <URI>webui/components/Login.java
+          </URI>
+          <URI>webui/components/PageAction.java
+          </URI>
+          <URI>webui/components/Paginate.java
+          </URI>
+          <URI>webui/components/Redirect.java
+          </URI>
+          <URI>webui/components/Response.java
+          </URI>
+          <URI>webui/components/SelectionEditor.java
+          </URI>
+          <URI>webui/components/SMTP.java
+          </URI>
+          <URI>webui/components/TupleEditor.java
+          </URI>
+          <URI>webui/components/html/AggregateEditor.java
+          </URI>
+          <URI>webui/components/html/Button.java
+          </URI>
+          <URI>webui/components/html/CheckboxInput.java
+          </URI>
+          <URI>webui/components/html/Editor.java
+          </URI>
+          <URI>webui/components/html/Form.java
+          </URI>
+          <URI>webui/components/html/FormCommand.java
+          </URI>
+          <URI>webui/components/html/HiddenInput.java
+          </URI>
+          <URI>webui/components/html/ImageButton.java
+          </URI>
+          <URI>webui/components/html/Link.java
+          </URI>
+          <URI>webui/components/html/Login.java
+          </URI>
+          <URI>webui/components/html/Option.java
+          </URI>
+          <URI>webui/components/html/RadioButton.java
+          </URI>
+          <URI>webui/components/html/RadioGroup.java
+          </URI>
+          <URI>webui/components/html/Select.java
+          </URI>
+          <URI>webui/components/html/SelectionEditor.java
+          </URI>
+          <URI>webui/components/html/SubmitButton.java
+          </URI>
+          <URI>webui/components/html/TextArea.java
+          </URI>
+          <URI>webui/components/html/TupleEditor.java
+          </URI>
+          <URI>webui/components/html/FileInput.java
+          </URI>
+        
+        </resources>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        <notes>
+          <scm:Note>AutoFilter controller filter set resolution logic moved to 
+            filter set constructor in preparation for the addition of 
+            additional functionality.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+        
+        <resources>
+          <URI>Controller.java
+          </URI>
+        
+        </resources>
+        
+      </scm:Change>      
+    
+    </detail>
+  </scm:Change>
+
+
+  <scm:Change>
     <revision>0.4.10.3
     </revision>
 
@@ -17,7 +170,6 @@
           <scm:Note>
             [SCPUBLIC-23] Regression: Login fails after bad password
           </scm:Note>
-          <scm:Note>
         </notes>
         
         <path>source/spiralcraft/servlet/webui/components/Login.java
@@ -46,7 +198,6 @@
             [SCPUBLIC-22] Servlet context init parameters should take 
               precedence over existing properties
           </scm:Note>
-          <scm:Note>
         </notes>
         
         <path>source/spiralcraft/servlet/autofilter/Controller.java
