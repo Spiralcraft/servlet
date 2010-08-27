@@ -16,12 +16,7 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
-
-import spiralcraft.text.markup.MarkupException;
-
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.vfs.Container;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
@@ -29,6 +24,7 @@ import spiralcraft.vfs.Resource;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Binding;
+import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.Control;
@@ -36,6 +32,7 @@ import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 
 import spiralcraft.text.html.URLEncoder;
+import spiralcraft.util.Path;
 
 public class FileInput
   extends Control<URI>
@@ -48,6 +45,8 @@ public class FileInput
   private String name;
   private String contextRelativeRoot;  
   private Binding<URI> rootUriX;
+  private Binding<URI> dirUriX;
+  private boolean createDirs;
 
   public class Tag
     extends AbstractTag
@@ -112,6 +111,25 @@ public class FileInput
   { this.rootUriX=rootUriX;
   }
   
+  /**
+   * The subdirectory into which the file will be saved, specified as a 
+   *   URI that is relative to the rootURI.
+   * 
+   * @param dirUriX
+   */
+  public void setDirUriX(Binding<URI> dirUriX)
+  { this.dirUriX=dirUriX;
+  }
+  
+  /**
+   * 
+   * Auto-create directories specified in the dirUri property
+   */
+  public void setCreateDirs(boolean createDirs)
+  { this.createDirs=createDirs;
+  }
+  
+  
   public Tag getTag()
   { return tag;
   }
@@ -123,22 +141,31 @@ public class FileInput
 
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(List<TglUnit> childUnits)
-    throws BindException,MarkupException
+  public Focus<?> bindSelf(Focus<?> focus)
+    throws BindException
   { 
-    super.bind(childUnits);
+    focus=super.bindSelf(focus);
     if (rootUriX!=null)
-    { rootUriX.bind(getFocus());
+    { rootUriX.bind(focus);
     }
+    if (dirUriX!=null)
+    { dirUriX.bind(focus);
+    }
+    
     Form form=findElement(Form.class);
     if (form!=null)
     { form.setMimeEncoded(true);
     }
-    
+
+    tag.bind(focus);
+    errorTag.bind(focus);    
 
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
     }
+    
+    
+    return focus;
   }
   
   @Override
@@ -228,7 +255,43 @@ public class FileInput
               (rootResource.getURI()+" is not a directory");
           }
           
-          Resource targetResource=rootContainer.getChild(filename);
+          
+          Container dirContainer=rootContainer;
+          
+          if (dirUriX!=null)
+          {
+            URI dirURI=dirUriX.get();
+            if (dirURI!=null)
+            {
+              if (dirURI.isAbsolute())
+              {
+                throw new IllegalArgumentException
+                  (dirURI+" absolute URI not allowed");
+              }
+              
+              Path path=new Path(dirURI.getPath(),'/');
+              if (path.isAbsolute())
+              { path=path.subPath(0);
+              }
+              
+              if (createDirs)
+              {
+                for (String child:path)
+                { dirContainer=dirContainer.ensureChildContainer(child);
+                }
+              }
+              else
+              {
+                for (String child:path)
+                { dirContainer=dirContainer.getChild(child).asContainer();
+                }
+              }
+                
+            }
+          }
+          
+          
+          Resource targetResource=dirContainer.getChild(filename);
           
           while (targetResource.exists())
           {
@@ -317,13 +380,7 @@ public class FileInput
   }
 
   
-  @Override
-  public void bindSelf()
-    throws BindException
-  { 
-    tag.bind(getFocus());
-    errorTag.bind(getFocus());
-  }    
+
 
 }
 
