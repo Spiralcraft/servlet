@@ -267,12 +267,12 @@ public class FileInput
       String filename
         =context.getPost().getOne(state.getVariableName()+".filename");
       
-      if (filenameX!=null)
+      if (filenameX!=null && filename!=null)
       { 
         String extension=StringUtil.suffix(filename,'.');
         filename=filenameX.get();
         
-        if (extension!=null && !extension.isEmpty())
+        if (filename!=null && extension!=null && !extension.isEmpty())
         { filename=filename+'.'+extension;
         }
       }
