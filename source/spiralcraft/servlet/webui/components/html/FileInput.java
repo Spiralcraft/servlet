@@ -24,6 +24,7 @@ import spiralcraft.vfs.Resource;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Binding;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.ClassLog;
 
@@ -34,6 +35,12 @@ import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLEncoder;
 import spiralcraft.util.Path;
 
+/**
+ * Records the relative URI 
+ * 
+ * @author mike
+ *
+ */
 public class FileInput
   extends Control<URI>
 {
@@ -46,7 +53,9 @@ public class FileInput
   private String contextRelativeRoot;  
   private Binding<URI> rootUriX;
   private Binding<URI> dirUriX;
+  private Binding<String> filenameX;
   private boolean createDirs;
+  private boolean overwrite;
 
   public class Tag
     extends AbstractTag
@@ -122,6 +131,35 @@ public class FileInput
   }
   
   /**
+   * The filename to use for the destination
+   * 
+   * @param filenameX
+   */
+  public void setFilename(String filename)
+  { 
+    this.filenameX
+      =new Binding<String>(Expression.<String>create("\""+filename+"\""));
+  } 
+  
+  /**
+   * The expression which provides the filename to use for the destination
+   * 
+   * @param filenameX
+   */
+  public void setFilenameX(Binding<String> filenameX)
+  { this.filenameX=filenameX;
+  }
+  
+  /**
+   * Whether to overwrite the destination file if it exists
+   * 
+   * @param overwrite
+   */
+  public void setOverwrite(boolean overwrite)
+  { this.overwrite=overwrite;
+  }
+  
+  /**
    * 
    * Auto-create directories specified in the dirUri property
    */
@@ -150,6 +188,9 @@ public class FileInput
     }
     if (dirUriX!=null)
     { dirUriX.bind(focus);
+    }
+    if (filenameX!=null)
+    { filenameX.bind(focus);
     }
     
     Form form=findElement(Form.class);
@@ -211,6 +252,10 @@ public class FileInput
       String filename
         =context.getPost().getOne(state.getVariableName()+".filename");
       
+      if (filenameX!=null)
+      { filename=filenameX.get();
+      }
+      
       if (filename!=null && target!=null)
       {
         String temporaryURI
@@ -247,6 +292,7 @@ public class FileInput
               ("Resource "+rootURI+" not found");
           }
 
+          URI canonicalRootURI=rootResource.getURI();
           Container rootContainer=rootResource.asContainer();
           
           if (rootContainer==null)
@@ -283,27 +329,36 @@ public class FileInput
               else
               {
                 for (String child:path)
-                { dirContainer=dirContainer.getChild(child).asContainer();
+                { 
+                  URI lastURI=dirContainer.asResource().getURI();
+                  dirContainer=dirContainer.getChild(child).asContainer();
+                  if (dirContainer==null)
+                  { 
+                    throw new IOException
+                      ("Cannot find directory '"+child+"' in "+lastURI);
+                  }
                 }
+                
               }
                 
             }
           }
           
+
+          URI relativePathURI
+            =canonicalRootURI.relativize(dirContainer.asResource().getURI());
           
           Resource targetResource=dirContainer.getChild(filename);
           
-          while (targetResource.exists())
+          while (!overwrite && targetResource.exists())
           {
             filename=nextUniqueName(filename);
-            targetResource=rootContainer.getChild(filename);
+            targetResource=dirContainer.getChild(filename);
           }
 
           targetResource.copyFrom(tempResource);
           
-          // Set the filename
-          // XXX Incorporate dynamic path element as well
-          URI fileURI=URI.create(URLEncoder.encode(filename));
+          URI fileURI=relativePathURI.resolve(URLEncoder.encode(filename));
           
 
           state.setValue(fileURI);
