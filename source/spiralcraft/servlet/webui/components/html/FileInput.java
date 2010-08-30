@@ -34,6 +34,7 @@ import spiralcraft.servlet.webui.ServiceContext;
 
 import spiralcraft.text.html.URLEncoder;
 import spiralcraft.util.Path;
+import spiralcraft.util.string.StringUtil;
 
 /**
  * Records the relative URI 
@@ -56,6 +57,7 @@ public class FileInput
   private Binding<String> filenameX;
   private boolean createDirs;
   private boolean overwrite;
+  private long maxSize;
 
   public class Tag
     extends AbstractTag
@@ -131,7 +133,9 @@ public class FileInput
   }
   
   /**
-   * The filename to use for the destination
+   * The filename to use for the destination, without the 
+   *   extension. The extension provided by the incoming file will be
+   *   converted to lower case and appended to the result.
    * 
    * @param filenameX
    */
@@ -143,11 +147,22 @@ public class FileInput
   
   /**
    * The expression which provides the filename to use for the destination
+   *   without the  extension. The extension provided by the incoming file will 
+   *   be converted to lower case and appended to the result.
    * 
    * @param filenameX
    */
   public void setFilenameX(Binding<String> filenameX)
   { this.filenameX=filenameX;
+  }
+  
+  /**
+   * The maximum permitted size of the file, in bytes
+   * 
+   * @param maxSize
+   */
+  public void setMaxSize(long maxSize)
+  { this.maxSize=maxSize;
   }
   
   /**
@@ -253,7 +268,13 @@ public class FileInput
         =context.getPost().getOne(state.getVariableName()+".filename");
       
       if (filenameX!=null)
-      { filename=filenameX.get();
+      { 
+        String extension=StringUtil.suffix(filename,'.');
+        filename=filenameX.get();
+        
+        if (extension!=null && !extension.isEmpty())
+        { filename=filename+'.'+extension;
+        }
       }
       
       if (filename!=null && target!=null)
@@ -269,6 +290,12 @@ public class FileInput
             log.fine("Got uri "+temporaryURI);
           }
           Resource tempResource=Resolver.getInstance().resolve(temporaryURI);
+          
+          if (maxSize>0 && tempResource.getSize()>maxSize)
+          { 
+            state.addError("Input cannot be larger than "+maxSize+" bytes");
+            return;
+          }
           
           URI rootURI=null;
           
