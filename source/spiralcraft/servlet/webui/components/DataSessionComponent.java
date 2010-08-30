@@ -101,6 +101,9 @@ public class DataSessionComponent
     }
     
     focus=dataFocus!=null?dataFocus:dataSessionFocus;
+
+    focus.addFacet(getAssembly().getFocus());
+    
     defaultSetters=Assignment.bindArray(defaultAssignments,focus);
     setters=Assignment.bindArray(assignments,focus);
     bindRequestAssignments(focus);
