@@ -19,6 +19,8 @@
 
     <exclude artifact="spiralcraft-textgen-test"/>
     <exclude artifact="spiralcraft-core-test"/>
+    
+    <conflict manager="latest-compatible"/>
   </dependencies>
 
 </ivy-module>
