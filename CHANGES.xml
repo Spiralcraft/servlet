@@ -15,6 +15,19 @@
     
       <scm:Change>
         <notes>
+          <scm:Note>[SCPUBLIC-28] Provide structured header management for 
+            SMTP component
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/SMTP.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
           <scm:Note>[SCPUBLIC-34] FileInput component now accepts "dirUriX", 
             "createDirs"  and "filenameX" properties to allow for the dynamic 
             selection of a target directory for the uploaded file.
