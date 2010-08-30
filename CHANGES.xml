@@ -8,16 +8,16 @@
     <authorId>miketoth
     </authorId>
     
-    <date>2010-08-26
+    <date>2010-08-29
     </date>
     
     <detail>
     
       <scm:Change>
         <notes>
-          <scm:Note>FileInput component now accepts "dirUriX" and "createDirs" 
-            properties to allow for the dynamic selection of a target directory 
-            for the uploaded file.
+          <scm:Note>[SCPUBLIC-34] FileInput component now accepts "dirUriX", 
+            "createDirs"  and "filenameX" properties to allow for the dynamic 
+            selection of a target directory for the uploaded file.
           </scm:Note>
 
         </notes>
@@ -26,7 +26,32 @@
         </path>
         
       </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>[SCPUBLIC-33] Improve facilities for skinning and UI markup
+            re-use
+          </scm:Note>
+          <scm:Note>Expose ControlState from Controls for skin access
+          </scm:Note>
+          <scm:Note>Expose DataSessionComponent for skin access
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>Control.java
+          </URI>
+          <URI>ControlGroup.java
+          </URI>
+          <URI>components/DataSessionComponent.java
+          </URI>
           
+        </resources>
+      </scm:Change>
+                
       <scm:Change>
         <notes>
           <scm:Note>Textgen binding call tree refactored to transmit Focus
