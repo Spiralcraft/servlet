@@ -8,7 +8,7 @@
     <authorId>miketoth
     </authorId>
     
-    <date>2010-08-29
+    <date>2010-08-30
     </date>
     
     <detail>
@@ -29,8 +29,10 @@
       <scm:Change>
         <notes>
           <scm:Note>[SCPUBLIC-34] FileInput component now accepts "dirUriX", 
-            "createDirs"  and "filenameX" properties to allow for the dynamic 
-            selection of a target directory for the uploaded file.
+            "createDirs", "filenameX", "filename", "overwrite", and "maxSize"
+            properties to allow for the dynamic selection of a target 
+            directory for the uploaded file and other requirements for fine
+            control of the upload process.
           </scm:Note>
 
         </notes>
