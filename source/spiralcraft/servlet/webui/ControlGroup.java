@@ -17,7 +17,6 @@ package spiralcraft.servlet.webui;
 import java.util.LinkedList;
 import java.util.List;
 
-import java.io.IOException;
 
 import spiralcraft.data.transaction.RollbackException;
 import spiralcraft.data.transaction.Transaction;
@@ -59,8 +58,7 @@ public abstract class ControlGroup<Ttarget>
 
   private int nextVariableName = 0;
 
-  protected ThreadLocal<ControlGroupState<Ttarget>> threadLocalState 
-    = new ThreadLocal<ControlGroupState<Ttarget>>();
+
   
   protected AbstractChannel<Ttarget> valueBinding;
 
@@ -68,10 +66,7 @@ public abstract class ControlGroup<Ttarget>
   
   protected boolean useDefaultTarget=true;
 
-  public ControlGroupState<Ttarget> getState()
-  {
-    return threadLocalState.get();
-  }
+
 
   @Override
   public String getVariableName()
@@ -128,29 +123,10 @@ public abstract class ControlGroup<Ttarget>
     try
     {
       
-      ControlGroupState<Ttarget> state =getState(context);
-      if (threadLocalState.get() != state)
-      {
 
-        try
-        {
-          threadLocalState.set(state);
-          super.message(context, message, path);
-        } 
-        finally
-        {
-          threadLocalState.remove();
-        }
-      }
-      else
-      {
-        if (debug)
-        { logFine("Re-entering message()");
-        }
-        // re-entrant mode
-        super.message(context, message, path);
-      }
-      
+      super.message(context, message, path);
+
+      ControlGroupState<Ttarget> state =getState(context);      
       if (transaction!=null && state.isErrorState())
       { 
         if (debug)
@@ -182,32 +158,7 @@ public abstract class ControlGroup<Ttarget>
   }
 
   
-  /**
-   * <p>Default implementation of render() for ControlGroup.
-   * </p>
-   * 
-   * <p>Performs pre-order ThreadLocal state push, 
-   *   and post-order ThreadLocal state pop()
-   * </p>
-   */
-  // Blind cast
-  @Override
-  public void render(EventContext context) throws IOException
-  {
-    if (debug)
-    { logFine(toString()+": render");
-    }
-    
-    try
-    {
-      threadLocalState.set(this.<Ttarget>getState(context));
-      super.render(context);
-    } 
-    finally
-    {
-      threadLocalState.remove();
-    }
-  }
+
 
   /**
    * <p>Called once to allow a subclass to further extend the binding chain.
@@ -299,7 +250,7 @@ public abstract class ControlGroup<Ttarget>
         public Ttarget retrieve()
         {
           // log.fine(threadLocalState.get().toString());
-          final ControlGroupState<Ttarget> state=threadLocalState.get();
+          final ControlGroupState<Ttarget> state=getState();
           if (state!=null)
           { return state.getValue();
           }
@@ -320,7 +271,7 @@ public abstract class ControlGroup<Ttarget>
         public boolean store(Ttarget val)
         {
           // log.fine("Store "+threadLocalState.get()+":"+val);
-          threadLocalState.get().setValue(val);
+          getState().setValue(val);
           return true;
         }
       };
@@ -468,6 +419,13 @@ public abstract class ControlGroup<Ttarget>
   {
     return new ControlGroupState<Ttarget>(this);
   }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public ControlGroupState<Ttarget> getState()
+  { return (ControlGroupState) super.getState();
+  }
+  
   
   @SuppressWarnings("unchecked")
   @Override

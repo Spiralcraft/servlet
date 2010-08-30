@@ -68,9 +68,12 @@ public abstract class Control<Ttarget>
   protected boolean uncacheable;
   
   private boolean contextualizeName=true;
-  
   private boolean forceUpdate;
+
   
+  private ThreadLocal<ControlState<Ttarget>> threadLocalState 
+    = new ThreadLocal<ControlState<Ttarget>>();
+
   /**
    * <p>The binding target expression that represents the "model" that this
    *   Control provides a view for.
@@ -81,6 +84,7 @@ public abstract class Control<Ttarget>
   public void setX(Expression<Ttarget> x)
   { this.expression=x;
   }
+  
   
   
   /**
@@ -179,6 +183,10 @@ public abstract class Control<Ttarget>
   public void setScatterOnPrepare(boolean val)
   { this.scatterOnPrepare=val;
   }  
+
+  public ControlState<Ttarget> getState()
+  { return threadLocalState.get();
+  }
   
   /**
    * <p>Prepare the control to receive data from the input context via its
@@ -196,6 +204,7 @@ public abstract class Control<Ttarget>
   protected void preGather(ServiceContext context)
   {
   }
+
   
   /**
    * <p>Read the value of the control from the input context and apply it 
@@ -470,6 +479,9 @@ public abstract class Control<Ttarget>
       }
     }
     computeDistances();
+    focus=focus.chain(target);
+    
+    focus.addFacet(getAssembly().getFocus());
     focus=bindSelf(focus);
     if (target!=null)
     { bindRules(target.getReflector(),focus);
@@ -570,7 +582,39 @@ public abstract class Control<Ttarget>
     )
   {
 
+
+    ControlState<Ttarget> state =getState(context);
+    if (threadLocalState.get() != state)
+    {
+
+      try
+      {
+        threadLocalState.set(state);
+        messageInContext(context,message,path);
+      } 
+      finally
+      {
+        threadLocalState.remove();
+      }
+    }
+    else
+    {
+      if (debug)
+      { logFine("Re-entering message()");
+      }
+      // re-entrant mode
+      messageInContext(context,message,path);
+    }
     
+  }
+  
+  
+  private void messageInContext
+    (EventContext context
+    ,Message message
+    ,LinkedList<Integer> path
+    )
+  {   
     if (message.getType()==GatherMessage.TYPE)
     { 
       // Reset error in pre-order, so controls can raise it if needed.
@@ -673,17 +717,25 @@ public abstract class Control<Ttarget>
   public void render(EventContext context)
     throws IOException
   {    
-    
-
     ControlState<Ttarget> state=getState(context);
     if (state.getControl()!=this)
     { throw new RuntimeException("State tree out of sync "+state+" "+this);
     }
-    if (debug)
-    { logFine("Control.render() "+this+" state="+state);
+
+    try
+    {
+      if (debug)
+      { logFine("Control.render() "+this+" state="+state);
+      }      
+      threadLocalState.set(state);
+      super.render(context);
+    } 
+    finally
+    { threadLocalState.remove();
     }
+
+
     
-    super.render(context);
   }
   
   /**
