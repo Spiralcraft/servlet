@@ -32,6 +32,7 @@ import spiralcraft.lang.reflect.BeanReflector;
 
 import spiralcraft.log.ClassLog;
 
+import spiralcraft.net.smtp.HeaderBinding;
 import spiralcraft.net.smtp.SMTPConnector;
 import spiralcraft.net.smtp.Envelope;
 
@@ -64,6 +65,8 @@ public class SMTP
   
   private Expression<String> senderX;
   private Expression<String> recipientX;
+  
+  private HeaderBinding<?>[] headerBindings;
   
   /**
    * <p>Specify the URI of the textgen email template for the message body
@@ -114,6 +117,15 @@ public class SMTP
   public void setAssignments(Assignment<Object>[] assignments)
   { this.postAssignments=assignments;
   }  
+  
+  /**
+   * Mappings of header values to expressions
+   * 
+   * @param headerBindings
+   */
+  public void setHeaderBindings(HeaderBinding<?>[] headerBindings)
+  { this.headerBindings=headerBindings;
+  }
   
   protected void newEntry()
   { 
@@ -194,6 +206,9 @@ public class SMTP
         }
         else
         {
+          if (headerBindings!=null)
+          { envelope.insertHeaders(headerBindings,true);
+          }
           smtpChannel.get().send(envelope);
           Setter.applyArray(postSetters);
           if (debug)
@@ -267,6 +282,12 @@ public class SMTP
         ,"Error compiling email template "+templateResource.getURI()
         ,generator.getException()
         );
+    }
+    if (headerBindings!=null)
+    {
+      for (HeaderBinding<?> binding:headerBindings)
+      { binding.bind(focus);
+      }
     }
     return super.bindExports(focus);
     
