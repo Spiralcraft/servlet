@@ -63,7 +63,7 @@ public class DataSessionComponent
   private Setter<?>[] setters;
   private Expression<Type<DataComposite>> typeX;
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
@@ -265,7 +265,6 @@ public class DataSessionComponent
     publishRequestBindings(context);
   } 
 
-  @SuppressWarnings("unchecked")
   private void bindRequestAssignments(Focus<?> focus)
     throws BindException
   {
@@ -273,7 +272,7 @@ public class DataSessionComponent
     { return;
     }
 
-    for (RequestBinding binding:requestBindings)
+    for (RequestBinding<?> binding:requestBindings)
     { 
       if (debug)
       { binding.setDebug(true);

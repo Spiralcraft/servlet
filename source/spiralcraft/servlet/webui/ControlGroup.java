@@ -232,7 +232,7 @@ public abstract class ControlGroup<Ttarget>
    * 
    * establish more specific Channels.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   // Not using generic versions
   public final void bind(Focus<?> focus,List<TglUnit> childUnits) throws BindException,
       MarkupException
@@ -420,7 +420,7 @@ public abstract class ControlGroup<Ttarget>
     return new ControlGroupState<Ttarget>(this);
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   public ControlGroupState<Ttarget> getState()
   { return (ControlGroupState) super.getState();

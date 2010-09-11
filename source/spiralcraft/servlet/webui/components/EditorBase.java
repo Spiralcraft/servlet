@@ -100,12 +100,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       (new MessageHandler()
       {
 
-        @SuppressWarnings("unchecked")
         @Override
         public void handleMessage(EventContext context, Message message,
             boolean postOrder)
         { 
-          EditorState state=getState(context);
+          EditorState<Tbuffer> state=getState(context);
           if (message.getType()==SaveMessage.TYPE)
           {
             if (!postOrder)
@@ -561,7 +560,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       );
   }
   
-  @SuppressWarnings("unchecked") // Command block doesn't care about types
+  @SuppressWarnings("rawtypes")
   public Command<Tbuffer,Void,Void> saveCommand
     (final List<Command> postSaveCommandList)
   {
@@ -844,7 +843,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   { return (EditorState<Tbuffer>) super.getState();
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Channel<?> bindTarget(Focus<?> parentFocus)
     throws BindException

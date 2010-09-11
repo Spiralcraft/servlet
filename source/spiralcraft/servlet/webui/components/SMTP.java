@@ -236,7 +236,7 @@ public class SMTP
   }
   
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected void addPreAssignment(String targetX,Expression source)
   { 
     Assignment<?> assignment

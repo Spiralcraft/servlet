@@ -213,7 +213,7 @@ public class SelectionEditor
   }
   
   @Override
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {

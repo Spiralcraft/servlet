@@ -142,7 +142,7 @@ public class AutoExec<Tcontext,Tresult>
   }
   
   @Override
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected AutoExecState<Tcontext,Tresult> getState(EventContext context)
   { return (AutoExecState) context.getState();
   }

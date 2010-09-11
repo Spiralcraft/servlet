@@ -84,7 +84,7 @@ public class RootComponent
 
   
   @Override
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked","rawtypes"})
   // Not using generic versions
   public final void bind(Focus<?> focus,List<TglUnit> childUnits) 
     throws BindException,MarkupException

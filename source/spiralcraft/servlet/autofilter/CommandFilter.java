@@ -36,7 +36,7 @@ import spiralcraft.servlet.autofilter.spi.FocusFilter;
  * @author mike
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class CommandFilter
   extends FocusFilter<Command>
 {

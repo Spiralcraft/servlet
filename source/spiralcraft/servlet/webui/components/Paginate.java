@@ -204,7 +204,7 @@ public class Paginate<Ttarget,Titem>
   }
 
   @Override
-  @SuppressWarnings("unchecked") // Issues with genericizing decorate method
+  @SuppressWarnings({ "unchecked", "rawtypes" }) // Issues with genericizing decorate method
   protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {

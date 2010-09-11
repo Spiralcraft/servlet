@@ -92,7 +92,7 @@ public abstract class AbstractTag
     
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected void addStandardBinding(String name,Expression expr)
   { 
     DictionaryBinding<?> binding=new DictionaryBinding();

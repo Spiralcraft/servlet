@@ -58,7 +58,7 @@ public class SharedDataFilter
   /**
    * Called -once- to create the Focus
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Focus<Tuple> createFocus
     (Focus<?> parentFocus)

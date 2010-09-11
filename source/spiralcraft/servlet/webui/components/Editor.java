@@ -764,7 +764,7 @@ public abstract class Editor
    * Wraps default behavior and provides a BufferChannel that buffers what
    *   comes from the target expression.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Channel<Buffer> bindTarget
     (Focus<?> parentFocus)
@@ -875,7 +875,6 @@ public abstract class Editor
   
 
  
-  @SuppressWarnings("unchecked")
   private void bindRequestAssignments(Focus<?> focus)
     throws BindException
   {
@@ -883,7 +882,7 @@ public abstract class Editor
     { return;
     }
 
-    for (RequestBinding binding:requestBindings)
+    for (RequestBinding<?> binding:requestBindings)
     { 
       if (debug)
       { binding.setDebug(true);

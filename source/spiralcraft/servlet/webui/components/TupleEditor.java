@@ -383,7 +383,7 @@ public abstract class TupleEditor
    * Wraps default behavior and provides a BufferChannel that buffers what
    *   comes from the target expression.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Channel<Buffer> bindTarget
     (Focus<?> parentFocus)
@@ -547,15 +547,14 @@ public abstract class TupleEditor
     };
   }   
   
-  @SuppressWarnings("unchecked")
-  private void bindRequestAssignments(Focus<?> focus,RequestBinding[] bindings)
+  private void bindRequestAssignments(Focus<?> focus,RequestBinding<?>[] bindings)
     throws BindException
   {
     if (bindings==null)
     { return;
     }
 
-    for (RequestBinding binding:bindings)
+    for (RequestBinding<?> binding:bindings)
     { 
       if (debug)
       { binding.setDebug(true);

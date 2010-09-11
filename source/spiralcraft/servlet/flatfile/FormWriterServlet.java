@@ -102,7 +102,7 @@ public class FormWriterServlet
   }
   
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked","rawtypes"})
   @Override
   public void init(ServletConfig config)
     throws ServletException

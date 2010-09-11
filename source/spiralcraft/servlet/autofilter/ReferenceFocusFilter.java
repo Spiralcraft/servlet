@@ -213,7 +213,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     
 //    private PersistentFocusProvider<Treferent,Tfocus> focusProvider;
     
-    @SuppressWarnings("unchecked") // Cast reference to contain Tfocus
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Cast reference to contain Tfocus
     public FocusHolder(Focus<?> parentFocus)
       throws BindException
     { 
@@ -262,6 +262,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   
   
 
+  @SuppressWarnings("unchecked")
   @Override
   protected void pushSubject
     (HttpServletRequest request

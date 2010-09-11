@@ -119,7 +119,7 @@ public class ParameterBinding<Tval>
   { return binding;
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public void bind(Focus<?> focus)
     throws BindException
   { 
