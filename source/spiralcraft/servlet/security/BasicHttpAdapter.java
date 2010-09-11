@@ -57,10 +57,12 @@ public class BasicHttpAdapter
    *   to it may invalidate passwords in the realm stored as part of digests.
    * 
    */
+  @Override
   public void setRealm(String realm)
   { this.realm=realm;
   }
     
+  @Override
   public Credential<?>[] readAuthorization(HttpServletRequest request)
     throws IOException,ServletException
   {
@@ -114,6 +116,7 @@ public class BasicHttpAdapter
   }
   
   
+  @Override
   public void writeChallenge(HttpServletResponse response)
     throws IOException
   {

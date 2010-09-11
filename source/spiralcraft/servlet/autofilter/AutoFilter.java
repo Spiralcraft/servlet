@@ -268,6 +268,7 @@ public abstract class AutoFilter
     }
   }
   
+  @Override
   public abstract void doFilter
     (ServletRequest request
     ,ServletResponse response
@@ -275,6 +276,7 @@ public abstract class AutoFilter
     )
     throws IOException,ServletException;
   
+  @Override
   public void destroy()
   { }
   

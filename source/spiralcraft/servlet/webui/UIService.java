@@ -110,6 +110,7 @@ public class UIService
   
   }
   
+  @Override
   public Focus<?> bind(Focus<?> focusChain)
     throws BindException
   {

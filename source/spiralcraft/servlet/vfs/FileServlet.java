@@ -656,6 +656,7 @@ public class FileServlet
       =container.listChildren
         (new ResourceFilter()
           {
+            @Override
             public boolean accept(Resource resource)
             { return resource.asContainer()!=null;
             }
@@ -707,6 +708,7 @@ public class FileServlet
       =container.listChildren
         (new ResourceFilter()
           {
+            @Override
             public boolean accept(Resource resource)
             { return resource.asContainer()==null;
             }

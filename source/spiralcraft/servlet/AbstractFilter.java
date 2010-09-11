@@ -44,6 +44,7 @@ public abstract class AbstractFilter
   private Configurator<?> configurator;
   protected ContextAdapter contextAdapter;
 
+  @Override
   @SuppressWarnings("unchecked")
   public void init(FilterConfig config)
     throws ServletException

@@ -65,6 +65,7 @@ public class HttpServlet
   protected ContextAdapter contextAdapter;
   
 
+  @Override
   @SuppressWarnings("unchecked")
   public void init(ServletConfig config)
     throws ServletException
@@ -118,6 +119,7 @@ public class HttpServlet
     }
   }
   
+  @Override
   public void destroy()
   {
   }
@@ -244,6 +246,7 @@ public class HttpServlet
    *   method.
    * </p>
    */
+  @Override
   public void service(ServletRequest request,ServletResponse response)
     throws ServletException,IOException
   {
@@ -251,10 +254,12 @@ public class HttpServlet
     
   }
 
+  @Override
   public ServletConfig getServletConfig()
   { return config;
   }
   
+  @Override
   public String getServletInfo()
   { return getClass().getName();
   }

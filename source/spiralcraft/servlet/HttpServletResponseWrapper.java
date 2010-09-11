@@ -42,10 +42,12 @@ public class HttpServletResponseWrapper
   { this.delegate=delegate;
   }
 
+  @Override
   public void addCookie(Cookie cookie)
   { delegate.addCookie(cookie);
   }
 
+  @Override
   public boolean containsHeader(String name)
   { return delegate.containsHeader(name);
   }
@@ -53,6 +55,7 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @Override
   @SuppressWarnings("deprecation")
   @Deprecated
   public String encodeRedirectUrl(String url)
@@ -62,44 +65,53 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @Override
   @SuppressWarnings("deprecation")
   @Deprecated
   public String encodeUrl(String url)
   { return delegate.encodeUrl(url);
   }
 
+  @Override
   public String encodeRedirectURL(String url)
   { return delegate.encodeRedirectURL(url);
   }
   
+  @Override
   public String encodeURL(String url)
   { return delegate.encodeURL(url);
   }
 
+  @Override
   public void sendError(int code,String msg) 
   	throws IOException
   { delegate.sendError(code,msg);
   }
       
+  @Override
   public void sendError(int code) 
     throws IOException
   { delegate.sendError(code);
   }
 
+  @Override
   public void sendRedirect(String location)
     throws IOException
   { delegate.sendRedirect(location);
   }
 
+  @Override
   public void setLocale(Locale locale)
   { delegate.setLocale(locale);
   }
 
+  @Override
   public Locale getLocale()
   { return delegate.getLocale();
   }
 
 
+  @Override
   public void setStatus(int code)
   { delegate.setStatus(code);
   }
@@ -108,80 +120,98 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @Override
   @SuppressWarnings("deprecation")
   @Deprecated
   public void setStatus(int code,String message)
   { delegate.setStatus(code,message);
   }
 
+  @Override
   public void setIntHeader(String name, int value)
   { delegate.setIntHeader(name,value);
   }
 
+  @Override
   public void setDateHeader(String name, long date)
   { delegate.setDateHeader(name,date);
   }
   
+  @Override
   public void addIntHeader(String name, int value)
   { delegate.addIntHeader(name,value);
   }
 
+  @Override
   public void addDateHeader(String name,long date)
   { delegate.addDateHeader(name,date);
   }
 
+  @Override
   public void addHeader(String name, String value)
   { delegate.addHeader(name,value);
   }
 
+  @Override
   public void setHeader(String name, String value)
   { delegate.setHeader(name,value);
   }
 
 
+  @Override
   public void setContentType(String value)
   { delegate.setContentType(value);
   }
 
+  @Override
   public void setContentLength(int len)
   { delegate.setContentLength(len);
   }
 
+  @Override
   public ServletOutputStream getOutputStream()
     throws IOException
   { return delegate.getOutputStream();
   }
 
+  @Override
   public PrintWriter getWriter()
     throws IOException
   { return delegate.getWriter();
   }
 
+  @Override
   public String getCharacterEncoding()
   { return delegate.getCharacterEncoding();
   }
 
+  @Override
   public void flushBuffer()
     throws IOException
   { delegate.flushBuffer();
   }
 
+  @Override
   public void setBufferSize(int bufferSize)
   { delegate.setBufferSize(bufferSize);
   }
 
+  @Override
   public int getBufferSize()
   { return delegate.getBufferSize();
   }
 
+  @Override
   public boolean isCommitted()
   { return delegate.isCommitted();
   }
 
+  @Override
   public void reset()
   { delegate.reset();
   }
 
+  @Override
   public void resetBuffer()
   { delegate.resetBuffer();
   }
