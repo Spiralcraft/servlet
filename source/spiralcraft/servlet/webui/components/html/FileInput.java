@@ -193,10 +193,17 @@ public class FileInput
 
 
   @Override
-  @SuppressWarnings("unchecked") // Not using generic versions
   public Focus<?> bindSelf(Focus<?> focus)
     throws BindException
   { 
+    if (target!=null && !target.getContentType().isAssignableFrom(URI.class))
+    { 
+      throw new BindException
+        ("FileInput invalid target type '"+target.getReflector().getTypeURI()+"' "
+        +": cannot be assigned a file path of type class:/java/net/URI"
+        );
+    }
+    
     focus=super.bindSelf(focus);
     if (rootUriX!=null)
     { rootUriX.bind(focus);
@@ -208,7 +215,7 @@ public class FileInput
     { filenameX.bind(focus);
     }
     
-    Form form=findElement(Form.class);
+    Form<?> form=findElement(Form.class);
     if (form!=null)
     { form.setMimeEncoded(true);
     }
