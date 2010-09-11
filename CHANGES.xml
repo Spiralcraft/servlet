@@ -2,6 +2,33 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.11.1
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-09-10
+    </date>
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>[SCPUBLIC-36] FileInput should fail fast if target is not 
+            a URI
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/FileInput.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.11
     </revision>
 
