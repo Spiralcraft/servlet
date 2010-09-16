@@ -2,6 +2,33 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.11.2
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-09-16
+    </date>
+    
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>New TaskFilter for more straightforward binding of
+            scenarios to web requests
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/TaskFilter.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.11.1
     </revision>
 
