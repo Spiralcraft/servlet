@@ -18,10 +18,12 @@ import java.io.IOException;
 import java.net.URI;
 
 import spiralcraft.lang.Binding;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.SimpleFocus;
+import spiralcraft.lang.util.ExpressionRenderer;
 import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.AutoFilter;
 import spiralcraft.text.Renderer;
@@ -91,12 +93,17 @@ public abstract class FocusFilter<T>
   
   private HttpFocus<?> httpFocus;
   private Binding<Boolean> whenX;
+  
   private Binding<Boolean> renderWhenX;
+  private Binding<Integer> responseCodeX;
+  private Binding<String> contentTypeX;
+  
   private boolean usesRequest;
   private Focus<T> focus;
   private Focus<?> exportFocus;
   private URI alias;
   private Renderer renderer;
+  private Expression<?> outputX;
   private volatile boolean initialized;
   
   
@@ -129,6 +136,12 @@ public abstract class FocusFilter<T>
   { this.whenX=whenX;
   }
   
+  /**
+   * A Boolean Expression which controls when the Renderer is used to
+   *   generate the response instead of executing the rest of the filter chain.
+   * 
+   * @param renderWhenX
+   */
   public void setRenderWhenX(Binding<Boolean> renderWhenX)
   { this.renderWhenX=renderWhenX;
   }
@@ -147,6 +160,37 @@ public abstract class FocusFilter<T>
   public void setRenderer(Renderer renderer)
   { this.renderer=renderer;
   }  
+  
+  /**
+   * <p>An Expression to output. This will provide the context for the 
+   *   specified Renderer or will cause a Renderer to be created if none
+   *   was specified.
+   * </p>
+   * 
+   * @param outputX
+   */
+  public void setOutputX(Expression<?> outputX)
+  { this.outputX=outputX;
+  }
+  
+  /**
+   * An Expression for the response code associated with the renderer
+   * 
+   * @param responseCodeX
+   */
+  public void setResponseCodeX(Binding<Integer> responseCodeX)
+  { this.responseCodeX=responseCodeX;
+  }
+
+  /**
+   * An Expression for the content type associated with the renderer, which
+   *   will be used to set the Content-Type response header.
+   * 
+   * @param responseCodeX
+   */
+  public void setContentTypeX(Binding<String> contentTypeX)
+  { this.contentTypeX=contentTypeX;
+  }
 
   public Focus<T> getFocus()
   { return focus;
@@ -283,7 +327,14 @@ public abstract class FocusFilter<T>
             && (renderWhenX==null || Boolean.TRUE.equals(renderWhenX.get())
                )
            )
-        { renderer.render(response.getWriter());
+        { 
+          if (responseCodeX!=null)
+          { ((HttpServletResponse) response).setStatus(responseCodeX.get());
+          }
+          if (contentTypeX!=null)
+          { response.setContentType(contentTypeX.get());
+          }
+          renderer.render(response.getWriter());
         }
         else
         { 
@@ -343,6 +394,7 @@ public abstract class FocusFilter<T>
   }
   
   
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   private final void init(Focus<?> requestFocus)
     throws BindException
   {
@@ -378,8 +430,26 @@ public abstract class FocusFilter<T>
       if (renderWhenX!=null)
       { renderWhenX.bind(exportFocus);
       }
+      if (contentTypeX!=null)
+      { contentTypeX.bind(exportFocus);
+      }
+      if (responseCodeX!=null)
+      { responseCodeX.bind(exportFocus);
+      }
+      
+      Focus<?> renderFocus=focus;
+      if (outputX!=null)
+      {
+        if (renderer==null)
+        { renderer=new ExpressionRenderer(outputX);
+        }
+        else
+        { renderFocus=renderFocus.chain(renderFocus.bind(outputX));
+        }
+      }
+      
       if (renderer!=null && renderer instanceof Contextual)
-      { ((Contextual) renderer).bind(focus);
+      { ((Contextual) renderer).bind(renderFocus);
       }        
     }
   }

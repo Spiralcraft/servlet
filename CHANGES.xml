@@ -12,7 +12,35 @@
     </date>
     
     <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Extend options for FocusFilter to dynamically control the 
+            Content-Type and HTTP response code.
+          </scm:Note>
+          <scm:Note>Provide outputX property for FocusFilter to 
+            contextualize Renderer or generate one automatically.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/spi/FocusFilter.java
+        </path>
+        
+      </scm:Change>
     
+      <scm:Change>
+        <notes>
+          <scm:Note>ParameterBinding will derive the target from the name
+            if target is empty.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/ParameterBinding.java
+        </path>
+        
+      </scm:Change>
+
       <scm:Change>
         <notes>
           <scm:Note>New TaskFilter for more straightforward binding of
