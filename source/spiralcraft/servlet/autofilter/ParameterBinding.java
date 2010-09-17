@@ -123,6 +123,10 @@ public class ParameterBinding<Tval>
   public void bind(Focus<?> focus)
     throws BindException
   { 
+    if (name!=null && target==null)
+    { target=Expression.create(name);
+    }
+    
     if (assignment)
     { 
       if (converter!=null)
