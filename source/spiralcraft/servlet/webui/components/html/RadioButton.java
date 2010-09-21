@@ -26,19 +26,19 @@ import spiralcraft.servlet.webui.components.AbstractSelectItemControl;
 import spiralcraft.servlet.webui.components.SelectItemState;
 
 /**
- * <P>Manages an OPTION as part of a SELECT list.
- * </P>
+ * <p>Manages an OPTION as part of a SELECT list.
+ * </p>
  * 
- * <P>Specify an expression for "value" property to define the "key" that
+ * <p>Specify an expression for "value" property to define the "key" that
  *   gets sent back to the target of the SELECT list. This OPTION will
  *   render as selected when appropriate.
- * </P>
+ * </p>
  * 
- * <P>The entry presented to
+ * <p>The entry presented to
  *   the user is defined within the content of this Control. 
  *   Specify the optional "x" target property to provide a specific Focus
  *   in the chain for the display content of the option.
- * </P>
+ * </p>
  * 
  * @author mike
  *
