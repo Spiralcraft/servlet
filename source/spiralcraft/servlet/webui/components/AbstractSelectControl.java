@@ -26,6 +26,7 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.net.http.VariableMapBinding;
 
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -70,7 +71,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   private Channel<?> source;
   private Expression<?> sourceExpression;
   protected boolean multi=false;
-  
+  private VariableMapBinding<Ttarget> binding;
   
   public void setName(String name)
   { this.name=name;
@@ -87,10 +88,6 @@ public class AbstractSelectControl<Ttarget,Tvalue>
     throws BindException
   { 
     Channel<Ttarget> target=(Channel<Ttarget>) super.bindTarget(parentFocus);
-    if (converter==null && target!=null)
-    { 
-      converter=target.getReflector().getStringConverter();
-    }
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
     }
@@ -104,7 +101,9 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
-  { return focus.chain(source);
+  { 
+    binding=new VariableMapBinding<Ttarget>(valueBinding,null,converter);
+    return focus.chain(source);
   }
   
   
@@ -119,75 +118,61 @@ public class AbstractSelectControl<Ttarget,Tvalue>
 //  { this.valueConverter=converter;
 //  }
   
-  @SuppressWarnings("unchecked") // Generic cast
   @Override
   public void gather(ServiceContext context)
   {
     SelectState<Ttarget,Tvalue> state=getState(context);
-     
-    if (multi)
-    {
-      log.fine("Multiselect not implemented");
+    if (context.getPost()==null)
+    { return;
     }
-    else
+
+    Ttarget val;
+    List<String> strings=context.getPost().get(state.getVariableName());
+    if (debug)
+    { log.fine("Read ["+strings+"] from posted formvar "+state.getVariableName());
+    }
+    
+
+    try
     {
-      Ttarget val;
-      try
+      if (strings==null || strings.size()==0)
+      { 
+        if (!state.getPresented())
+        {
+          if (debug)
+          { 
+            log.fine
+              (getLogPrefix()
+              +"Ignoring missing value for not-presented control"
+              );
+          }
+          return;
+        }
+      
+        val=null;
+      }
+      else
       {
-        if (context.getPost()==null)
-        { return;
-        }
-        
-        List<String> strings=context.getPost().get(state.getVariableName());
-        if (debug)
-        { log.fine("Read ["+strings+"] from posted formvar "+state.getVariableName());
-        }
-        
-        if (strings==null || strings.size()==0)
-        { 
-          if (!state.getPresented())
-          {
-            if (debug)
-            { 
-              log.fine
-                (getLogPrefix()
-                +"Ignoring missing value for not-presented control"
-                );
-            }
-            return;
-          }
-          
-          val=null;
-        }
-        else if (strings.get(0)!=null && !(strings.get(0).length()==0))
-        { 
-          if (converter!=null)
-          { val=converter.fromString(strings.get(0));
-          }
-          else
-          { val=(Ttarget) strings.get(0);
-          }
-        }
-        else
-        { val=null;
-        }
+
+        val=binding.convertInput(strings);
         if (debug)
         { log.fine("Got selection ["+val+"] for "+getVariableName());
         }
+        
+      }
 
-        state.setValue(val);
-        if (conditionallyUpdateTarget(val,state.getPreviousValue()))
-        { state.valueUpdated();
-        }
-      }
-      catch (AccessException x)
-      { handleException(context,x);
-      }
-      catch (NumberFormatException x)
-      { handleException(context,x);
-      }
+      state.setValue(val);
+      if (conditionallyUpdateTarget(val,state.getPreviousValue()))
+      { state.valueUpdated();
+      }   
+        
     }
-
+    catch (AccessException x)
+    { handleException(context,x);
+    }
+    catch (NumberFormatException x)
+    { handleException(context,x);
+    }
 
   }
   

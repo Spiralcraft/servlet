@@ -25,45 +25,41 @@ import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractSelectControl;
 
 /**
- * <P>A standard HTML SELECT list, bound to a target and a source.
- * </P>
+ * <p>A group of checkboxes bound to a single location for multiple selections
+ * </p>
  * 
- * <P>The "x" (binding target) property contains an expression that references
+ * <p>The "x" (binding target) property contains an expression that references
  *   the currently selected item(s). The optional "source" property contains an 
  *   expression that provides a list of candidate values, used for generating 
- *   the set of options (see the Option class).
- * </P>
+ *   the set of options (see the RadioButton class).
+ * </p>
  *  
  * @author mike
  *
  * @param <Ttarget>
  * @param <Tvalue>
  */
-public class Select<Ttarget,Tvalue>
+public class Checklist<Ttarget,Tvalue>
   extends AbstractSelectControl<Ttarget,Tvalue>
 {
 
+  { multi=true;
+  }
   
   private Tag tag=new Tag();
   
-  private class Tag
+  public class Tag
     extends AbstractTag
   {
+    private String tagName=null;
+    
     @Override
     protected String getTagName(EventContext context)
-    { return "select";
+    { return tagName;
     }
-
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    {   
-      ControlState<?> state=getState(context);
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
-      if (multi)
-      { renderAttribute(context.getWriter(),"multiple",null);
-      }
-      super.renderAttributes(context);
+    
+    public void setTagName(String tagName)
+    { this.tagName=tagName;
     }
     
     @Override
@@ -74,7 +70,7 @@ public class Select<Ttarget,Tvalue>
     @Override
     protected void renderContent(EventContext context)
       throws IOException
-    { Select.super.render(context);
+    { Checklist.super.render(context);
     }    
     
   };
@@ -86,9 +82,7 @@ public class Select<Ttarget,Tvalue>
   { return tag;
   }
   
-  public void setMulti(boolean multi)
-  { this.multi=multi;
-  }
+
 
 
   
@@ -96,27 +90,30 @@ public class Select<Ttarget,Tvalue>
   public void render(EventContext context)
     throws IOException
   {
-    ControlState<?> state=getState(context);
-    if (state.isErrorState())
+    if (getState(context).isErrorState())
     { errorTag.render(context);
     }
     else
     { tag.render(context);
     }
-    state.setPresented(true);
+    ((ControlState<?>) context.getState()).setPresented(true);
   }
   
+//  void setValueConverter(StringConverter<Tvalue> converter)
+//  { this.valueConverter=converter;
+//  }
+  
+
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
     throws BindException
   {
+
     focus=super.bindExports(focus);
     tag.bind(focus);
     errorTag.bind(focus);
     return focus;
   }
-
-
 }
   
 
