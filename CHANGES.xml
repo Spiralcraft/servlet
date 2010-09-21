@@ -2,6 +2,55 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.11.3
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-09-21
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>[SCPUBLIC-43] Implement multiselect lists and a checklist
+            control
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>AbstractSelectControl.java
+          </URI>
+          <URI>html/Select.java
+          </URI>
+          <URI>html/Checklist.java
+          </URI>
+          <URI>html/ChecklistItem.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix NPE when a null literal is specified to stub the
+            command. 
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/component/AbstractCommandControl.java
+        </path>
+        
+      </scm:Change>
+
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.11.2
     </revision>
 
