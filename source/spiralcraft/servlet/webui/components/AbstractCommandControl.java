@@ -139,7 +139,9 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
     throws BindException
   {
     if (!(Command.class.isAssignableFrom(target.getContentType()))
+
         && ((Class<?>) target.getContentType())!=Void.class
+        && ((Class<?>) target.getContentType())!=Void.TYPE
        )
     { 
       throw new BindException
