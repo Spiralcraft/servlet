@@ -59,8 +59,12 @@ public class DataSessionComponent
   private Focus<DataComposite> dataFocus;
   private Assignment<?>[] defaultAssignments;
   private Assignment<?>[] assignments;
-  private Setter<?>[] defaultSetters;
+  private Assignment<?>[] requestAssignments;  
+ 
+  private Setter<?>[] defaultSetters;  
+  private Setter<?>[] requestSetters;
   private Setter<?>[] setters;
+  
   private Expression<Type<DataComposite>> typeX;
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -104,9 +108,10 @@ public class DataSessionComponent
 
     focus.addFacet(getAssembly().getFocus());
     
+    requestSetters=Assignment.bindArray(requestAssignments,focus);
     defaultSetters=Assignment.bindArray(defaultAssignments,focus);
     setters=Assignment.bindArray(assignments,focus);
-    bindRequestAssignments(focus);
+    bindRequestBindings(focus);
     bindChildren(focus,childUnits);
   }
   
@@ -117,9 +122,10 @@ public class DataSessionComponent
 // 
 
   /**
-   * <p>Default Assignments get executed when the target value is null, when
-   *   a new state frame is being computed, either at the beginning of
-   *   a request, or after all actions have been performed.
+   * <p>Default Assignments get executed for null assignment target values 
+   *   when a new state frame is being computed, (either at the beginning
+   *   of a non-responsive request, or on "prepare", after all input has been 
+   *   processed)
    * </p>
    *   
    * @param assignments
@@ -127,11 +133,21 @@ public class DataSessionComponent
   public void setDefaultAssignments(Assignment<?>[] assignments)
   { defaultAssignments=assignments;
   }
+
+  /**
+   * <p>Request assignments always get executed at the beginning of each 
+   *   request in order to prepare the session for new input.
+   * </p>
+   * @param assignments
+   */
+  public void setRequestAssignments(Assignment<?>[] assignments)
+  { this.requestAssignments=assignments;
+  }
   
   /**
    * <p>Assignments get executed whenever a new state frame is being
-   *   computed, either at the beginning of
-   *   a request, or after all actions have been performed.
+   *   computed (either at the beginning of a non-responsive request, 
+   *   or on "prepare", after all input has been processed)
    * </p>
    * @param assignments
    */
@@ -227,6 +243,9 @@ public class DataSessionComponent
   { 
 		DataSessionState state=getState(context);
 		
+		// Always run to prep for input
+		applyRequestAssignments(context);
+		
     // Leave the session object alone until handlePrepare()
     //   for a responsive request
     if (state.frameChanged(context.getCurrentFrame()))
@@ -265,7 +284,7 @@ public class DataSessionComponent
     publishRequestBindings(context);
   } 
 
-  private void bindRequestAssignments(Focus<?> focus)
+  private void bindRequestBindings(Focus<?> focus)
     throws BindException
   {
     if (requestBindings==null)
@@ -294,6 +313,18 @@ public class DataSessionComponent
       }
     }
   }
+  
+  private void applyRequestAssignments(ServiceContext context)
+  {
+    if (requestSetters!=null)
+    {
+      if (debug)
+      { log.fine("Applying request assignments");
+      }
+
+      Setter.applyArray(requestSetters);
+    }
+  }  
 
   private void applyAssignments()
   {
