@@ -100,6 +100,9 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
         if (target!=null)
         { 
           command=target.get();
+          if (contextX!=null)
+          { command.setContext(contextX.get());
+          }
           state.setValue(command);
           commandLocal.set(command);
         }
