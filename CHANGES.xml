@@ -1,6 +1,57 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+
+  <scm:Change>
+  
+    <revision>0.4.11.4
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-09-21
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix non-working contextX property in AbstractCommandControl
+          </scm:Note>
+
+          <scm:Note>AutoExec.handlePrepare() erroneously called 
+            super.handleRequest()
+          </scm:Note>
+          
+       </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>AbstractCommandControl.java
+          </URI>
+          <URI>Autoexec.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Provide a way for a DataSessionComponent to reset values
+            before input is processed via requestAssignments.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/DataSessionComponent.java
+        </path>
+        
+      </scm:Change>
+
+    </detail>
+  </scm:Change>
+    
   <scm:Change>
     <revision>0.4.11.3
     </revision>
