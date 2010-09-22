@@ -81,7 +81,7 @@ public class AutoExec<Tcontext,Tresult>
       //   it now.
       getState(context).setBypass(false);
     }
-    super.handleRequest(context);
+    super.handlePrepare(context);
   }
   
   
