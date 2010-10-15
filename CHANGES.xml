@@ -20,6 +20,9 @@
           </scm:Note>
           <scm:Note>Use Request character encoding for multipart form input
           </scm:Note>
+          <scm:Note>[SCPUBLIC-54] FileInput.sanitizeInput escapes filenames so
+            they only contain letters, digits, '.' and '_' characters.
+          </scm:Note>
        </notes>
         
         <path>source/spiralcraft/servlet/
@@ -29,6 +32,8 @@
           <URI>flatfile/FormWriterServlet.java
           </URI>
           <URI>webui/ServiceContext.java
+          </URI>
+          <URI>webui/components/html/FileInput.java
           </URI>
         </resources>
         
