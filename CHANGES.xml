@@ -4,6 +4,42 @@
 
   <scm:Change>
   
+    <revision>0.4.12
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-10-14
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Sync with core 0.4.12
+          </scm:Note>
+          <scm:Note>Use Request character encoding for multipart form input
+          </scm:Note>
+       </notes>
+        
+        <path>source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>flatfile/FormWriterServlet.java
+          </URI>
+          <URI>webui/ServiceContext.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.11.4
     </revision>
 
