@@ -141,7 +141,9 @@ public class FormWriterServlet
       
       focus=new SimpleFocus<Tuple>(context,channel);
       
-      updater=new Updater(context);
+      updater=new Updater();
+      updater.setFieldSet(type.getFieldSet());
+      updater.bind(context);
       updater.dataInitialize(type.getFieldSet());
       
       boolean exists=resource.exists();
