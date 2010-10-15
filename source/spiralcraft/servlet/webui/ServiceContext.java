@@ -195,6 +195,9 @@ public class ServiceContext
       else if (contentType.startsWith("multipart/form-data"))
       {
         MultipartVariableMap map=new MultipartVariableMap();
+        if (request.getCharacterEncoding()!=null)
+        { map.setDefaultPartEncoding(request.getCharacterEncoding());
+        }
         map.read
           (request.getInputStream()
           ,contentType
