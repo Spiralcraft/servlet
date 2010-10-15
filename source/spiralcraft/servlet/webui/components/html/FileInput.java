@@ -58,6 +58,7 @@ public class FileInput
   private boolean createDirs;
   private boolean overwrite;
   private long maxSize;
+  private boolean sanitizeInput;
 
   public class Tag
     extends AbstractTag
@@ -87,9 +88,23 @@ public class FileInput
   private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag(tag);
   
-  
+  /**
+   * Specify the suffix that will be used to generate the HTML control name
+   * 
+   * @param name
+   */
   public void setName(String name)
   { this.name=name;
+  }
+  
+  /**
+   * Convert the filename supplied by the client a string consisting only
+   *   of letters, numbers, '.' and '_' for portability across filesystems.
+   * 
+   * @param sanitizeInput
+   */
+  public void setSanitizeInput(boolean sanitizeInput)
+  { this.sanitizeInput=sanitizeInput;
   }
   
   /**
@@ -259,6 +274,23 @@ public class FileInput
     super.render(context);
   }
   
+  private String encodeName(String name)
+  {
+    StringBuffer out=new StringBuffer();
+    for (char chr:name.toCharArray())
+    {
+      if (chr=='.'
+          || (chr<127 && Character.isLetterOrDigit(chr))
+          )
+      { out.append(chr);
+      }
+      else
+      { out.append("_"+Integer.toHexString((int) chr));
+      }
+    }
+    return out.toString();
+  }
+  
 
   @Override
   public void gather(ServiceContext context)
@@ -274,6 +306,10 @@ public class FileInput
       String filename
         =context.getPost().getOne(state.getVariableName()+".filename");
       
+      if (sanitizeInput && filename!=null)
+      { filename=encodeName(filename);
+      }
+      
       if (filenameX!=null && filename!=null)
       { 
         String extension=StringUtil.suffix(filename,'.');
@@ -283,9 +319,12 @@ public class FileInput
         { filename=filename+'.'+extension;
         }
       }
+
       
       if (filename!=null && target!=null)
       {
+
+        
         String temporaryURI
           =context.getPost().getOne(state.getVariableName()+".temporaryURI");
         
