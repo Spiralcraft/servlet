@@ -619,7 +619,7 @@ public class FileServlet
     throws IOException
   {
     if (log.canLog(Level.DEBUG))
-    { log.log(Level.DEBUG,"Listing "+container.asResource().getURI());
+    { log.log(Level.DEBUG,"Listing "+container.getURI());
     }
 
     String host=request.getHeader("Host");

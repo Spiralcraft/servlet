@@ -61,12 +61,12 @@ public class Flow<Tstate,Tinput>
   @Override
   public void scatter(ServiceContext context)
   {
-    FlowState<Tstate,Tinput> state=getState(context);
-    Tinput input=null;
-    while ((input=state.dequeueInput())!=null)
-    { 
-      
-    }
+//    FlowState<Tstate,Tinput> state=getState(context);
+//    Tinput input=null;
+//    while ((input=state.dequeueInput())!=null)
+//    { 
+//      
+//    }
     
   }
   

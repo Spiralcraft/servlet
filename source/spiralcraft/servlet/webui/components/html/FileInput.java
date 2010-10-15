@@ -364,7 +364,7 @@ public class FileInput
               {
                 for (String child:path)
                 { 
-                  URI lastURI=dirContainer.asResource().getURI();
+                  URI lastURI=dirContainer.getURI();
                   dirContainer=dirContainer.getChild(child).asContainer();
                   if (dirContainer==null)
                   { 
@@ -380,7 +380,7 @@ public class FileInput
           
 
           URI relativePathURI
-            =canonicalRootURI.relativize(dirContainer.asResource().getURI());
+            =canonicalRootURI.relativize(dirContainer.getURI());
           
           Resource targetResource=dirContainer.getChild(filename);
           
