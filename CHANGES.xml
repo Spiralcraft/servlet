@@ -4,6 +4,59 @@
 
   <scm:Change>
   
+    <revision>0.4.12.2
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-10-31
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>the WebUI Paginate component now resets automatically when 
+            a new conversation is referred from a different page.
+          </scm:Note>
+       </notes>
+        
+        <path>source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>UIService.java
+          </URI>
+          <URI>components/Paginate.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix NPE when UIServlet doesn't get a Focus chain
+          </scm:Note>
+       </notes>
+        
+        <path>source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>webui/UIServlet.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.12
     </revision>
 
