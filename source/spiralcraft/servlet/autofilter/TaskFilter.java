@@ -62,7 +62,7 @@ public class TaskFilter<Tcontext,Tresult>
   }
   
   /**
-   * An Expression which returns a new instance of a Command to execute
+   * The Task scenario to run
    * 
    * @param x
    */
