@@ -18,6 +18,7 @@ import spiralcraft.servlet.HttpServlet;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.SimpleFocus;
 //import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.SimpleChannel;
@@ -107,8 +108,15 @@ public class UIServlet
           {
             
             Focus<?> focus=FocusFilter.getFocusChain(request);
-
-            focus=focus.chain(new SimpleChannel<UIServlet>(this,true));
+            if (focus!=null)
+            { focus=focus.chain(new SimpleChannel<UIServlet>(this,true));
+            }
+            else
+            { 
+              focus
+                =new SimpleFocus<UIServlet>
+                  (new SimpleChannel<UIServlet>(this,true));
+            }
             uiServant=new UIService(contextAdapter);
             focus=uiServant.bind(focus);
             pathMap.put(contextPath,uiServant);
