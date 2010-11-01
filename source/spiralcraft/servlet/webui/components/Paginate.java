@@ -126,6 +126,17 @@ public class Paginate<Ttarget,Titem>
     };
   }  
     
+  @Override
+  protected void scatter(ServiceContext context)
+  {
+    super.scatter(context);
+    if (context.getInitial() && !context.isSameReferer())
+    {
+      PageState<Ttarget,Titem> state=getState(context);
+      state.setCurrentPage(0);
+    }
+    
+  }
   
   @Override
   protected void handlePrepare(ServiceContext context)

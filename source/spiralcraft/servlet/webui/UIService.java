@@ -210,7 +210,7 @@ public class UIService
         serviceContext.setResponse(response);
 
         ResourceSession.RequestSyncStatus syncStatus
-        =localSession.getRequestSyncStatus(serviceContext.getQuery());
+          =localSession.getRequestSyncStatus(serviceContext.getQuery());
 
         if (syncStatus==ResourceSession.RequestSyncStatus.OUTOFSYNC)
         { 
@@ -225,7 +225,9 @@ public class UIService
           }
         }
         else if (syncStatus==ResourceSession.RequestSyncStatus.INITIATED)
-        { serviceContext.setCurrentFrame(localSession.nextFrame());
+        { 
+          serviceContext.setInitial(true);
+          serviceContext.setCurrentFrame(localSession.nextFrame());
         }
 
 

@@ -24,6 +24,7 @@ import java.util.List;
 
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.StateFrame;
+import spiralcraft.util.URIUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,6 +74,7 @@ public class ServiceContext
   private URI contextURI;
   private String contentType;
   private boolean outOfSync;
+  private boolean initial;
   
   
   public ServiceContext(Writer writer,boolean stateful,StateFrame frame)
@@ -99,6 +101,22 @@ public class ServiceContext
    */
   public void setOutOfSync(boolean outOfSync)
   { this.outOfSync=outOfSync;
+  }
+  
+  /**
+   * 
+   * @return Whether this is the initial request of a conversation
+   */
+  public boolean getInitial()
+  { return initial;
+  }
+  
+  /**
+   * Whether this is the initial request of a conversation
+   * 
+   */
+  public void setInitial(boolean initial)
+  { this.initial=initial;
   }
   
   
@@ -368,6 +386,22 @@ public class ServiceContext
    */
   public void setCommandProcessor(CommandProcessor commandProcessor)
   { this.commandProcessor=commandProcessor;
+  }
+  
+  public boolean isSameReferer()
+  { 
+    String referer=request.getHeader("Referer");
+    if (referer!=null && !referer.isEmpty())
+    { 
+      URI refererURI=URIUtil.trimToPath
+        (URI.create(referer));
+      URI requestURI=URIUtil.trimToPath
+        (URI.create(request.getRequestURL().toString()));
+      return requestURI.equals(refererURI);
+    }
+    else
+    { return false;
+    }
   }
   
   public URI getContextURI()
