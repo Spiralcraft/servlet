@@ -153,10 +153,7 @@ public class SelectionEditor
     
     // Populate look-up map
     for (BufferTuple buffer: aggregate)
-    { 
-      if (!buffer.isDelete())
-      { mapBuffer(keyMap,buffer);
-      }
+    { mapBuffer(keyMap,buffer);
     }
     
     // Check-off or create selected items
@@ -170,7 +167,11 @@ public class SelectionEditor
         aggregate.add(buffer);
       }
       else
-      { keyMap.remove(item);
+      {
+        if (buffer.isDelete())
+        { buffer.undelete();
+        }
+        keyMap.remove(item);
       }
       
     }
