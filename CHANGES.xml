@@ -16,6 +16,18 @@
     <detail>
       <scm:Change>
         <notes>
+          <scm:Note>SelectionEditor will undelete a deleted buffer if it
+            is reselected instead of creating a new one.
+          </scm:Note>
+       </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/SelectionEditor.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
           <scm:Note>Allow containers to provide a contextual Focus to the
             Controller to allow an embedded app to provide a view into a
             higher level context.
