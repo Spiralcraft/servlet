@@ -4,6 +4,40 @@
 
   <scm:Change>
   
+    <revision>0.4.12.3
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-11-09
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Allow containers to provide a contextual Focus to the
+            Controller to allow an embedded app to provide a view into a
+            higher level context.
+          </scm:Note>
+       </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/
+        </path>
+        
+        <resources>
+          <URI>Controller.java
+          </URI>
+          <URI>spi/FocusFilter.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+  
+  <scm:Change>
+  
     <revision>0.4.12.2
     </revision>
 
