@@ -90,6 +90,9 @@ public abstract class FocusFilter<T>
   { return (Focus<?>) request.getAttribute(attributeName);
   }
 
+  public static void setFocusChain(HttpServletRequest request,Focus<?> focus)
+  { request.setAttribute(attributeName,focus);
+  }
   
   private HttpFocus<?> httpFocus;
   private Binding<Boolean> whenX;

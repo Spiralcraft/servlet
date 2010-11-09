@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.Contextual;
+import spiralcraft.lang.Focus;
 import spiralcraft.log.Level;
 
 import javax.servlet.Filter;
@@ -41,6 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 import spiralcraft.data.persist.PersistenceException;
 import spiralcraft.data.persist.XmlBean;
 import spiralcraft.log.ClassLog;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.time.Clock;
 import spiralcraft.time.Scheduler;
@@ -74,7 +79,7 @@ import spiralcraft.vfs.file.FileResource;
  * </p>
  */
 public class Controller
-  implements Filter
+  implements Filter,Contextual
 {
   private static final ClassLog log=ClassLog.getInstance(Controller.class);
   
@@ -110,6 +115,8 @@ public class Controller
   private URI codeURI=URI.create("");
   
   private Scheduler scheduler;
+
+  private Focus<?> focus;
   
   
 
@@ -319,8 +326,27 @@ public class Controller
       if (throwable==null)
       {
         String pathString=request.getRequestURI();
-        FilterChain chain=resolveChain(pathString,endpoint);
-        chain.doFilter(servletRequest,servletResponse);
+        
+     
+        Focus<?> lastFocus=null;
+        if (focus!=null)
+        {
+          lastFocus=FocusFilter.getFocusChain(request);
+          FocusFilter.setFocusChain(request,focus);
+        }
+        
+        try
+        {
+          FilterChain chain=resolveChain(pathString,endpoint);
+          chain.doFilter(servletRequest,servletResponse);
+        }
+        finally
+        {
+          if (focus!=null)
+          { FocusFilter.setFocusChain(request,lastFocus);
+          }
+        }
+        
       }
       else
       { sendError(servletResponse,throwable);
@@ -925,6 +951,14 @@ public class Controller
       }
       localFilters.add(filter);
     }
+  }
+
+  @Override
+  public Focus<?> bind(Focus<?> focusChain)
+    throws BindException
+  { 
+    focus=focusChain;
+    return focusChain;
   }
 
 }
