@@ -36,13 +36,15 @@ import spiralcraft.servlet.security.BasicHttpAdapter;
 import spiralcraft.servlet.security.HttpAdapter;
 
 /**
- * <P>Requires HTTP based authentication using an application supplied 
+ * <p>Requires HTTP based authentication using an application supplied 
  *   Authenticator implementation.
+ * </p>
  * 
- * <P>By default, in order to mitigate the effects of misconfiguration
+ * <p>By default, in order to mitigate the effects of misconfiguration
  *  this filter is global (applies to subdirectories), overridable,
  *  and is not additive (the HTTP protocol only allows one active
  *  set of credentials at a time)
+ * </p>
  * 
  * @author mike
  *
