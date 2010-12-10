@@ -121,7 +121,6 @@ public class FileServlet
   private Resource translatePath(String relativePath)
     throws UnresolvableURIException,IOException
   { 
-
     Resource mappedResource
       =Resolver.getInstance().resolve(URI.create("context:"+relativePath));
     if (mappedResource!=null && mappedResource.exists())
@@ -172,7 +171,15 @@ public class FileServlet
       return;
       
     }
-
+    
+    if (!contextPath.startsWith("/"))
+    { 
+      log.warning("Illegal path "+contextPath);
+      send404(request,response);
+      return;
+    }
+    
+    
     Resource resource=translatePath(contextPath);
     if (debugLevel.canLog(Level.DEBUG))
     { log.log(Level.DEBUG,"File Servlet serving "+contextPath);
