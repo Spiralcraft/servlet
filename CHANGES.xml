@@ -4,6 +4,34 @@
 
   <scm:Change>
   
+    <revision>0.4.12.4
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-12-09
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix NPE when request path does not start with a "/"
+            (potential malformed request, proxy style request, or web server 
+            error). FileServlet will now respond with  a 404 "Not Found" in 
+            this case.
+          </scm:Note>
+       </notes>
+        
+        <path>source/spiralcraft/servlet/vfs/FileServlet.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.12.3
     </revision>
 
