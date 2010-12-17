@@ -10,7 +10,7 @@
     <authorId>miketoth
     </authorId>
     
-    <date>2010-12-09
+    <date>2010-12-16
     </date>
     
     <detail>
@@ -25,6 +25,26 @@
         
         <path>source/spiralcraft/servlet/vfs/FileServlet.java
         </path>
+        
+      </scm:Change>
+      
+      <scm:Change>
+        <notes>
+          <scm:Note>Misc logging
+          </scm:Note>
+       </notes>
+        
+        <path>source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>Component.java
+          </URI>
+          <URI>UIService.java
+          </URI>
+          <URI>components/Acceptor.java
+          </URI>
+        </resources>
         
       </scm:Change>
     </detail>
