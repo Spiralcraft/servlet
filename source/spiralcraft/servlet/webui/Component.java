@@ -199,7 +199,11 @@ public abstract class Component
    * @param context
    */
   protected void handleInitialize(ServiceContext context)
-  { }
+  { 
+    if (debug)
+    { log.fine("Init");
+    }
+  }
 
 
   

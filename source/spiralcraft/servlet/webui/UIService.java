@@ -218,7 +218,7 @@ public class UIService
           serviceContext.setOutOfSync(true);
           // Clear any pending responsive actions for an out of sync request
           localSession.clearActions();
-          if (debugLevel.canLog(Level.DEBUG))
+          if (debugLevel.isDebug())
           { 
             log.debug
             ("Out of sync request, ignoring pending responsive actions");
@@ -228,6 +228,9 @@ public class UIService
         { 
           serviceContext.setInitial(true);
           serviceContext.setCurrentFrame(localSession.nextFrame());
+          if (debugLevel.isDebug())
+          { log.debug("Initializing session for "+localSession.getLocalURI());
+          }
         }
 
 
@@ -275,7 +278,7 @@ public class UIService
   
   
   /**
-   * <p>Service a request for the on a given component with the specified
+   * <p>Service a request for the  given component with the specified
    *    serviceContext, which has already been associated with a request,
    *    response and a local ResourceSession.
    * </p>
@@ -295,6 +298,9 @@ public class UIService
     ElementState oldState=localSession.getRootState();
     if (oldState==null)
     { 
+      if (debugLevel.isDebug())
+      { log.debug("Initializing state tree for "+localSession.getLocalURI());
+      }
       // Initialize a fresh state
       serviceContext.setState(component.createState());
       // Set up state structure and register "initial" events
