@@ -30,11 +30,13 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.NullChannel;
+import spiralcraft.lang.util.LangUtil;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.LoginEntry;
+import spiralcraft.security.auth.Permission;
 
 import spiralcraft.servlet.autofilter.SecurityFilter;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -65,6 +67,20 @@ import spiralcraft.util.ArrayUtil;
 public class Login
   extends ControlGroup<LoginEntry>
 {
+
+  private static final Permission LOGIN_PERMISSION;
+  static
+  {
+    try
+    { 
+      LOGIN_PERMISSION=LangUtil.eval
+        ("[@:class:/spiralcraft/security/auth/LoginPermission].()");
+    }
+    catch (BindException x)
+    { throw new RuntimeException("Error resolving LoginPermission",x);
+    } 
+  }
+      
   private static final ClassLog log
     =ClassLog.getInstance(Login.class);
 
@@ -88,6 +104,8 @@ public class Login
   private SecurityFilter securityFilter;
   private Binding<?> onLoginX;
   
+  private boolean requireLoginPermission;
+  
 //  private boolean silent;
 
   /**
@@ -109,9 +127,27 @@ public class Login
   
 
   /**
+   * <p>Indicate that the LoginPermission must be assigned to the user in
+   *   order for the login to succeed. If no LoginPermission is assigned,
+   *   a permission error will be indicated and the user will not be allowed
+   *   to login. 
+   * </p>
+   * 
+   * <p>Defaults to false, indicating that successful authentication is 
+   *   sufficient to allow login.
+   * </p>
+   * 
+   * @param requireLoginPermission
+   */
+  public void setRequireLoginPermission(boolean requireLoginPermission)
+  { this.requireLoginPermission=requireLoginPermission;
+  }
+  
+  
+  /**
    * <p>Specify that the login form is an in-place login that may be present
    *   inside the secured page, and thus no automatic redirect to a 
-   *   referrering page should occur.
+   *   referring page should occur.
    * </p>
    * 
    * @param inPlace
@@ -224,8 +260,29 @@ public class Login
     {
       
       authenticated=session.authenticate();
+     
       if (authenticated)
-      { username=session.getPrincipal().getName(); 
+      { 
+        username=session.getPrincipal().getName(); 
+        if (requireLoginPermission)
+        { 
+          authenticated=session.hasPermission(LOGIN_PERMISSION);
+          if (authenticated)
+          { 
+            if (debug)
+            { log.fine(getLogPrefix()+username+" has LoginPermission");
+            }
+          }
+          else
+          { 
+            session.logout();
+            if (debug)
+            { log.fine(getLogPrefix()+username+" does NOT have LoginPermission");
+            }
+            
+          }
+        }
+
       }
     }
       

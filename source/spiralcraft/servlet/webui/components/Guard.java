@@ -125,10 +125,13 @@ public class Guard
   protected void handlePrepare(ServiceContext context)
   { 
     super.handlePrepare(context);
-    if (!sessionChannel.get().isAuthenticated())
+    if (!permitted())
     { 
       if (debug)
-      { log.fine("Session not authenticated "+sessionChannel.get());
+      { 
+        
+        log.fine
+          (getLogPrefix(context)+"Not permitted "+sessionChannel.get());
       }
       try
       { setupRedirect(context);
@@ -149,11 +152,11 @@ public class Guard
   {
     
     if (message.getType()!=InitializeMessage.TYPE
-        && !sessionChannel.get().isAuthenticated()
+        && !permitted()
         )
     { 
       if (debug)
-      { log.fine(this.toString()+" redirecting- no authent");
+      { log.fine(getLogPrefix(context)+"redirecting- not permitted");
       }
       try
       { setupRedirect((ServiceContext) context);
@@ -171,7 +174,7 @@ public class Guard
   public void render(EventContext context)
     throws IOException
   {
-    if (!sessionChannel.get().isAuthenticated())
+    if (!permitted())
     { 
       try
       { setupRedirect((ServiceContext) context);
@@ -187,6 +190,16 @@ public class Guard
     }
   }
 
+  private boolean permitted()
+  {
+    AuthSession session=sessionChannel.get();
+    if (session!=null)
+    { 
+      return session.isAuthenticated();
+    }
+    return false;
+  }
+  
 }
 
 
