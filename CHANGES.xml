@@ -4,6 +4,40 @@
 
   <scm:Change>
   
+    <revision>0.4.12.7
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2010-12-31
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Add LoginPermission check to Login component.
+          </scm:Note>
+          <scm:Note>Prepare Guard component for future permission checks.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>Login.java
+          </URI>
+          <URI>Guard.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.12.4
     </revision>
 
