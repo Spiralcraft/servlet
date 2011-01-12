@@ -4,6 +4,48 @@
 
   <scm:Change>
   
+    <revision>0.4.12.8
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2011-01-12
+    </date>
+    
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Session keepalive mechanism using async calls from
+            spiralcraft-jsclient package.
+          </scm:Note>
+          <scm:Note>Query parameter "oob" assigned out of band function
+            name "sessionSync" will obtain the number of milliseconds
+            remaining in the Session, or 0 if the page is out of sync.
+          </scm:Note>
+          <scm:Note>ResourceSession provides the async callback URL
+            through ServiceContext. 
+          </scm:Note>          
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>UIService.java
+          </URI>
+          <URI>ResourceSession.java
+          </URI>
+          <URI>ServiceContext.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.12.7
     </revision>
 
