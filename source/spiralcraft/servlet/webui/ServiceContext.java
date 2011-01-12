@@ -241,6 +241,16 @@ public class ServiceContext
   { this.response=response;
   }
   
+  /**
+   * The URL that can be used to issue asynchronous requests back to this
+   *   page. The URL reflects the current state of the conversation.
+   *   
+   * @return
+   */
+  public String getAsyncURL()
+  { return resourceSession.getAsyncURL();
+  }
+  
   public String registerAction(Action action)
   {
     String rawUrl=resourceSession.registerAction(action);

@@ -146,6 +146,16 @@ public class ResourceSession
   { return localURI;
   }
   
+  
+  String getAsyncURL()
+  {
+    String encodedParameters=parameterMap.generateEncodedForm();
+    return localURI
+      +"?lrs="+Integer.toString(sequence)
+      +(encodedParameters!=null?"&"+encodedParameters:"")
+      ;
+  }
+  
   /**
    * 
    * @param action The Action to register

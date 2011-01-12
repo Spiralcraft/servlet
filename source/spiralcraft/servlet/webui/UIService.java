@@ -209,37 +209,77 @@ public class UIService
         serviceContext.setRequest(request);
         serviceContext.setResponse(response);
 
+        
+        VariableMap query=serviceContext.getQuery();
         ResourceSession.RequestSyncStatus syncStatus
-          =localSession.getRequestSyncStatus(serviceContext.getQuery());
+          =localSession.getRequestSyncStatus(query);
 
-        if (syncStatus==ResourceSession.RequestSyncStatus.OUTOFSYNC)
-        { 
-          serviceContext.setCurrentFrame(localSession.nextFrame());
-          serviceContext.setOutOfSync(true);
-          // Clear any pending responsive actions for an out of sync request
-          localSession.clearActions();
-          if (debugLevel.isDebug())
+        String outOfBand
+          =query!=null
+          ?query.getOne("oob")
+          :null;
+          
+        if (outOfBand!=null && !outOfBand.isEmpty())
+        {
+          // Process out-of-band request
+          outOfBand=outOfBand.intern(); 
+          
+          if (outOfBand=="sessionSync")
           { 
-            log.debug
-            ("Out of sync request, ignoring pending responsive actions");
+            switch (syncStatus)
+            {
+              case INITIATED:
+              case OUTOFSYNC:
+                response.getWriter().write("0");
+                break;
+              default:
+                response.getWriter().write
+                  (Integer.toString
+                    (request.getSession().getMaxInactiveInterval()*1000)
+                  );
+                break;
+
+            }
+            response.setContentType("text/plain");
+            response.setStatus(200);
+
           }
+          response.getWriter().flush();
+          response.flushBuffer();
         }
-        else if (syncStatus==ResourceSession.RequestSyncStatus.INITIATED)
-        { 
-          serviceContext.setInitial(true);
-          serviceContext.setCurrentFrame(localSession.nextFrame());
-          if (debugLevel.isDebug())
-          { log.debug("Initializing session for "+localSession.getLocalURI());
+        else
+        {
+          // Process interactive request
+          
+          if (syncStatus==ResourceSession.RequestSyncStatus.OUTOFSYNC)
+          { 
+            serviceContext.setCurrentFrame(localSession.nextFrame());
+            serviceContext.setOutOfSync(true);
+            // Clear any pending responsive actions for an out of sync request
+            localSession.clearActions();
+            if (debugLevel.isDebug())
+            { 
+              log.debug
+              ("Out of sync request, ignoring pending responsive actions");
+            }
           }
-        }
-
-
-        serviceContext.setResourceSession(localSession);
-
-        synchronized (localSession)
-        { 
-          // Resource state is not multi-threaded
-          sequence(component,serviceContext);
+          else if (syncStatus==ResourceSession.RequestSyncStatus.INITIATED)
+          { 
+            serviceContext.setInitial(true);
+            serviceContext.setCurrentFrame(localSession.nextFrame());
+            if (debugLevel.isDebug())
+            { log.debug("Initializing session for "+localSession.getLocalURI());
+            }
+          }
+  
+  
+          serviceContext.setResourceSession(localSession);
+  
+          synchronized (localSession)
+          { 
+            // Resource state is not multi-threaded
+            sequence(component,serviceContext);
+          }
         }
       }
       else
@@ -338,6 +378,42 @@ public class UIService
     }
     
     
+    if (!done)
+    { 
+      // SYNC RESPONSE
+      generateResponse(serviceContext,localSession,component);
+    }
+    
+    ElementState newState=serviceContext.getState();
+    if (newState!=oldState)
+    { 
+      // Cache the state for the next iteration
+      localSession.setRootState(newState);
+    }
+      
+    response.getWriter().flush();
+    response.flushBuffer();
+    
+  }
+  
+  /**
+   * <p>Generate a fresh page for the client 
+   * </p>
+   * 
+   * @param serviceContext
+   * @param localSession
+   * @param component
+   * @throws ServletException
+   * @throws IOException
+   */
+  private void generateResponse
+    (ServiceContext serviceContext
+    ,ResourceSession localSession
+    ,RootComponent component
+    ) throws ServletException, IOException
+  {
+    
+    
     // XXX consider deferring the frame change to the next request if nothing
     //  changed- ie. don't go into sequence mode
     // XXX it is likely that the frame should be advanced at a low level
@@ -348,6 +424,7 @@ public class UIService
     
     // This makes everything recompute before rendering
     serviceContext.setCurrentFrame(localSession.nextFrame());
+    boolean done=false;
     
     if (!done)
     {
@@ -387,15 +464,7 @@ public class UIService
       
     }
       
-    ElementState newState=serviceContext.getState();
-    if (newState!=oldState)
-    { 
-      // Cache the state for the next iteratio
-      localSession.setRootState(newState);
-    }
-      
-    response.getWriter().flush();
-    response.flushBuffer();
+
   }
   
   /**
