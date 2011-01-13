@@ -241,6 +241,10 @@ public class UIService
 
             }
             response.setContentType("text/plain");
+            response.setHeader("Cache-Control","no-cache");
+            response.setIntHeader("Max-Age",0);
+            response.setDateHeader("Expires",0);
+            
             response.setStatus(200);
 
           }
