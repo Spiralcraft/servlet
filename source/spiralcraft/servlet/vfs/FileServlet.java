@@ -180,7 +180,17 @@ public class FileServlet
     }
     
     
-    Resource resource=translatePath(contextPath);
+    Resource resource;
+    try
+    { resource=translatePath(contextPath);
+    }
+    catch (UnresolvableURIException x)
+    { 
+      send400(request,response);
+      return;
+    }
+
+
     if (debugLevel.canLog(Level.DEBUG))
     { log.log(Level.DEBUG,"File Servlet serving "+contextPath);
     }
@@ -400,9 +410,21 @@ public class FileServlet
       (404
       ,"<H2>404 - Not Found</H2>The specified path, <STRONG>"
       +request.getRequestURI()
-      +"</STRONG> could not be found on this server."
+      +"</STRONG>, could not be found on this server."
       );        
     
+  }
+  
+  private void send400(HttpServletRequest request,HttpServletResponse response)
+    throws IOException
+  {
+    response.sendError
+    (400
+    ,"<H2>400 - Bad Request</H2>The specified request, <STRONG>"
+    +request.getRequestURI()
+    +"</STRONG>, contains invalid syntax."
+    );        
+  
   }
   
   /**
