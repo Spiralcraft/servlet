@@ -151,7 +151,6 @@ public class Paginate<Ttarget,Titem>
   @SuppressWarnings("unchecked") // PageItem cast
   protected void resetPageState(PageState<Ttarget,Titem> state)
   {
-   
       
     int start=state.getCurrentPage()*state.getPageSize();
 
@@ -163,7 +162,7 @@ public class Paginate<Ttarget,Titem>
     if (listDecorator!=null)
     {
       Ttarget targetList=target.get();
-      count=listDecorator.size(targetList);
+      count=targetList==null?0:listDecorator.size(targetList);
       int max=Math.min(start+state.getPageSize(),count);
       for (int i=start;i<max;i++)
       { list.add(listDecorator.get(targetList,i));
