@@ -182,7 +182,7 @@ public class Guard
       catch (ServletException x)
       { 
         x.printStackTrace();
-        context.getWriter().write(x.toString());
+        context.getOutput().append(x.toString());
       }
     }
     else

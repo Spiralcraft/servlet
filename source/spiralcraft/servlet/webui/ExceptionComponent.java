@@ -14,6 +14,7 @@
 //
 package spiralcraft.servlet.webui;
 
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -31,11 +32,11 @@ public class ExceptionComponent
   public void render(EventContext context)
     throws IOException
   { 
-    context.getWriter().write("<html><body><pre>");
-    context.getWriter().flush();
+    context.getOutput().append("<html><body><pre>");
+    ((Flushable) context.getOutput()).flush();
     exception.printStackTrace
       (new PrintStream(((ServiceContext) context).getResponse().getOutputStream())
       );
-    context.getWriter().write("</pre></body></html>");
+    context.getOutput().append("</pre></body></html>");
   }
 }

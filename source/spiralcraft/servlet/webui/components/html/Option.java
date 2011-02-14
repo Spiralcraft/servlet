@@ -65,12 +65,12 @@ public class Option<Ttarget,Tvalue>
       SelectItemState<Tvalue> state=getState(context);
 
       if (state.isSelected())
-      { renderAttribute(context.getWriter(),"selected","selected");
+      { renderAttribute(context.getOutput(),"selected","selected");
       }
       if (converter!=null)
       { 
         renderAttribute
-          (context.getWriter(),"value",converter.toString(state.getValue())
+          (context.getOutput(),"value",converter.toString(state.getValue())
           );
       }
       else
@@ -78,7 +78,7 @@ public class Option<Ttarget,Tvalue>
         if (state.getValue()!=null)
         {
           renderAttribute
-            (context.getWriter()
+            (context.getOutput()
             ,"value"
             ,state.getValue()!=null
             ?state.getValue().toString()

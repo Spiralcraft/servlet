@@ -72,7 +72,7 @@ public class TextArea<Ttarget>
       throws IOException
     {   
       ControlState<?> state=getState(context);
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      renderAttribute(context.getOutput(),"name",state.getVariableName());
       super.renderAttributes(context);
     }
     
@@ -87,7 +87,7 @@ public class TextArea<Ttarget>
     { 
       String value=TextArea.this.<String>getState(context).getValue();
       if (value!=null)
-      {  context.getWriter().write(value);
+      {  context.getOutput().append(value);
       }
     }
 

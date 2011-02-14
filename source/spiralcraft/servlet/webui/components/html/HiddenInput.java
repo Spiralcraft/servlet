@@ -50,10 +50,10 @@ public class HiddenInput<Ttarget>
       throws IOException
     {   
       ControlState<Ttarget> state=getState(context);
-      renderAttribute(context.getWriter(),"type","hidden");
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      renderAttribute(context.getOutput(),"type","hidden");
+      renderAttribute(context.getOutput(),"name",state.getVariableName());
       if (state.getValue()!=null && !password)
-      { renderAttribute(context.getWriter(),"value",(String) state.getValue());
+      { renderAttribute(context.getOutput(),"value",(String) state.getValue());
       }
       super.renderAttributes(context);
     }

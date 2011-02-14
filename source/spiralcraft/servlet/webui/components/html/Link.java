@@ -74,7 +74,7 @@ public class Link
           .registerAction(createAction(context));
       
       
-      renderAttribute(context.getWriter(),"href",actionURI);
+      renderAttribute(context.getOutput(),"href",actionURI);
       super.renderAttributes(context);
     }
 

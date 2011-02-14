@@ -65,16 +65,16 @@ public class RadioButton<Ttarget,Tvalue>
       SelectItemState<Tvalue> state=getState(context);
 
 
-      renderAttribute(context.getWriter(),"type","radio");
+      renderAttribute(context.getOutput(),"type","radio");
       renderAttribute
-        (context.getWriter(),"name",state.getSelectState().getVariableName());
+        (context.getOutput(),"name",state.getSelectState().getVariableName());
       if (state.isSelected())
-      { renderAttribute(context.getWriter(),"checked","checked");
+      { renderAttribute(context.getOutput(),"checked","checked");
       }
       if (converter!=null)
       { 
         renderAttribute
-          (context.getWriter(),"value",converter.toString(state.getValue())
+          (context.getOutput(),"value",converter.toString(state.getValue())
           );
       }
       else
@@ -82,7 +82,7 @@ public class RadioButton<Ttarget,Tvalue>
         if (state.getValue()!=null)
         {
           renderAttribute
-            (context.getWriter()
+            (context.getOutput()
             ,"value"
             ,state.getValue()!=null
             ?state.getValue().toString()

@@ -15,7 +15,6 @@
 package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.EventContext;
@@ -84,34 +83,34 @@ public class ErrorTag
     throws IOException
   { 
     ControlState<?> state=(ControlState<?>) context.getState();
-    Writer out=context.getWriter();
+    Appendable out=context.getOutput();
     
     String[] errors=state.getErrors();
     if (errors!=null)
     { 
       for (String string: errors)
       { 
-        out.write(string);
-        out.write("<br/>");
+        out.append(string);
+        out.append("<br/>");
       }
     }
     if (state.getException()!=null)
     { 
-      out.write("<!--\r\n");
+      out.append("<!--\r\n");
 
       Throwable exception=state.getException();
       while (exception!=null)
       {
-        out.write(exception.toString());
+        out.append(exception.toString());
 
         for (StackTraceElement element : exception.getStackTrace())
         {
-          out.write(element.toString());
-          out.write("\r\n");
+          out.append(element.toString());
+          out.append("\r\n");
         }
         exception=exception.getCause();
       }
-      out.write("-->\r\n");
+      out.append("-->\r\n");
       
     }
     

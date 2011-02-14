@@ -21,7 +21,6 @@ import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.textgen.EventContext;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import spiralcraft.text.xml.AttributeEncoder;
 import spiralcraft.util.ArrayUtil;
@@ -248,11 +247,11 @@ public abstract class AbstractTag
   }
   
   protected void renderPresentAttribute
-    (Writer writer,String name,String value)
+    (Appendable out,String name,String value)
     throws IOException
   { 
     if (value!=null)
-    { renderAttribute(writer,name,value);
+    { renderAttribute(out,name,value);
     }
   }
   
@@ -265,18 +264,18 @@ public abstract class AbstractTag
    * @param value
    * @throws IOException
    */
-  protected void renderAttribute(Writer writer,String name,String value)
+  protected void renderAttribute(Appendable out,String name,String value)
     throws IOException
   {
-    writer.write(name);
+    out.append(name);
     if (value!=null)
     {
-      writer.write("=\"");
-      attributeEncoder.encode(value,writer);
-      writer.write("\" ");
+      out.append("=\"");
+      attributeEncoder.encode(value,out);
+      out.append("\" ");
     }
     else
-    { writer.write(" ");
+    { out.append(" ");
     }
   }
   
@@ -284,25 +283,25 @@ public abstract class AbstractTag
     throws IOException
   { 
     if (attributes!=null)
-    { context.getWriter().write(attributes+" ");
+    { context.getOutput().append(attributes+" ");
     }
     if (standardAttributeBindings!=null)
-    { renderBoundAttributes(context.getWriter(),standardAttributeBindings);
+    { renderBoundAttributes(context.getOutput(),standardAttributeBindings);
     }
     if (attributeBindings!=null)
-    { renderBoundAttributes(context.getWriter(),attributeBindings);
+    { renderBoundAttributes(context.getOutput(),attributeBindings);
     }
   }
 
   protected void renderBoundAttributes
-    (Writer writer,DictionaryBinding<?>[] bindings)
+    (Appendable out,DictionaryBinding<?>[] bindings)
     throws IOException
   {
     for (DictionaryBinding<?> binding : bindings)
     { 
       String val=binding.get();
       if (val!=null)
-      { renderAttribute(writer,binding.getName(),val);
+      { renderAttribute(out,binding.getName(),val);
       }
     }
   }
@@ -368,25 +367,25 @@ public abstract class AbstractTag
     String name=getTagName(context);
     if (shouldRender && name!=null && name.length()>0)
     {
-      Writer writer=context.getWriter();
-      writer.write("<");
-      writer.write(getTagName(context));
-      writer.write(" ");
+      Appendable out=context.getOutput();
+      out.append("<");
+      out.append(getTagName(context));
+      out.append(" ");
     
       renderAttributes(context);
     
       if (hasContent && contentPosition==0)
       { 
-        writer.write(">");
+        out.append(">");
    
         renderContent(context);
     
-        writer.write("</");
-        writer.write(getTagName(context));
-        writer.write(">");
+        out.append("</");
+        out.append(getTagName(context));
+        out.append(">");
       }
       else
-      { writer.write("/>");
+      { out.append("/>");
       }
 
       if (hasContent && contentPosition>0)

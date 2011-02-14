@@ -64,12 +64,12 @@ public class CheckboxInput
       throws IOException
     {   
       ControlState<Boolean> state=getState(context);
-      renderAttribute(context.getWriter(),"type","checkbox");
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
-      renderAttribute(context.getWriter(),"value","on");
+      renderAttribute(context.getOutput(),"type","checkbox");
+      renderAttribute(context.getOutput(),"name",state.getVariableName());
+      renderAttribute(context.getOutput(),"value","on");
       Boolean val=state.getValue();
       if (val!=null && val)
-      { renderAttribute(context.getWriter(),"checked","checked");
+      { renderAttribute(context.getOutput(),"checked","checked");
       }
       super.renderAttributes(context);
     }

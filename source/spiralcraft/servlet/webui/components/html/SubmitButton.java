@@ -58,11 +58,11 @@ public class SubmitButton<Tcontext,Tresult>
     protected void renderAttributes(EventContext context)
       throws IOException
     {   
-      renderAttribute(context.getWriter(),"type","submit");
-      renderAttribute(context.getWriter(),"name",getState(context).getVariableName());
+      renderAttribute(context.getOutput(),"type","submit");
+      renderAttribute(context.getOutput(),"name",getState(context).getVariableName());
       
       // Yes, we are renaming it
-      renderAttribute(context.getWriter(),"value",label);
+      renderAttribute(context.getOutput(),"value",label);
       super.renderAttributes(context);
     }
 

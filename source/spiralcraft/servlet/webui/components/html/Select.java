@@ -59,9 +59,9 @@ public class Select<Ttarget,Tvalue>
       throws IOException
     {   
       ControlState<?> state=getState(context);
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      renderAttribute(context.getOutput(),"name",state.getVariableName());
       if (multi)
-      { renderAttribute(context.getWriter(),"multiple",null);
+      { renderAttribute(context.getOutput(),"multiple",null);
       }
       super.renderAttributes(context);
     }

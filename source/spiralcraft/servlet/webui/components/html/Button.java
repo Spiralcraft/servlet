@@ -63,9 +63,9 @@ public class Button<Tcontext,Tresult>
       throws IOException
     {   
       CommandState<Tcontext,Tresult> state=getState(context);
-      renderAttribute(context.getWriter(),"type",type);
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
-      renderAttribute(context.getWriter(),"value",value);
+      renderAttribute(context.getOutput(),"type",type);
+      renderAttribute(context.getOutput(),"name",state.getVariableName());
+      renderAttribute(context.getOutput(),"value",value);
       super.renderAttributes(context);
     }
 

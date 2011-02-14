@@ -15,7 +15,6 @@
 package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import spiralcraft.textgen.EventContext;
 
@@ -165,15 +164,15 @@ public class ImageButton<Tcontext,Tresult>
       throws IOException
     {   
       CommandState<Tcontext,Tresult> state=getState(context);
-      Writer writer=context.getWriter();
-      renderAttribute(writer,"type","image");
-      renderPresentAttribute(writer,"src",src);
-      renderPresentAttribute(writer,"alt",ImageButton.this.alt);
-      renderPresentAttribute(writer,"alt",tagAlt);
-      renderPresentAttribute(writer,"height",height);
-      renderPresentAttribute(writer,"width",width);
-      renderPresentAttribute(writer,"border",border);
-      renderAttribute(writer,"name",state.getVariableName());
+      Appendable out=context.getOutput();
+      renderAttribute(out,"type","image");
+      renderPresentAttribute(out,"src",src);
+      renderPresentAttribute(out,"alt",ImageButton.this.alt);
+      renderPresentAttribute(out,"alt",tagAlt);
+      renderPresentAttribute(out,"height",height);
+      renderPresentAttribute(out,"width",width);
+      renderPresentAttribute(out,"border",border);
+      renderAttribute(out,"name",state.getVariableName());
       super.renderAttributes(context);
     }
 

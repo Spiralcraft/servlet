@@ -28,7 +28,6 @@ import spiralcraft.servlet.webui.components.Acceptor;
 
 
 import java.io.IOException;
-import java.io.Writer;
 
 public class Form<T>
   extends Acceptor<T>
@@ -78,12 +77,12 @@ public class Form<T>
         =((ServiceContext) context)
           .registerAction(createAction(context,true));
       
-      Writer writer=context.getWriter();
-      renderPresentAttribute(writer,"name",name);
-      renderAttribute(writer,"action",actionURI);
-      renderAttribute(writer,"method","post");
+      Appendable out=context.getOutput();
+      renderPresentAttribute(out,"name",name);
+      renderAttribute(out,"action",actionURI);
+      renderAttribute(out,"method","post");
       if (mimeEncoded)
-      { renderAttribute(writer,"enctype","multipart/form-data");
+      { renderAttribute(out,"enctype","multipart/form-data");
       }
       super.renderAttributes(context);
     }

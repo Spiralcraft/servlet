@@ -61,14 +61,14 @@ public class TextInput<Ttarget>
     {   
       ControlState<String> state=getState(context);
       if (password)
-      { renderAttribute(context.getWriter(),"type","password");
+      { renderAttribute(context.getOutput(),"type","password");
       }
       else
-      { renderAttribute(context.getWriter(),"type","text");
+      { renderAttribute(context.getOutput(),"type","text");
       }
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      renderAttribute(context.getOutput(),"name",state.getVariableName());
       if (!password && state.getValue()!=null)
-      { renderAttribute(context.getWriter(),"value",state.getValue());
+      { renderAttribute(context.getOutput(),"value",state.getValue());
       }
       super.renderAttributes(context);
     }
