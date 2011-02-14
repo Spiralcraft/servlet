@@ -37,10 +37,12 @@ import spiralcraft.command.Command;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Reflector;
 import spiralcraft.lang.Setter;
+import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.log.Level;
 
 /**
@@ -70,6 +72,11 @@ public abstract class Control<Ttarget>
   private boolean contextualizeName=true;
   private boolean forceUpdate;
 
+  protected LinkedList<Contextual> parentContextuals;
+  protected LinkedList<Contextual> targetContextuals;
+  protected LinkedList<Contextual> selfContextuals;
+  
+  
   
   private ThreadLocal<ControlState<Ttarget>> threadLocalState 
     = new ThreadLocal<ControlState<Ttarget>>();
@@ -462,11 +469,100 @@ public abstract class Control<Ttarget>
   { return (ControlState<X>) context.getState();
   }
   
+  /**
+   * Add a Contextual to be bound to this Control's parent's context 
+   * 
+   * @param contextual
+   */
+  protected void addParentContextual(Contextual contextual)
+  { 
+    if (this.parentContextuals==null)
+    { this.parentContextuals=new LinkedList<Contextual>();
+    }
+    this.parentContextuals.add(contextual);
+  }
+
+  /**
+   * Remove a Contextual from the list of Contextuals to be bound
+   * 
+   * @param contextual
+   */
+  protected void removeParentContextual(Contextual contextual)
+  {
+    if (this.parentContextuals!=null)
+    { this.parentContextuals.remove(contextual);
+    }
+  }
+  
+  /**
+   * Add a Contextual to be bound to this Control's target's context 
+   * 
+   * @param contextual
+   */
+  protected void addTargetContextual(Contextual contextual)
+  { 
+    if (this.targetContextuals==null)
+    { this.targetContextuals=new LinkedList<Contextual>();
+    }
+    this.targetContextuals.add(contextual);
+  }
+
+  /**
+   * Remove a Contextual from the list of Contextuals to be bound
+   * 
+   * @param contextual
+   */
+  protected void removeTargetContextual(Contextual contextual)
+  {
+    if (this.targetContextuals!=null)
+    { this.targetContextuals.remove(contextual);
+    }
+  }
+  
+  /**
+   * Add a Contextual to be bound to this Control's own context 
+   * 
+   * @param contextual
+   */
+  protected void addSelfContextual(Contextual contextual)
+  { 
+    if (this.selfContextuals==null)
+    { this.selfContextuals=new LinkedList<Contextual>();
+    }
+    this.selfContextuals.add(contextual);
+  }
+  
+  
+  /**
+   * Remove a Contextual from the list of Contextuals to be bound
+   * 
+   * @param contextual
+   */
+  protected void removeSelfContextual(Contextual contextual)
+  {
+    if (this.selfContextuals!=null)
+    { this.selfContextuals.remove(contextual);
+    }
+  }
+  
+  protected void bindContextuals(Focus<?> focus,List<Contextual> contextuals)
+    throws BindException
+  { 
+    if (contextuals!=null)
+    {
+      for (Contextual contextual:contextuals)
+      { contextual.bind(focus);
+      }
+    }
+  }
+
+  
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public void bind(Focus<?> focus,List<TglUnit> childUnits)
     throws BindException,MarkupException
   { 
+    bindContextuals(focus,parentContextuals);
     if (expression!=null)
     { 
       target=focus.bind(expression);
@@ -481,8 +577,19 @@ public abstract class Control<Ttarget>
     computeDistances();
     focus=focus.chain(target);
     
+    bindContextuals(focus,targetContextuals);
+    
     focus.addFacet(getAssembly().getFocus());
+    if (selfContextuals!=null)
+    {
+      bindContextuals
+        (focus.chain(new SimpleChannel<Control<Ttarget>>(this,true))
+        ,selfContextuals
+        );
+    }
     focus=bindSelf(focus);
+    
+    
     if (target!=null)
     { bindRules(target.getReflector(),focus);
     }

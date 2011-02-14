@@ -29,6 +29,7 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.SimpleFocus;
 
 import spiralcraft.lang.spi.AbstractChannel;
+import spiralcraft.lang.spi.SimpleChannel;
 
 import spiralcraft.text.markup.MarkupException;
 
@@ -241,6 +242,8 @@ public abstract class ControlGroup<Ttarget>
     { logFine(" bind():expression=" + expression);
     }
 
+    bindContextuals(focus,parentContextuals);
+    
     target = (Channel<Ttarget>) bindTarget(focus);
     if (target != null)
     {
@@ -284,6 +287,14 @@ public abstract class ControlGroup<Ttarget>
       // Expose the expression target as the new Focus, and add the
       // assembly in as another layer
       SimpleFocus myFocus = new SimpleFocus(focus, valueBinding);
+      bindContextuals(myFocus,targetContextuals);
+      if (selfContextuals!=null)
+      {
+        bindContextuals
+          (focus.chain(new SimpleChannel<Control<Ttarget>>(this,true))
+          ,selfContextuals
+          );
+      }
       myFocus.addFacet(getAssembly().getFocus());
       focus=myFocus;
       bindRules(target.getReflector(),focus);
@@ -295,11 +306,21 @@ public abstract class ControlGroup<Ttarget>
       if (debug)
       { logFine("No Channel created, using parent focus");
       }
+      bindContextuals(focus,targetContextuals);
       SimpleFocus myFocus = new SimpleFocus(focus, null);
+      
+      if (selfContextuals!=null)
+      {
+        bindContextuals
+          (focus.chain(new SimpleChannel<Control<Ttarget>>(this,true))
+          ,selfContextuals
+          );
+      }
       myFocus.addFacet(getAssembly().getFocus());
 
 
       focus=myFocus;      
+      bindContextuals(focus,selfContextuals);
       bindRules
         (((Channel<Ttarget>) focus.getSubject()).getReflector()
         ,focus
