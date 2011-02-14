@@ -32,6 +32,8 @@ import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 
+import spiralcraft.text.MessageFormat;
+import spiralcraft.text.ParseException;
 import spiralcraft.text.html.URLEncoder;
 import spiralcraft.util.Path;
 import spiralcraft.util.string.StringUtil;
@@ -60,6 +62,19 @@ public class FileInput
   private long maxSize;
   private boolean sanitizeInput;
 
+  private MessageFormat fileTooLargeError;
+  { 
+    try
+    {
+      fileTooLargeError
+        =new MessageFormat("Input cannot be larger than "+maxSize+" bytes");
+      selfContextuals.add(fileTooLargeError);
+    }
+    catch (ParseException x)
+    { throw new RuntimeException(x);
+    }
+  }
+  
   public class Tag
     extends AbstractTag
   {
@@ -73,8 +88,8 @@ public class FileInput
       throws IOException
     {   
       ControlState<URI> state=getState(context);
-      renderAttribute(context.getWriter(),"type","file");
-      renderAttribute(context.getWriter(),"name",state.getVariableName());
+      renderAttribute(context.getOutput(),"type","file");
+      renderAttribute(context.getOutput(),"name",state.getVariableName());
       super.renderAttributes(context);
     }
     
@@ -105,6 +120,16 @@ public class FileInput
    */
   public void setSanitizeInput(boolean sanitizeInput)
   { this.sanitizeInput=sanitizeInput;
+  }
+  
+  
+  public void setFileTooLargeError(MessageFormat fileTooLargeError)
+  { 
+    removeSelfContextual(this.fileTooLargeError);
+    this.fileTooLargeError=fileTooLargeError;
+    if (fileTooLargeError!=null)
+    { addSelfContextual(fileTooLargeError);
+    }
   }
   
   /**
@@ -339,7 +364,7 @@ public class FileInput
           
           if (maxSize>0 && tempResource.getSize()>maxSize)
           { 
-            state.addError("Input cannot be larger than "+maxSize+" bytes");
+            state.addError(StringUtil.renderToString(fileTooLargeError));
             return;
           }
           
