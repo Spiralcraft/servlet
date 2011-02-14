@@ -4,6 +4,120 @@
 
   <scm:Change>
   
+    <revision>0.4.13
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+
+    <detail>
+    
+      <scm:Change>
+        <notes>
+          <scm:Note>Simplify inheritance by providing a facility to register
+            Contextextuals that need to be bound instead of overriding 
+            protected methods.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>Control.java
+          </URI>
+          <URI>ControlGroup.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
+        <notes>
+          <scm:Note>Refactor uses of Writer to Appendable where appropriate
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>ExceptionComponent.java
+          </URI>
+          <URI>components/Guard.java
+          </URI>
+          <URI>components/html/AbstractTag.java
+          </URI>
+          <URI>components/html/Button.java
+          </URI>
+          <URI>components/html/CheckboxInput.java
+          </URI>
+          <URI>components/html/ChecklistItem.java
+          </URI>
+          <URI>components/html/ErrorTag.java
+          </URI>
+          <URI>components/html/FileInput.java
+          </URI>
+          <URI>components/html/Form.java
+          </URI>
+          <URI>components/html/HiddenInput.java
+          </URI>
+          <URI>components/html/ImageButton.java
+          </URI>
+          <URI>components/html/Link.java
+          </URI>
+          <URI>components/html/Option.java
+          </URI>
+          <URI>components/html/RadioButton.java
+          </URI>
+          <URI>components/html/Select.java
+          </URI>
+          <URI>components/html/SubmitButton.java
+          </URI>
+          <URI>components/html/TextArea.java
+          </URI>
+          <URI>components/html/TextInput.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
+        <notes>
+          <scm:Note>Add a MessageFormat for the file too large error
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/FileInput.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Send a 400 error when FileServlet catches a malformed
+            request path.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/vfs/FileServlet.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix NPE in Paginator reset when input list is null
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Paginate.java
+        </path>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.12.8
     </revision>
 
