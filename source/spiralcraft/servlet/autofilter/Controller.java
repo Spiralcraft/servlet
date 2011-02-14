@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
@@ -523,7 +524,15 @@ public class Controller
     if (node.getParent()!=null)
     { node.getParent().removeChild(node);
     }
+    
+    LinkedList<PathTree<FilterSet>> deleteList
+      =new LinkedList<PathTree<FilterSet>>();
+    
     for (PathTree<FilterSet> child: node)
+    { deleteList.add(child);
+    }
+    
+    for (PathTree<FilterSet> child: deleteList)
     { deleteRecursive(child);
     }
   }
