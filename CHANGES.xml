@@ -14,6 +14,18 @@
     </date>
 
     <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>Fix ConcurrentModificationException when changing
+            .control.xml in a running server
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+        
+      </scm:Change>
+
     
       <scm:Change>
         <notes>
