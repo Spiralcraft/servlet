@@ -18,6 +18,7 @@ import java.io.Writer;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+//import java.nio.charset.Charset;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -62,6 +63,7 @@ public class ServiceContext
   private static final Level debugLevel
     =ClassLog.getInitialDebugLevel(ServiceContext.class,null);
   
+//  private static final Charset UTF_8=Charset.forName("UTF-8");
   
   private ResourceSession resourceSession;
   private HttpServletRequest request;
@@ -204,10 +206,13 @@ public class ServiceContext
       String contentType=request.getContentType();
       if (contentType.startsWith("application/x-www-form-urlencoded"))
       { 
-        // XXX Need to consider the optional ;charset=xxx parameter
+        // String characterEncoding=request.getCharacterEncoding();
         String postString
           =StreamUtil.readAsciiString
-            (request.getInputStream(),request.getContentLength());
+            (request.getInputStream()
+            ,request.getContentLength()
+            );
+        // XXX Pass character encoding to VariableMap
         this.post=VariableMap.fromUrlEncodedString(postString);
       }
       else if (contentType.startsWith("multipart/form-data"))
