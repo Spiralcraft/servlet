@@ -16,6 +16,18 @@
     <detail>
       <scm:Change>
         <notes>
+          <scm:Note>Ensure that POST content respects the indicated
+            character set.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
           <scm:Note>Fix ConcurrentModificationException when changing
             .control.xml in a running server
           </scm:Note>
