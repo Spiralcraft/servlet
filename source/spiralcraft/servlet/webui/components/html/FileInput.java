@@ -67,7 +67,7 @@ public class FileInput
     try
     {
       fileTooLargeError
-        =new MessageFormat("Input cannot be larger than "+maxSize+" bytes");
+        =new MessageFormat("Input cannot be larger than {|.maxSize|} bytes");
       selfContextuals.add(fileTooLargeError);
     }
     catch (ParseException x)
@@ -203,6 +203,15 @@ public class FileInput
    */
   public void setMaxSize(long maxSize)
   { this.maxSize=maxSize;
+  }
+  
+  /**
+   * The maximum permitted size of the file, in bytes
+   * 
+   * @return maxSize
+   */
+  public long getMaxSize()
+  { return maxSize;
   }
   
   /**
