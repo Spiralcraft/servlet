@@ -68,7 +68,7 @@ public class FileInput
     {
       fileTooLargeError
         =new MessageFormat("Input cannot be larger than {|.maxSize|} bytes");
-      selfContextuals.add(fileTooLargeError);
+      addSelfContextual(fileTooLargeError);
     }
     catch (ParseException x)
     { throw new RuntimeException(x);
