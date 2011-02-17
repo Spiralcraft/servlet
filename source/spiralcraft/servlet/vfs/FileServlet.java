@@ -51,6 +51,7 @@ import java.util.Date;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import spiralcraft.net.http.Headers;
 import spiralcraft.net.http.RangeHeader;
@@ -121,8 +122,24 @@ public class FileServlet
   private Resource translatePath(String relativePath)
     throws UnresolvableURIException,IOException
   { 
+    URI contextURI;
+    try
+    { contextURI=new URI("context:"+relativePath);
+    }
+    catch (URISyntaxException x)
+    { 
+      throw new UnresolvableURIException
+        (relativePath,"Could not resolve this path in the context: scheme ",x);
+    }
+    
+    if (contextURI.getAuthority()!=null)
+    {
+      throw new UnresolvableURIException
+        (contextURI,"An authority is not permitted in this context");
+    }
+    
     Resource mappedResource
-      =Resolver.getInstance().resolve(URI.create("context:"+relativePath));
+      =Resolver.getInstance().resolve(contextURI);
     if (mappedResource!=null && mappedResource.exists())
     { 
       if (debugLevel.canLog(Level.DEBUG))
@@ -136,6 +153,7 @@ public class FileServlet
       { log.debug("context:"+relativePath+" did not resolve");
       }
     }
+    
     
     String filePath=getServletConfig().getServletContext()
       .getRealPath(relativePath);
@@ -186,6 +204,7 @@ public class FileServlet
     }
     catch (UnresolvableURIException x)
     { 
+      log.warning("Invalid URI syntax "+contextPath);
       send400(request,response);
       return;
     }
