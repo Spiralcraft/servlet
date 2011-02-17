@@ -19,9 +19,10 @@
           <scm:Note>Ensure that POST content respects the indicated
             character set.
           </scm:Note>
+
         </notes>
         
-        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        <path>source/spiralcraft/servlet/webui/ServiceContext.java
         </path>
         
       </scm:Change>
@@ -30,6 +31,9 @@
         <notes>
           <scm:Note>Fix ConcurrentModificationException when changing
             .control.xml in a running server
+          </scm:Note>
+          <scm:Note>ContextResourceMap now requires the instantiator to connect
+            it with its parent instance.
           </scm:Note>
         </notes>
         
