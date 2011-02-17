@@ -302,6 +302,10 @@ public class Controller
     contextResourceMap.put("files",contextURI.resolve(filesURI));
     contextResourceMap.put("code",contextURI.resolve(codeURI));
     
+    // Note- this should be conditional on the level of isolation
+    //   we are enforcing.
+    contextResourceMap.setParent(ContextResourceMap.get());
+    
   }
   
   /**
