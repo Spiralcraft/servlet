@@ -17,8 +17,10 @@ package spiralcraft.servlet.webui.components;
 
 
 
+import spiralcraft.command.AbstractCommandFactory;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.command.CommandFactory;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
@@ -43,12 +45,10 @@ import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.util.ArrayUtil;
 
-
-
-
 /**
- * Provides lifecycle management and WebUI control bindings for
+ * <p>Provides lifecycle management and WebUI control bindings for
  *   BufferTuples
+ * </p>
  * 
  * @author mike
  *
@@ -67,6 +67,45 @@ public abstract class TupleEditor
   private Channel<BufferAggregate<Buffer,?>> aggregateChannel;
   
   private boolean phantom;
+  
+  /**
+   * Ensure that the current buffer will exist after saving
+   */
+  public final CommandFactory<BufferTuple,Void,Void> 
+    ensureExists
+      =new AbstractCommandFactory<BufferTuple,Void,Void>()
+  {
+    @Override
+    public Command<BufferTuple,Void,Void> command()
+    {
+      return new QueuedCommand<BufferTuple,Void,Void>
+        (getState()
+        ,new CommandAdapter<BufferTuple,Void,Void>()
+          { 
+            { name="ensureExists";
+            }
+
+            @Override
+            public void run()
+            { 
+              try
+              { 
+                BufferTuple tuple=getState().getValue();
+                if (tuple==null)
+                { newBuffer();
+                }
+                else if (tuple.isDelete())
+                { tuple.undelete();
+                }
+              }
+              catch (DataException x)
+              { setException(x);
+              }
+            }
+          }
+        );
+    }
+  };
   
   
   /**
@@ -158,6 +197,19 @@ public abstract class TupleEditor
       );
   }
 
+  /**
+   * <p>Indicate whether the Tuple being edited will exist if the Editor
+   *   is saved. Returns true of a buffer is present and not deleted, or
+   *   false if no buffer or a deleted buffer is present.
+   * </p>
+   * @return
+   */
+  public boolean getWillExist()
+  { 
+    BufferTuple buffer=getState().getValue();
+    return buffer!=null && !buffer.isDelete();
+  }
+  
   @Override
   protected void scatter(ServiceContext context)
   {
@@ -319,6 +371,8 @@ public abstract class TupleEditor
       
     
   }  
+  
+
 
   public void setOnSave(Binding<?> onSave)
   { this.onSave=onSave;
