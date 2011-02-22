@@ -38,6 +38,7 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.NullChannel;
+import spiralcraft.lang.util.ChannelBuffer;
 
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -52,7 +53,8 @@ import spiralcraft.textgen.MessageHandler;
 import spiralcraft.util.ArrayUtil;
 
 /**
- * Provides common functionality for Editors
+ * <p>Provides common functionality for Editors
+ * </p>
  * 
  * @author mike
  *
@@ -92,6 +94,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
   private boolean touchNew;
   private Binding<Boolean> touchWhenX;
+  protected Binding<Object> triggerKeyX;
 
   {
     useDefaultTarget=false;
@@ -208,6 +211,21 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     }
   }
   
+  
+  /**
+   * <p>Specify a trigger Expression that will recompute the value of the
+   *   current state when a contextual value changes.
+   * </p>
+   * 
+   * @param triggerKeyX
+   */
+  public void setTriggerKeyX(Binding<Object> triggerKeyX)
+  { 
+    removeParentContextual(this.triggerKeyX);
+    this.triggerKeyX=triggerKeyX;
+    addParentContextual(triggerKeyX);
+    
+  }
   
   /**
    * 
@@ -706,6 +724,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected void scatter(ServiceContext context)
   { 
     EditorState<Tbuffer> state=getState(context);
+    if (triggerKeyX!=null && state.trigger.update())
+    { state.setValue(null);
+    }
+    
     Tbuffer lastBuffer=state.getValue();
    
     super.scatter(context);
@@ -824,8 +846,8 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
   @Override
   public EditorState<Tbuffer> createState()
-  {
-    return new EditorState<Tbuffer>(this);
+  { return new EditorState<Tbuffer>
+      (this,new ChannelBuffer<Object>(triggerKeyX));
   }  
   
     
@@ -842,6 +864,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   public EditorState<Tbuffer> getState()
   { return (EditorState<Tbuffer>) super.getState();
   }
+  
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override

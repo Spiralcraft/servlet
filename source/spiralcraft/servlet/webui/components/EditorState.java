@@ -18,6 +18,7 @@ import java.net.URI;
 
 import spiralcraft.command.Command;
 import spiralcraft.data.session.Buffer;
+import spiralcraft.lang.util.ChannelBuffer;
 import spiralcraft.servlet.webui.ControlGroupState;
 
 
@@ -28,9 +29,12 @@ public class EditorState<T extends Buffer>
   private boolean redirect;
   private URI redirectURI;
   private Command<?,?,?> postSaveCommand;
+  public final ChannelBuffer<?> trigger;
   
-  public EditorState(EditorBase<T> editor)
-  { super(editor);
+  public EditorState(EditorBase<T> editor,ChannelBuffer<?> trigger)
+  { 
+    super(editor);
+    this.trigger=trigger;
   }
   
   public void setRedirect(boolean redirect)
