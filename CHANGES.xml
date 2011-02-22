@@ -16,6 +16,49 @@
     <detail>
       <scm:Change>
         <notes>
+          <scm:Note>Provide a triggerKeyX property to EditorBase that 
+            resets the buffer when specified contextual data changes.
+          </scm:Note>
+          <scm:Note>TupleEditor provides a property "willExist" to check
+            to see whether the "save" operation will result in an existing
+            Tuple as opposed to a deletion.
+          </scm:Note>
+          <scm:Note>TupleEditor provides an "ensureExists" command to 
+            ensure that the "save" operation will result in an existing
+            Tuple.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>EditorBase.java
+          </URI>
+          <URI>EditorState.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>RedirectFilter supports prefix based Redirect logic and
+            temporary or permanent (302 or 301) redirects.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/RedirectFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
           <scm:Note>Ensure that POST content respects the indicated
             character set.
           </scm:Note>
@@ -45,9 +88,9 @@
     
       <scm:Change>
         <notes>
-          <scm:Note>Simplify inheritance by providing a facility to register
-            Contextextuals that need to be bound instead of overriding 
-            protected methods.
+          <scm:Note>Simplify inheritance by providing a facility in Control
+            superclass to register Contextuals that need to be bound instead 
+            of requiring the override of protected methods.
           </scm:Note>
         </notes>
         
