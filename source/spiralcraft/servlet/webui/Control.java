@@ -470,7 +470,12 @@ public abstract class Control<Ttarget>
   }
   
   /**
-   * Add a Contextual to be bound to this Control's parent's context 
+   * <p>Add a Contextual to be bound to this Control's parent's context.
+   * </p>
+   * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
    * 
    * @param contextual
    */
@@ -495,8 +500,13 @@ public abstract class Control<Ttarget>
   }
   
   /**
-   * Add a Contextual to be bound to this Control's target's context 
+   * <p>Add a Contextual to be bound to this Control's target's context 
+   * </p>
    * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
+   *
    * @param contextual
    */
   protected void addTargetContextual(Contextual contextual)
@@ -520,7 +530,12 @@ public abstract class Control<Ttarget>
   }
   
   /**
-   * Add a Contextual to be bound to this Control's own context 
+   * <p>Add a Contextual to be bound to this Control's own context 
+   * </p>
+   * 
+   * <p>The Focus returned by the Contextual will not be used by this
+   *   component.
+   * </p>
    * 
    * @param contextual
    */
