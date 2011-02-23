@@ -26,6 +26,7 @@ import java.util.List;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.StateFrame;
 import spiralcraft.util.URIUtil;
+import spiralcraft.util.thread.ThreadLocalStack;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,6 +64,13 @@ public class ServiceContext
   private static final Level debugLevel
     =ClassLog.getInitialDebugLevel(ServiceContext.class,null);
   
+  private static final ThreadLocalStack<ServiceContext> threadContext
+    =new ThreadLocalStack<ServiceContext>(true);
+  
+  public static final ServiceContext get()
+  { return threadContext.get();
+  }
+  
 //  private static final Charset UTF_8=Charset.forName("UTF-8");
   
   private ResourceSession resourceSession;
@@ -80,7 +88,9 @@ public class ServiceContext
   
   
   public ServiceContext(Writer writer,boolean stateful,StateFrame frame)
-  { super(writer,stateful,frame);
+  { 
+    super(writer,stateful,frame);
+    threadContext.push(this);
   }
 
   
@@ -154,7 +164,7 @@ public class ServiceContext
     }
     commandProcessor=null;
     redirectURI=null;
-    
+    threadContext.pop();
   }
   
   URI getRedirectURI()
