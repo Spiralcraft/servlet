@@ -14,10 +14,17 @@
     </date>
 
     <detail>
+      
       <scm:Change>
         <notes>
           <scm:Note>Provide a triggerKeyX property to EditorBase that 
             resets the buffer when specified contextual data changes.
+          </scm:Note>
+          <scm:Note>Add retainNew parameter to EditorBase (defaults to true)
+            to permit turning off automatic retention of unsaved data.
+          </scm:Note>
+          <scm:Note>Do not retain new, unsaved buffers that have been marked
+            for deletion. 
           </scm:Note>
           <scm:Note>TupleEditor provides a property "willExist" to check
             to see whether the "save" operation will result in an existing
@@ -27,7 +34,7 @@
             ensure that the "save" operation will result in an existing
             Tuple.
           </scm:Note>
-
+          
         </notes>
         
         <path>source/spiralcraft/servlet/webui/components
@@ -103,6 +110,17 @@
           <URI>ControlGroup.java
           </URI>
         </resources>
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
+          <scm:Note>ServiceContext pushes itself onto a static 
+            ThreadLocaLStack so all methods can access it via
+            ServiceContext.get()
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/servlet/webui/ServiceContext
+        </path>
       </scm:Change>
       
       <scm:Change>
