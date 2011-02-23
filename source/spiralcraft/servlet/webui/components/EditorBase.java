@@ -91,6 +91,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected boolean autoCreate;
   protected boolean autoSave;
   protected boolean retain;
+  protected boolean retainNew=true;
 
   private boolean touchNew;
   private Binding<Boolean> touchWhenX;
@@ -236,6 +237,15 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   { this.redirectOnSaveURI=uri;
   }
   
+  
+  /**
+   * 
+   * @param retainNew whether a new, unsaved buffer will be retained if the
+   *   target to be edited returns null. Defaults to true.
+   */
+  public void setRetainNew(boolean retainNew)
+  { this.retainNew=retainNew;
+  }
   
   /**
    * @param param The query string parameter which holds the URI to
@@ -715,7 +725,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   protected void gather(ServiceContext context)
   { 
     if (autoSave)
-    { getState(context).queueCommand(saveCommand());
+    { 
+      if (debug)
+      { log.debug("Queueing save command on auto-save");
+      }
+      getState(context).queueCommand(saveCommand());
     }
     super.gather(context);
   }
@@ -759,10 +773,16 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       }
       else if (lastBuffer.getOriginal()==null)
       { 
-        if (debug)
-        { logFine("New buffer is sticky "+lastBuffer);
+        if (retainNew 
+            && (!lastBuffer.isTuple() || !lastBuffer.asTuple().isDelete())
+           )
+        {
+          // Don't retain new buffers that have been deleted
+          if (debug)
+          { logFine("New buffer is sticky "+lastBuffer);
+          }
+          state.setValue(lastBuffer);
         }
-        state.setValue(lastBuffer);
       }
       else
       {
