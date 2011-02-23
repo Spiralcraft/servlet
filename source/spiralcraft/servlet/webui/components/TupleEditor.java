@@ -91,8 +91,18 @@ public abstract class TupleEditor
               try
               { 
                 BufferTuple tuple=getState().getValue();
+                if (TupleEditor.this.debug)
+                { log.fine("Existing value is "+tuple);
+                }
                 if (tuple==null)
-                { newBuffer();
+                { 
+                  newBuffer();
+                  setInitialValues(getState().getValue());
+                  applyRequestBindings(ServiceContext.get());
+                  
+                  if (TupleEditor.this.debug)
+                  { log.fine("Created new buffer "+getState().getValue());
+                  }
                 }
                 else if (tuple.isDelete())
                 { tuple.undelete();
