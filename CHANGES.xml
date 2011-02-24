@@ -14,6 +14,26 @@
     </date>
 
     <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>New mechanism to support the use of Editors using Links
+            without Forms.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>Acceptor.java
+          </URI>
+          <URI>LinkAcceptor.java
+          </URI>
+          <URI>html/Link.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
       
       <scm:Change>
         <notes>
