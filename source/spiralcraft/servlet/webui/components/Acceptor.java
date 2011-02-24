@@ -1,5 +1,5 @@
 //
-//Copyright (c) 2008,2008 Michael Toth
+//Copyright (c) 2008,2011 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -144,6 +144,10 @@ public abstract class Acceptor<T>
 
   
   protected abstract boolean wasActioned(ServiceContext context);
+
+  protected String pathToActionName(int[] path)
+  { return ArrayUtil.format(path,".",null);
+  }
   
   /**
    * <p>Create a new Action target for the Acceptor
@@ -158,7 +162,7 @@ public abstract class Acceptor<T>
     
     String pathString;
     if (isClearable)
-    { pathString=ArrayUtil.format(path,".",null);
+    { pathString=pathToActionName(path);
     }
     else
     { pathString=clientPostActionName;

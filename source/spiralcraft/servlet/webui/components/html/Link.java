@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 1998,2011 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -23,9 +23,12 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.util.LangUtil;
+import spiralcraft.log.Level;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.Component;
+import spiralcraft.servlet.webui.components.LinkAcceptor;
 
 import spiralcraft.util.ArrayUtil;
 
@@ -52,6 +55,8 @@ public class Link
   private Channel<Command<?,?,?>> commandChannel;
   private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag(tag);
+  private String[] queueActions;
+  private LinkAcceptor<?> linkAcceptor;
   
   public void setX(Expression<Command<?,?,?>> expression)
   { commandExpression=expression;
@@ -100,12 +105,17 @@ public class Link
     { commandChannel=focus.bind(commandExpression);
     }
 
+    linkAcceptor=LangUtil.findInstance(LinkAcceptor.class,focus);
 
     tag.bind(focus);
     errorTag.bind(focus);
     
     bindChildren(focus,childUnits);
     
+  }
+  
+  public void setQueueActions(String[] actionNames)
+  { this.queueActions=actionNames;
   }
   
   public Tag getTag()
@@ -138,9 +148,34 @@ public class Link
       @Override
       public void invoke(ServiceContext context)
       { 
-        command.execute();
-        if (command.getException()!=null)
-        { command.getException().printStackTrace();
+        if (command!=null)
+        {
+          command.execute();
+          if (command.getException()!=null)
+          { 
+            log.log
+              (Level.WARNING
+              ,Link.this.getErrorContext()+": Error running link command"
+              ,command.getException()
+              );
+          }
+        }
+        
+        // XXX Note, this should not be global, need to come up with
+        //   contextual trigger mechanism
+        if (queueActions!=null)
+        { 
+          for (String actionName:queueActions)
+          { 
+            if (debug)
+            { log.fine("Queuing action "+actionName);
+            }
+            ServiceContext.get().queueAction(actionName);
+          }
+        }
+        
+        if (linkAcceptor!=null)
+        { linkAcceptor.linkActioned();
         }
       }
     };
