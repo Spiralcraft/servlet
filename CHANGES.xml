@@ -16,6 +16,18 @@
     <detail>
       <scm:Change>
         <notes>
+          <scm:Note>Add afterCommitX property to ControlGroup to trigger
+            functionality after a successful transaction commit.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/ControlGroup.java
+        </path>
+              
+      </scm:Change>
+
+      <scm:Change>
+        <notes>
           <scm:Note>New mechanism to support the use of Editors using Links
             without Forms.
           </scm:Note>
