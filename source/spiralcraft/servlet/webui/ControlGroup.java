@@ -146,8 +146,15 @@ public abstract class ControlGroup<Ttarget>
       if (newTransaction)
       { 
         transaction.commit();
+
         if (afterCommitX!=null)
-        { afterCommitX.get();
+        { 
+          try
+          { afterCommitX.get();
+          }
+          catch (Exception x)
+          { handleException(context,x);
+          }
         }
       }
     }
