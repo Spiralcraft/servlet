@@ -23,6 +23,7 @@ import spiralcraft.data.transaction.Transaction;
 import spiralcraft.data.transaction.TransactionException;
 import spiralcraft.lang.BindException;
 
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.AccessException;
@@ -66,8 +67,14 @@ public abstract class ControlGroup<Ttarget>
   private String variableName;
   
   protected boolean useDefaultTarget=true;
+  private Binding<?> afterCommitX;
 
-
+  public void setAfterCommitX(Binding<?> afterCommitX)
+  { 
+    this.removeTargetContextual(this.afterCommitX);
+    this.addTargetContextual(afterCommitX);
+    this.afterCommitX=afterCommitX;
+  }
 
   @Override
   public String getVariableName()
@@ -137,7 +144,11 @@ public abstract class ControlGroup<Ttarget>
       }
       
       if (newTransaction)
-      { transaction.commit();
+      { 
+        transaction.commit();
+        if (afterCommitX!=null)
+        { afterCommitX.get();
+        }
       }
     }
     catch (RollbackException x)
