@@ -20,6 +20,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.command.Command;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -57,9 +58,46 @@ public class Link
   private ErrorTag errorTag=new ErrorTag(tag);
   private String[] queueActions;
   private LinkAcceptor<?> linkAcceptor;
+  private String fragment;
+  private Binding<String> fragmentX;
   
+  /**
+   * An Expression which evaluates to the command that will be invoked when
+   *   the link is clicked.
+   *   
+   * @param expression
+   */
   public void setX(Expression<Command<?,?,?>> expression)
   { commandExpression=expression;
+  }
+  
+  /**
+   * <p>An Expression which evaluates to the fragment portion of the URL that
+   *   will be generated. 
+   * </p>
+   * 
+   * <p>If the static fragment property is also specified, it will be used 
+   *   as a prefix to this value.
+   * </p>
+   *   
+   * @param fragmentX
+   */
+  public void setFragmentX(Binding<String> fragmentX)
+  { this.fragmentX=fragmentX;
+  }
+  
+  /**
+   * <p>A static fragment portion of the URL that will be generated.
+   * </p>
+   * 
+   * <p>If the fragmentX property is also specified, it will be prefixed with
+   *   this value.
+   * </p>
+   *   
+   * @param fragmentX
+   */
+  public void setFragment(String fragment)
+  { this.fragment=fragment;
   }
   
   public class Tag extends AbstractTag
@@ -78,6 +116,21 @@ public class Link
         =((ServiceContext) context)
           .registerAction(createAction(context));
       
+      String fragmentVal=null;
+      if (fragmentX!=null)
+      { fragmentVal=fragmentX.get();
+      }
+      
+      if (fragmentVal==null)
+      { fragmentVal=fragment;
+      }
+      else if (fragment!=null)
+      { fragmentVal=fragment+fragmentVal;
+      }
+      
+      if (fragmentVal!=null)
+      { actionURI=actionURI+"#"+fragmentVal;
+      }
       
       renderAttribute(context.getOutput(),"href",actionURI);
       super.renderAttributes(context);
@@ -110,6 +163,9 @@ public class Link
     tag.bind(focus);
     errorTag.bind(focus);
     
+    if (fragmentX!=null)
+    { fragmentX.bind(focus);
+    }
     bindChildren(focus,childUnits);
     
   }
