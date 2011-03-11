@@ -15,6 +15,24 @@
 
     <detail>
       <scm:Change>
+        <revision>-rc6
+        </revision>
+        
+        <notes>
+          <scm:Note>Link now permits specification of fragment portion of the 
+            generated URL using the fragment and fragmentX properties. 
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Link.java
+        </path>
+              
+      </scm:Change>
+
+      <scm:Change>
+        <revision>-rc5
+        </revision>
+
         <notes>
           <scm:Note>Add afterCommitX property to ControlGroup to trigger
             functionality after a successful transaction commit.
