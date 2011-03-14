@@ -61,8 +61,14 @@ public class UICache
   }  
   
   /**
+   * <p>Get or create a bound UI RootComponent defined by a source code 
+   *   Resource and uniquely identified by a ServletContext relative path 
+   *   String.
+   * </p>
+   *   
    * 
-   * @param contextRelativePath The path relative to the ServletContext
+   * @param resource The source code file for the UI component
+   * @param instancePath The path relative to the ServletContext
    *   that uniquely identifies the UI component
    *   
    * @return The RootComponent associated with the path
@@ -124,11 +130,17 @@ public class UICache
   }
   
   /**
-   * Find or create the ResourceUnit that references the compiled textgen 
-   *  doclet.
+   * <p>Find or create the UIResourceUnit that references the compiled textgen 
+   *  doclet within the specified context.
+   * </p>
    * 
-   * @param contextRelativePath The path relative to the ServletContext
+   * @param resource  The path relative to the ServletContext
    *   of the textgen source doclet
+   * @param instancePath  A path string corresponding to the contextually
+   *   scoped instance of the UIResourceUnit. The instancePath is used to cache
+   *   the UIResourceUnit generated from the source code file within a given
+   *   context.
+   *  
    * @return
    * @throws ServletException
    * @throws IOException
@@ -157,8 +169,14 @@ public class UICache
   }
   
   /**
-   * Get the component instance that is identified by the specified path
-   *   relative to the ServletContext
+   * <p>Get or create the component instance that is identified by the specified 
+   *   path relative to the ServletContext and is derived from the provided
+   *   RootUnit instance.
+   * </p>
+   * 
+   * <p>If the instancePath is not found, or the supplied RootUnit is different
+   *   than the previously bound unit, a new RootComponent will be returned.
+   * </p>
    * 
    * @param contextRelativePath
    * @return
