@@ -10,10 +10,23 @@
     <authorId>miketoth
     </authorId>
     
-    <date>
+    <date>2011-03-30
     </date>
 
     <detail>
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Experimental (not yet functional) 
+            "Script" component for managing javascript
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Script.java
+        </path>
+              
+      </scm:Change>
+          
       <scm:Change>
         <revision>-rc6
         </revision>
