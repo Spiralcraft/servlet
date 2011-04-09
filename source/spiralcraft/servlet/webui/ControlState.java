@@ -24,7 +24,6 @@ import spiralcraft.rules.RuleException;
 import spiralcraft.rules.Violation;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.MementoState;
-import spiralcraft.textgen.StateFrame;
 
 /**
  * <p>An ElementState associated with a named Form control.
@@ -51,7 +50,6 @@ public class ControlState<Tbuf>
   private ArrayList<Command<Tbuf,?,?>> commands;
 //  private DataState dataState=DataState.INIT;
   private boolean presented;
-  private StateFrame currentFrame;
   
 
   public ControlState(Control<?> control)
@@ -59,20 +57,7 @@ public class ControlState<Tbuf>
     super(control.getChildCount());
     this.control=control;
   }
-  
-  public boolean frameChanged(StateFrame frame)
-  { 
-    if (currentFrame!=frame)
-    { 
-      if (control.isDebug())
-      { control.logFine("Frame changed to "+frame+" from "+currentFrame);
-      }
-      currentFrame=frame;
-      return true;
-    }
-    return false;
-  }
-  
+   
   public void setPresented(boolean presented)
   { this.presented=presented;
   }
