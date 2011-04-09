@@ -47,7 +47,7 @@ public class TextInput<Ttarget>
   
   private Tag tag=new Tag();
   
-  class Tag 
+  public class Tag 
     extends AbstractTag
   {
     @Override
@@ -55,6 +55,14 @@ public class TextInput<Ttarget>
     { return "input";
     }
 
+    public void setSize(int size)
+    { this.appendAttribute("size",Integer.toString(size));
+    }
+
+    public void setMaxlength(int maxlength)
+    { this.appendAttribute("maxlength",Integer.toString(maxlength));
+    }
+    
     @Override
     protected void renderAttributes(EventContext context)
       throws IOException
