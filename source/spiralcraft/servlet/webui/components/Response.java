@@ -33,7 +33,6 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
 import spiralcraft.textgen.MessageHandler;
-import spiralcraft.textgen.compiler.TglUnit;
 
 
 /**
@@ -90,7 +89,7 @@ public class Response
   }
   
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
 
@@ -106,7 +105,7 @@ public class Response
     for (Assignment<?> assignment: assignments)
     { setters.add(assignment.bind(focus));
     }
-    super.bind(focus,childUnits);
+    return super.bind(focus);
   }  
   
 

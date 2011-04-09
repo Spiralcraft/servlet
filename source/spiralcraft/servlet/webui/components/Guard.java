@@ -19,7 +19,6 @@ package spiralcraft.servlet.webui.components;
 import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -39,7 +38,6 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.Message;
-import spiralcraft.textgen.compiler.TglUnit;
 
 
 /**
@@ -82,13 +80,13 @@ public class Guard
   }
 
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     setupSession(focus);
     focus=focus.chain(sessionChannel);
     focus.addFacet(getAssembly().getFocus());
-    super.bind(focus,childUnits);
+    return super.bind(focus);
   }  
   
 

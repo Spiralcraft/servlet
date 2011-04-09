@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -37,7 +36,6 @@ import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.compiler.TglUnit;
 
 
 /**
@@ -90,7 +88,7 @@ public class Redirect
   }
   
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     if (when!=null)
@@ -99,7 +97,7 @@ public class Redirect
     if (locationX!=null)
     { locationChannel=focus.bind(locationX);
     }
-    super.bind(focus,childUnits);
+    return super.bind(focus);
   }  
   
 

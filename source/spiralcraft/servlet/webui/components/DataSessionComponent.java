@@ -18,7 +18,6 @@ package spiralcraft.servlet.webui.components;
 import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
-import java.util.List;
 
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
@@ -44,8 +43,6 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
-import spiralcraft.textgen.StateFrame;
-import spiralcraft.textgen.compiler.TglUnit;
 
 public class DataSessionComponent
   extends Component
@@ -69,7 +66,7 @@ public class DataSessionComponent
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     if (debug)
@@ -112,7 +109,7 @@ public class DataSessionComponent
     defaultSetters=Assignment.bindArray(defaultAssignments,focus);
     setters=Assignment.bindArray(assignments,focus);
     bindRequestBindings(focus);
-    bindChildren(focus,childUnits);
+    return super.bind(focus);
   }
   
 //  @Override
@@ -309,7 +306,7 @@ public class DataSessionComponent
       }
       VariableMap query=context.getQuery();
       for (RequestBinding<?> binding: requestBindings)
-      { binding.getBinding().read(query);
+      { binding.read(query);
       }
     }
   }
@@ -373,7 +370,6 @@ class DataSessionState
 
   private DataSession session;
   private boolean initialized;
-  private volatile StateFrame currentFrame;
   private boolean requestBindingsApplied;
   
   public DataSessionState(DataSession session,int childCount)
@@ -382,18 +378,7 @@ class DataSessionState
     this.session=session;
     
   }
-
-  public boolean frameChanged(StateFrame frame)
-  { 
-    if (currentFrame!=frame)
-    { 
-      currentFrame=frame;
-      return true;
-    }
-    return false;
-      
-  }
-  
+ 
   public boolean isInitialized()
   { return initialized;
   }

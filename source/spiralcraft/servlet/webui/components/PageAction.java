@@ -14,7 +14,6 @@
 //
 package spiralcraft.servlet.webui.components;
 
-import java.util.List;
 
 import spiralcraft.command.Command;
 import spiralcraft.lang.BindException;
@@ -31,7 +30,6 @@ import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.util.ArrayUtil;
 
@@ -141,14 +139,13 @@ public class PageAction
   }
   
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     if (commandExpression!=null)
     { commandChannel=focus.bind(commandExpression);
     }
-
-    bindChildren(focus,childUnits);
+    return super.bind(focus);
   }  
   
   /**
