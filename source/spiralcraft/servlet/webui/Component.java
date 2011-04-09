@@ -49,40 +49,18 @@ import java.util.LinkedList;
  *   Actions delivered to components from the containing servlet.
  * </p>
  * 
+ * <p>Node: Component is in transition while webui is migrated to the
+ *   common spiralcraft.app.Component model
+ * </p>
+ * 
  * @author mike
  *
  */
 public abstract class Component
   extends Element
 {
-//  private Component parentComponent;
-  
-//  private Expression<?> beforeRequest;
-//  private Expression<?> afterRequest;
-//  
-//  private Expression<?> beforePrepare;
-//  private Expression<?> afterPrepare;
-//  
-//  private Expression<?> beforeRender;
-//  private Expression<?> afterRender;
-  
-//  public Component getParentComponent()
-//  { return parentComponent;
-//  }
-  
 
-//  @Override
-//  protected void setParent(Element parentElement)
-//  {
-//    super.setParent(parentElement);
-//    if (parentElement!=null)
-//    { 
-//      this.parentComponent
-//        =parentElement.<Component>findElement(Component.class);
-//    }
-//
-//  }
-
+  
   @Override
   public void message
     (EventContext context
@@ -137,10 +115,7 @@ public abstract class Component
 
   }
 
-      
-  public void destroy()
-  {
-  }
+
   
   /**
    * <p>Called as soon as a request comes in, before actions
