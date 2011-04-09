@@ -6,7 +6,6 @@ import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.compiler.TglUnit;
 
 
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.vfs.Resource;
@@ -27,16 +26,7 @@ public class RootUnit
   
   public RootComponent bindRoot(Focus<?> focus)
     throws MarkupException
-  {
-    RootComponent element=new RootComponent();
-    
-    try
-    { element.bind(focus,children);
-    }
-    catch (BindException x)
-    { throw new MarkupException(x.toString(),getPosition());
-    }
-    return element;    
+  { return (RootComponent) bind(focus,null,new RootComponent());
   }
   
 }

@@ -16,7 +16,6 @@ package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.command.Command;
 import spiralcraft.lang.BindException;
@@ -34,7 +33,6 @@ import spiralcraft.servlet.webui.components.LinkAcceptor;
 import spiralcraft.util.ArrayUtil;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * <P>A Link, bound to a Command. The "x" (binding target) property contains an
@@ -151,7 +149,7 @@ public class Link
   }
   
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     if (commandExpression!=null)
@@ -166,8 +164,7 @@ public class Link
     if (fragmentX!=null)
     { fragmentX.bind(focus);
     }
-    bindChildren(focus,childUnits);
-    
+    return super.bind(focus);    
   }
   
   public void setQueueActions(String[] actionNames)

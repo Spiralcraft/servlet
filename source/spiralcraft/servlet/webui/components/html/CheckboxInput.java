@@ -15,12 +15,10 @@
 package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
-import java.util.List;
 
 import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.compiler.TglUnit;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
@@ -107,10 +105,10 @@ public class CheckboxInput
   }
 
   @Override
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
-    super.bind(focus,childUnits);
+    super.bind(focus);
     
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
@@ -123,6 +121,7 @@ public class CheckboxInput
       throw new BindException
         ("CheckboxInput can only be bound to a boolean target");
     }
+    return focus;
         
   }
   
