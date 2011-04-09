@@ -98,8 +98,9 @@ public class UICache
           { 
             ExceptionComponent component
               =new ExceptionComponent(resourceUnit.getException());
+            component.setScaffold(unit);
             try
-            { component.bind(null,null);
+            { component.bind(null);
             }
             catch (BindException x)
             { throw new ServletException(x);
@@ -115,7 +116,7 @@ public class UICache
         ExceptionComponent component
           =new ExceptionComponent(x);
         try
-        { component.bind(null,null);
+        { component.bind(null);
         }
         catch (BindException y)
         { throw new ServletException(y);

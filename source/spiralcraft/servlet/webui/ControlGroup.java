@@ -37,7 +37,6 @@ import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
 
-import spiralcraft.textgen.compiler.TglUnit;
 
 /**
  * <p>Groups a number of related Controls to create a single complex target
@@ -253,7 +252,7 @@ public abstract class ControlGroup<Ttarget>
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   // Not using generic versions
-  public final void bind(Focus<?> focus,List<TglUnit> childUnits) throws BindException,
+  public final Focus<?> bind(Focus<?> focus) throws BindException,
       MarkupException
   {
     if (debug)
@@ -363,7 +362,8 @@ public abstract class ControlGroup<Ttarget>
     computeDistances();
     focus=bindExports(focus);
 
-    bindChildren(focus,childUnits);
+    bindChildren(focus);
+    return focus;
   }
 
   /**

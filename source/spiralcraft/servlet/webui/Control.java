@@ -24,7 +24,6 @@ import spiralcraft.textgen.EventContext;
 
 import spiralcraft.textgen.Message;
 
-import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.textgen.elements.Iterate;
 import spiralcraft.util.ArrayUtil;
 
@@ -574,7 +573,7 @@ public abstract class Control<Ttarget>
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public void bind(Focus<?> focus,List<TglUnit> childUnits)
+  public Focus<?> bind(Focus<?> focus)
     throws BindException,MarkupException
   { 
     bindContextuals(focus,parentContextuals);
@@ -615,7 +614,7 @@ public abstract class Control<Ttarget>
         ,focus
         );
     }
-    bindChildren(focus,childUnits);
+    return super.bind(focus);
     
   }
   

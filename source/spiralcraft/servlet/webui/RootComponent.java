@@ -17,14 +17,12 @@ package spiralcraft.servlet.webui;
 import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.Message;
-import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.time.Clock;
 
 import spiralcraft.command.Command;
@@ -86,7 +84,7 @@ public class RootComponent
   @Override
   @SuppressWarnings({"unchecked","rawtypes"})
   // Not using generic versions
-  public final void bind(Focus<?> focus,List<TglUnit> childUnits) 
+  public final Focus<?> bind(Focus<?> focus) 
     throws BindException,MarkupException
   {
     if (debug)
@@ -103,7 +101,7 @@ public class RootComponent
         (BeanReflector.<ServiceContext>getInstance(ServiceContext.class));
     compoundFocus.addFacet
       (new SimpleFocus(threadLocal));
-    super.bind(focus,childUnits);
+    return super.bind(focus);
   }
   /**
    * 
