@@ -4,6 +4,195 @@
 
   <scm:Change>
   
+    <revision>0.4.14
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+
+    <detail>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>Session component provides scope that spans multiple
+            requests, with requestBindings property to update self on
+            each request.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Session.java
+        </path>
+        
+      </scm:Change>
+          
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>RequestData component simplifies access to Request 
+            query variables.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/RequestData.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>Added size and maxlength properties to TextInput tag
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/TextInput.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>RequestBinding doesn't expose VariableMap implementation
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>Editor.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+          <URI>RequestBinding.java
+          </URI>
+          <URI>DataSessionComponent.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>textgen ElementState now handles StateFrame change detection
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ControlState.java
+          </URI>
+          <URI>components/DataSessionComponent.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>textgen TglUnit and Element interface signature changes
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>autofilter/ReferenceFocusFilter.java
+          </URI>
+          <URI>webui/Control.java
+          </URI>
+          <URI>webui/ControlGroup.java
+          </URI>
+          <URI>webui/RootComponent.java
+          </URI>
+          <URI>webui/UICache.java
+          </URI>
+          <URI>components/DataSessionComponent.java
+          </URI>
+          <URI>components/Guard.java
+          </URI>
+          <URI>components/PageAction.java
+          </URI>
+          <URI>components/Redirect.java
+          </URI>
+          <URI>components/Response.java
+          </URI>
+          <URI>components/html/Link.java
+          </URI>
+          <URI>components/html/CheckboxInput.java
+          </URI>
+          <URI>textgen/RootUnit.java
+          </URI>
+        </resources>
+              
+      </scm:Change>
+      
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>ThreadContextual interface is now Context
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>autofilter/ReferenceFocusFilter.java
+          </URI>
+        </resources>
+              
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>Experimental (not yet functional) 
+            "Script" component for managing javascript
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Script.java
+        </path>
+              
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.13
     </revision>
 
