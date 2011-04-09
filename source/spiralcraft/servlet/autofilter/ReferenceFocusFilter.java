@@ -24,7 +24,7 @@ import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
-import spiralcraft.lang.ThreadContextual;
+import spiralcraft.lang.Context;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
@@ -142,7 +142,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     }
     
     threaded
-      =ThreadContextual.class.isAssignableFrom
+      =Context.class.isAssignableFrom
         (focus.getSubject().getContentType());
     subject=focus.getSubject();
     return focus;
@@ -252,7 +252,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   protected void popSubject(HttpServletRequest request)
   {
     if (threaded)
-    { ((ThreadContextual) subject.get()).pop();
+    { ((Context) subject.get()).pop();
     }
     if (scope==Scope.SESSION)
     { transientBinding.pop();
@@ -322,7 +322,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
       
     }
     if (threaded)
-    { ((ThreadContextual) subject.get()).push();
+    { ((Context) subject.get()).push();
     }
   }
 
