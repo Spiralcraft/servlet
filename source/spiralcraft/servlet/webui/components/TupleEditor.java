@@ -284,7 +284,7 @@ public abstract class TupleEditor
         if (debug)
         { logFine("applying requestBinding "+binding.getName());
         }
-        binding.getBinding().read(context.getQuery());
+        binding.read(context.getQuery());
         binding.publish(context);
       }
     }

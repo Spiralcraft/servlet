@@ -605,7 +605,7 @@ public abstract class Editor
         if (debug)
         { log.fine("Applying requestBinding "+binding.getName());
         }
-        binding.getBinding().read(context.getQuery());
+        binding.read(context.getQuery());
         binding.publish(context);
       }
     }

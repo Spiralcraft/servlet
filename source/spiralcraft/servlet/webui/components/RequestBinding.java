@@ -18,6 +18,7 @@ import java.util.List;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 
@@ -25,6 +26,7 @@ import spiralcraft.lang.parser.AssignmentNode;
 import spiralcraft.lang.util.ExpressionStringConverter;
 
 import spiralcraft.log.ClassLog;
+import spiralcraft.net.http.VariableMap;
 import spiralcraft.net.http.VariableMapBinding;
 
 import spiralcraft.servlet.webui.ServiceContext;
@@ -41,6 +43,7 @@ import spiralcraft.util.string.StringConverter;
  *
  */
 public class RequestBinding<Tval>
+  implements Contextual
 {
   private static final ClassLog log
     =ClassLog.getInstance(RequestBinding.class);
@@ -114,7 +117,8 @@ public class RequestBinding<Tval>
   }
   
   @SuppressWarnings("unchecked")
-  public void bind(Focus<?> focus)
+  @Override
+  public Focus<?> bind(Focus<?> focus)
     throws BindException
   { 
     if (assignment)
@@ -163,7 +167,7 @@ public class RequestBinding<Tval>
     if (translator!=null)
     { binding.setTranslator(translator);
     }
-  
+    return focus;
   }
   
   public void setPublish(boolean publish)
@@ -178,6 +182,10 @@ public class RequestBinding<Tval>
     }
   }
       
+  public void read(VariableMap map)
+  { binding.read(map);
+  }
+  
   public void publish(ServiceContext context)
   {
     if (publish)
