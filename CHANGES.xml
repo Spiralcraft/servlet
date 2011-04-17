@@ -1,7 +1,33 @@
 <scm:Change.list
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
+  <scm:Change>
+    <revision>0.4.13.1
+    </revision>
 
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2011-04-16
+    </date>
+
+    <detail>
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Fix to track spiralcraft.net.smtp.Envelope API changes
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/SMTP.java
+        </path>
+              
+      </scm:Change>
+    </detail>
+  
+  
+  </scm:Change>
+  
   <scm:Change>
   
     <revision>0.4.13
