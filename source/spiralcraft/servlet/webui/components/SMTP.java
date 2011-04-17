@@ -201,7 +201,7 @@ public class SMTP
         { getState().addError("Missing sender address");
         }
         else if 
-          (envelope.getRecipients()==null || envelope.getRecipients().isEmpty())
+          (envelope.getRecipientList()==null || envelope.getRecipientList().isEmpty())
         { getState().addError("Missing recipients");
         }
         else
@@ -214,7 +214,7 @@ public class SMTP
           if (debug)
           {  
             log.fine
-              ("Sent to "+envelope.getRecipients()
+              ("Sent to "+envelope.getRecipientList()
               +"\r\n"+envelope.getEncodedMessage()
               );
           }
