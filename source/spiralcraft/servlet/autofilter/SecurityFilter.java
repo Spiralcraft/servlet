@@ -73,6 +73,7 @@ public class SecurityFilter
   private String cookiePath="/";
   private int minutesToPersist;
   private boolean requireValidCookie;
+  private boolean disableLoginCookies;
 
   private boolean preAuthenticate;
   private String ticketAuthModuleName="local";
@@ -83,12 +84,20 @@ public class SecurityFilter
   }
   
   /**
-   * The amount of time a login should persist. Setting this enables
-   *   persistent login cookies.
+   * A limit on the the amount of time a persistent login is valid. 
    */
   public void setMinutesToPersist(int minutesToPersist)
   { this.minutesToPersist=minutesToPersist;
   }
+  
+  /**
+   * Disables the use of login cookies
+   * 
+   * @param disableLoginCookie
+   */
+  public void setDisableLoginCookies(boolean disableLoginCookies)
+  { this.disableLoginCookies=disableLoginCookies;
+  } 
   
   /**
    * Attempt to authenticate the session as soon as it is created to
@@ -285,7 +294,7 @@ public class SecurityFilter
   }  
 
   private boolean usingCookies()
-  { return minutesToPersist>0 || requireValidCookie; 
+  { return !disableLoginCookies || requireValidCookie; 
   }
   
   /**
@@ -357,11 +366,11 @@ public class SecurityFilter
     //   to provide a basis for ticket forgery prevention, perhaps by using
     //   the expiry time at a minimum, to ensure the uniqueness of each
     //   Ticket
-    
+           
     if (!usingCookies())
     { return;
     }
-      
+    
     VariableMap map=new VariableMap();
     String username=authSessionChannel.get().getPrincipal().getName();
     String password=entry.getPasswordCleartext();
