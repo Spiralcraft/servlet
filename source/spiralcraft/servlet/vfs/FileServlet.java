@@ -666,7 +666,7 @@ public class FileServlet
     )
     throws IOException
   {
-    if (log.canLog(Level.DEBUG))
+    if (debugLevel.isDebug())
     { log.log(Level.DEBUG,"Listing "+container.getURI());
     }
 

@@ -21,6 +21,54 @@
         </revision>
         
         <notes>
+          <scm:Note>Suppress extraneous debug message when directory listing
+            is requested.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/vfs/FileServlet.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>Only disable login cookies when the disableLoginCookies
+            option is used.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
+          <scm:Note>Minor SMTP API update- getRecipients() changed to
+            getRecipientList() in Envelope.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/SMTP.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev1
+        </revision>
+        
+        <notes>
           <scm:Note>Session component provides scope that spans multiple
             requests, with requestBindings property to update self on
             each request.
