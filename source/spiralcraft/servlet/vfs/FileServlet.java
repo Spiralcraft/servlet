@@ -460,7 +460,8 @@ public class FileServlet
     {
       if (!resource.exists())
       { 
-        send404(request,response);
+        response.setStatus(404);
+        response.getOutputStream().flush();
         return;
         
       }
@@ -501,12 +502,8 @@ public class FileServlet
     }
     catch (FileNotFoundException x)
     {
-      response.sendError
-        (404
-        ,"<H2>404 - Not Found</H2>The specified URL, <STRONG>"
-        +request.getRequestURI()
-        +"</STRONG> could not be found on this server."
-        );
+      response.setStatus(404);
+      response.getOutputStream().flush();
     }
     catch (IOException x)
     { 
