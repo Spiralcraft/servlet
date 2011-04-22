@@ -17,6 +17,22 @@
 
       <scm:Change>
         
+        <revision>-dev2
+        </revision>
+        
+        <notes>
+          <scm:Note>FileServlet should not send a message body when a
+            HEAD request results in 404 NOT FOUND
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/vfs/FileServlet.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+        
         <revision>-dev1
         </revision>
         
