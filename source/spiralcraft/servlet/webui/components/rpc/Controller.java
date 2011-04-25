@@ -22,9 +22,11 @@ import spiralcraft.servlet.webui.RequestMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.Acceptor;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
-import spiralcraft.textgen.MessageHandler;
+import spiralcraft.textgen.MessageHandlerChain;
 
+import spiralcraft.textgen.kit.AbstractMessageHandler;
+
+import spiralcraft.app.Message;
 
 public class Controller<T>
   extends Acceptor<T>
@@ -37,13 +39,14 @@ public class Controller<T>
     // Add a handler to invoke the automatic post action after all the
     //   subcomponents have processed the RequestMessage
     addHandler
-      (new MessageHandler()
+      (new AbstractMessageHandler()
       {
         @Override
         public void handleMessage(EventContext context, Message message,
-            boolean postOrder)
+            MessageHandlerChain next)
         { 
-          if (autoPost && postOrder && message.getType()==RequestMessage.TYPE)
+          next.handleMessage(context,message);
+          if (autoPost && message.getType()==RequestMessage.TYPE)
           { createAction(context,false).invoke((ServiceContext) context);
           }
         }
