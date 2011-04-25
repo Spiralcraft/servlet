@@ -1,11 +1,11 @@
 package spiralcraft.servlet.webui.textgen;
 
 import spiralcraft.servlet.webui.RootComponent;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.compiler.TglUnit;
 
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.vfs.Resource;
@@ -25,7 +25,7 @@ public class RootUnit
   }
   
   public RootComponent bindRoot(Focus<?> focus)
-    throws MarkupException
+    throws ContextualException
   { return (RootComponent) bind(focus,null,new RootComponent());
   }
   
