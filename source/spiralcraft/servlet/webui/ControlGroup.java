@@ -14,10 +14,10 @@
 //
 package spiralcraft.servlet.webui;
 
-import java.util.LinkedList;
 import java.util.List;
 
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.transaction.RollbackException;
 import spiralcraft.data.transaction.Transaction;
 import spiralcraft.data.transaction.TransactionException;
@@ -32,10 +32,9 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.spi.SimpleChannel;
 
-import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
 
 
 /**
@@ -87,8 +86,7 @@ public abstract class ControlGroup<Ttarget>
   }
 
   @Override
-  public void message(EventContext context, Message message,
-      LinkedList<Integer> path)
+  public void message(EventContext context, Message message)
   {
 
     // Put our state into ThreadLocal storage so subcontrols can bind to
@@ -131,7 +129,7 @@ public abstract class ControlGroup<Ttarget>
     {
       
 
-      super.message(context, message, path);
+      super.message(context, message);
 
       ControlGroupState<Ttarget> state =getState(context);      
       if (transaction!=null && state.isErrorState())
@@ -252,8 +250,8 @@ public abstract class ControlGroup<Ttarget>
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   // Not using generic versions
-  public final Focus<?> bind(Focus<?> focus) throws BindException,
-      MarkupException
+  public final Focus<?> bind(Focus<?> focus) 
+      throws ContextualException
   {
     if (debug)
     { logFine(" bind():expression=" + expression);
@@ -343,6 +341,7 @@ public abstract class ControlGroup<Ttarget>
         ,focus
         );
     }
+    bindHandlers(focus);
     if (variableName == null && getParent()!=null)
     {
       ControlGroup parentGroup = getParent().findElement(ControlGroup.class);
@@ -491,7 +490,7 @@ public abstract class ControlGroup<Ttarget>
         for (Message newMessage : messageList)
         {
           // Reentrant 
-          message(context, newMessage, null);
+          context.dispatch(newMessage,this,null);
         }
         continue;
       }

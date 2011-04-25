@@ -20,10 +20,9 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.PrepareMessage;
 
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 /**
  * <p>A Component is a unit of web user interface composition. 
@@ -65,7 +64,6 @@ public abstract class Component
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
 //    // Copious
@@ -102,7 +100,7 @@ public abstract class Component
       }
 
 
-      super.message(context,message,path);
+      super.message(context,message);
 
       if (message.getType()==PrepareMessage.TYPE)
       { postPrepare((ServiceContext) context);

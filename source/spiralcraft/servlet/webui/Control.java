@@ -18,11 +18,10 @@ import spiralcraft.rules.Inspector;
 import spiralcraft.rules.Rule;
 import spiralcraft.rules.RuleSet;
 import spiralcraft.rules.Violation;
-import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
 
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
 
 import spiralcraft.textgen.elements.Iterate;
 import spiralcraft.util.ArrayUtil;
@@ -33,6 +32,7 @@ import java.util.List;
 
 
 import spiralcraft.command.Command;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
@@ -560,7 +560,7 @@ public abstract class Control<Ttarget>
   }
   
   protected void bindContextuals(Focus<?> focus,List<Contextual> contextuals)
-    throws BindException
+    throws ContextualException
   { 
     if (contextuals!=null)
     {
@@ -574,7 +574,7 @@ public abstract class Control<Ttarget>
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     bindContextuals(focus,parentContextuals);
     if (expression!=null)
@@ -699,7 +699,6 @@ public abstract class Control<Ttarget>
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
 
@@ -711,7 +710,7 @@ public abstract class Control<Ttarget>
       try
       {
         threadLocalState.set(state);
-        messageInContext(context,message,path);
+        messageInContext(context,message);
       } 
       finally
       {
@@ -724,7 +723,7 @@ public abstract class Control<Ttarget>
       { logFine("Re-entering message()");
       }
       // re-entrant mode
-      messageInContext(context,message,path);
+      messageInContext(context,message);
     }
     
   }
@@ -733,7 +732,6 @@ public abstract class Control<Ttarget>
   private void messageInContext
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {   
     if (message.getType()==GatherMessage.TYPE)
@@ -744,7 +742,7 @@ public abstract class Control<Ttarget>
     } 
     
     try
-    { super.message(context,message,path);
+    { super.message(context,message);
     }
     catch (RuntimeException x)
     { 
