@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Authenticator;
@@ -120,7 +120,7 @@ public class AuthenticateFilter
         bound=true;
       }
     }
-    catch (BindException x)
+    catch (ContextualException x)
     { throw new ServletException("Error binding authenticator",x);
     }
         

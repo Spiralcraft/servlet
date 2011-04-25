@@ -34,6 +34,7 @@ import spiralcraft.data.Type;
 import spiralcraft.data.persist.AbstractXmlObject;
 //import spiralcraft.data.persist.PersistentFocusProvider;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.common.LifecycleException;
 
 
@@ -112,7 +113,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   @Override
   protected Focus<Tfocus> createFocus
     (Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   { 
     URI attributeURI=instanceURI;
     if (attributeURI==null)
@@ -149,7 +150,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   }
 
   private Focus<Tfocus> createConstantFocus(Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   {
     Focus<Tfocus> focus=createStableFocus(parentFocus);
     SimpleChannel<Tfocus> constantChannel
@@ -169,7 +170,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   }
   
   private Focus<Tfocus> createStableFocus(Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   {
     FocusHolder stableFocusHolder
       =new FocusHolder(parentFocus);
@@ -186,7 +187,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   }
 
   private Focus<Tfocus> createTransientFocus(Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   {
     FocusHolder targetFocusHolder
       =new FocusHolder(parentFocus);
@@ -215,7 +216,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     
     @SuppressWarnings({ "unchecked", "rawtypes" }) // Cast reference to contain Tfocus
     public FocusHolder(Focus<?> parentFocus)
-      throws BindException
+      throws ContextualException
     { 
       if (parentFocus==null)
       { parentFocus=new SimpleFocus(null);
@@ -268,7 +269,7 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     (HttpServletRequest request
     ,HttpServletResponse response
     ) 
-    throws BindException
+    throws ContextualException
   {
     if (scope==Scope.SESSION)
     {

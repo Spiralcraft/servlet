@@ -31,6 +31,7 @@ import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.codec.text.Base64Codec;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
@@ -431,7 +432,7 @@ public class SecurityFilter
   @Override
   protected Focus<AuthSession> createFocus
     (Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   { 
     if (authenticator==null)
     { authenticator=new TestAuthenticator();

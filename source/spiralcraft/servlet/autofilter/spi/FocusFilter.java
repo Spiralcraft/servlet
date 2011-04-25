@@ -17,6 +17,7 @@ package spiralcraft.servlet.autofilter.spi;
 import java.io.IOException;
 import java.net.URI;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -229,7 +230,7 @@ public abstract class FocusFilter<T>
    */
   protected abstract Focus<T> createFocus
     (Focus<?> parentFocus)
-    throws BindException;
+    throws ContextualException;
   
   /**
    * Populate the subject of the Focus with the appropriate object for
@@ -239,7 +240,7 @@ public abstract class FocusFilter<T>
    */
   protected abstract void pushSubject
     (HttpServletRequest request,HttpServletResponse response)
-    throws BindException,ServletException;
+    throws ContextualException,ServletException;
   
   /**
    * Restore the subject of the Focus with the object it referenced for this
@@ -354,7 +355,7 @@ public abstract class FocusFilter<T>
         chain.doFilter(request,response);
       }
     }
-    catch (BindException x)
+    catch (ContextualException x)
     { 
       ServletException sx=new ServletException(x.toString());
       sx.initCause(x);
@@ -399,7 +400,7 @@ public abstract class FocusFilter<T>
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private final void init(Focus<?> requestFocus)
-    throws BindException
+    throws ContextualException
   {
   
     

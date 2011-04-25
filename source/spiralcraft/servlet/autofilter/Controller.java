@@ -43,6 +43,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.persist.PersistenceException;
 import spiralcraft.data.persist.XmlBean;
 import spiralcraft.log.ClassLog;
@@ -302,9 +303,25 @@ public class Controller
     contextResourceMap.put("files",contextURI.resolve(filesURI));
     contextResourceMap.put("code",contextURI.resolve(codeURI));
     
-    // Note- this should be conditional on the level of isolation
-    //   we are enforcing.
-    contextResourceMap.setParent(ContextResourceMap.get());
+    // contextResourceMap.setIsolate(true)
+    try
+    { contextResourceMap.bind(focus);
+    }
+    catch (ContextualException x)
+    { 
+      try
+      {
+        throw new ServletException
+          ("Error binding contextResourceMap in "
+          +context.getResource("/").toString()
+          ,x
+          );
+      }
+      catch (MalformedURLException y)
+      { y.printStackTrace();
+      }
+    }
+    
     
   }
   

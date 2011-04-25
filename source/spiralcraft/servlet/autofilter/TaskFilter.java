@@ -18,9 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.command.Command;
+import spiralcraft.common.ContextualException;
 
 import spiralcraft.lang.Assignment;
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Reflector;
 import spiralcraft.lang.Setter;
@@ -100,7 +100,7 @@ public class TaskFilter<Tcontext,Tresult>
   @Override
   protected Focus<Command<Task,Tcontext,Tresult>> createFocus
     (Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   { 
 
     task.bind(parentFocus);

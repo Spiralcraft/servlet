@@ -42,12 +42,11 @@ import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.Element;
 
 
-import spiralcraft.text.ParseException;
-
 import spiralcraft.servlet.HttpFocus;
 
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 
 
@@ -245,7 +244,7 @@ class ResourceEntry
       element=null;
       exception=x;
     }
-    catch (ParseException x)
+    catch (ContextualException x)
     { 
       element=null;
       exception=x;
