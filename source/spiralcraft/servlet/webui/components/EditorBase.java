@@ -48,9 +48,11 @@ import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.SaveMessage;
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
-import spiralcraft.textgen.MessageHandler;
+import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.kit.AbstractMessageHandler;
 import spiralcraft.util.ArrayUtil;
+
+import spiralcraft.app.Message;
 
 /**
  * <p>Provides common functionality for Editors
@@ -101,51 +103,49 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     useDefaultTarget=false;
     
     addHandler
-      (new MessageHandler()
+      (new AbstractMessageHandler()
       {
 
         @Override
         public void handleMessage(EventContext context, Message message,
-            boolean postOrder)
+            MessageHandlerChain next)
         { 
           EditorState<Tbuffer> state=getState(context);
           if (message.getType()==SaveMessage.TYPE)
           {
-            if (!postOrder)
-            {
-              // Save on descent
-              try
-              { save();
-              }
-              catch (DataException x)
-              { handleException(context,x);
-              }
+            // Save on descent
+            try
+            { save();
             }
-            else
-            {
-              // Run post-save command on ascent
-              Command<?,?,?> postSaveCommand=state.getPostSaveCommand();
-              if (postSaveCommand!=null)
-              { 
-                if (!state.isErrorState())
-                { 
-                  if (debug)
-                  { logFine("Executing "+postSaveCommand);
-                  }
-                  postSaveCommand.execute();
-                  if (postSaveCommand.getException()!=null)
-                  { handleException(context,postSaveCommand.getException());
-                  }
-                  
-                }
-                state.setPostSaveCommand(null);
-              }
+            catch (DataException x)
+            { handleException(context,x);
             }
           }
           
-          if (postOrder 
-              && state.isRedirect()
-              )
+          next.handleMessage(context,message);
+          
+          if (message.getType()==SaveMessage.TYPE)
+          {
+            // Run post-save command on ascent
+            Command<?,?,?> postSaveCommand=state.getPostSaveCommand();
+            if (postSaveCommand!=null)
+            { 
+              if (!state.isErrorState())
+              { 
+                if (debug)
+                { logFine("Executing "+postSaveCommand);
+                }
+                postSaveCommand.execute();
+                if (postSaveCommand.getException()!=null)
+                { handleException(context,postSaveCommand.getException());
+                }
+                  
+              }
+              state.setPostSaveCommand(null);
+            }
+          }
+          
+          if (state.isRedirect())
           { 
             URI uri=state.getRedirectURI();
             state.setRedirect(false);

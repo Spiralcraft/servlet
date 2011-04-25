@@ -17,8 +17,8 @@ package spiralcraft.servlet.webui.components;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.LinkedList;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
@@ -39,10 +39,10 @@ import spiralcraft.net.http.VariableMap;
 
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
+
+import spiralcraft.app.Message;
 
 public class DataSessionComponent
   extends Component
@@ -67,7 +67,7 @@ public class DataSessionComponent
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws  ContextualException
   { 
     if (debug)
     { log.fine("DataSession.bind() "+focus);
@@ -195,7 +195,6 @@ public class DataSessionComponent
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     ) 
   {
 
@@ -210,7 +209,7 @@ public class DataSessionComponent
       }
     
       
-      super.message(context,message,path);
+      super.message(context,message);
       if (debug)
       { 
         log.fine

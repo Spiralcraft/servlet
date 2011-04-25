@@ -16,7 +16,6 @@ package spiralcraft.servlet.webui.components;
 
 
 
-import java.util.LinkedList;
 
 import spiralcraft.command.Command;
 import spiralcraft.lang.AccessException;
@@ -25,8 +24,10 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
 import spiralcraft.lang.BindException;
+
+
+import spiralcraft.app.Message;
 
 /**
  * Generic control fires Commands from within a WebUI component tree
@@ -48,13 +49,13 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   
   @Override
   public void message
-    (EventContext context,Message message,LinkedList<Integer> path)
+    (EventContext context,Message message)
   { 
     try
     { 
       pushState(context);
       
-      super.message(context,message,path);
+      super.message(context,message);
     
     }
     finally

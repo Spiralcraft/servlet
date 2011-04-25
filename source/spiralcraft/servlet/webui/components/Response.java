@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import spiralcraft.lang.Assignment;
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
@@ -28,12 +27,12 @@ import spiralcraft.lang.Setter;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
 
-import spiralcraft.text.markup.MarkupException;
-
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
-import spiralcraft.textgen.MessageHandler;
+import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.kit.AbstractMessageHandler;
 
+import spiralcraft.app.Message;
+import spiralcraft.common.ContextualException;
 
 /**
  * <p>Provide a means to interact with the HTTP response
@@ -54,19 +53,18 @@ public class Response
     =new ArrayList<Setter<?>>();
 
   {
-    this.addHandler(new MessageHandler()
+    this.addHandler
+      (new AbstractMessageHandler()
     {
 
       @Override
-      public void handleMessage(EventContext context, Message message,
-          boolean postOrder)
+      public void handleMessage
+        (EventContext context, Message message,MessageHandlerChain next)
       {
-        if (!postOrder)
-        {
-          for (Setter<?> setter:setters)
-          { setter.set();
-          }
+        for (Setter<?> setter:setters)
+        { setter.set();
         }
+        next.handleMessage(context,message);
       }
     }
     );
@@ -90,7 +88,7 @@ public class Response
   
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
 
     focus=

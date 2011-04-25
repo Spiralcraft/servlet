@@ -203,14 +203,14 @@ public abstract class Acceptor<T>
             //   state from one request to the next
             //   
             scatter(context);
-            relayMessage(context,PREPARE_MESSAGE,null);
+            relayMessage(context,PREPARE_MESSAGE);
           }
-          relayMessage(context,GATHER_MESSAGE,null);
+          relayMessage(context,GATHER_MESSAGE);
         
           if (!formState.isErrorState())
           { 
             // Don't run commands if any vars have errors
-            relayMessage(context,COMMAND_MESSAGE,null);
+            relayMessage(context,COMMAND_MESSAGE);
           }
           else
           { 

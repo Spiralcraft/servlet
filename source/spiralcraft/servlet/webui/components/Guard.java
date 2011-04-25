@@ -18,14 +18,13 @@ package spiralcraft.servlet.webui.components;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 
@@ -34,11 +33,10 @@ import spiralcraft.security.auth.AuthSession;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLDataEncoder;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.InitializeMessage;
-import spiralcraft.textgen.Message;
 
+import spiralcraft.app.Message;
 
 /**
  * <P>Secures a block of content by redirecting to another page if the user
@@ -81,7 +79,7 @@ public class Guard
 
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     setupSession(focus);
     focus=focus.chain(sessionChannel);
@@ -145,7 +143,6 @@ public class Guard
   public void message
     (EventContext context
     ,Message message
-    ,LinkedList<Integer> path
     )
   {
     
@@ -164,7 +161,7 @@ public class Guard
       }
     }
     else
-    { super.message(context,message,path);
+    { super.message(context,message);
     }
   }
   

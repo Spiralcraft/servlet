@@ -53,9 +53,11 @@ import spiralcraft.servlet.webui.SaveMessage;
 
 
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
-import spiralcraft.textgen.MessageHandler;
+import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.textgen.kit.AbstractMessageHandler;
 import spiralcraft.util.ArrayUtil;
+
+import spiralcraft.app.Message;
 
 
 public abstract class Editor
@@ -97,14 +99,14 @@ public abstract class Editor
   
   {
     addHandler
-      (new MessageHandler()
+      (new AbstractMessageHandler()
       {
 
         @Override
-        public void handleMessage(EventContext context, Message message,
-            boolean postOrder)
+        public void handleMessage(EventContext context, Message message
+          ,MessageHandlerChain next)
         { 
-          if (!phantom && !postOrder && message.getType()==SaveMessage.TYPE)
+          if (!phantom && message.getType()==SaveMessage.TYPE)
           {
             try
             { save();
@@ -113,8 +115,10 @@ public abstract class Editor
             { handleException(context,x);
             }
           }
+
+          next.handleMessage(context,message);
           
-          if (!phantom && postOrder && message.getType()==SaveMessage.TYPE)
+          if (!phantom && message.getType()==SaveMessage.TYPE)
           {
             if (redirectOnSaveURI!=null
                 && !Editor.this.getState().isErrorState()
