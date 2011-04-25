@@ -16,18 +16,15 @@ package spiralcraft.servlet.webui;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.Message;
 import spiralcraft.time.Clock;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
@@ -37,6 +34,8 @@ import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 
+
+import spiralcraft.app.Message;
 
 /**
  * <p>Represents the root of a WebUI component tree
@@ -85,7 +84,7 @@ public class RootComponent
   @SuppressWarnings({"unchecked","rawtypes"})
   // Not using generic versions
   public final Focus<?> bind(Focus<?> focus) 
-    throws BindException,MarkupException
+    throws ContextualException
   {
     if (debug)
     { log.fine("bind");
@@ -145,7 +144,7 @@ public class RootComponent
 
   @Override
   public void message
-    (EventContext context,Message message,LinkedList<Integer> path)
+    (EventContext context,Message message)
   {
     if (threadLocal==null)
     { throw new RuntimeException("UIComponent "+this+" never bound");
@@ -153,7 +152,7 @@ public class RootComponent
     
     threadLocal.push((ServiceContext) context);
     try
-    { super.message(context,message,path);
+    { super.message(context,message);
     }
     finally
     { threadLocal.pop();

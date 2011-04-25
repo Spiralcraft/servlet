@@ -32,13 +32,15 @@ import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.ContextAdapter;
 import spiralcraft.servlet.HttpFocus;
-import spiralcraft.text.markup.MarkupException;
-import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.InitializeMessage;
-import spiralcraft.textgen.Message;
 import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.StateFrame;
 import spiralcraft.vfs.Resource;
+
+
+import spiralcraft.app.Message;
+import spiralcraft.app.State;
+import spiralcraft.common.ContextualException;
 
 /**
  * <p>Manages a set of WebUI interfaces and their session state 
@@ -124,7 +126,7 @@ public class UIService
     (Resource uiResource
     ,String statePath
     )
-    throws ServletException,IOException,MarkupException
+    throws ServletException,IOException,ContextualException
   { 
     return uiCache.getUI
       (uiResource
@@ -339,16 +341,17 @@ public class UIService
     HttpServletResponse response=serviceContext.getResponse();
     ResourceSession localSession=serviceContext.getResourceSession();
 
-    ElementState oldState=localSession.getRootState();
+    State oldState=localSession.getRootState();
     if (oldState==null)
     { 
       if (debugLevel.isDebug())
       { log.debug("Initializing state tree for "+localSession.getLocalURI());
       }
-      // Initialize a fresh state
+      
       serviceContext.setState(component.createState());
       // Set up state structure and register "initial" events
-      component.message(serviceContext,INITIALIZE_MESSAGE,null);
+      serviceContext.dispatch
+        (INITIALIZE_MESSAGE,component,null);
     }
     else
     { 
@@ -366,7 +369,7 @@ public class UIService
     //
     // REQUEST
     //
-    component.message(serviceContext,REQUEST_MESSAGE,null);
+    serviceContext.dispatch(REQUEST_MESSAGE,component,null);
     done=processRedirect(serviceContext);
     
     if (!done)
@@ -388,7 +391,7 @@ public class UIService
       generateResponse(serviceContext,localSession,component);
     }
     
-    ElementState newState=serviceContext.getState();
+    State newState=serviceContext.getState();
     if (newState!=oldState)
     { 
       // Cache the state for the next iteration
@@ -436,7 +439,7 @@ public class UIService
       //
       // PREPARE
       //
-      component.message(serviceContext,PREPARE_MESSAGE,null);
+      serviceContext.dispatch(PREPARE_MESSAGE,component,null);
       done=processRedirect(serviceContext);
     }
     
@@ -453,7 +456,7 @@ public class UIService
       //
       // COMMAND
       //
-      component.message(serviceContext,COMMAND_MESSAGE,null);
+      serviceContext.dispatch(COMMAND_MESSAGE,component,null);
       done=processRedirect(serviceContext);
     }
 
@@ -567,11 +570,7 @@ public class UIService
         for (int i:action.getTargetPath())
         { path.add(i);
         }
-        component.message
-        (context
-            ,new ActionMessage(action)
-        ,path
-        );
+        context.dispatch(new ActionMessage(action),component,path);
       }
     }
     else
