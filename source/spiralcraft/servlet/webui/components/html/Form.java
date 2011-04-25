@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 1998,2011 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -29,6 +29,13 @@ import spiralcraft.servlet.webui.components.Acceptor;
 
 import java.io.IOException;
 
+/**
+ * An HTML form
+ * 
+ * @author mike
+ *
+ * @param <T>
+ */
 public class Form<T>
   extends Acceptor<T>
 {
