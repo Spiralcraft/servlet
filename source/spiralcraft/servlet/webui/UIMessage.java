@@ -14,7 +14,7 @@
 //
 package spiralcraft.servlet.webui;
 
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
 
 
 public class UIMessage
@@ -22,14 +22,14 @@ public class UIMessage
 {
   
   protected boolean transactional;
-  private final MessageType type;
+  private final Type type;
   
-  public UIMessage(MessageType type)
+  public UIMessage(Type type)
   { this.type=type;
   }
   
   @Override
-  public MessageType getType()
+  public Type getType()
   { return type;
   }
   
