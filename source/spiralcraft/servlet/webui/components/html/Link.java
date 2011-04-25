@@ -14,11 +14,10 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
 
 import spiralcraft.command.Command;
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
@@ -150,7 +149,7 @@ public class Link
   
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     if (commandExpression!=null)
     { commandChannel=focus.bind(commandExpression);

@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui.components;
 
 
 import spiralcraft.command.Command;
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -26,7 +26,6 @@ import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 
-import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
@@ -140,7 +139,7 @@ public class PageAction
   
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     if (commandExpression!=null)
     { commandChannel=focus.bind(commandExpression);

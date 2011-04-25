@@ -16,10 +16,10 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
-import spiralcraft.text.markup.MarkupException;
 
 import spiralcraft.textgen.EventContext;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Focus;
@@ -106,7 +106,7 @@ public class CheckboxInput
 
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     super.bind(focus);
     

@@ -25,7 +25,7 @@ import java.net.URL;
 import javax.servlet.ServletException;
 
 
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -34,7 +34,6 @@ import spiralcraft.log.Level;
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLDataEncoder;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.textgen.EventContext;
 
 
@@ -89,7 +88,7 @@ public class Redirect
   
   @Override
   public Focus<?> bind(Focus<?> focus)
-    throws BindException,MarkupException
+    throws ContextualException
   { 
     if (when!=null)
     { whenChannel=focus.bind(when);

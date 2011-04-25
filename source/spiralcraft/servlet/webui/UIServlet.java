@@ -17,6 +17,7 @@ package spiralcraft.servlet.webui;
 import spiralcraft.servlet.HttpServlet;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.SimpleFocus;
 //import spiralcraft.lang.Channel;
@@ -27,7 +28,6 @@ import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.vfs.NotStreamableException;
 import spiralcraft.vfs.Resolver;
 
-import spiralcraft.text.markup.MarkupException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -279,7 +279,7 @@ public class UIServlet
       }
       return component;
     }
-    catch (MarkupException x)
+    catch (ContextualException x)
     { 
       throw new ServletException
         ("Error loading webui Component for ["+relativePath+"]:"+x,x);

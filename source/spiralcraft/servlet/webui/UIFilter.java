@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
@@ -30,7 +31,6 @@ import spiralcraft.lang.Reflector;
 import spiralcraft.lang.reflect.BeanReflector;
 
 import spiralcraft.servlet.autofilter.spi.RequestFocusFilter;
-import spiralcraft.text.markup.MarkupException;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 
@@ -127,7 +127,7 @@ public class UIFilter<Tcontext>
             (resource, contextAdapter.getRelativePath(request));
 
       }
-      catch (MarkupException x)
+      catch (ContextualException x)
       { 
         throw new ServletException
           ("Error loading webui Component ["+uri+"]:"+x,x);

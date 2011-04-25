@@ -21,6 +21,7 @@ import spiralcraft.servlet.webui.textgen.UIResourceUnit;
 import spiralcraft.servlet.webui.textgen.RootUnit;
 
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
@@ -78,7 +79,7 @@ public class UICache
    */
   public synchronized RootComponent getUI
     (Resource resource,String instancePath)
-    throws MarkupException,IOException,ServletException
+    throws ContextualException,IOException,ServletException
   {
     UIResourceUnit resourceUnit
       =resolveResourceUnit(resource,instancePath);
@@ -184,7 +185,7 @@ public class UICache
    */
   private RootComponent 
     getComponent(String instancePath,RootUnit unit)
-    throws MarkupException
+    throws ContextualException
   {
     ComponentReference ref=componentMap.get(instancePath);
     if (ref!=null && ref.unit==unit)
