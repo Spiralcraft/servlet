@@ -17,7 +17,7 @@ package spiralcraft.servlet.webui;
 import java.util.ArrayList;
 import java.util.List;
 
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
 
 
 /**

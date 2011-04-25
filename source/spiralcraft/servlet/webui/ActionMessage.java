@@ -14,14 +14,14 @@
 //
 package spiralcraft.servlet.webui;
 
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
 
 
 public class ActionMessage
   extends Message
 {
 
-  public static final MessageType TYPE=new MessageType();
+  public static final Type TYPE=new Type();
   
   { multicast=false;
   }
@@ -29,7 +29,7 @@ public class ActionMessage
   private final Action action;
   
   @Override
-  public MessageType getType()
+  public Type getType()
   { return TYPE;
   }
   

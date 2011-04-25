@@ -7,10 +7,11 @@ import java.util.List;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
-import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.StateFrame;
 import spiralcraft.util.ListMap;
 
+
+import spiralcraft.app.State;
 
 //import spiralcraft.util.RandomUtil;
 
@@ -43,7 +44,7 @@ public class ResourceSession
   private final VariableMap parameterMap
     =new VariableMap();
     
-  private ElementState state;
+  private State state;
   
   private String localURI;
   private volatile int sequence;
@@ -120,11 +121,11 @@ public class ResourceSession
   { return actionMap.get(name);
   }
   
-  public ElementState getRootState()
+  public State getRootState()
   { return state;
   }
   
-  void setRootState(ElementState state)
+  void setRootState(State state)
   { this.state=state;
   }
   

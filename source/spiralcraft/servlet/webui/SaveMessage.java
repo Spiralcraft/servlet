@@ -23,7 +23,7 @@ package spiralcraft.servlet.webui;
 public class SaveMessage
   extends UIMessage
 {
-  public static final MessageType TYPE=new MessageType();
+  public static final Type TYPE=new Type();
 
   
   public SaveMessage()

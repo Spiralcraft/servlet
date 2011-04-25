@@ -14,7 +14,7 @@
 //
 package spiralcraft.servlet.webui;
 
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
 
 /**
  * <p>Called at the beginning of a request cycle to permit components to
@@ -29,14 +29,14 @@ public class RequestMessage
 {
   
 
-  public static final MessageType TYPE=new MessageType();
+  public static final Type TYPE=new Type();
   
   { multicast=true;
   }
   
   
   @Override
-  public MessageType getType()
+  public Type getType()
   { return TYPE;
   }      
 }

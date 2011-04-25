@@ -17,6 +17,7 @@ package spiralcraft.servlet.webui;
 import java.util.ArrayList;
 import java.util.List;
 
+import spiralcraft.app.State;
 import spiralcraft.command.Command;
 
 import spiralcraft.log.ClassLog;
@@ -85,8 +86,9 @@ public class ControlState<Tbuf>
   }
   
   @Override
-  public void resolve()
+  public void link(State parentState,int[] path)
   { 
+    super.link(parentState,path);
     // controlGroupState=getParent().findElementState(ControlGroupState.class);
     
     int dist=control.getControlGroupStateDistance();

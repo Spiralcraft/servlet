@@ -14,7 +14,7 @@
 //
 package spiralcraft.servlet.webui;
 
-import spiralcraft.textgen.Message;
+import spiralcraft.app.Message;
 
 
 public class GatherMessage
@@ -22,14 +22,14 @@ public class GatherMessage
 {
   
 
-  public static final MessageType TYPE=new MessageType();
+  public static final Type TYPE=new Type();
   
   { multicast=true;
   }
   
   
   @Override
-  public MessageType getType()
+  public Type getType()
   { return TYPE;
   }    
   
