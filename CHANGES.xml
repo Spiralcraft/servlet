@@ -40,6 +40,15 @@
         <notes>
           <scm:Note>Textgen Refactor
           </scm:Note>
+          <scm:Note>textgen.Element now implements spiralcraft.app.Component, 
+            and textgen.EventContext now implements spiralcraft.app.Dispatcher
+          </scm:Note>
+          <scm:Note>Replace EventContext.getOutput() with OutputContext
+            ThreadLocal
+          </scm:Note>
+          <scm:Note>Remove EventContext.render() and use Dispatcher.dispatch()
+            with a RenderMessage instead
+          </scm:Note>         
           <scm:Note>Message and ElementState now implement spiralcraft.app
             counterparts.
           </scm:Note>          
@@ -94,9 +103,13 @@
           </URI>
           <URI>webui/ControlGroup.java
           </URI>
-          <URI>webui/ResourceSession.java
+          <URI>webui/ControlGroup.java
+          </URI>
+          <URI>webui/ExceptionComponent.java
           </URI>
           <URI>webui/RootComponent.java
+          </URI>
+          <URI>webui/ServiceContext.java
           </URI>
           <URI>webui/UICache.java
           </URI>
@@ -108,11 +121,21 @@
           </URI>
           <URI>webui/UIServlet.java
           </URI>
-          <URI>webui/components/PageAction.java
-          </URI>
           <URI>webui/components/AbstractCommandControl.java
           </URI>
+          <URI>webui/components/AbstractSelectControl.java
+          </URI>
+          <URI>webui/components/AbstractSelectItemControl.java
+          </URI>
+          <URI>webui/components/AbstractTextControl.java
+          </URI>
           <URI>webui/components/Acceptor.java
+          </URI>
+          <URI>webui/components/AcceptorCommand.java
+          </URI>
+          <URI>webui/components/AggregateEditor.java
+          </URI>
+          <URI>webui/components/AutoExec.java
           </URI>
           <URI>webui/components/DataSessionComponent.java
           </URI>
@@ -120,15 +143,81 @@
           </URI>
           <URI>webui/components/EditorBase.java
           </URI>
+          <URI>webui/components/Flow.java
+          </URI>
           <URI>webui/components/Guard.java
+          </URI>
+          <URI>webui/components/LinkAcceptor.java
+          </URI>
+          <URI>webui/components/Login.java
+          </URI>
+          <URI>webui/components/PageAction.java
+          </URI>
+          <URI>webui/components/Paginate.java
+          </URI>
+          <URI>webui/components/Redirect.java
           </URI>
           <URI>webui/components/Response.java
           </URI>
+          <URI>webui/components/SelectionEditor.java
+          </URI>
+          <URI>webui/components/Session.java
+          </URI>
+          <URI>webui/components/SMTP.java
+          </URI>
+          <URI>webui/components/TupleEditor.java
+          </URI>
+          <URI>webui/components/html/AbstractTag.java
+          </URI>
+          <URI>webui/components/html/AggregateEditor.java
+          </URI>
+          <URI>webui/components/html/Button.java
+          </URI>
           <URI>webui/components/html/CheckboxInput.java
+          </URI>
+          <URI>webui/components/html/Checklist.java
+          </URI>
+          <URI>webui/components/html/ChecklistItem.java
+          </URI>
+          <URI>webui/components/html/Editor.java
+          </URI>
+          <URI>webui/components/html/ErrorTag.java
+          </URI>
+          <URI>webui/components/html/FileInput.java
+          </URI>
+          <URI>webui/components/html/Form.java
+          </URI>
+          <URI>webui/components/html/FormCommand.java
+          </URI>
+          <URI>webui/components/html/HiddenInput.java
           </URI>
           <URI>webui/components/html/Link.java
           </URI>
+          <URI>webui/components/html/Login.java
+          </URI>
+          <URI>webui/components/html/Option.java
+          </URI>
+          <URI>webui/components/html/RadioButton.java
+          </URI>
+          <URI>webui/components/html/RadioGroup.java
+          </URI>
+          <URI>webui/components/html/Script.java
+          </URI>
+          <URI>webui/components/html/Select.java
+          </URI>
+          <URI>webui/components/html/SelectionEditor.java
+          </URI>
+          <URI>webui/components/html/SubmitButton.java
+          </URI>
+          <URI>webui/components/html/TextArea.java
+          </URI>
+          <URI>webui/components/html/TextInput.java
+          </URI>
+          <URI>webui/components/html/TuleEditor.java
+          </URI>
           <URI>webui/components/rpc/Controller.java
+          </URI>
+          <URI>webui/components/rpc/TupleEditor.java
           </URI>
           <URI>webui/textgen/RootUnit.java
           </URI>
