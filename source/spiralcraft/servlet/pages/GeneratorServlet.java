@@ -37,6 +37,7 @@ import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
 
 import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.RenderMessage;
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.Element;
@@ -267,7 +268,7 @@ class ResourceEntry
     { 
       Writer writer=response.getWriter();
       EventContext context=new EventContext(writer,false,null);
-      element.render(context);
+      context.dispatch(RenderMessage.INSTANCE,element,null);
       writer.flush();
     }
   }
