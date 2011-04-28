@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui.components;
 
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
@@ -71,7 +72,7 @@ public abstract class AbstractTextControl<Ttarget>
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" }) // Not using generic versions
   public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   { 
     if (converter==null && target!=null)
     { 

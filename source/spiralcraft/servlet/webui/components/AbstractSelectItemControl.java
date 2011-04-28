@@ -17,8 +17,9 @@ package spiralcraft.servlet.webui.components;
 
 import spiralcraft.util.string.StringConverter;
 
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
@@ -67,7 +68,7 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
   
   @Override
   public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     if (valueExpression==null)
     { 
@@ -98,7 +99,7 @@ public class AbstractSelectItemControl<Ttarget,Tvalue>
   
   @SuppressWarnings("unchecked")
   @Override
-  protected SelectItemState<Tvalue> getState(EventContext context)
+  protected SelectItemState<Tvalue> getState(Dispatcher context)
   { return (SelectItemState<Tvalue>) context.getState();
   }
   

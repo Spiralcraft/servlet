@@ -15,7 +15,6 @@
 package spiralcraft.servlet.webui.components;
 
 
-import java.io.IOException;
 import java.net.URI;
 
 import spiralcraft.common.ContextualException;
@@ -40,8 +39,8 @@ import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.ElementState;
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
 public class DataSessionComponent
@@ -166,34 +165,10 @@ public class DataSessionComponent
     }
      
   }
-
-  @Override
-  public void render(EventContext context) throws IOException
-  {
-
-    try
-    {
-      DataSessionState state=getState(context);
-      
-      dataSessionChannel.push(state.get());
-      if (!state.isInitialized())
-      { 
-        dataSessionFocus.initializeDataSession();
-        state.setInitialized(true);
-      }
-      
-      super.render(context);
-    } 
-    finally
-    {
-      dataSessionChannel.pop();
-    }
-  }
-
   
   @Override
   public void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     ) 
   {
@@ -230,7 +205,7 @@ public class DataSessionComponent
       (dataSessionFocus.newDataSession(),getChildCount());
   }
   
-  protected DataSessionState getState(EventContext context)
+  protected DataSessionState getState(Dispatcher context)
   { return (DataSessionState) context.getState();
   }
   
@@ -244,7 +219,7 @@ public class DataSessionComponent
 		
     // Leave the session object alone until handlePrepare()
     //   for a responsive request
-    if (state.frameChanged(context.getCurrentFrame()))
+    if (state.frameChanged(context.getFrame()))
     {
       applyRequestBindings(context);
       applyAssignments();
@@ -256,7 +231,7 @@ public class DataSessionComponent
   public void handlePrepare(ServiceContext context)
   { 
     DataSessionState state=getState(context);
-    if (state.frameChanged(context.getCurrentFrame()))
+    if (state.frameChanged(context.getFrame()))
     { 
     	if (!state.getRequestBindingsApplied())
     	{

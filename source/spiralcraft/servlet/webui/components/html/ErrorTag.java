@@ -16,8 +16,12 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
+import spiralcraft.app.Message;
+import spiralcraft.app.State;
 import spiralcraft.servlet.webui.ControlState;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.OutputContext;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandlerChain;
 
 /**
  * <p>A Tag that formats an error message that is associated with another
@@ -31,15 +35,10 @@ import spiralcraft.textgen.EventContext;
 public class ErrorTag
     extends AbstractTag
 {
-  private AbstractTag controlTag;
   private String tagName=null;
-  
-  public ErrorTag(AbstractTag controlTag)
-  { this.controlTag=controlTag;
-  }
 
   @Override
-  protected String getTagName(EventContext context)
+  protected String getTagName(Dispatcher context)
   { 
     if (((ControlState<?>) context.getState()).getErrors()!=null)
     { return tagName;
@@ -68,22 +67,17 @@ public class ErrorTag
   protected boolean hasContent()
   { return true;
   }
-    
-  @Override
-  protected void renderAfter(EventContext context)
-    throws IOException
-  {
-    if (controlTag!=null)
-    { controlTag.render(context);
-    }
-  }
   
   @Override
-  protected void renderContent(EventContext context)
+  protected void renderContent
+    (Dispatcher context
+    ,Message message
+    ,MessageHandlerChain next
+    )
     throws IOException
   { 
     ControlState<?> state=(ControlState<?>) context.getState();
-    Appendable out=context.getOutput();
+    Appendable out=OutputContext.get();
     
     String[] errors=state.getErrors();
     if (errors!=null)
@@ -113,16 +107,20 @@ public class ErrorTag
       out.append("-->\r\n");
       
     }
+    super.renderContent(context,message,next);
     
   }
-
-
-  @Override
-  protected void renderAttributes(EventContext context)
-    throws IOException
-  { 
-    super.renderAttributes(context);
-  }
   
-
+  @Override
+  protected boolean shouldHandleMessage(Dispatcher context,Message message)
+  { 
+    if (super.shouldHandleMessage(context,message))
+    {
+      State st=context.getState();
+      if (st!=null && st instanceof ControlState)
+      { return ((ControlState<?>) st).isErrorState();
+      }
+    }
+    return false;
+  }
 }

@@ -21,8 +21,8 @@ package spiralcraft.servlet.webui.components.rpc;
 import spiralcraft.servlet.webui.RequestMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.Acceptor;
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandlerChain;
 
 import spiralcraft.textgen.kit.AbstractMessageHandler;
 
@@ -42,7 +42,7 @@ public class Controller<T>
       (new AbstractMessageHandler()
       {
         @Override
-        public void handleMessage(EventContext context, Message message,
+        public void doHandler(Dispatcher context, Message message,
             MessageHandlerChain next)
         { 
           next.handleMessage(context,message);

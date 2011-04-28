@@ -14,16 +14,12 @@
 //
 package spiralcraft.servlet.webui.components;
 
-
-
-import java.io.IOException;
-
-import spiralcraft.lang.BindException;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.EventContext;
 
 /**
  * <p>Automatically runs a command whenever the state frame changes.
@@ -118,7 +114,7 @@ public class AutoExec<Tcontext,Tresult>
   
   @Override
   public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   { 
     
     focus=super.bindSelf(focus);
@@ -143,22 +139,10 @@ public class AutoExec<Tcontext,Tresult>
   
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  protected AutoExecState<Tcontext,Tresult> getState(EventContext context)
+  protected AutoExecState<Tcontext,Tresult> getState(Dispatcher context)
   { return (AutoExecState) context.getState();
   }
-  
-    @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    pushState(context);
-    try
-    { super.render(context);
-    }
-    finally
-    { popState(context);
-    }
-  }
+
 }
 
 class AutoExecState<Tcontext,Tresult>

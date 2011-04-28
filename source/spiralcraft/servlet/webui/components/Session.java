@@ -15,10 +15,10 @@
 package spiralcraft.servlet.webui.components;
 
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.ValueState;
 
 
@@ -40,7 +40,7 @@ public class Session<T>
   }
   
   @Override
-  protected void onFrameChange(EventContext context)
+  protected void onFrameChange(Dispatcher context)
   {
     if (requestBindings!=null)
     {

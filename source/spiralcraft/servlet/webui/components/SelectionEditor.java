@@ -18,6 +18,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 import spiralcraft.data.session.BufferAggregate;
@@ -216,7 +217,7 @@ public class SelectionEditor
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" })
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     focus=super.bindExports(focus);
     if (key==null)

@@ -16,13 +16,13 @@ package spiralcraft.servlet.webui.components;
 
 import java.util.LinkedList;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.command.AbstractCommandFactory;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.command.Command;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.EventContext;
 
 /**
  * 
@@ -78,7 +78,7 @@ public class Flow<Tstate,Tinput>
   
   @SuppressWarnings("unchecked")
   @Override
-  public FlowState<Tstate,Tinput> getState(EventContext context)
+  public FlowState<Tstate,Tinput> getState(Dispatcher context)
   { return (FlowState<Tstate,Tinput>) context.getState();
   }
   

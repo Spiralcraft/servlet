@@ -18,12 +18,10 @@ import java.io.IOException;
 
 
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 //import spiralcraft.log.ClassLog;
 
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
 
@@ -41,21 +39,22 @@ public class HiddenInput<Ttarget>
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "input";
     }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
       ControlState<Ttarget> state=getState(context);
-      renderAttribute(context.getOutput(),"type","hidden");
-      renderAttribute(context.getOutput(),"name",state.getVariableName());
+      renderAttribute(out,"type","hidden");
+      renderAttribute(out,"name",state.getVariableName());
       if (state.getValue()!=null && !password)
-      { renderAttribute(context.getOutput(),"value",(String) state.getValue());
+      { renderAttribute(out,"value",(String) state.getValue());
       }
-      super.renderAttributes(context);
+      super.renderAttributes(context,out);
+      state.setPresented(true);
     }
     
     @Override
@@ -65,9 +64,13 @@ public class HiddenInput<Ttarget>
     
   }
   
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
   
-
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
@@ -87,34 +90,5 @@ public class HiddenInput<Ttarget>
   { this.password=password;
   }
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    ControlState<?> state=getState(context);
-    if (state.isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-    super.render(context);
-    state.setPresented(true);
-    
-  }
-  
-
-  @Override
-  public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindSelf(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }    
-  
-
-
 }
 

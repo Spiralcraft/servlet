@@ -14,14 +14,11 @@
 //
 package spiralcraft.servlet.webui.components;
 
-import java.io.IOException;
 import java.util.List;
 
-
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.EventContext;
 
-import spiralcraft.lang.BindException;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -86,7 +83,7 @@ public class AcceptorCommand<Tcontext,Tresult>
   
   @Override
   protected Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     focus=super.bindSelf(focus);
     if (when!=null)
@@ -164,18 +161,6 @@ public class AcceptorCommand<Tcontext,Tresult>
   { 
   }
 
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    pushState(context);
-    try
-    { super.render(context);
-    }
-    finally
-    { popState(context);
-    }
-  }  
 
 }
 

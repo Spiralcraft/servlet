@@ -16,11 +16,12 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 import java.net.URI;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.vfs.Container;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Binding;
@@ -79,18 +80,18 @@ public class FileInput
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "input";
     }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
       ControlState<URI> state=getState(context);
-      renderAttribute(context.getOutput(),"type","file");
-      renderAttribute(context.getOutput(),"name",state.getVariableName());
-      super.renderAttributes(context);
+      renderAttribute(out,"type","file");
+      renderAttribute(out,"name",state.getVariableName());
+      super.renderAttributes(context,out);
     }
     
     @Override
@@ -101,7 +102,12 @@ public class FileInput
   };
   
   private Tag tag=new Tag();
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   /**
    * Specify the suffix that will be used to generate the HTML control name
@@ -243,7 +249,7 @@ public class FileInput
 
   @Override
   public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   { 
     if (target!=null && !target.getContentType().isAssignableFrom(URI.class))
     { 
@@ -264,13 +270,10 @@ public class FileInput
     { filenameX.bind(focus);
     }
     
-    Form<?> form=findElement(Form.class);
+    Form<?> form=findComponent(Form.class);
     if (form!=null)
     { form.setMimeEncoded(true);
     }
-
-    tag.bind(focus);
-    errorTag.bind(focus);    
 
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
@@ -295,18 +298,6 @@ public class FileInput
 //  { return new ControlState<URI>(this);
 //  }
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if ( getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-    super.render(context);
-  }
   
   private String encodeName(String name)
   {

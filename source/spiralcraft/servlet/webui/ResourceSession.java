@@ -7,7 +7,7 @@ import java.util.List;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
-import spiralcraft.textgen.StateFrame;
+import spiralcraft.app.StateFrame;
 import spiralcraft.util.ListMap;
 
 

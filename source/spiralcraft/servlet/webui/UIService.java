@@ -34,7 +34,8 @@ import spiralcraft.servlet.ContextAdapter;
 import spiralcraft.servlet.HttpFocus;
 import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.PrepareMessage;
-import spiralcraft.textgen.StateFrame;
+import spiralcraft.textgen.RenderMessage;
+import spiralcraft.app.StateFrame;
 import spiralcraft.vfs.Resource;
 
 
@@ -348,10 +349,9 @@ public class UIService
       { log.debug("Initializing state tree for "+localSession.getLocalURI());
       }
       
-      serviceContext.setState(component.createState());
       // Set up state structure and register "initial" events
       serviceContext.dispatch
-        (INITIALIZE_MESSAGE,component,null);
+        (INITIALIZE_MESSAGE,component,component.createState(),null);
     }
     else
     { 
@@ -606,7 +606,7 @@ public class UIService
     
     serviceContext.getResponse().setStatus(200);
     serviceContext.getResponse().addHeader("Cache-Control","no-cache");
-    component.render(serviceContext);
+    serviceContext.dispatch(RenderMessage.INSTANCE,component,null);
     
     
   }  

@@ -16,14 +16,12 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.AbstractCommandControl;
 import spiralcraft.servlet.webui.components.CommandState;
 
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMap;
 
 /**
@@ -50,8 +48,12 @@ public class ImageButton<Tcontext,Tresult>
   private Tag tag
     =new Tag();
   
-  private ErrorTag errorTag=new ErrorTag(tag);
-
+  private ErrorTag errorTag=new ErrorTag();
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   
   public Tag getTag()
@@ -80,26 +82,6 @@ public class ImageButton<Tcontext,Tresult>
   { return name;
   }
 
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    
-    pushState(context);
-    try
-    {
-      if (getState(context).isErrorState())
-      { errorTag.render(context);
-      }
-      else
-      { tag.render(context);
-      }
-      super.render(context);
-    }
-    finally
-    { popState(context);
-    }    
-  }
   
   @Override
   public void gather(ServiceContext context)
@@ -139,7 +121,7 @@ public class ImageButton<Tcontext,Tresult>
     private String tagAlt;
     
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "input";
     }
 
@@ -160,11 +142,10 @@ public class ImageButton<Tcontext,Tresult>
     }
     
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
       CommandState<Tcontext,Tresult> state=getState(context);
-      Appendable out=context.getOutput();
       renderAttribute(out,"type","image");
       renderPresentAttribute(out,"src",src);
       renderPresentAttribute(out,"alt",ImageButton.this.alt);
@@ -173,7 +154,7 @@ public class ImageButton<Tcontext,Tresult>
       renderPresentAttribute(out,"width",width);
       renderPresentAttribute(out,"border",border);
       renderAttribute(out,"name",state.getVariableName());
-      super.renderAttributes(context);
+      super.renderAttributes(context,out);
     }
 
     @Override
@@ -190,14 +171,5 @@ public class ImageButton<Tcontext,Tresult>
     
   }
   
-  @Override
-  public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindSelf(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }    
 }
 

@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 
@@ -52,8 +53,9 @@ import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.SaveMessage;
 
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.kit.AbstractMessageHandler;
 import spiralcraft.util.ArrayUtil;
 
@@ -103,7 +105,7 @@ public abstract class Editor
       {
 
         @Override
-        public void handleMessage(EventContext context, Message message
+        public void doHandler(Dispatcher context, Message message
           ,MessageHandlerChain next)
         { 
           if (!phantom && message.getType()==SaveMessage.TYPE)
@@ -852,7 +854,7 @@ public abstract class Editor
   @Override
   @SuppressWarnings("unchecked")
   protected Focus<Buffer> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     DataReflector<Buffer> reflector
     =(DataReflector<Buffer>) focus.getSubject().getReflector();

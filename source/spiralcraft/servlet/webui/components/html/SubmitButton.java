@@ -16,13 +16,11 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.AbstractCommandControl;
 import spiralcraft.servlet.webui.components.CommandState;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMap;
 
 /**
@@ -50,20 +48,20 @@ public class SubmitButton<Tcontext,Tresult>
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "input";
     }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
-      renderAttribute(context.getOutput(),"type","submit");
-      renderAttribute(context.getOutput(),"name",getState(context).getVariableName());
+      renderAttribute(out,"type","submit");
+      renderAttribute(out,"name",getState(context).getVariableName());
       
       // Yes, we are renaming it
-      renderAttribute(context.getOutput(),"value",label);
-      super.renderAttributes(context);
+      renderAttribute(out,"value",label);
+      super.renderAttributes(context,out);
     }
 
     @Override
@@ -72,7 +70,13 @@ public class SubmitButton<Tcontext,Tresult>
     }
   }
     
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
@@ -96,27 +100,6 @@ public class SubmitButton<Tcontext,Tresult>
   { return name;
   }
 
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    pushState(context);
-    try
-    { 
-    
-      if (getState(context).isErrorState())
-      { errorTag.render(context);
-      }
-      else
-      { tag.render(context);
-      }
-      super.render(context);    
-
-    }
-    finally
-    { popState(context);
-    }
-  }
   
   @Override
   public void gather(ServiceContext context)
@@ -146,16 +129,7 @@ public class SubmitButton<Tcontext,Tresult>
   public void scatter(ServiceContext context)
   { 
   }
-  
-  @Override
-  public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindSelf(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }   
+
 
 }
 

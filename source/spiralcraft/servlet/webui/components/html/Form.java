@@ -14,14 +14,11 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 // import spiralcraft.log.ClassLog;
 
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.components.Acceptor;
 
 
@@ -52,7 +49,7 @@ public class Form<T>
   	private String name;
   	
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return tagName;
     }
     
@@ -69,14 +66,9 @@ public class Form<T>
     { return true;
     }
     
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { Form.super.render(context);
-    }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     { 
       
@@ -84,18 +76,23 @@ public class Form<T>
         =((ServiceContext) context)
           .registerAction(createAction(context,true));
       
-      Appendable out=context.getOutput();
       renderPresentAttribute(out,"name",name);
       renderAttribute(out,"action",actionURI);
       renderAttribute(out,"method","post");
       if (mimeEncoded)
       { renderAttribute(out,"enctype","multipart/form-data");
       }
-      super.renderAttributes(context);
+      super.renderAttributes(context,out);
     }
   }
   
-  private final ErrorTag errorTag=new ErrorTag(tag);
+  private final ErrorTag errorTag=new ErrorTag();
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   /**
    * 
@@ -123,33 +120,5 @@ public class Form<T>
   public void setMimeEncoded(boolean mimeEncoded)
   { this.mimeEncoded=mimeEncoded;
   }
-  
-  public void renderError(ServiceContext context)
-    throws IOException
-  { new ErrorTag(tag).render(context);
-  }  
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    ControlGroupState<T> state=getState(context);
-    if (state.isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-  }
-  
-  @Override
-  protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindExports(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }  
 
 }

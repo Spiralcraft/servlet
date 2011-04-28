@@ -17,7 +17,7 @@ package spiralcraft.servlet.webui.components.html;
 import java.io.IOException;
 
 import spiralcraft.servlet.webui.Component;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 /**
  * References a client side script. Placeholder for addition of capabilites
@@ -37,26 +37,22 @@ public class Script
     =new AbstractTag()
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "script";
     }
 
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
-      renderAttribute(context.getOutput(),"type",type);
-      renderAttribute(context.getOutput(),"src",src);
+      renderAttribute(out,"type",Script.this.type);
+      renderAttribute(out,"src",src);
       
-      super.renderAttributes(context);
+      super.renderAttributes(context,out);
       
     }    
-    @Override
-    protected void renderContent(EventContext context)
-    throws IOException
-    { Script.super.render(context);
-    }
+
 
     @Override
     protected boolean hasContent()
@@ -65,9 +61,8 @@ public class Script
 
   };
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { tag.render(context);
+  
+  { addHandler(tag);
   }
+
 }

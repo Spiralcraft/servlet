@@ -14,15 +14,11 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import java.io.IOException;
-
-
-
-
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataComposite;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 public class SelectionEditor<TorigContent extends DataComposite,TselectItem>
     extends spiralcraft.servlet.webui.components.SelectionEditor<TorigContent,TselectItem>
@@ -38,7 +34,7 @@ public class SelectionEditor<TorigContent extends DataComposite,TselectItem>
     }
     
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return tagName;
     }
     
@@ -47,23 +43,19 @@ public class SelectionEditor<TorigContent extends DataComposite,TselectItem>
     { return true;
     }
     
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { SelectionEditor.super.render(context);
-    }
 
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    { super.renderAttributes(context);
-    }
   }
   
   private Tag tag=new Tag();
   
   private ErrorTag errorTag
-    =new ErrorTag(tag);
+    =new ErrorTag();
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
 
   public Tag getTag()
   { return tag;
@@ -73,28 +65,15 @@ public class SelectionEditor<TorigContent extends DataComposite,TselectItem>
   { return errorTag;
   }
 
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if ( getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-  }
 
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
-    if (findElement(Form.class)==null)
+    if (findComponent(Form.class)==null)
     { throw new BindException("Editor must be contained in a Form");
     }
     focus=super.bindExports(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
     return focus;
   }
 

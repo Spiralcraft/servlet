@@ -14,14 +14,7 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import java.io.IOException;
-
-
-
-import spiralcraft.data.session.Buffer;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 /**
  * <p>A TupleEditor suitable for an interactive HTML Form editing context
@@ -44,7 +37,7 @@ public class TupleEditor
     }
     
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return tagName;
     }
     
@@ -52,23 +45,18 @@ public class TupleEditor
     protected boolean hasContent()
     { return true;
     }
-    
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { TupleEditor.super.render(context);
-    }
 
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    { super.renderAttributes(context);
-    }
   }
   
   private Tag tag=new Tag();
   
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
+
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
 
   public Tag getTag()
   { return tag;
@@ -76,30 +64,6 @@ public class TupleEditor
   
   public ErrorTag getErrorTag()
   { return errorTag;
-  }
-
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if (getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  protected Focus<Buffer> bindExports(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindExports(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return (Focus<Buffer>) focus;
   } 
-  
 
 }

@@ -19,14 +19,13 @@ import spiralcraft.rules.Rule;
 import spiralcraft.rules.RuleSet;
 import spiralcraft.rules.Violation;
 
-import spiralcraft.textgen.EventContext;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
 import spiralcraft.textgen.elements.Iterate;
 import spiralcraft.util.ArrayUtil;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -279,7 +278,7 @@ public abstract class Control<Ttarget>
   protected void handleRequest(ServiceContext context)
   { 
     ControlState<Ttarget> state = getState(context);
-    if (state.frameChanged(context.getCurrentFrame()))
+    if (state.frameChanged(context.getFrame()))
     {
       if (debug)
       { logFine("Scattering on Request due to frame change : state="+state);
@@ -332,7 +331,7 @@ public abstract class Control<Ttarget>
   protected void handlePrepare(ServiceContext context)
   { 
     ControlState<Ttarget> state = getState(context);
-    boolean frameChanged=state.frameChanged(context.getCurrentFrame());
+    boolean frameChanged=state.frameChanged(context.getFrame());
     
     if (frameChanged && debug)
     { log.fine("Frame changed on PREPARE");
@@ -464,7 +463,7 @@ public abstract class Control<Ttarget>
   }
   
   @SuppressWarnings("unchecked")
-  protected <X> ControlState<X> getState(EventContext context)
+  protected <X> ControlState<X> getState(Dispatcher context)
   { return (ControlState<X>) context.getState();
   }
   
@@ -625,7 +624,7 @@ public abstract class Control<Ttarget>
    * @throws BindException
    */
   protected Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   { return focus;
   }
   
@@ -697,13 +696,16 @@ public abstract class Control<Ttarget>
   
   @Override
   public void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {
 
 
     ControlState<Ttarget> state =getState(context);
+    if (state.getControl()!=this)
+    { throw new RuntimeException("State tree out of sync "+state+" "+this);
+    }
     if (threadLocalState.get() != state)
     {
 
@@ -730,7 +732,7 @@ public abstract class Control<Ttarget>
   
   
   private void messageInContext
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {   
@@ -762,7 +764,7 @@ public abstract class Control<Ttarget>
   public ControlGroup<?> getControlGroup()
   { 
     if (getParent()!=null)
-    { return getParent().findElement(ControlGroup.class);
+    { return getParent().findComponent(ControlGroup.class);
     }
     else
     { return null;
@@ -825,39 +827,6 @@ public abstract class Control<Ttarget>
   
   
   /**
-   * <p>Default implementation of render() for Controls.
-   * </p>
-   * 
-   * <p>Performs pre-order internal state check, debug trap, 
-   *   and post-order ControlState error state reset.
-   * </p>
-   */
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  {    
-    ControlState<Ttarget> state=getState(context);
-    if (state.getControl()!=this)
-    { throw new RuntimeException("State tree out of sync "+state+" "+this);
-    }
-
-    try
-    {
-      if (debug)
-      { logFine("Control.render() "+this+" state="+state);
-      }      
-      threadLocalState.set(state);
-      super.render(context);
-    } 
-    finally
-    { threadLocalState.remove();
-    }
-
-
-    
-  }
-  
-  /**
    * Convenience method to bind assignments managed by subclasses into the
    *   Focus referenced by this control.
    * 
@@ -916,7 +885,7 @@ public abstract class Control<Ttarget>
    * @param x
    */
   protected void handleException
-    (EventContext context
+    (Dispatcher context
     ,Exception x
     )
   {

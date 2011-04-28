@@ -14,9 +14,6 @@
 //
 package spiralcraft.servlet.webui.components;
 
-
-
-import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.ServletException;
@@ -33,9 +30,9 @@ import spiralcraft.security.auth.AuthSession;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLDataEncoder;
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.InitializeMessage;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
 /**
@@ -141,7 +138,7 @@ public class Guard
 
   @Override
   public void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {
@@ -165,25 +162,6 @@ public class Guard
     }
   }
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  {
-    if (!permitted())
-    { 
-      try
-      { setupRedirect((ServiceContext) context);
-      }
-      catch (ServletException x)
-      { 
-        x.printStackTrace();
-        context.getOutput().append(x.toString());
-      }
-    }
-    else
-    { super.render(context);
-    }
-  }
 
   private boolean permitted()
   {

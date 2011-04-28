@@ -14,24 +14,22 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import java.io.IOException;
 
-
-
-
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.session.Buffer;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 public class Editor
     extends spiralcraft.servlet.webui.components.Editor
 {
 
-  private final AbstractTag tag=new AbstractTag()
+  private class Tag 
+    extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher context)
     { return "div";
     }
     
@@ -39,23 +37,19 @@ public class Editor
     protected boolean hasContent()
     { return true;
     }
-    
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { Editor.super.render(context);
-    }
 
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    { super.renderAttributes(context);
-    }
   };
   
+  private Tag tag=new Tag();
+  
   private ErrorTag errorTag
-    =new ErrorTag(tag);
-
+    =new ErrorTag();
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
+  
   public AbstractTag getTag()
   { return tag;
   }
@@ -64,30 +58,15 @@ public class Editor
   { return errorTag;
   }
 
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if ( getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-  }
 
-  @SuppressWarnings("unchecked")
   @Override
   protected Focus<Buffer> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
-    if (findElement(Form.class)==null)
+    if (findComponent(Form.class)==null)
     { throw new BindException("Editor must be contained in a Form");
     }
-    focus=super.bindExports(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return (Focus<Buffer>) focus;
+    return super.bindExports(focus);
   }
   
 }

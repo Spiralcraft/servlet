@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.command.CommandBlock;
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
 import spiralcraft.data.lang.DataReflector;
@@ -47,8 +48,8 @@ import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.SaveMessage;
 
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.kit.AbstractMessageHandler;
 import spiralcraft.util.ArrayUtil;
 
@@ -107,7 +108,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       {
 
         @Override
-        public void handleMessage(EventContext context, Message message,
+        public void doHandler(Dispatcher context, Message message,
             MessageHandlerChain next)
         { 
           EditorState<Tbuffer> state=getState(context);
@@ -833,7 +834,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
    * @param context
    * @return A new Action
    */
-  protected Action createNewAction(EventContext context)
+  protected Action createNewAction(Dispatcher context)
   {
     return new Action(newActionName,context.getState().getPath())
     {
@@ -873,7 +874,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     
   @SuppressWarnings("unchecked")
   @Override
-  protected EditorState<Tbuffer> getState(EventContext context)
+  protected EditorState<Tbuffer> getState(Dispatcher context)
   { return (EditorState<Tbuffer>) context.getState();
   }
   
@@ -935,9 +936,9 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
-    if (findElement(Acceptor.class)==null)
+    if (findComponent(Acceptor.class)==null)
     { throw new BindException
         ("Editor must be contained in a Form or other Acceptor");
     }

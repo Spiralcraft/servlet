@@ -14,11 +14,16 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import spiralcraft.lang.BindException;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Message;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.DictionaryBinding;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.OutputContext;
+import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.textgen.RenderMessage;
+import spiralcraft.textgen.kit.AbstractMessageHandler;
 
 import java.io.IOException;
 
@@ -44,7 +49,9 @@ import spiralcraft.util.ArrayUtil;
  *
  */
 public abstract class AbstractTag
+  extends AbstractMessageHandler
 {
+  
   private static final AttributeEncoder attributeEncoder
     =new AttributeEncoder();
   
@@ -53,10 +60,13 @@ public abstract class AbstractTag
   protected boolean shouldRender=true;
   
     
-  protected abstract String getTagName(EventContext context);
+  protected abstract String getTagName(Dispatcher context);
   
   private DictionaryBinding<?>[] attributeBindings;
   private DictionaryBinding<?>[] standardAttributeBindings;
+  
+  { type=RenderMessage.TYPE;
+  }
   
   
   /**
@@ -80,6 +90,88 @@ public abstract class AbstractTag
 
   public void setAttributeBindings(DictionaryBinding<?>[] attributeBindings)
   { this.attributeBindings=attributeBindings;
+  }
+  
+  
+  @Override
+  protected void doHandler
+    (Dispatcher context,Message message,MessageHandlerChain next)
+  { 
+    try
+    { render(context,message,next);
+    }
+    catch (IOException x)
+    { throw new RuntimeException(x);
+    }
+  }
+  
+  
+  /**
+   * Render the Tag, and all its contents.
+   * 
+   * 
+   * @param context
+   * @throws IOException
+   */
+  private final void render
+    (Dispatcher context,Message message,MessageHandlerChain next)
+    throws IOException
+  { 
+    
+    boolean hasContent=hasContent();
+
+    renderBefore(context);
+    if (hasContent && contentPosition<0)
+    { renderContent(context,message,next);
+    }
+    
+    String name=getTagName(context);
+    if (shouldRender && name!=null && name.length()>0)
+    {
+      Appendable out=OutputContext.get();
+      out.append("<");
+      out.append(getTagName(context));
+      out.append(" ");
+    
+      renderAttributes(context,out);
+    
+      if (hasContent && contentPosition==0)
+      { 
+        out.append(">");
+   
+        renderContent(context,message,next);
+    
+        out.append("</");
+        out.append(getTagName(context));
+        out.append(">");
+      }
+      else
+      { out.append("/>");
+      }
+
+      if (hasContent && contentPosition>0)
+      { renderContent(context,message,next);
+      }
+
+    }
+    else
+    {
+      // Rendering disabled
+      if (hasContent())
+      { renderContent(context,message,next);
+      }
+    }
+    renderAfter(context);
+  }  
+  
+  /**
+   * 
+   * @param context
+   * @throws IOException
+   */
+  protected void renderContent(Dispatcher context,Message message,MessageHandlerChain next)
+    throws IOException
+  { next.handleMessage(context,message);
   }
   
   protected void appendAttribute(String name,String value)
@@ -229,8 +321,9 @@ public abstract class AbstractTag
   { this.contentPosition=contentPosition;
   }
 
-  public void bind(Focus<?> focus)
-    throws BindException
+  @Override
+  public Focus<?> bind(Focus<?> focus)
+    throws ContextualException
   { 
     if (attributeBindings!=null)
     {
@@ -244,6 +337,7 @@ public abstract class AbstractTag
       { binding.bind(focus);
       }
     }
+    return focus;
   }
   
   protected void renderPresentAttribute
@@ -279,17 +373,17 @@ public abstract class AbstractTag
     }
   }
   
-  protected void renderAttributes(EventContext context)
+  protected void renderAttributes(Dispatcher context,Appendable out)
     throws IOException
   { 
     if (attributes!=null)
-    { context.getOutput().append(attributes+" ");
+    { out.append(attributes+" ");
     }
     if (standardAttributeBindings!=null)
-    { renderBoundAttributes(context.getOutput(),standardAttributeBindings);
+    { renderBoundAttributes(out,standardAttributeBindings);
     }
     if (attributeBindings!=null)
-    { renderBoundAttributes(context.getOutput(),attributeBindings);
+    { renderBoundAttributes(out,attributeBindings);
     }
   }
 
@@ -315,22 +409,14 @@ public abstract class AbstractTag
    */
   protected abstract boolean hasContent();
   
-  /**
-   * 
-   * @param context
-   * @throws IOException
-   */
-  protected void renderContent(EventContext context)
-    throws IOException
-  { 
-  }
+
   
   /**
    * 
    * @param context
    * @throws IOException
    */
-  protected void renderBefore(EventContext context)
+  protected void renderBefore(Dispatcher context)
     throws IOException
   {
   }
@@ -340,68 +426,12 @@ public abstract class AbstractTag
    * @param context
    * @throws IOException
    */
-  protected void renderAfter(EventContext context)
+  protected void renderAfter(Dispatcher context)
     throws IOException
   {
   }
 
-  
-  /**
-   * Render the Tag, and all its contents.
-   * 
-   * 
-   * @param context
-   * @throws IOException
-   */
-  public final void render(EventContext context)
-    throws IOException
-  { 
-    
-    boolean hasContent=hasContent();
 
-    renderBefore(context);
-    if (hasContent && contentPosition<0)
-    { renderContent(context);
-    }
-    
-    String name=getTagName(context);
-    if (shouldRender && name!=null && name.length()>0)
-    {
-      Appendable out=context.getOutput();
-      out.append("<");
-      out.append(getTagName(context));
-      out.append(" ");
-    
-      renderAttributes(context);
-    
-      if (hasContent && contentPosition==0)
-      { 
-        out.append(">");
-   
-        renderContent(context);
-    
-        out.append("</");
-        out.append(getTagName(context));
-        out.append(">");
-      }
-      else
-      { out.append("/>");
-      }
-
-      if (hasContent && contentPosition>0)
-      { renderContent(context);
-      }
-
-    }
-    else
-    {
-      // Rendering disabled
-      if (hasContent())
-      { renderContent(context);
-      }
-    }
-    renderAfter(context);
-  }
   
 
 }

@@ -18,14 +18,14 @@ package spiralcraft.servlet.webui.components;
 
 
 import spiralcraft.command.Command;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.servlet.webui.Control;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.lang.BindException;
-
 
 import spiralcraft.app.Message;
 
@@ -49,7 +49,7 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   
   @Override
   public void message
-    (EventContext context,Message message)
+    (Dispatcher context,Message message)
   { 
     try
     { 
@@ -85,7 +85,7 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
    * 
    * @param context
    */
-  protected void executeCommand(EventContext context)
+  protected void executeCommand(Dispatcher context)
   {    
     try
     {
@@ -140,7 +140,7 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   
   @Override
   protected Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     if (!(Command.class.isAssignableFrom(target.getContentType()))
 
@@ -187,15 +187,15 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
 
   @SuppressWarnings("unchecked")
   @Override
-  protected CommandState<Tcontext,Tresult> getState(EventContext context)
+  protected CommandState<Tcontext,Tresult> getState(Dispatcher context)
   { return (CommandState<Tcontext,Tresult>) context.getState();
   }
   
-  protected final void pushState(EventContext context)
+  protected final void pushState(Dispatcher context)
   { commandLocal.push(getState(context).getValue());
   }
   
-  protected final void popState(EventContext context)
+  protected final void popState(Dispatcher context)
   { commandLocal.pop();
   }
 }

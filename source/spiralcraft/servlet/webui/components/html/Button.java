@@ -16,14 +16,12 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.AbstractCommandControl;
 import spiralcraft.servlet.webui.components.CommandState;
 
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMap;
 
 /**
@@ -54,19 +52,19 @@ public class Button<Tcontext,Tresult>
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher context)
     { return "button";
     }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
       CommandState<Tcontext,Tresult> state=getState(context);
-      renderAttribute(context.getOutput(),"type",type);
-      renderAttribute(context.getOutput(),"name",state.getVariableName());
-      renderAttribute(context.getOutput(),"value",value);
-      super.renderAttributes(context);
+      renderAttribute(out,"type",Button.this.type);
+      renderAttribute(out,"name",state.getVariableName());
+      renderAttribute(out,"value",value);
+      super.renderAttributes(context,out);
     }
 
     @Override
@@ -74,14 +72,16 @@ public class Button<Tcontext,Tresult>
     { return true;
     }
     
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { Button.super.render(context);
-    }
+
   }
     
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
@@ -109,25 +109,6 @@ public class Button<Tcontext,Tresult>
   { return name;
   }
   
-
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    pushState(context);
-    try
-    {
-      if (getState(context).isErrorState())
-      { errorTag.render(context);
-      }
-      else
-      { tag.render(context);
-      }
-    }
-    finally
-    { popState(context);
-    }
-  }
   
   @Override
   public void gather(ServiceContext context)
@@ -157,15 +138,6 @@ public class Button<Tcontext,Tresult>
   { 
   }
 
-  @Override
-  public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindSelf(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }  
 
 }
 

@@ -18,12 +18,10 @@ import java.io.IOException;
 
 
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 //import spiralcraft.log.ClassLog;
 
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
 
@@ -51,7 +49,7 @@ public class TextInput<Ttarget>
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "input";
     }
 
@@ -64,21 +62,23 @@ public class TextInput<Ttarget>
     }
     
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
       ControlState<String> state=getState(context);
       if (password)
-      { renderAttribute(context.getOutput(),"type","password");
+      { renderAttribute(out,"type","password");
       }
       else
-      { renderAttribute(context.getOutput(),"type","text");
+      { renderAttribute(out,"type","text");
       }
-      renderAttribute(context.getOutput(),"name",state.getVariableName());
+      renderAttribute(out,"name",state.getVariableName());
       if (!password && state.getValue()!=null)
-      { renderAttribute(context.getOutput(),"value",state.getValue());
+      { renderAttribute(out,"value",state.getValue());
       }
-      super.renderAttributes(context);
+
+      state.setPresented(true);
+      super.renderAttributes(context,out);
     }
     
     @Override
@@ -88,9 +88,13 @@ public class TextInput<Ttarget>
     
   }
   
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
   
-
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
@@ -99,35 +103,6 @@ public class TextInput<Ttarget>
   public ErrorTag getErrorTag()
   { return errorTag;
   }
-
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    ControlState<String> state=getState(context);
-    if (state.isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-    state.setPresented(true);
-    super.render(context);
-  }
-  
-  @Override
-  public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindSelf(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }    
-  
-  
-
 
 }
 

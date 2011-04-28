@@ -14,11 +14,10 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import java.io.IOException;
-
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 public class Login
     extends spiralcraft.servlet.webui.components.Login
@@ -34,7 +33,7 @@ public class Login
     }
     
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return tagName;
     }
     
@@ -42,25 +41,19 @@ public class Login
     protected boolean hasContent()
     { return true;
     }
-    
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { Login.super.render(context);
-    }
 
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    { super.renderAttributes(context);
-    }
   }
   
   private Tag tag=new Tag();
   
   private ErrorTag errorTag
-    =new ErrorTag(tag);
-
+    =new ErrorTag();
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
+  
   public Tag getTag()
   { return tag;
   }
@@ -70,26 +63,12 @@ public class Login
   }
 
   @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if (getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-  }
-
-  @Override
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
-    if (findElement(Form.class)==null)
+    if (findComponent(Form.class)==null)
     { throw new BindException("Login must be contained in a Form");
     }
-    tag.bind(focus);
-    errorTag.bind(focus);
     return super.bindExports(focus);
   }
   

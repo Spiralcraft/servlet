@@ -14,10 +14,6 @@
 //
 package spiralcraft.servlet.webui.components.rpc;
 
-import java.io.IOException;
-
-import spiralcraft.textgen.EventContext;
-
 
 /**
  * <p>A TupleEditor geared towards RPC based editing
@@ -29,13 +25,6 @@ import spiralcraft.textgen.EventContext;
 public class TupleEditor
     extends spiralcraft.servlet.webui.components.TupleEditor
 {
-
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    renderChildren(context);
-  }
 
 
 

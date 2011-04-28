@@ -20,6 +20,7 @@ import spiralcraft.log.Level;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
@@ -258,7 +259,7 @@ public class SMTP
       
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     if (senderX!=null)
     { addPreAssignment("sender",senderX);

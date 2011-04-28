@@ -16,13 +16,12 @@ package spiralcraft.servlet.webui;
 
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.PrepareMessage;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
-import java.io.IOException;
 
 /**
  * <p>A Component is a unit of web user interface composition. 
@@ -62,7 +61,7 @@ public abstract class Component
   
   @Override
   public void message
-    (EventContext context
+    (Dispatcher context
     ,Message message
     )
   {
@@ -176,15 +175,6 @@ public abstract class Component
     if (debug)
     { log.fine("Init");
     }
-  }
-
-
-  
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { renderChildren(context);
   }
   
 }

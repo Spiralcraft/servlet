@@ -21,6 +21,7 @@ import spiralcraft.command.AbstractCommandFactory;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.command.CommandFactory;
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Type;
@@ -42,7 +43,7 @@ import spiralcraft.lang.spi.TranslatorChannel;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.util.ArrayUtil;
 
 /**
@@ -534,7 +535,7 @@ public abstract class TupleEditor
   @Override
   @SuppressWarnings("unchecked")
   protected Focus<Buffer> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     focus=super.bindExports(focus);
     DataReflector<Buffer> reflector
@@ -579,7 +580,7 @@ public abstract class TupleEditor
    * @return A new Action
    */
   @Override
-  protected Action createNewAction(EventContext context)
+  protected Action createNewAction(Dispatcher context)
   {
     return new Action(newActionName,context.getState().getPath())
     {

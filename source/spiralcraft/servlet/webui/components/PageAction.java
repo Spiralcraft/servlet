@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui.components;
 
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.command.Command;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
@@ -220,7 +221,7 @@ public class PageAction
   { return new ActionState(this);
   }
   
-  protected ActionState getState(EventContext context)
+  protected ActionState getState(Dispatcher context)
   { return (ActionState) context.getState();
   }
   

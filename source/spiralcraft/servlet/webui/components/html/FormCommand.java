@@ -14,14 +14,10 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import java.io.IOException;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 import spiralcraft.servlet.webui.components.AcceptorCommand;
-
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 
 /**
  * <p>Triggers Command execution during the GATHER phase of an Acceptor,
@@ -57,7 +53,7 @@ public class FormCommand<Tcontext,Tresult>
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return null;
     }
 
@@ -67,7 +63,13 @@ public class FormCommand<Tcontext,Tresult>
     }
   }
     
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
@@ -76,30 +78,6 @@ public class FormCommand<Tcontext,Tresult>
   public ErrorTag getErrorTag()
   { return errorTag;
   }
-  
-  
-  @Override
-  protected Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
-  {
-    focus=super.bindSelf(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if (getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-    super.render(context);
-  }
-  
+
 }
 

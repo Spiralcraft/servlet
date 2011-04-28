@@ -19,8 +19,10 @@ import spiralcraft.log.Level;
 
 import javax.servlet.ServletException;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.common.ContextualException;
 
 
 import spiralcraft.lang.Assignment;
@@ -42,7 +44,6 @@ import spiralcraft.servlet.autofilter.SecurityFilter;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.EventContext;
 import spiralcraft.util.ArrayUtil;
 
 
@@ -218,7 +219,7 @@ public class Login
   
   @SuppressWarnings("unchecked")
   @Override
-  protected LoginState getState(EventContext context)
+  protected LoginState getState(Dispatcher context)
   { return (LoginState) context.getState();
   }
 
@@ -566,7 +567,7 @@ public class Login
   
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     postSetters=bindAssignments(focus,postAssignments);
     preSetters=bindAssignments(focus,preAssignments);

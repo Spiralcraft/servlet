@@ -25,6 +25,7 @@ import java.net.URL;
 import javax.servlet.ServletException;
 
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
@@ -34,7 +35,7 @@ import spiralcraft.log.Level;
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLDataEncoder;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.kit.RenderHandler;
 
 
 /**
@@ -56,6 +57,32 @@ public class Redirect
   private String refererParameter;
   private boolean mergeQuery;
 
+  { addHandler
+      (new RenderHandler () 
+        { 
+          @Override
+          public void render(Dispatcher context)
+            throws IOException
+          {
+  
+            Boolean val=whenChannel!=null?whenChannel.get():Boolean.TRUE;
+            if (val!=null && val)
+            {
+              log.fine(getLogPrefix(context)+":Redirect on render");
+              try
+              { setupRedirect((ServiceContext) context);
+              }
+              catch (ServletException x)
+              { log.log(Level.WARNING,getLogPrefix(context),x);
+              }
+                
+            }
+          }
+        
+        }
+      );
+  }
+  
   public void setRedirectURI(URI uri)
   { redirectURI=uri;
   }
@@ -220,27 +247,6 @@ public class Redirect
    
   }  
     
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  {
-
-    Boolean val=whenChannel!=null?whenChannel.get():Boolean.TRUE;
-    if (val!=null && val)
-    {
-      log.fine(getLogPrefix(context)+":Redirect on render");
-      try
-      { setupRedirect((ServiceContext) context);
-      }
-      catch (ServletException x)
-      { log.log(Level.WARNING,getLogPrefix(context),x);
-      }
-        
-    }
-    else
-    { super.render(context);
-    }
-  }
 
 }
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.lang.BindException;
@@ -38,7 +39,6 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.EventContext;
 import spiralcraft.util.ArrayUtil;
 
 
@@ -93,7 +93,7 @@ public class Paginate<Ttarget,Titem>
    * @param context
    * @return A new Action
    */
-  protected Action createResetAction(EventContext context)
+  protected Action createResetAction(Dispatcher context)
   {
     String actionName
       =resetActionName==null
@@ -290,7 +290,7 @@ public class Paginate<Ttarget,Titem>
   
   @SuppressWarnings("unchecked")
   @Override
-  protected PageState<Ttarget,Titem> getState(EventContext context)
+  protected PageState<Ttarget,Titem> getState(Dispatcher context)
   { return (PageState<Ttarget,Titem>) context.getState();
   }
 

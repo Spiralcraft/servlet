@@ -14,7 +14,7 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
 import spiralcraft.command.Command;
 import spiralcraft.common.ContextualException;
@@ -52,11 +52,17 @@ public class Link
   private Expression<Command<?,?,?>> commandExpression;
   private Channel<Command<?,?,?>> commandChannel;
   private Tag tag=new Tag();
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
   private String[] queueActions;
   private LinkAcceptor<?> linkAcceptor;
   private String fragment;
   private Binding<String> fragmentX;
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   /**
    * An Expression which evaluates to the command that will be invoked when
@@ -100,12 +106,12 @@ public class Link
   public class Tag extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "a";
     }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     { 
       
@@ -129,8 +135,8 @@ public class Link
       { actionURI=actionURI+"#"+fragmentVal;
       }
       
-      renderAttribute(context.getOutput(),"href",actionURI);
-      super.renderAttributes(context);
+      renderAttribute(out,"href",actionURI);
+      super.renderAttributes(context,out);
     }
 
     @Override
@@ -138,12 +144,6 @@ public class Link
     { return getChildCount()>0;
     }
     
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { 
-      Link.super.render(context);
-    }
     
   }
   
@@ -157,9 +157,6 @@ public class Link
 
     linkAcceptor=LangUtil.findInstance(LinkAcceptor.class,focus);
 
-    tag.bind(focus);
-    errorTag.bind(focus);
-    
     if (fragmentX!=null)
     { fragmentX.bind(focus);
     }
@@ -178,16 +175,8 @@ public class Link
   { return errorTag;
   }
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { tag.render(context);
-    
-  }
   
-
-  
-  protected Action createAction(EventContext context)
+  protected Action createAction(Dispatcher context)
   {
     int[] path=context.getState().getPath();
     

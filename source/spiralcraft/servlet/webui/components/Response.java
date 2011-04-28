@@ -27,8 +27,8 @@ import spiralcraft.lang.Setter;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
 
-import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.MessageHandlerChain;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.kit.AbstractMessageHandler;
 
 import spiralcraft.app.Message;
@@ -58,14 +58,15 @@ public class Response
     {
 
       @Override
-      public void handleMessage
-        (EventContext context, Message message,MessageHandlerChain next)
+      protected void doHandler
+        (Dispatcher context, Message message,MessageHandlerChain next)
       {
         for (Setter<?> setter:setters)
         { setter.set();
         }
         next.handleMessage(context,message);
       }
+
     }
     );
   }

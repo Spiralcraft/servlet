@@ -14,15 +14,9 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import java.io.IOException;
 
-
-
-
+import spiralcraft.app.Dispatcher;
 import spiralcraft.data.DataComposite;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
-import spiralcraft.textgen.EventContext;
 
 /**
  * HTML extension for editing an Aggregate (a collection of DataComposites)  
@@ -45,7 +39,7 @@ public class AggregateEditor<T extends DataComposite>
     }
     
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher context)
     { return tagName;
     }
     
@@ -53,25 +47,18 @@ public class AggregateEditor<T extends DataComposite>
     protected boolean hasContent()
     { return true;
     }
-    
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { AggregateEditor.super.render(context);
-    }
 
-    @Override
-    protected void renderAttributes(EventContext context)
-      throws IOException
-    { super.renderAttributes(context);
-    }
   }
   
   private Tag tag=new Tag();
   
-  private ErrorTag errorTag
-    =new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
 
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
+  
   public Tag getTag()
   { return tag;
   }
@@ -79,30 +66,6 @@ public class AggregateEditor<T extends DataComposite>
   public ErrorTag getErrorTag()
   { return errorTag;
   }
-
-  @Override
-  protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindExports(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if ( getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-  }
-
-
-  
+   
 
 }

@@ -18,9 +18,7 @@ import java.io.IOException;
 
 
 
-import spiralcraft.textgen.EventContext;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractSelectControl;
 
@@ -52,7 +50,7 @@ public class RadioGroup<Ttarget,Tvalue>
     private String tagName=null;
     
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return tagName;
     }
     
@@ -66,52 +64,30 @@ public class RadioGroup<Ttarget,Tvalue>
     }
     
     @Override
-    protected void renderContent(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out) 
       throws IOException
-    { RadioGroup.super.render(context);
-    }    
+    { 
+
+      ((ControlState<?>) context.getState()).setPresented(true);
+      super.renderAttributes(context,out);
+    }
     
   };
 
   private ErrorTag errorTag
-    =new ErrorTag(tag);
+    =new ErrorTag();
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
   }
   
 
-
-
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  {
-    if (getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-    ((ControlState<?>) context.getState()).setPresented(true);
-  }
-  
-//  void setValueConverter(StringConverter<Tvalue> converter)
-//  { this.valueConverter=converter;
-//  }
-  
-
-  @Override
-  protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
-  {
-
-    focus=super.bindExports(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }
 }
   
 

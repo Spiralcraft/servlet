@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 import spiralcraft.data.Field;
@@ -411,7 +412,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   @Override
   @SuppressWarnings("unchecked")
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     focus=super.bindExports(focus);
     DataReflector<Buffer> reflector

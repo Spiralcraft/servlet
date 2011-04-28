@@ -18,9 +18,7 @@ import java.io.IOException;
 
 
 
-import spiralcraft.textgen.EventContext;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractSelectControl;
 
@@ -50,37 +48,39 @@ public class Select<Ttarget,Tvalue>
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "select";
     }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
       ControlState<?> state=getState(context);
-      renderAttribute(context.getOutput(),"name",state.getVariableName());
+      renderAttribute(out,"name",state.getVariableName());
       if (multi)
-      { renderAttribute(context.getOutput(),"multiple",null);
+      { renderAttribute(out,"multiple",null);
       }
-      super.renderAttributes(context);
+      state.setPresented(true);
+      super.renderAttributes(context,out);
     }
     
     @Override
     protected boolean hasContent()
     { return true;
     }
-    
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { Select.super.render(context);
-    }    
+      
     
   };
 
   private ErrorTag errorTag
-    =new ErrorTag(tag);
+    =new ErrorTag();
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
@@ -89,33 +89,6 @@ public class Select<Ttarget,Tvalue>
   public void setMulti(boolean multi)
   { this.multi=multi;
   }
-
-
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  {
-    ControlState<?> state=getState(context);
-    if (state.isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-    state.setPresented(true);
-  }
-  
-  @Override
-  protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
-  {
-    focus=super.bindExports(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }
-
 
 }
   

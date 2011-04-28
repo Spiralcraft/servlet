@@ -16,14 +16,15 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandlerChain;
 
 //import spiralcraft.log.ClassLog;
 
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
+import spiralcraft.app.Message;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
+import spiralcraft.textgen.OutputContext;
 
 public class TextArea<Ttarget>
   extends AbstractTextControl<Ttarget>
@@ -31,11 +32,14 @@ public class TextArea<Ttarget>
 //  private static final ClassLog log
 //    =ClassLog.getInstance(TextInput.class);
   
+  private Tag tag=new Tag();  
+  private ErrorTag errorTag=new ErrorTag();
+    
   
-  private Tag tag=new Tag();
-  
-  private ErrorTag errorTag=new ErrorTag(tag);
-  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
@@ -45,35 +49,22 @@ public class TextArea<Ttarget>
   { return errorTag;
   }
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    ControlState<?> state=getState(context);
-    if (state.isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-    state.setPresented(true);
-  }  
-
   public class Tag
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher dispatcher)
     { return "textarea";
     }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
       ControlState<?> state=getState(context);
-      renderAttribute(context.getOutput(),"name",state.getVariableName());
-      super.renderAttributes(context);
+      renderAttribute(out,"name",state.getVariableName());
+      state.setPresented(true);
+      super.renderAttributes(context,out);
     }
     
     @Override
@@ -82,13 +73,19 @@ public class TextArea<Ttarget>
     }
     
     @Override
-    protected void renderContent(EventContext context)
+    protected void renderContent
+      (Dispatcher context
+      ,Message message
+      ,MessageHandlerChain next
+      )
       throws IOException
     { 
       String value=TextArea.this.<String>getState(context).getValue();
       if (value!=null)
-      {  context.getOutput().append(value);
+      { OutputContext.get().append(value);
       }
+      super.renderContent(context,message,next);
+      
     }
 
     public void setRows(String val)
@@ -112,17 +109,7 @@ public class TextArea<Ttarget>
     }
     
     
-  }
-  
-  @Override
-  public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindSelf(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }       
+  }  
   
 }
 

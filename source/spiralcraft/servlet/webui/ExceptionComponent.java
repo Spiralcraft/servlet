@@ -18,25 +18,39 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.textgen.OutputContext;
+import spiralcraft.textgen.kit.RenderHandler;
 
 public class ExceptionComponent
     extends RootComponent
 {
   private Throwable exception;
+  
+  { addHandler
+      (new RenderHandler()
+        { 
+          @Override
+          protected void render(Dispatcher context)
+            throws IOException
+          { 
+            Appendable out=OutputContext.get();
+            out.append("<html><body><pre>");
+            ((Flushable) out).flush();
+            exception.printStackTrace
+              (new PrintStream(((ServiceContext) context).getResponse().getOutputStream())
+              );
+            out.append("</pre></body></html>");
+          }
+        
+        } 
+      );
+  }
+  
   public ExceptionComponent(Throwable exception)
   { this.exception=exception;
   }
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    context.getOutput().append("<html><body><pre>");
-    ((Flushable) context.getOutput()).flush();
-    exception.printStackTrace
-      (new PrintStream(((ServiceContext) context).getResponse().getOutputStream())
-      );
-    context.getOutput().append("</pre></body></html>");
-  }
+  
+  
 }

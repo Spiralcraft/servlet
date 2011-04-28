@@ -14,12 +14,10 @@
 //
 package spiralcraft.servlet.webui;
 
-import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.ServletException;
 
-import spiralcraft.textgen.EventContext;
 import spiralcraft.time.Clock;
 
 import spiralcraft.command.Command;
@@ -35,6 +33,7 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
 /**
@@ -144,7 +143,7 @@ public class RootComponent
 
   @Override
   public void message
-    (EventContext context,Message message)
+    (Dispatcher context,Message message)
   {
     if (threadLocal==null)
     { throw new RuntimeException("UIComponent "+this+" never bound");
@@ -160,18 +159,6 @@ public class RootComponent
     
   }
   
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    threadLocal.push((ServiceContext) context);
-    try
-    { super.render(context);
-    }
-    finally
-    { threadLocal.pop();
-    }
-  }
   
   public Command<?,?,?> actionCommand(final String actionName)
   {

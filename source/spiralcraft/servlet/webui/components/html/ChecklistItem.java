@@ -17,11 +17,8 @@ package spiralcraft.servlet.webui.components.html;
 import java.io.IOException;
 
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 
-
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.components.AbstractSelectItemControl;
 import spiralcraft.servlet.webui.components.SelectItemState;
 
@@ -54,27 +51,27 @@ public class ChecklistItem<Ttarget,Tvalue>
     extends AbstractTag
   {
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher context)
     { return "input";
     }
 
     @Override
-    protected void renderAttributes(EventContext context)
+    protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
       SelectItemState<Tvalue> state=getState(context);
 
 
-      renderAttribute(context.getOutput(),"type","checkbox");
+      renderAttribute(out,"type","checkbox");
       renderAttribute
-        (context.getOutput(),"name",state.getSelectState().getVariableName());
+        (out,"name",state.getSelectState().getVariableName());
       if (state.isSelected())
-      { renderAttribute(context.getOutput(),"checked","checked");
+      { renderAttribute(out,"checked","checked");
       }
       if (converter!=null)
       { 
         renderAttribute
-          (context.getOutput(),"value",converter.toString(state.getValue())
+          (out,"value",converter.toString(state.getValue())
           );
       }
       else
@@ -82,7 +79,7 @@ public class ChecklistItem<Ttarget,Tvalue>
         if (state.getValue()!=null)
         {
           renderAttribute
-            (context.getOutput()
+            (out
             ,"value"
             ,state.getValue()!=null
             ?state.getValue().toString()
@@ -90,15 +87,10 @@ public class ChecklistItem<Ttarget,Tvalue>
             );
         }
       }
-      super.renderAttributes(context);
+      super.renderAttributes(context,out);
       
     }
     
-    @Override
-    protected void renderContent(EventContext context)
-      throws IOException
-    { ChecklistItem.super.render(context);
-    }
     
     @Override
     protected boolean hasContent()
@@ -108,7 +100,12 @@ public class ChecklistItem<Ttarget,Tvalue>
   };
   
   private Tag tag=new Tag();
-  private ErrorTag errorTag=new ErrorTag(tag);
+  private ErrorTag errorTag=new ErrorTag();
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
@@ -117,29 +114,7 @@ public class ChecklistItem<Ttarget,Tvalue>
   public ErrorTag getErrorTag()
   { return errorTag;
   }
-    
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    if (getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-  }
-  
-  @Override
-  public Focus<?> bindSelf(Focus<?> focus)
-    throws BindException
-  { 
-    focus=super.bindSelf(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }   
+     
 }
 
 

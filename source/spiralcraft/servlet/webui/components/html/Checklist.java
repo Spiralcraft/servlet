@@ -18,9 +18,7 @@ import java.io.IOException;
 
 
 
-import spiralcraft.textgen.EventContext;
-import spiralcraft.lang.BindException;
-import spiralcraft.lang.Focus;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractSelectControl;
 
@@ -54,7 +52,7 @@ public class Checklist<Ttarget,Tvalue>
     private String tagName=null;
     
     @Override
-    protected String getTagName(EventContext context)
+    protected String getTagName(Dispatcher context)
     { return tagName;
     }
     
@@ -68,52 +66,31 @@ public class Checklist<Ttarget,Tvalue>
     }
     
     @Override
-    protected void renderContent(EventContext context)
+    protected void renderAfter
+      (Dispatcher context)
       throws IOException
-    { Checklist.super.render(context);
-    }    
-    
+    { 
+      super.renderAfter(context);
+      ((ControlState<?>) context.getState()).setPresented(true);
+    }
   };
 
   private ErrorTag errorTag
-    =new ErrorTag(tag);
+    =new ErrorTag();
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   public Tag getTag()
   { return tag;
   }
   
-
-
-
-  
-  @Override
-  public void render(EventContext context)
-    throws IOException
-  {
-    if (getState(context).isErrorState())
-    { errorTag.render(context);
-    }
-    else
-    { tag.render(context);
-    }
-    ((ControlState<?>) context.getState()).setPresented(true);
+  public ErrorTag getErrorTag()
+  { return errorTag;
   }
-  
-//  void setValueConverter(StringConverter<Tvalue> converter)
-//  { this.valueConverter=converter;
-//  }
-  
 
-  @Override
-  protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
-  {
-
-    focus=super.bindExports(focus);
-    tag.bind(focus);
-    errorTag.bind(focus);
-    return focus;
-  }
 }
   
 

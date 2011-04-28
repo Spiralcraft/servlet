@@ -17,9 +17,10 @@ package spiralcraft.servlet.webui.components;
 
 import java.io.IOException;
 
+import spiralcraft.app.Dispatcher;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.EventContext;
+import spiralcraft.textgen.kit.RenderHandler;
 
 /**
  * Coordinates behavior triggered by responsive links
@@ -33,18 +34,25 @@ public class LinkAcceptor<T>
 {
   //private static final ClassLog log=ClassLog.getInstance(Controller.class);
   
-  @Override
-  protected boolean wasActioned(ServiceContext context)
-  { return !context.getOutOfSync();
+  { addHandler
+    (new RenderHandler () 
+      { 
+        @Override
+        public void render(Dispatcher context)
+          throws IOException
+        {
+          Action action=createAction(context,true);
+          ((ServiceContext) context).registerAction(action);
+
+        }
+      
+      }
+    );
   }
   
   @Override
-  public void render(EventContext context)
-    throws IOException
-  { 
-    Action action=createAction(context,true);
-    ((ServiceContext) context).registerAction(action);
-    super.render(context);
+  protected boolean wasActioned(ServiceContext context)
+  { return !context.getOutOfSync();
   }
   
   /**

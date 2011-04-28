@@ -17,10 +17,11 @@ package spiralcraft.servlet.webui.components;
 import java.util.List;
 
 
-import spiralcraft.textgen.EventContext;
 import spiralcraft.util.string.StringConverter;
 
 
+import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
@@ -100,7 +101,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   { 
     binding=new VariableMapBinding<Ttarget>(valueBinding,null,converter);
     return focus.chain(source);
@@ -213,7 +214,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   
   @SuppressWarnings("unchecked")
   @Override
-  protected SelectState<Ttarget,Tvalue> getState(EventContext context)
+  protected SelectState<Ttarget,Tvalue> getState(Dispatcher context)
   { return (SelectState<Ttarget,Tvalue>) context.getState();
   }
 }

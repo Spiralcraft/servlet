@@ -18,10 +18,9 @@ import java.net.URI;
 
 import javax.servlet.ServletException;
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.textgen.PrepareMessage;
 
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -35,8 +34,11 @@ import spiralcraft.servlet.webui.GatherMessage;
 
 import spiralcraft.util.ArrayUtil;
 
+import spiralcraft.textgen.EventContext;
+
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.common.ContextualException;
 
 /**
  * <p>Accepts a user input action and sequences the processing behavior of 
@@ -156,7 +158,7 @@ public abstract class Acceptor<T>
    * @param context
    * @return A new Action
    */
-  protected Action createAction(EventContext context,final boolean isClearable)
+  protected Action createAction(Dispatcher context,final boolean isClearable)
   {
     int[] path=context.getState().getPath();
     
@@ -238,7 +240,7 @@ public abstract class Acceptor<T>
   
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     if (onPost!=null)
     { onPostChannel=focus.bind(onPost);

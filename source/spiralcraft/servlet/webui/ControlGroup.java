@@ -33,7 +33,7 @@ import spiralcraft.lang.spi.AbstractChannel;
 import spiralcraft.lang.spi.SimpleChannel;
 
 
-import spiralcraft.textgen.EventContext;
+import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 
 
@@ -86,7 +86,7 @@ public abstract class ControlGroup<Ttarget>
   }
 
   @Override
-  public void message(EventContext context, Message message)
+  public void message(Dispatcher context, Message message)
   {
 
     // Put our state into ThreadLocal storage so subcontrols can bind to
@@ -222,7 +222,7 @@ public abstract class ControlGroup<Ttarget>
    * @throws BindException 
    */
   protected Focus<?> bindExports(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   { return focus;
   }
 
@@ -344,7 +344,7 @@ public abstract class ControlGroup<Ttarget>
     bindHandlers(focus);
     if (variableName == null && getParent()!=null)
     {
-      ControlGroup parentGroup = getParent().findElement(ControlGroup.class);
+      ControlGroup parentGroup = getParent().findComponent(ControlGroup.class);
       if (parentGroup != null)
       { 
         
@@ -467,7 +467,7 @@ public abstract class ControlGroup<Ttarget>
   
   @SuppressWarnings("unchecked")
   @Override
-  protected  <X> ControlGroupState<X> getState(EventContext context)
+  protected  <X> ControlGroupState<X> getState(Dispatcher context)
   { return (ControlGroupState<X>) context.getState();
   }
   

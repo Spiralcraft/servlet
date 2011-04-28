@@ -23,8 +23,8 @@ import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
+import spiralcraft.app.StateFrame;
 import spiralcraft.textgen.EventContext;
-import spiralcraft.textgen.StateFrame;
 import spiralcraft.util.URIUtil;
 import spiralcraft.util.thread.ThreadLocalStack;
 
@@ -133,7 +133,7 @@ public class ServiceContext
   
   
   @Override
-  public String getLogPrefix()
+  public String getContextInfo()
   { 
     HttpSession session=request.getSession(false);
     if (session!=null)
