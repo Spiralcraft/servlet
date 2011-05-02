@@ -2,6 +2,34 @@
   xmlns:scm="class:/spiralcraft/scm/meta/"
   >
   <scm:Change>
+    <revision>0.4.13.2
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2011-05-02
+    </date>
+
+    <detail>
+      <scm:Change>
+        
+        <notes>
+          <scm:Note>Fix issue where Login component does not recompute referring
+            page after the first time it is used.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Login.java
+        </path>
+              
+      </scm:Change>
+    </detail>
+  
+  
+  </scm:Change>
+
+  <scm:Change>
     <revision>0.4.13.1
     </revision>
 
