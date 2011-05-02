@@ -413,6 +413,10 @@ public class ServiceContext
   { this.commandProcessor=commandProcessor;
   }
   
+  /**
+   * @return whether this request is a result of a link-back from
+   *   the same page
+   */
   public boolean isSameReferer()
   { 
     String referer=request.getHeader("Referer");
