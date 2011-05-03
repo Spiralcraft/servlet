@@ -360,9 +360,14 @@ public class Login
   
   private void computeReferer(ServiceContext context,LoginState state)
   {
-    if (state.getValue()==null 
-        && state.getReferer()==null
-        )
+    if ( (state.getValue()==null 
+          && state.getReferer()==null
+          )
+       || 
+          (context.getInitial()
+          && !context.isSameReferer()
+          )
+       )
     { 
       
       String refererParam
