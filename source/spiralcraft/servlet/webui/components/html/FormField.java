@@ -14,7 +14,6 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import java.io.IOException;
 import java.util.List;
 
 import spiralcraft.app.Dispatcher;
@@ -22,7 +21,6 @@ import spiralcraft.data.Tuple;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlGroup;
-import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.compiler.TglUnit;
 import spiralcraft.ui.MetadataType;
 
