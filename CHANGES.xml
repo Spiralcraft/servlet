@@ -20,6 +20,21 @@
         <revision>-dev2
         </revision>
         
+        <notes>
+          <scm:Note>Fix issue where referer parameter only gets read on
+            first use of control
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/components/Login.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        
+        <revision>-dev2
+        </revision>
+        
        
         
         <notes>
