@@ -14,11 +14,17 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
+import java.io.IOException;
 import java.util.List;
 
+import spiralcraft.app.Dispatcher;
+import spiralcraft.data.Tuple;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlGroup;
+import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.textgen.compiler.TglUnit;
+import spiralcraft.ui.MetadataType;
 
 /**
  * <p>An area for editing a particular data element, which includes a set
@@ -33,12 +39,58 @@ public class FormField<T>
   extends ControlGroup<T>
 {
   
+  
+  public class Tag 
+    extends AbstractTag
+  {
+    @Override
+    protected String getTagName(Dispatcher dispatcher)
+    { return "div";
+    }
+    
+    @Override
+    protected boolean hasContent()
+    { return true;
+    }
+    
+  }
+  
+  private Tag tag=new Tag();
+  private ErrorTag errorTag=new ErrorTag();
+  
+  
+  { 
+    addHandler(errorTag);
+    addHandler(tag);
+  }
+  
+  public Tag getTag()
+  { return tag;
+  }
+  
+  public ErrorTag getErrorTag()
+  { return errorTag;
+  }
+  
   // Needs a div tag here
   
   @Override
   protected List<TglUnit> expandChildren(Focus<?> focus,List<TglUnit> children)
   { 
     // Generate children from the focus type
+    
+    Channel<?> subject=focus.getSubject();
+    
+    Tuple fieldMetadata=null;
+    
+    Channel<Tuple> fieldMetadataChannel
+      =subject.<Tuple>resolveMeta(focus,MetadataType.FIELD.uri);
+    if (fieldMetadataChannel!=null)
+    { 
+      if (fieldMetadataChannel!=null)
+      { fieldMetadata=fieldMetadataChannel.get();
+      }
+    }
     
     return children;
   }
