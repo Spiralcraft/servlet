@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2008 Michael Toth
+//Copyright (c) 2011 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
