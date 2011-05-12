@@ -349,9 +349,11 @@ public class UIService
       { log.debug("Initializing state tree for "+localSession.getLocalURI());
       }
       
+      serviceContext.setState(component.createState());
+      
       // Set up state structure and register "initial" events
       serviceContext.dispatch
-        (INITIALIZE_MESSAGE,component,component.createState(),null);
+        (INITIALIZE_MESSAGE,component,null);
     }
     else
     { 
