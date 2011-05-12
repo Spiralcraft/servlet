@@ -173,10 +173,11 @@ public class DataSessionComponent
     ) 
   {
 
+
+    DataSessionState state=getState(context);
+    dataSessionChannel.push(state.get());
     try
     {
-      DataSessionState state=getState(context);
-      dataSessionChannel.push(state.get());
       if (!state.isInitialized())
       { 
         dataSessionFocus.initializeDataSession();
