@@ -17,12 +17,12 @@ package spiralcraft.servlet.webui.components.html;
 import java.util.List;
 
 import spiralcraft.app.Dispatcher;
-import spiralcraft.data.Tuple;
-import spiralcraft.lang.Channel;
+//import spiralcraft.data.Tuple;
+//import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.textgen.compiler.TglUnit;
-import spiralcraft.ui.MetadataType;
+//import spiralcraft.ui.MetadataType;
 
 /**
  * <p>An area for editing a particular data element, which includes a set
@@ -75,20 +75,20 @@ public class FormField<T>
   @Override
   protected List<TglUnit> expandChildren(Focus<?> focus,List<TglUnit> children)
   { 
-    // Generate children from the focus type
-    
-    Channel<?> subject=focus.getSubject();
-    
-    Tuple fieldMetadata=null;
-    
-    Channel<Tuple> fieldMetadataChannel
-      =subject.<Tuple>resolveMeta(focus,MetadataType.FIELD.uri);
-    if (fieldMetadataChannel!=null)
-    { 
-      if (fieldMetadataChannel!=null)
-      { fieldMetadata=fieldMetadataChannel.get();
-      }
-    }
+//    // Generate children from the focus type
+//    
+//    Channel<?> subject=focus.getSubject();
+//    
+//    Tuple fieldMetadata=null;
+//    
+//    Channel<Tuple> fieldMetadataChannel
+//      =subject.<Tuple>resolveMeta(focus,MetadataType.FIELD.uri);
+//    if (fieldMetadataChannel!=null)
+//    { 
+//      if (fieldMetadataChannel!=null)
+//      { fieldMetadata=fieldMetadataChannel.get();
+//      }
+//    }
     
     return children;
   }
