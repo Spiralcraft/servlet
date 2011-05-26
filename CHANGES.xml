@@ -16,6 +16,68 @@
     <detail>
 
       <scm:Change>
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>SessionChannel kit part helps bind a reference to the
+            current session
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/kit/SessionChannel.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>ReferenceFocusFilter supports PrefixedName based
+            configuration using setReference()
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/ReferenceFocusFilter.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev3
+        </release>
+        
+        <notes>
+          <scm:Note>spiralcraft-textgen MessageHandler implementations have 
+            moved to spiralcraft.app.kit
+          </scm:Note>
+          <scm:Note>StateFrame change detection moved into the core
+            spiralcraft.app.State api and the Dispatcher
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>Control.java
+          </URI>
+          <URI>components/DataSessionComponent.java
+          </URI>
+          <URI>components/Editor.java
+          </URI>
+          <URI>components/EditorBase.java
+          </URI>
+          <URI>components/Response.java
+          </URI>
+          <URI>components/html/AbstractTag.java
+          </URI>
+          <URI>components/rpc/Controller.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
         
         <revision>-dev2
         </revision>
