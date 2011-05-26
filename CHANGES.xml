@@ -63,6 +63,9 @@
           <scm:Note>StateFrame change detection moved into the core
             spiralcraft.app.State api and the Dispatcher
           </scm:Note>
+          <scm:Note>addXXXContextual, removeXXXContextual methods moved up into
+            the Element base type
+          </scm:Note>
         </notes>
         
         <path>source/spiralcraft/servlet/webui
