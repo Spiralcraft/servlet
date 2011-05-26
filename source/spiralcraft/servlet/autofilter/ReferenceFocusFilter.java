@@ -125,8 +125,11 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
     throws ContextualException
   { 
     URI attributeURI=instanceURI;
-    if (attributeURI==null)
+    if (attributeURI==null && type!=null)
     { attributeURI=type.getURI();
+    }
+    else 
+    { attributeURI=referenceURI;
     }
     
     this.attributeName
