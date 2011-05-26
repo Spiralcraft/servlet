@@ -36,6 +36,8 @@ import spiralcraft.data.persist.AbstractXmlObject;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.LifecycleException;
+import spiralcraft.common.namespace.PrefixedName;
+import spiralcraft.common.namespace.UnresolvedPrefixException;
 
 
 /**
@@ -65,7 +67,14 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   private Focus<?> parentFocus;
   private String attributeName;
   private boolean threaded=false;
+  private URI alias;
+  private URI referenceURI;
+  
 
+  public void setReference(PrefixedName reference) 
+    throws UnresolvedPrefixException
+  { this.referenceURI=reference.resolve().toURIPath();
+  }
   
   public void setTypeURI(URI typeURI)
   { 
@@ -107,6 +116,11 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   }
 
 
+  public void setAlias(PrefixedName alias)
+    throws UnresolvedPrefixException
+  { this.alias=alias.resolve().toURIPath();
+  }
+  
   /**
    * Called -once- to create the Focus
    */
@@ -146,6 +160,9 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
       =Context.class.isAssignableFrom
         (focus.getSubject().getContentType());
     subject=focus.getSubject();
+    if (alias!=null)
+    { focus.addAlias(alias);
+    }
     return focus;
   }
 
@@ -222,9 +239,18 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
       { parentFocus=new SimpleFocus(null);
       }
       
-      reference=(AbstractXmlObject<Treferent,Tfocus>) 
-        AbstractXmlObject.<Treferent>activate
-          (type!=null?type.getURI():null,instanceURI,parentFocus);
+      if (referenceURI!=null)
+      { 
+        reference=(AbstractXmlObject<Treferent,Tfocus>) 
+          AbstractXmlObject.<Treferent>activate
+            (referenceURI,parentFocus);
+      }
+      else
+      {
+        reference=(AbstractXmlObject<Treferent,Tfocus>) 
+          AbstractXmlObject.<Treferent>activate
+            (type!=null?type.getURI():null,instanceURI,parentFocus);
+      }
       
       referencedFocus=(Focus<Tfocus>) reference.getFocus();
       
