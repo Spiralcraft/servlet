@@ -40,7 +40,6 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Reflector;
 import spiralcraft.lang.Setter;
-import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.log.Level;
 
 /**
@@ -70,11 +69,7 @@ public abstract class Control<Ttarget>
   private boolean contextualizeName=true;
   private boolean forceUpdate;
 
-  protected LinkedList<Contextual> parentContextuals;
-  protected LinkedList<Contextual> targetContextuals;
-  protected LinkedList<Contextual> selfContextuals;
-  
-  
+  protected LinkedList<Contextual> targetContextuals; 
   
   private ThreadLocal<ControlState<Ttarget>> threadLocalState 
     = new ThreadLocal<ControlState<Ttarget>>();
@@ -505,7 +500,7 @@ public abstract class Control<Ttarget>
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
   { 
-    bindContextuals(focus,parentContextuals);
+    bindParentContextuals(focus);
     if (expression!=null)
     { 
       target=focus.bind(expression);
@@ -523,16 +518,10 @@ public abstract class Control<Ttarget>
     bindContextuals(focus,targetContextuals);
     
     focus.addFacet(getAssembly().getFocus());
-    if (selfContextuals!=null)
-    {
-      bindContextuals
-        (focus.chain(new SimpleChannel<Control<Ttarget>>(this,true))
-        ,selfContextuals
-        );
-    }
+    bindSelfFocus(focus);
     focus=bindSelf(focus);
     
-    
+    bindExportContextuals(focus);
     if (target!=null)
     { bindRules(target.getReflector(),focus);
     }
@@ -543,12 +532,13 @@ public abstract class Control<Ttarget>
         ,focus
         );
     }
+    bindHandlers(focus);
+    
     bindChildren(focus);
     return focus;
     
   }
   
-  @Override
   /**
    * <p>Override to bind anything and set this component's focus. Called from
    *   bind() before rules are bound.
