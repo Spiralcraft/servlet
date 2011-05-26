@@ -220,7 +220,7 @@ public class DataSessionComponent
 		
     // Leave the session object alone until handlePrepare()
     //   for a responsive request
-    if (state.frameChanged(context.getFrame()))
+    if (state.isNewFrame())
     {
       applyRequestBindings(context);
       applyAssignments();
@@ -232,7 +232,7 @@ public class DataSessionComponent
   public void handlePrepare(ServiceContext context)
   { 
     DataSessionState state=getState(context);
-    if (state.frameChanged(context.getFrame()))
+    if (state.isNewFrame())
     { 
     	if (!state.getRequestBindingsApplied())
     	{
