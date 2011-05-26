@@ -278,7 +278,7 @@ public abstract class Control<Ttarget>
   protected void handleRequest(ServiceContext context)
   { 
     ControlState<Ttarget> state = getState(context);
-    if (state.frameChanged(context.getFrame()))
+    if (state.isNewFrame())
     {
       if (debug)
       { logFine("Scattering on Request due to frame change : state="+state);
@@ -331,7 +331,7 @@ public abstract class Control<Ttarget>
   protected void handlePrepare(ServiceContext context)
   { 
     ControlState<Ttarget> state = getState(context);
-    boolean frameChanged=state.frameChanged(context.getFrame());
+    boolean frameChanged=state.isNewFrame();
     
     if (frameChanged && debug)
     { log.fine("Frame changed on PREPARE");

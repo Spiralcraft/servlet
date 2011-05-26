@@ -16,14 +16,15 @@ package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.app.kit.AbstractMessageHandler;
+
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.textgen.OutputContext;
-import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.textgen.RenderMessage;
-import spiralcraft.textgen.kit.AbstractMessageHandler;
 
 import java.io.IOException;
 

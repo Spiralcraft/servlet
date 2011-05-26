@@ -21,12 +21,12 @@ package spiralcraft.servlet.webui.components.rpc;
 import spiralcraft.servlet.webui.RequestMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.Acceptor;
+
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.MessageHandlerChain;
-
-import spiralcraft.textgen.kit.AbstractMessageHandler;
-
 import spiralcraft.app.Message;
+
+import spiralcraft.app.kit.AbstractMessageHandler;
 
 public class Controller<T>
   extends Acceptor<T>

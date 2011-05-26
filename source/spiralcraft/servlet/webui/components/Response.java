@@ -29,9 +29,9 @@ import spiralcraft.servlet.webui.ServiceContext;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.MessageHandlerChain;
-import spiralcraft.textgen.kit.AbstractMessageHandler;
-
 import spiralcraft.app.Message;
+import spiralcraft.app.kit.AbstractMessageHandler;
+
 import spiralcraft.common.ContextualException;
 
 /**

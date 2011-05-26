@@ -50,10 +50,10 @@ import spiralcraft.servlet.webui.SaveMessage;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.MessageHandlerChain;
-import spiralcraft.textgen.kit.AbstractMessageHandler;
-import spiralcraft.util.ArrayUtil;
-
 import spiralcraft.app.Message;
+import spiralcraft.app.kit.AbstractMessageHandler;
+
+import spiralcraft.util.ArrayUtil;
 
 /**
  * <p>Provides common functionality for Editors

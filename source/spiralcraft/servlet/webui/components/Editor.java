@@ -52,15 +52,15 @@ import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.SaveMessage;
 
-
-import spiralcraft.app.Dispatcher;
-import spiralcraft.textgen.EventContext;
-import spiralcraft.app.MessageHandlerChain;
-import spiralcraft.textgen.kit.AbstractMessageHandler;
 import spiralcraft.util.ArrayUtil;
 
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.Message;
 
+import spiralcraft.app.kit.AbstractMessageHandler;
+
+import spiralcraft.textgen.EventContext;
 
 public abstract class Editor
   extends ControlGroup<Buffer>
