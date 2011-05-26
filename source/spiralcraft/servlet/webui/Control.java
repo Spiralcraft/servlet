@@ -500,42 +500,48 @@ public abstract class Control<Ttarget>
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
   { 
-    bindParentContextuals(focus);
-    if (expression!=null)
-    { 
-      target=focus.bind(expression);
-    }
-    else
-    { 
-      target=(Channel<Ttarget>) focus.getSubject();
-      if (target==null)
-      { target=(Channel<Ttarget>) focus.getContext();
+    try
+    {
+      bindParentContextuals(focus);
+      if (expression!=null)
+      { 
+        target=focus.bind(expression);
       }
+      else
+      { 
+        target=(Channel<Ttarget>) focus.getSubject();
+        if (target==null)
+        { target=(Channel<Ttarget>) focus.getContext();
+        }
+      }
+      computeDistances();
+      focus=focus.chain(target);
+      
+      bindContextuals(focus,targetContextuals);
+      
+      focus.addFacet(getAssembly().getFocus());
+      bindSelfFocus(focus);
+      focus=bindSelf(focus);
+      
+      bindExportContextuals(focus);
+      if (target!=null)
+      { bindRules(target.getReflector(),focus);
+      }
+      else if (focus.getSubject()!=null)
+      { 
+        bindRules
+          ((Reflector<Ttarget>) focus.getSubject().getReflector()
+          ,focus
+          );
+      }
+      bindHandlers(focus);
+      
+      bindChildren(focus);
+      return focus;
     }
-    computeDistances();
-    focus=focus.chain(target);
-    
-    bindContextuals(focus,targetContextuals);
-    
-    focus.addFacet(getAssembly().getFocus());
-    bindSelfFocus(focus);
-    focus=bindSelf(focus);
-    
-    bindExportContextuals(focus);
-    if (target!=null)
-    { bindRules(target.getReflector(),focus);
+    catch (ContextualException x)
+    { throw new ContextualException("Bind error",getErrorContext(),x);
     }
-    else if (focus.getSubject()!=null)
-    { 
-      bindRules
-        ((Reflector<Ttarget>) focus.getSubject().getReflector()
-        ,focus
-        );
-    }
-    bindHandlers(focus);
-    
-    bindChildren(focus);
-    return focus;
     
   }
   

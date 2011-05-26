@@ -253,101 +253,108 @@ public abstract class ControlGroup<Ttarget>
   public final Focus<?> bind(Focus<?> focus) 
       throws ContextualException
   {
-    if (debug)
-    { logFine(" bind():expression=" + expression);
-    }
-
-    bindParentContextuals(focus);
-    
-    target = (Channel<Ttarget>) bindTarget(focus);
-    if (target != null)
+    try
     {
-      valueBinding = new AbstractChannel<Ttarget>(target.getReflector())
+      
+      if (debug)
+      { logFine(" bind():expression=" + expression);
+      }
+  
+      bindParentContextuals(focus);
+      
+      target = (Channel<Ttarget>) bindTarget(focus);
+      if (target != null)
       {
-        @Override
-        public Ttarget retrieve()
+        valueBinding = new AbstractChannel<Ttarget>(target.getReflector())
         {
-          // log.fine(threadLocalState.get().toString());
-          final ControlGroupState<Ttarget> state=getState();
-          if (state!=null)
-          { return state.getValue();
+          @Override
+          public Ttarget retrieve()
+          {
+            // log.fine(threadLocalState.get().toString());
+            final ControlGroupState<Ttarget> state=getState();
+            if (state!=null)
+            { return state.getValue();
+            }
+            else
+            { 
+              throw new IllegalStateException
+                ("Not in context: "
+                +ControlGroup.this.toString()
+                +": "+ControlGroup.this.getErrorContext()
+                );
+            }
           }
-          else
+  
+          @Override
+          /**
+           * Buffer the value updated by any child objects
+           */
+          public boolean store(Ttarget val)
+          {
+            // log.fine("Store "+threadLocalState.get()+":"+val);
+            getState().setValue(val);
+            return true;
+          }
+        };
+        
+        // Always scatter on request if we can't cache the target
+        if (UIServlet.cachingProhibited(target.getContentType()))
+        { uncacheable=true;
+        }
+            
+        // Expose the expression target as the new Focus, and add the
+        // assembly in as another layer
+        SimpleFocus myFocus = new SimpleFocus(focus, valueBinding);
+        bindContextuals(myFocus,targetContextuals);
+        bindSelfFocus(focus);
+  
+        myFocus.addFacet(getAssembly().getFocus());
+        focus=myFocus;
+        bindRules(target.getReflector(),focus);
+      } 
+      else
+      {
+        // Expose the expression target as the new Focus, and add the
+        // assembly in as another layer
+        if (debug)
+        { logFine("No Channel created, using parent focus");
+        }
+        bindContextuals(focus,targetContextuals);
+        SimpleFocus myFocus = new SimpleFocus(focus, null);
+        bindSelfFocus(focus);
+        myFocus.addFacet(getAssembly().getFocus());
+        focus=myFocus;      
+        bindRules
+          (((Channel<Ttarget>) focus.getSubject()).getReflector()
+          ,focus
+          );
+      }
+      bindHandlers(focus);
+      if (variableName == null && getParent()!=null)
+      {
+        ControlGroup parentGroup = getParent().findComponent(ControlGroup.class);
+        if (parentGroup != null)
+        { 
+          
+          variableName = parentGroup.nextVariableName();
+          if (debug)
           { 
-            throw new IllegalStateException
-              ("Not in context: "
-              +ControlGroup.this.toString()
-              +": "+ControlGroup.this.getErrorContext()
+            log.debug
+              ("Generating variable name '"+variableName+"' using parent "
+                  +parentGroup.toString()
               );
           }
         }
-
-        @Override
-        /**
-         * Buffer the value updated by any child objects
-         */
-        public boolean store(Ttarget val)
-        {
-          // log.fine("Store "+threadLocalState.get()+":"+val);
-          getState().setValue(val);
-          return true;
-        }
-      };
-      
-      // Always scatter on request if we can't cache the target
-      if (UIServlet.cachingProhibited(target.getContentType()))
-      { uncacheable=true;
       }
-          
-      // Expose the expression target as the new Focus, and add the
-      // assembly in as another layer
-      SimpleFocus myFocus = new SimpleFocus(focus, valueBinding);
-      bindContextuals(myFocus,targetContextuals);
-      bindSelfFocus(focus);
-
-      myFocus.addFacet(getAssembly().getFocus());
-      focus=myFocus;
-      bindRules(target.getReflector(),focus);
-    } 
-    else
-    {
-      // Expose the expression target as the new Focus, and add the
-      // assembly in as another layer
-      if (debug)
-      { logFine("No Channel created, using parent focus");
-      }
-      bindContextuals(focus,targetContextuals);
-      SimpleFocus myFocus = new SimpleFocus(focus, null);
-      bindSelfFocus(focus);
-      myFocus.addFacet(getAssembly().getFocus());
-      focus=myFocus;      
-      bindRules
-        (((Channel<Ttarget>) focus.getSubject()).getReflector()
-        ,focus
-        );
+      computeDistances();
+      focus=bindExports(focus);
+  
+      bindChildren(focus);
+      return focus;
     }
-    bindHandlers(focus);
-    if (variableName == null && getParent()!=null)
-    {
-      ControlGroup parentGroup = getParent().findComponent(ControlGroup.class);
-      if (parentGroup != null)
-      { 
-        
-        variableName = parentGroup.nextVariableName();
-        if (debug)
-        { 
-          log.debug
-            ("Generating variable name '"+variableName+"' using parent "
-                +parentGroup.toString()
-            );
-        }
-      }
+    catch (ContextualException x)
+    { throw new ContextualException("Bind error",getErrorContext(),x);
     }
-    computeDistances();
-    focus=bindExports(focus);
-
-    bindChildren(focus);
-    return focus;
   }
 
   /**
