@@ -37,10 +37,19 @@
           <scm:Note>ReferenceFocusFilter supports PrefixedName based
             configuration using setReference()
           </scm:Note>
+          <scm:Note>FocusFilter.alias property is now a PrefixedName
+          </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/servlet/autofilter/ReferenceFocusFilter.java
+        <path>source/spiralcraft/servlet/autofilter/
         </path>
+        
+        <resources>
+          <URI>ReferenceFocusFilter.java
+          </URI>
+          <URI>spi/FocusFilter.java
+          </URI>
+        </resources>
       </scm:Change>
 
       <scm:Change>
