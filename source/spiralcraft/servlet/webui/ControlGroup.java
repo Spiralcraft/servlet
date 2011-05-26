@@ -30,7 +30,7 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.SimpleFocus;
 
 import spiralcraft.lang.spi.AbstractChannel;
-import spiralcraft.lang.spi.SimpleChannel;
+
 
 
 import spiralcraft.app.Dispatcher;
@@ -257,7 +257,7 @@ public abstract class ControlGroup<Ttarget>
     { logFine(" bind():expression=" + expression);
     }
 
-    bindContextuals(focus,parentContextuals);
+    bindParentContextuals(focus);
     
     target = (Channel<Ttarget>) bindTarget(focus);
     if (target != null)
@@ -303,13 +303,8 @@ public abstract class ControlGroup<Ttarget>
       // assembly in as another layer
       SimpleFocus myFocus = new SimpleFocus(focus, valueBinding);
       bindContextuals(myFocus,targetContextuals);
-      if (selfContextuals!=null)
-      {
-        bindContextuals
-          (focus.chain(new SimpleChannel<Control<Ttarget>>(this,true))
-          ,selfContextuals
-          );
-      }
+      bindSelfFocus(focus);
+
       myFocus.addFacet(getAssembly().getFocus());
       focus=myFocus;
       bindRules(target.getReflector(),focus);
@@ -323,19 +318,9 @@ public abstract class ControlGroup<Ttarget>
       }
       bindContextuals(focus,targetContextuals);
       SimpleFocus myFocus = new SimpleFocus(focus, null);
-      
-      if (selfContextuals!=null)
-      {
-        bindContextuals
-          (focus.chain(new SimpleChannel<Control<Ttarget>>(this,true))
-          ,selfContextuals
-          );
-      }
+      bindSelfFocus(focus);
       myFocus.addFacet(getAssembly().getFocus());
-
-
       focus=myFocus;      
-      bindContextuals(focus,selfContextuals);
       bindRules
         (((Channel<Ttarget>) focus.getSubject()).getReflector()
         ,focus
