@@ -16,6 +16,41 @@
     <detail>
 
       <scm:Change>
+        <release>-dev4
+        </release>
+        
+        <notes>
+          <scm:Note>Guard filter supports redirectUriX function to 
+            permit a redirect in response to specific cases.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/GuardFilter.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev4
+        </release>
+        
+        <notes>
+          <scm:Note>Make sure all bind() methods re-throw ContextExceptions with
+            source code error context.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>Control.java
+          </URI>
+          <URI>ControlGroup.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
         <release>-dev3
         </release>
         
