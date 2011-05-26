@@ -67,7 +67,6 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   private Focus<?> parentFocus;
   private String attributeName;
   private boolean threaded=false;
-  private URI alias;
   private URI referenceURI;
   
 
@@ -116,10 +115,6 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   }
 
 
-  public void setAlias(PrefixedName alias)
-    throws UnresolvedPrefixException
-  { this.alias=alias.resolve().toURIPath();
-  }
   
   /**
    * Called -once- to create the Focus
@@ -160,9 +155,6 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
       =Context.class.isAssignableFrom
         (focus.getSubject().getContentType());
     subject=focus.getSubject();
-    if (alias!=null)
-    { focus.addAlias(alias);
-    }
     return focus;
   }
 
