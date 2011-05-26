@@ -36,7 +36,7 @@ import spiralcraft.data.persist.AbstractXmlObject;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.LifecycleException;
-import spiralcraft.common.namespace.PrefixedName;
+import spiralcraft.common.namespace.ContextualName;
 import spiralcraft.common.namespace.UnresolvedPrefixException;
 
 
@@ -70,9 +70,9 @@ public class ReferenceFocusFilter<Treferent,Tfocus>
   private URI referenceURI;
   
 
-  public void setReference(PrefixedName reference) 
+  public void setReference(ContextualName reference) 
     throws UnresolvedPrefixException
-  { this.referenceURI=reference.resolve().toURIPath();
+  { this.referenceURI=reference.getQName().toURIPath();
   }
   
   public void setTypeURI(URI typeURI)

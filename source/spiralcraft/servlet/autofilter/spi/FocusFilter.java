@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import spiralcraft.common.ContextualException;
-import spiralcraft.common.namespace.PrefixedName;
+import spiralcraft.common.namespace.ContextualName;
 import spiralcraft.common.namespace.UnresolvedPrefixException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Expression;
@@ -209,9 +209,9 @@ public abstract class FocusFilter<T>
    * 
    * @param alias
    */
-  public void setAlias(PrefixedName alias)
+  public void setAlias(ContextualName alias)
     throws UnresolvedPrefixException
-  { this.alias=alias.resolve().toURIPath();
+  { this.alias=alias.getQName().toURIPath();
   }
   
   /**
