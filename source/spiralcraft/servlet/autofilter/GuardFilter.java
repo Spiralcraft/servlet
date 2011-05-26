@@ -15,6 +15,7 @@
 package spiralcraft.servlet.autofilter;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,10 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
+import spiralcraft.text.html.URLDataEncoder;
 
 /**
  * Protects access to a resource, allowing access when a specified
@@ -47,6 +50,7 @@ public class GuardFilter
   private Expression<Boolean> guardX;
   private Channel<String> messageChannel;
   private Channel<Boolean> guardChannel;
+  private Binding<URI> redirectUriX;
   
   private int responseCode=501;
   
@@ -68,6 +72,10 @@ public class GuardFilter
   { this.guardX=guardX;
   }
   
+  public void setRedirectUriX(Binding<URI> redirectUriX)
+  { this.redirectUriX=redirectUriX;
+  }
+  
   public void bind(Focus<?> focus)
     throws BindException
   {
@@ -78,6 +86,9 @@ public class GuardFilter
       if (debug)
       { messageChannel.setDebug(debug);
       }
+    }
+    if (redirectUriX!=null)
+    { redirectUriX.bind(focus);
     }
     if (guardX!=null)
     { 
@@ -91,6 +102,16 @@ public class GuardFilter
     }
     bound=true;
   }  
+  
+  private URI createRedirectURI(URI redirectURI,HttpServletRequest request)
+  {
+    String referer=request.getRequestURL().toString();
+    URI redirect
+      =URI.create
+        (redirectURI.getPath()+"?referer="+URLDataEncoder.encode(referer));
+    return redirect;
+  }
+
   
   @Override
   public void doFilter
@@ -121,12 +142,18 @@ public class GuardFilter
       }
         
       HttpServletResponse httpResponse=(HttpServletResponse) response;
-      httpResponse.setStatus(responseCode);
       
 
-     
-      if (messageChannel!=null)
+      URI redirectURI=redirectUriX!=null?redirectUriX.get():null;
+      if (redirectURI!=null)
       { 
+        httpResponse.sendRedirect
+          (createRedirectURI(redirectURI,httpRequest).toString());
+      }
+      else if (messageChannel!=null)
+      { 
+
+        httpResponse.setStatus(responseCode);
         String message=messageChannel.get();
         if (message!=null)
         {
