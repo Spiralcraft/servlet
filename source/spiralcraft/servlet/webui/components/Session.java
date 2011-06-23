@@ -16,9 +16,13 @@ package spiralcraft.servlet.webui.components;
 
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.app.kit.AbstractMessageHandler;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.ValueState;
 
 
@@ -34,6 +38,34 @@ public class Session<T>
   extends spiralcraft.textgen.elements.Session<T>
 {
   private RequestBinding<?>[] requestBindings;
+  
+  { addHandler(new AbstractMessageHandler()
+      {
+        { this.type=PrepareMessage.TYPE;
+        }
+
+        @Override
+        protected void doHandler(
+          Dispatcher dispatcher,
+          Message message,
+          MessageHandlerChain next)
+        {
+          if (requestBindings!=null)
+          { 
+            if (debug)
+            { log.fine("Publishing request bindings");
+            }
+            for (RequestBinding<?> binding: requestBindings)
+            { binding.publish(ServiceContext.get());
+            }
+          }
+          
+          next.handleMessage(dispatcher,message);
+        }
+        
+      }
+    );
+  }
   
   public void setRequestBindings(RequestBinding<?>[] requestBindings)
   { this.requestBindings=requestBindings;
