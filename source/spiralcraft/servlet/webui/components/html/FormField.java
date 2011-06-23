@@ -75,7 +75,9 @@ public class FormField<T>
   @Override
   protected List<TglUnit> expandChildren(Focus<?> focus,List<TglUnit> children)
   { 
-//    // Generate children from the focus type
+    
+    
+//    // Optionally Generate children from the focus type
 //    
 //    Channel<?> subject=focus.getSubject();
 //    
