@@ -266,8 +266,8 @@ public class SecurityFilter
     //   uniqueness of each ticket.
     
     VariableMap map=VariableMap.fromUrlEncodedString(cookie.getValue());
-    String username=map.getOne("username");
-    String ticketBase64=map.getOne("ticket");
+    String username=map.getFirst("username");
+    String ticketBase64=map.getFirst("ticket");
     if (username!=null && ticketBase64!=null)
     {
 

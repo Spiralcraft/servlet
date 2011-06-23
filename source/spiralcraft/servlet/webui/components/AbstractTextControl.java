@@ -174,7 +174,7 @@ public abstract class AbstractTextControl<Ttarget>
     if (context.getPost()!=null)
     {
     
-      String postVal=context.getPost().getOne(state.getVariableName());
+      String postVal=context.getPost().getFirst(state.getVariableName());
       if (debug)
       { log.fine(getLogPrefix()+"Got posted value "+postVal);
       }

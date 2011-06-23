@@ -117,7 +117,7 @@ public class Button<Tcontext,Tresult>
     VariableMap post=context.getPost();
     boolean gotPost=false;
     if (post!=null)
-    { gotPost=post.getOne(state.getVariableName())!=null;
+    { gotPost=post.getFirst(state.getVariableName())!=null;
     }
 
     if (gotPost)
@@ -128,7 +128,7 @@ public class Button<Tcontext,Tresult>
     { 
       log.fine
         ("Button: readPost- "+state.getVariableName()+"="
-            +context.getPost().getOne(state.getVariableName())
+            +context.getPost().getFirst(state.getVariableName())
         );
     }
   }

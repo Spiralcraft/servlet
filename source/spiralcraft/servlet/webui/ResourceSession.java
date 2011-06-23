@@ -83,7 +83,7 @@ public class ResourceSession
       return RequestSyncStatus.INITIATED;
     }
     
-    String state=query.getOne("lrs");
+    String state=query.getFirst("lrs");
     if (Integer.toString(sequence).equals(state))
     { return RequestSyncStatus.RESPONSIVE;
     }

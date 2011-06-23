@@ -181,7 +181,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       {
         String value
           =context.getQuery()
-            .getOne(redirectOnSaveParameter);
+            .getFirst(redirectOnSaveParameter);
         if (value!=null)
         { redirectURI=URI.create(value);
         }
@@ -711,7 +711,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
     if (redirectOnSaveParameter!=null && context.getQuery()!=null)
     {
-      String redirectURI=context.getQuery().getOne(redirectOnSaveParameter);
+      String redirectURI=context.getQuery().getFirst(redirectOnSaveParameter);
       if (redirectURI!=null)
       { context.setActionParameter(redirectOnSaveParameter,redirectURI);
       }

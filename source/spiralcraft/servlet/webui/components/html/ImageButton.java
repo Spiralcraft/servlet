@@ -91,7 +91,7 @@ public class ImageButton<Tcontext,Tresult>
     boolean gotPost=false;
     if (post!=null)
     { 
-      gotPost=post.getOne(state.getVariableName()+".x")!=null;
+      gotPost=post.getFirst(state.getVariableName()+".x")!=null;
       if (debug)
       { log.fine(toString()+(gotPost?": got pressed":": didn't get pressed")); 
       }
@@ -106,7 +106,7 @@ public class ImageButton<Tcontext,Tresult>
     { 
       log.fine
         ("ImageButton: readPost- "+state.getVariableName()+"="
-            +context.getPost().getOne(state.getVariableName())
+            +context.getPost().getFirst(state.getVariableName())
         );
     }
   }

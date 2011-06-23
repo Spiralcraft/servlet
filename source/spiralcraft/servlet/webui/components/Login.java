@@ -371,7 +371,7 @@ public class Login
     { 
       
       String refererParam
-        =context.getQuery()!=null?context.getQuery().getOne("referer"):null;
+        =context.getQuery()!=null?context.getQuery().getFirst("referer"):null;
       
       // Initial request- get referer for redirect
       URI refererURI;

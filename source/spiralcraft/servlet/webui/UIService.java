@@ -219,7 +219,7 @@ public class UIService
 
         String outOfBand
           =query!=null
-          ?query.getOne("oob")
+          ?query.getFirst("oob")
           :null;
           
         if (outOfBand!=null && !outOfBand.isEmpty())
@@ -371,6 +371,11 @@ public class UIService
     //
     // REQUEST
     //
+    if (debugLevel.isFine())
+    { 
+      log.fine("Dispatching REQUEST message for frame "
+        +serviceContext.getFrame());
+    }
     serviceContext.dispatch(REQUEST_MESSAGE,component,null);
     done=processRedirect(serviceContext);
     
@@ -441,6 +446,11 @@ public class UIService
       //
       // PREPARE
       //
+      if (debugLevel.isFine())
+      { 
+        log.fine("Dispatching PREPARE message for frame "
+          +serviceContext.getFrame());
+      }
       serviceContext.dispatch(PREPARE_MESSAGE,component,null);
       done=processRedirect(serviceContext);
     }
@@ -458,6 +468,11 @@ public class UIService
       //
       // COMMAND
       //
+      if (debugLevel.isFine())
+      {
+        log.fine("Dispatching COMMAND message for frame "
+            +serviceContext.getFrame());
+      }
       serviceContext.dispatch(COMMAND_MESSAGE,component,null);
       done=processRedirect(serviceContext);
     }
@@ -468,6 +483,11 @@ public class UIService
       //
       // RENDER
       //
+      if (debugLevel.isFine())
+      {
+        log.fine("Dispatching RENDER message for frame "
+          +serviceContext.getFrame());
+      }
       render(component,serviceContext);
       done=processRedirect(serviceContext);
       

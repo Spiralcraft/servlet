@@ -150,7 +150,7 @@ public class CheckboxInput
     // Only update if changed
     if (context.getPost()!=null)
     {
-      String post=context.getPost().getOne(state.getVariableName());
+      String post=context.getPost().getFirst(state.getVariableName());
 
       Boolean value=post!=null && post.equals("on");
       Boolean previousValue=Boolean.TRUE.equals(state.getPreviousValue());

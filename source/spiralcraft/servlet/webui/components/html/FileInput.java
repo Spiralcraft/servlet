@@ -329,7 +329,7 @@ public class FileInput
     if (context.getPost()!=null)
     {
       String filename
-        =context.getPost().getOne(state.getVariableName()+".filename");
+        =context.getPost().getFirst(state.getVariableName()+".filename");
       
       if (sanitizeInput && filename!=null)
       { filename=encodeName(filename);
@@ -351,7 +351,7 @@ public class FileInput
 
         
         String temporaryURI
-          =context.getPost().getOne(state.getVariableName()+".temporaryURI");
+          =context.getPost().getFirst(state.getVariableName()+".temporaryURI");
         
         try
         {
