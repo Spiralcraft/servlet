@@ -72,6 +72,29 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   private boolean contentRequired;
   private String contentRequiredMessage="At least one entry is required";
   
+  
+  public Command<BufferAggregate<BufferTuple,Tcontent>,Void,Void>
+    deleteCommand(final BufferTuple buffer)
+  {
+    return new QueuedCommand<BufferAggregate<BufferTuple,Tcontent>,Void,Void>
+      (getState()
+      ,new CommandAdapter<BufferAggregate<BufferTuple,Tcontent>,Void,Void>()
+        { 
+          @Override
+          public void run()
+          { 
+            try
+            { deleteBuffer(buffer);
+            }
+            catch (DataException x)
+            { setException(x);
+            }
+          }
+
+        }
+      );
+  }
+  
   public Command<BufferAggregate<BufferTuple,Tcontent>,Void,Void> 
     addNewCommand()
   {
@@ -183,6 +206,12 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     
     try
     {
+      if (padCount<padSize)
+      { 
+        if (logLevel.isFine())
+        { log.fine("Adding "+(padSize-padCount)+" rows of padding");
+        }
+      }
       
       for (int i=padCount;i<padSize;i++)
       { aggregate.add(newChildBuffer());
@@ -526,6 +555,27 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     // Add a Tuple to the list
     aggregate.add(newChildBuffer());
       
+  }
+  
+  protected void deleteBuffer(BufferTuple buffer)
+    throws DataException
+  {
+    BufferAggregate<BufferTuple,Tcontent> aggregate
+      =getState().getValue();
+    if (aggregate.contains(buffer))
+    {
+      if (buffer.getOriginal()!=null)
+      { buffer.delete();
+      }
+      else
+      { aggregate.remove(buffer);
+      }
+    }
+    else
+    { logWarning("Buffer "+buffer+" is not contained in this aggregate");
+    }
+    
+    
   }
   
   protected BufferTuple newChildBuffer()
