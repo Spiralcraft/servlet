@@ -82,7 +82,7 @@ public class ControlState<Tbuf>
     if (stringValue.length()>256)
     { stringValue=stringValue.substring(0,256)+"...";
     }
-    return super.toString()+"value="+stringValue;
+    return super.toString()+" value="+stringValue;
   }
   
   @Override

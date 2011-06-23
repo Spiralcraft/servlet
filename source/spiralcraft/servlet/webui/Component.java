@@ -67,7 +67,7 @@ public abstract class Component
   {
 //    // Copious
     if (debug)
-    { log.fine(this.toString()+" message "+message);
+    { log.fine(this.toString()+" message="+message+" state="+context.getState());
     }
     
 
