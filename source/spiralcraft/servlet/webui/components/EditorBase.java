@@ -26,8 +26,13 @@ import spiralcraft.command.CommandAdapter;
 import spiralcraft.command.CommandBlock;
 import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataException;
+import spiralcraft.data.Field;
+import spiralcraft.data.Key;
+import spiralcraft.data.Tuple;
 import spiralcraft.data.Type;
+import spiralcraft.data.core.RelativeField;
 import spiralcraft.data.lang.DataReflector;
+import spiralcraft.data.lang.MetadataType;
 
 import spiralcraft.data.session.DataSession;
 import spiralcraft.data.session.Buffer;
@@ -40,6 +45,7 @@ import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.NullChannel;
 import spiralcraft.lang.util.ChannelBuffer;
+import spiralcraft.lang.util.LangUtil;
 
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
@@ -89,10 +95,16 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   
   private URI redirectOnSaveURI;
   private String redirectOnSaveParameter;
+  
+
+  private Channel<Tuple> parentChannel;
+  private Channel<Tuple> parentKeyChannel;
+  private Channel<Tuple> localKeyChannel;
 
   
   protected boolean autoCreate;
   protected boolean autoSave;
+  protected boolean autoKey;
   protected boolean retain;
   protected boolean retainNew=true;
 
@@ -227,6 +239,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     this.triggerKeyX=triggerKeyX;
     addParentContextual(triggerKeyX);
     
+  }
+  
+  public void setAutoKey(boolean autoKey)
+  { this.autoKey=autoKey;
   }
   
   /**
@@ -890,7 +906,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Channel<?> bindTarget(Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   {
     Channel<?> source=super.bindTarget(parentFocus);
     
@@ -899,7 +915,8 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     if (source==null && type!=null)
     { 
       if (debug)
-      { logFine
+      { 
+        logFine
           ("No source: Binding NullChannel for type "
           +type+" and turning autoCreate on"
           );
@@ -911,10 +928,18 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     { 
       if (debug)
       { logFine("Source="+source);
-      }
+      }    
 
     }
     return source;
+  }
+  
+  protected void applyKeyValues()
+  {
+    if (parentKeyChannel!=null && localKeyChannel!=null)
+    { 
+      localKeyChannel.set(parentKeyChannel.get());
+    }
   }
   
   /**
@@ -946,11 +971,65 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
     focus=super.bindExports(focus);
     
+    
     if (touchWhenX!=null)
     { touchWhenX.bind(focus);
     }
+    
     return focus;
   }
+  
+  @SuppressWarnings("unchecked")
+  protected void bindKeys(Focus<?> focus)
+    throws ContextualException
+  {
+    if (!autoKey)
+    { return;
+    }
+    Channel<Tuple> source=(Channel<Tuple>) focus.getSubject();
+    // Get information about the relationship to auto-bind key values
+    Channel<Field<?>> fieldChannel
+      =source.<Field<?>>resolveMeta(focus,MetadataType.FIELD.uri);
+    if (fieldChannel!=null)
+    { 
+      Field<?> field=fieldChannel.get();
+      if (debug)
+      { log.debug(this.getLogPrefix()+"Got field metadata for "+field.getURI());
+      }
+      if (field instanceof RelativeField)
+      {
+        if (debug)
+        { log.debug(this.getLogPrefix()+"Got key metadata for "+field.getURI());
+        }
+        RelativeField<?> rfield=(RelativeField<?>) field;
+        parentChannel=LangUtil.findChannel
+          (DataReflector.getInstance
+            (rfield.getScheme().getType())
+              .getTypeURI()
+          ,focus
+          );
+
+        Key<Tuple> parentKey=(Key<Tuple>) rfield.getKey();
+        parentKeyChannel
+          =parentKey.bindChannel(parentChannel,focus,null);
+            
+        Key<Tuple> localKey
+          =(Key<Tuple>) type.findKey(parentKey.getImportedKey().getFieldNames());
+        localKeyChannel=localKey.bindChannel(source,focus,null);
+      }
+      if (debug)
+      { log.debug(this.getLogPrefix()+"No key metadata for "+field.getURI());
+      }
+    }    
+    else
+    {
+      if (debug)
+      { log.debug(this.getLogPrefix()+"No field metadata");
+      }
+
+    }
+  }
+
 }
 
 

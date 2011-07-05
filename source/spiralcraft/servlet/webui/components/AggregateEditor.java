@@ -290,6 +290,8 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
             { log.fine(toString()+": applying preSaveAssignments to "+buffer);
             }
             Setter.applyArray(preSaveSetters);
+
+            applyKeyValues();            
           }
           finally
           { childChannel.pop();
@@ -297,6 +299,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         }
       }
 
+      
       beforeCheckDirty(aggregate);
       
       if (aggregate.isDirty())
@@ -377,7 +380,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   @Override
   protected Channel<Buffer> bindTarget
     (Focus<?> parentFocus)
-      throws BindException
+      throws ContextualException
   { 
     if (debug)
     { log.fine("Editor.bind() "+parentFocus);
@@ -502,6 +505,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       { isPadChannel=childFocus.bind(padX);
       }
       
+      bindKeys(childFocus);
     }
     
    

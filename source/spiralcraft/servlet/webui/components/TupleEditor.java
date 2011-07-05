@@ -312,6 +312,8 @@ public abstract class TupleEditor
         }
         Setter.applyArray(preSaveSetters);
       }
+      
+      applyKeyValues();
 
       beforeCheckDirty(buffer);
 
@@ -452,7 +454,7 @@ public abstract class TupleEditor
   @Override
   protected Channel<Buffer> bindTarget
     (Focus<?> parentFocus)
-      throws BindException
+      throws ContextualException
   { 
     if (debug)
     { logFine("Editor.bind() "+parentFocus);
@@ -568,6 +570,8 @@ public abstract class TupleEditor
     if (onSave!=null)
     { onSave.bind(focus);
     }
+    
+    bindKeys(focus);
     return (Focus<Buffer>) focus;
     
   }
