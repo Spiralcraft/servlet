@@ -196,7 +196,8 @@ public abstract class ControlGroup<Ttarget>
    *   state.
    * @throws BindException
    */
-  protected Channel<?> bindTarget(Focus<?> parentFocus) throws BindException
+  protected Channel<?> bindTarget(Focus<?> parentFocus) 
+    throws ContextualException
   {
     if (expression != null)
     { return parentFocus.bind(expression);

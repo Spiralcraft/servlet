@@ -774,7 +774,7 @@ public abstract class Editor
   @Override
   protected Channel<Buffer> bindTarget
     (Focus<?> parentFocus)
-      throws BindException
+      throws ContextualException
   { 
     if (debug)
     { log.fine("Editor.bind() "+parentFocus);

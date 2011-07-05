@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.SimpleFocus;
@@ -203,7 +204,7 @@ public class Paginate<Ttarget,Titem>
 
   @Override
   protected Channel<?> bindTarget(Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   {
     // We will receive something that can be Iterated over
     

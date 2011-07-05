@@ -22,7 +22,6 @@ import spiralcraft.util.string.StringConverter;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
-import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
@@ -86,7 +85,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
   public Channel<Ttarget> bindTarget(Focus<?> parentFocus)
-    throws BindException
+    throws ContextualException
   { 
     Channel<Ttarget> target=(Channel<Ttarget>) super.bindTarget(parentFocus);
     if (target==null)
