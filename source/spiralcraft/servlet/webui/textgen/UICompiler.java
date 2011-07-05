@@ -16,6 +16,6 @@ public class UICompiler
   
   @Override
   protected RootUnit createDocletUnit(TglUnit parent,Resource resource)
-  { return new RootUnit(parent,resource);
+  { return new RootUnit(parent,resource,this);
   }
 }

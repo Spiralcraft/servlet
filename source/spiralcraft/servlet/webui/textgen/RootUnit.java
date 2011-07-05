@@ -19,9 +19,8 @@ import spiralcraft.vfs.Resource;
 public class RootUnit
   extends DocletUnit
 {
-  public RootUnit(TglUnit parent,Resource resource)
-  {
-    super(parent,resource);
+  public RootUnit(TglUnit parent,Resource resource,UICompiler compiler)
+  { super(parent,resource,compiler);
   }
   
   public RootComponent bindRoot(Focus<?> focus)
