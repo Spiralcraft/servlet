@@ -20,6 +20,74 @@
         </release>
         
         <notes>
+          <scm:Note>TglUnit constructor added reference to TglCompiler
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/textgen
+        </path>
+        
+        <resources>
+          <URI>RootUnit.java
+          </URI>
+          <URI>UICompiler.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Editors support automatic keying when traversing a
+            RelativeField
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>AggregateEditor.java
+          </URI>
+          <URI>EditorBase.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Make sure all bindTarget() methods throw 
+            ContextualExceptions
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>ControlGroup.java
+          </URI>
+          <URI>components/AbstractSelectControl.java
+          </URI>
+          <URI>components/Editor.java
+          </URI>
+          <URI>components/Paginate.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
           <scm:Note>Added deleteCommand(BufferTuple) to AggregateEditor
             to support deleting a row from a grid based control
           </scm:Note>
