@@ -20,6 +20,22 @@
         </release>
         
         <notes>
+          <scm:Note>GuardFilter adds configuration properties
+            "authenticate","loginURI", and "permissionsX"
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/modules/servlet/autofilter/GuardFilter.java
+        </path>
+        
+
+      </scm:Change>
+      
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
           <scm:Note>TglUnit constructor added reference to TglCompiler
           </scm:Note>
         </notes>
