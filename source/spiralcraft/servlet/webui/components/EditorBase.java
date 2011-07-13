@@ -32,10 +32,10 @@ import spiralcraft.data.Tuple;
 import spiralcraft.data.Type;
 import spiralcraft.data.core.RelativeField;
 import spiralcraft.data.lang.DataReflector;
-import spiralcraft.data.lang.MetadataType;
 
 import spiralcraft.data.session.DataSession;
 import spiralcraft.data.session.Buffer;
+import spiralcraft.data.types.meta.MetadataType;
 
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
