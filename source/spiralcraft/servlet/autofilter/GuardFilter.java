@@ -28,8 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
-import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.util.LangUtil;
+import spiralcraft.security.auth.AuthSession;
+import spiralcraft.security.auth.Permission;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.text.html.URLDataEncoder;
 
@@ -46,11 +48,13 @@ public class GuardFilter
 {
 
   private boolean bound=false;
-  private Expression<String> messageX;
-  private Expression<Boolean> guardX;
-  private Channel<String> messageChannel;
-  private Channel<Boolean> guardChannel;
+  private Binding<String> messageX;
+  private Binding<Boolean> guardX;
   private Binding<URI> redirectUriX;
+  private Binding<Permission[]> permissionsX;
+  private Channel<AuthSession> authSessionX;
+  private URI loginURI;
+  private boolean authenticate;
   
   private int responseCode=501;
   
@@ -64,11 +68,11 @@ public class GuardFilter
   { this.responseCode=responseCode;
   }
   
-  public void setMessageX(Expression<String> messageX)
+  public void setMessageX(Binding<String> messageX)
   { this.messageX=messageX;
   } 
   
-  public void setGuardX(Expression<Boolean> guardX)
+  public void setGuardX(Binding<Boolean> guardX)
   { this.guardX=guardX;
   }
   
@@ -76,15 +80,27 @@ public class GuardFilter
   { this.redirectUriX=redirectUriX;
   }
   
+  public void setPermissionsX(Binding<Permission[]> permissionsX)
+  { this.permissionsX=permissionsX;
+  }
+  
+  public void setAuthenticate(boolean authenticate)
+  { this.authenticate=authenticate;
+  }
+  
+  public void setLoginURI(URI loginURI)
+  { this.loginURI=loginURI;
+  }
+  
   public void bind(Focus<?> focus)
     throws BindException
   {
-    
+    authSessionX=LangUtil.findChannel(AuthSession.class,focus);
     if (messageX!=null)
     { 
-      messageChannel=focus.bind(messageX);
+      messageX.bind(focus);
       if (debug)
-      { messageChannel.setDebug(debug);
+      { messageX.setDebug(debug);
       }
     }
     if (redirectUriX!=null)
@@ -92,10 +108,13 @@ public class GuardFilter
     }
     if (guardX!=null)
     { 
-      guardChannel=focus.bind(guardX);
+      guardX.bind(focus);
       if (debug)
-      { guardChannel.setDebug(debug);
+      { guardX.setDebug(debug);
       }
+    }
+    if (permissionsX!=null)
+    { permissionsX.bind(focus);
     }
     else
     { throw new BindException("GuardFilter.guardX must be specified");
@@ -134,7 +153,58 @@ public class GuardFilter
       }
     }
     
-    Boolean val=guardChannel.get();
+    Boolean val=guardX!=null?guardX.get():null;
+    boolean failedAuthentication=false;
+    
+    if (val==null || Boolean.TRUE.equals(val) && authenticate)
+    { 
+      
+      if (authSessionX==null)
+      { val=false;
+      }
+      else
+      {
+        AuthSession session=authSessionX.get();
+        if (session==null)
+        { val=false;
+        }
+        else
+        { 
+          if (session.isAuthenticated())
+          { val=true;
+          }
+          else
+          { 
+            val=false;
+            failedAuthentication=true;
+          }
+        }
+      }
+    }
+    
+    if (val==null || Boolean.TRUE.equals(val) && (permissionsX!=null))
+    {
+      if (authSessionX==null)
+      { val=false;
+      }
+      else
+      {
+        AuthSession session=authSessionX.get();
+        if (session==null)
+        { val=false;
+        }
+        else
+        { 
+          Permission[] permissions=permissionsX.get();
+          if (permissions!=null)
+          { val=session.hasPermissions(permissions);
+          }
+        }
+            
+      }
+    }
+        
+    
     if (!Boolean.TRUE.equals(val))
     {
       if (debug)
@@ -144,23 +214,41 @@ public class GuardFilter
       HttpServletResponse httpResponse=(HttpServletResponse) response;
       
 
-      URI redirectURI=redirectUriX!=null?redirectUriX.get():null;
-      if (redirectURI!=null)
-      { 
+      if (failedAuthentication && loginURI!=null)
+      {
+        String referer=((HttpServletRequest) request).getRequestURL().toString();
+        URI redirectURI
+          =URI.create
+            (loginURI.getPath()+"?referer="+URLDataEncoder.encode(referer));
+        if (debug)
+        { log.fine("Setting up redirect to "+redirectURI);
+        }
         httpResponse.sendRedirect
           (createRedirectURI(redirectURI,httpRequest).toString());
       }
-      else if (messageChannel!=null)
-      { 
-
-        httpResponse.setStatus(responseCode);
-        String message=messageChannel.get();
-        if (message!=null)
-        {
-          httpResponse.setContentType("text/plain");
-          httpResponse.setContentLength(message.length());
-          response.getWriter().write(message);
-          response.getWriter().flush();
+      else
+      {
+        URI redirectURI=redirectUriX!=null?redirectUriX.get():null;
+        if (redirectURI!=null)
+        { 
+          if (debug)
+          { log.fine("Setting up redirect to "+redirectURI);
+          }
+          httpResponse.sendRedirect
+            (createRedirectURI(redirectURI,httpRequest).toString());
+        }
+        else if (messageX!=null)
+        { 
+  
+          httpResponse.setStatus(responseCode);
+          String message=messageX.get();
+          if (message!=null)
+          {
+            httpResponse.setContentType("text/plain");
+            httpResponse.setContentLength(message.length());
+            response.getWriter().write(message);
+            response.getWriter().flush();
+          }
         }
       }
     }
