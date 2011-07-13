@@ -116,8 +116,13 @@ public class GuardFilter
     if (permissionsX!=null)
     { permissionsX.bind(focus);
     }
-    else
-    { throw new BindException("GuardFilter.guardX must be specified");
+    
+    if (guardX==null && permissionsX==null && !authenticate)
+    {
+      throw new BindException
+        ("GuardFilter must be configured with one or more of the following "
+         +" properties: guardX,permissionX,authenticate"
+        );
     }
     bound=true;
   }  
@@ -149,7 +154,7 @@ public class GuardFilter
       { bind(FocusFilter.getFocusChain(httpRequest));
       }
       catch (BindException x)
-      { throw new ServletException("Error binding ErrorFilter",x);
+      { throw new ServletException("Error binding GuardFilter",x);
       }
     }
     
