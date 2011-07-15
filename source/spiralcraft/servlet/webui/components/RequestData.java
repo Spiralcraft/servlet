@@ -24,6 +24,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Reflector;
 import spiralcraft.lang.Signature;
 import spiralcraft.lang.parser.StructNode;
+import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.ExpressionFocusElement;
 import spiralcraft.textgen.ValueState;
@@ -43,6 +44,7 @@ public class RequestData<T>
   extends ExpressionFocusElement<T>
 {
   private RequestBinding<?>[] requestBindings;
+  private ThreadLocalChannel<T> prevalue;
   private String[] excludedNames;
   private boolean autoMap;
   
@@ -50,6 +52,9 @@ public class RequestData<T>
   @Override
   protected Focus<?> bindExports(Focus<?> focusChain) throws BindException
   {     
+    prevalue
+      =new ThreadLocalChannel<T>
+        ((Reflector<T>) focusChain.getSubject().getReflector());
     if (requestBindings==null || autoMap)
     {
       Reflector<?> targetReflector=focusChain.getSubject().getReflector();
@@ -82,11 +87,15 @@ public class RequestData<T>
         {
           if (sig.getParameters()==null 
               && !excludedNames.contains(sig.getName())
+              && !sig.getName().startsWith("@")
               )
           { 
             RequestBinding requestBinding=new RequestBinding();
             requestBinding.setName(sig.getName());
             requestBinding.setTarget(Expression.create("."+sig.getName()));
+            if (debug)
+            { requestBinding.setDebug(true);
+            }
             autoBindings.add(requestBinding);
           }
         }
@@ -95,10 +104,11 @@ public class RequestData<T>
       }
     }
     
+    Focus<?> prefocus=focusChain.chain(prevalue);
     if (requestBindings!=null)
     { 
       for (RequestBinding<?> requestBinding:requestBindings)
-      { requestBinding.bind(focusChain);
+      { requestBinding.bind(prefocus);
       }
     }
     return focusChain;
@@ -138,16 +148,21 @@ public class RequestData<T>
   {
     T value=super.computeExportValue(state);
     
-    
-    if (requestBindings!=null)
+    prevalue.push(value);
+    try
     {
-      ServiceContext context=ServiceContext.get();
-      for (RequestBinding<?> requestBinding:requestBindings)
-      { requestBinding.read(context.getQuery());
+      if (requestBindings!=null)
+      {
+        ServiceContext context=ServiceContext.get();
+        for (RequestBinding<?> requestBinding:requestBindings)
+        { requestBinding.read(context.getQuery());
+        }
       }
+      return value;
     }
-    // Apply bindings here
-    return value;
+    finally
+    { prevalue.pop();
+    }
     
   }
   
