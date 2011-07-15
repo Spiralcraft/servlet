@@ -20,6 +20,36 @@
         </release>
         
         <notes>
+          <scm:Note>Fix webui root component not supporting the "contextX"
+            attribute for the @doclet tag
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/modules/servlet/webui/textgen/RootUnit.java
+        </path>
+
+      </scm:Change>
+      
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
+          <scm:Note>Fixed RequestData component to pin target reference while
+            bindings are applied.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/modules/servlet/webui/components/RequestData.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev1
+        </release>
+        
+        <notes>
           <scm:Note>GuardFilter adds configuration properties
             "authenticate","loginURI", and "permissionsX"
           </scm:Note>

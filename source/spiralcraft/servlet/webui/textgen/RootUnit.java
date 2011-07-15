@@ -25,7 +25,11 @@ public class RootUnit
   
   public RootComponent bindRoot(Focus<?> focus)
     throws ContextualException
-  { return (RootComponent) bind(focus,null,new RootComponent());
+  { 
+    if (contextX!=null)
+    { focus=bindContext(focus,null,null);
+    }
+    return (RootComponent) bind(focus,null,new RootComponent());
   }
   
 }
