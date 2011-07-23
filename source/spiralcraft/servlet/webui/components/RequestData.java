@@ -28,6 +28,7 @@ import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.ExpressionFocusElement;
 import spiralcraft.textgen.ValueState;
+import spiralcraft.util.ArrayUtil;
 
 
 /**
@@ -46,6 +47,7 @@ public class RequestData<T>
   private RequestBinding<?>[] requestBindings;
   private ThreadLocalChannel<T> prevalue;
   private String[] excludedNames;
+  private String[] publishNames;
   private boolean autoMap;
   
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -96,6 +98,9 @@ public class RequestData<T>
             if (debug)
             { requestBinding.setDebug(true);
             }
+            if (ArrayUtil.contains(publishNames,sig.getName()))
+            { requestBinding.setPublish(true);
+            }
             autoBindings.add(requestBinding);
           }
         }
@@ -135,6 +140,15 @@ public class RequestData<T>
   }
   
   /**
+   * Republish the specified property names in back-links to this page
+   * 
+   * @param excludedNames
+   */
+  public void setPublishNames(String[] publishNames)
+  { this.publishNames=publishNames;
+  }
+  
+  /**
    * An optional set of mappings to use for specific request fields
    * 
    * @param requestBindings
@@ -155,7 +169,9 @@ public class RequestData<T>
       {
         ServiceContext context=ServiceContext.get();
         for (RequestBinding<?> requestBinding:requestBindings)
-        { requestBinding.read(context.getQuery());
+        { 
+          requestBinding.read(context.getQuery());
+          requestBinding.publish(context);
         }
       }
       return value;
