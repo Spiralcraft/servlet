@@ -38,6 +38,9 @@
           <scm:Note>Fixed RequestData component to pin target reference while
             bindings are applied.
           </scm:Note>
+          <scm:Note>RequestData capability to re-publish query variables 
+            to back-links
+          </scm:Note>
         </notes>
         
         <path>source/spiralcraft/modules/servlet/webui/components/RequestData.java
