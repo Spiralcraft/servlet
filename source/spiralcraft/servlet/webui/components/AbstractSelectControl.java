@@ -23,6 +23,7 @@ import spiralcraft.util.string.StringConverter;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -72,6 +73,7 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   private Expression<?> sourceExpression;
   protected boolean multi=false;
   private VariableMapBinding<Ttarget> binding;
+  private Binding<?> onUpdate;
   
   public void setName(String name)
   { this.name=name;
@@ -79,6 +81,13 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   
   public void setSource(Expression<?> sourceExpression)
   { this.sourceExpression=sourceExpression;
+  }
+  
+  public void setOnUpdate(Binding<?> onUpdate)
+  { 
+    this.removeSelfContextual(this.onUpdate);
+    this.onUpdate=onUpdate;
+    this.addSelfContextual(this.onUpdate);
   }
 
 
@@ -163,7 +172,12 @@ public class AbstractSelectControl<Ttarget,Tvalue>
 
       state.setValue(val);
       if (conditionallyUpdateTarget(val,state.getPreviousValue()))
-      { state.valueUpdated();
+      { 
+        
+        state.valueUpdated();
+        if (onUpdate!=null)
+        { onUpdate.get();
+        }
       }   
         
     }
