@@ -16,6 +16,37 @@
     <detail>
 
       <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>Added onUpdate expression to AbstractSelectControl to fire
+            an expression when data is changed
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/modules/servlet/webui/components/AbstractSelectControl.java
+        </path>
+
+      </scm:Change>
+
+
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>Fix for AggregateEditor repeatedly initializing new
+            buffers
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/modules/servlet/webui/components/AggregateEditor.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
         <release>-dev1
         </release>
         
