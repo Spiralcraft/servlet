@@ -175,7 +175,10 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       }
 
       for (BufferTuple buffer: aggregate)
-      { initChild(buffer);
+      { 
+        if (!buffer.isDirty())
+        { initChild(buffer);
+        }
       }
       
       if (padSize>0)
