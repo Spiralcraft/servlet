@@ -386,15 +386,16 @@ public abstract class ControlGroup<Ttarget>
     {
       if (target != null)
       {
+        Ttarget lastValue=state.getValue();
         state.updateValue(target.get());
         if (debug)
         { 
           String valueString
             =(state.getValue()!=null?state.getValue().toString():"null");
-          if (valueString.length()>256)
-          { valueString=valueString.substring(0,256)+"...";
-          }
-          logFine("Read value from target into state "+valueString);
+          String lastValueString
+            =(lastValue!=null?lastValue.toString():"null");
+          
+          logFine("Read value from target into state ["+valueString+"] old value was ["+lastValueString+"]");
         }
       }
       else
