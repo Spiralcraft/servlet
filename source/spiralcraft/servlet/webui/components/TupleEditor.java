@@ -64,6 +64,7 @@ public abstract class TupleEditor
   private Setter<?>[] publishedSetters;
   private Setter<?>[] preSaveSetters;
   private Binding<?> onSave;
+  private Binding<?> preSave;
 
   private Channel<BufferAggregate<Buffer,?>> aggregateChannel;
   
@@ -313,8 +314,14 @@ public abstract class TupleEditor
         Setter.applyArray(preSaveSetters);
       }
       
+      if (preSave!=null)
+      { preSave.get();
+      }
+      
       applyKeyValues();
+      
 
+      
       beforeCheckDirty(buffer);
 
       if (buffer.isDirty())
@@ -386,7 +393,10 @@ public abstract class TupleEditor
   }  
   
 
-
+  public void setPreSave(Binding<?> preSave)
+  { this.preSave=preSave;
+  }
+  
   public void setOnSave(Binding<?> onSave)
   { this.onSave=onSave;
   }
@@ -570,7 +580,9 @@ public abstract class TupleEditor
     if (onSave!=null)
     { onSave.bind(focus);
     }
-    
+    if (preSave!=null)
+    { preSave.bind(focus);
+    }
     bindKeys(focus);
     return (Focus<Buffer>) focus;
     
