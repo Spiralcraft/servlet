@@ -938,7 +938,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   {
     if (parentKeyChannel!=null && localKeyChannel!=null)
     { 
-      localKeyChannel.set(parentKeyChannel.get());
+      Tuple key=parentKeyChannel.get();
+      if (debug)
+      { log.fine("Applying key "+key);
+      }
+      localKeyChannel.set(key);
     }
   }
   
@@ -989,7 +993,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     Channel<Tuple> source=(Channel<Tuple>) focus.getSubject();
     // Get information about the relationship to auto-bind key values
     Channel<Field<?>> fieldChannel
-      =source.<Field<?>>resolveMeta(focus,MetadataType.FIELD.uri);
+      =source.<Field<?>>resolveMeta(focus,MetadataType.RELATIVE_FIELD.uri);
     if (fieldChannel!=null)
     { 
       Field<?> field=fieldChannel.get();
@@ -1017,14 +1021,17 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           =(Key<Tuple>) type.findKey(parentKey.getImportedKey().getFieldNames());
         localKeyChannel=localKey.bindChannel(source,focus,null);
       }
-      if (debug)
-      { log.debug(this.getLogPrefix()+"No key metadata for "+field.getURI());
+      else
+      {
+        if (debug)
+        { log.debug(this.getLogPrefix()+"No key metadata for "+field.getURI());
+        }
       }
     }    
     else
     {
       if (debug)
-      { log.debug(this.getLogPrefix()+"No field metadata");
+      { log.debug(this.getLogPrefix()+"No field metadata "+source.trace(null).toString());
       }
 
     }
