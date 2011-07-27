@@ -231,34 +231,20 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   
   private void initChild(BufferTuple child)
   {
-    if (newSetters==null && initialSetters==null)
+    if (initialSetters==null)
     { return;
     }
     
     childChannel.push(child);
     try
     {
-
-      if (newSetters!=null && child.getOriginal()==null)
-      { 
-        if (debug)
-        { log.fine(toString()+": applying new values");
-        }
-          
-        for (Setter<?> setter : newSetters)
-        { setter.set();
-        }
+      
+      if (debug)
+      { log.fine(toString()+": applying initial values");
       }
-        
-      if (initialSetters!=null)
-      {
-        if (debug)
-        { log.fine(toString()+": applying initial values");
-        }
 
-        for (Setter<?> setter : initialSetters)
-        { setter.set();
-        }
+      for (Setter<?> setter : initialSetters)
+      { setter.set();
       }
     }
     finally
@@ -271,6 +257,10 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   protected void save()
     throws DataException
   {
+    if (debug)
+    { log.fine("Saving...");
+    }
+    
     BufferAggregate<BufferTuple,?> aggregate=getState().getValue();
     
     if (aggregate==null)
@@ -281,7 +271,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     }
     else
     {
-      if (preSaveSetters!=null)
+      if (preSaveSetters!=null || autoKey)
       {
         for (int i=0;i<aggregate.size();i++)
         { 
@@ -289,12 +279,15 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
           childChannel.push(buffer);
           try 
           { 
-            if (debug)
-            { log.fine(toString()+": applying preSaveAssignments to "+buffer);
+            if (preSaveSetters!=null)
+            {
+              if (debug)
+              { log.fine(toString()+": applying preSaveAssignments to "+buffer);
+              }
+              Setter.applyArray(preSaveSetters);
             }
-            Setter.applyArray(preSaveSetters);
 
-            applyKeyValues();            
+            applyKeyValues();
           }
           finally
           { childChannel.pop();
@@ -474,7 +467,8 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       }
       
       childChannel=new ThreadLocalChannel<BufferTuple>
-        (DataReflector.<BufferTuple>getInstance(contentType));
+        (DataReflector.<BufferTuple>getInstance
+          (contentType),true,focus.getSubject());
 
       childFocus=focus.chain(childChannel);
       
@@ -588,10 +582,21 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   protected BufferTuple newChildBuffer()
     throws DataException
   {
-      BufferTuple newTuple
-        =(BufferTuple) getDataSession().newBuffer(getType().getContentType());
-      initChild(newTuple);
-      return newTuple;
+    BufferTuple newTuple
+      =(BufferTuple) getDataSession().newBuffer(getType().getContentType());
+    
+    if (newSetters!=null)
+    {
+      childChannel.push(newTuple);
+      try
+      { Setter.applyArray(newSetters);
+      }
+      finally
+      { childChannel.pop();
+      }
+    }
+    initChild(newTuple);
+    return newTuple;
   }
 }
 
