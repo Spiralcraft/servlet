@@ -268,6 +268,9 @@ public abstract class ControlGroup<Ttarget>
       {
         valueBinding = new AbstractChannel<Ttarget>(target.getReflector())
         {
+          { origin=target;
+          }
+          
           @Override
           public Ttarget retrieve()
           {
