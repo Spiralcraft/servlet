@@ -407,7 +407,19 @@ public abstract class Control<Ttarget>
       { 
         boolean ret=target.set(newVal);
         if (debug)
-        { this.logFine("Target value updated "+previousVal+"  ->  "+newVal);
+        { 
+          if (ret)
+          { 
+            this.logFine("Target value updated ["
+              +previousVal+"]  ->  ["+newVal+"]");
+          }
+          else
+          { 
+            this.logFine
+              ("Update failed writing ["+previousVal+"]"
+               +"  ->  ["+newVal+"]"
+               );
+          }
         }
         return ret;
       }
