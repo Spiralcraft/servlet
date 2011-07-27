@@ -98,7 +98,9 @@ public class RequestData<T>
             if (debug)
             { requestBinding.setDebug(true);
             }
-            if (ArrayUtil.contains(publishNames,sig.getName()))
+            if (publishNames!=null 
+                && ArrayUtil.contains(publishNames,sig.getName())
+                )
             { requestBinding.setPublish(true);
             }
             autoBindings.add(requestBinding);
