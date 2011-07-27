@@ -20,6 +20,48 @@
         </release>
         
         <notes>
+          <scm:Note>Add preSave binding to take over preSaveAssignments
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/modules/servlet/webui/components/TupleEditor.java
+        </path>
+
+      </scm:Change>
+      
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>Fix autoKey behavior to use RelativeField
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/modules/servlet/webui/components/EditorBase.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
+          <scm:Note>ControlGroup supports Channel.trace()
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/modules/servlet/webui/ControlGroup.java
+        </path>
+
+      </scm:Change>
+      
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <notes>
           <scm:Note>Added onUpdate expression to AbstractSelectControl to fire
             an expression when data is changed
           </scm:Note>
