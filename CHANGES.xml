@@ -14,7 +14,32 @@
     </date>
 
     <detail>
+      <scm:Change>
+        <release>-dev2
+        </release>
+        
+        <scm:Notes>
+          <scm:Note>InitializeMessage subsumed into 
+            spiralcraft.app.InitializeMessage
+          </scm:Note>
+        </scm:Notes>          
+        
+        <path>source/spiralcraft/modules/servlet/webui/
+        </path>
+        
+        <resources>
+          <URI>Component.java
+          </URI>
+          <URI>UIService.java
+          </URI>
+          <URI>DataSessionComponent.java
+          </URI>
+          <URI>Guard.java
+          </URI>
+        </resources>
 
+      </scm:Change>
+          
       <scm:Change>
         <release>-dev2
         </release>
