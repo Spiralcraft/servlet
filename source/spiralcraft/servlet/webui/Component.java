@@ -16,11 +16,11 @@ package spiralcraft.servlet.webui;
 
 
 import spiralcraft.textgen.Element;
-import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.InitializeMessage;
 
 
 /**

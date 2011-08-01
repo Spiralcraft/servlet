@@ -32,15 +32,16 @@ import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.ContextAdapter;
 import spiralcraft.servlet.HttpFocus;
-import spiralcraft.textgen.InitializeMessage;
 import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.RenderMessage;
-import spiralcraft.app.StateFrame;
 import spiralcraft.vfs.Resource;
 
 
 import spiralcraft.app.Message;
 import spiralcraft.app.State;
+import spiralcraft.app.InitializeMessage;
+import spiralcraft.app.StateFrame;
+
 import spiralcraft.common.ContextualException;
 
 /**

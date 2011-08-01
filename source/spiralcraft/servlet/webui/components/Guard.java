@@ -30,10 +30,10 @@ import spiralcraft.security.auth.AuthSession;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.text.html.URLDataEncoder;
-import spiralcraft.textgen.InitializeMessage;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.InitializeMessage;
 
 /**
  * <P>Secures a block of content by redirecting to another page if the user

@@ -226,6 +226,12 @@ public class DataSessionComponent
       applyAssignments();
       state.setRequestBindingsApplied(true);
     }
+    else
+    {
+      if (debug)
+      { log.debug("Skipping request bindings- continuation of previous request");
+      }
+    }
   } 
 
   @Override
