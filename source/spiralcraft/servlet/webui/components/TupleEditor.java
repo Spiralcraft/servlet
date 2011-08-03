@@ -24,6 +24,7 @@ import spiralcraft.command.CommandFactory;
 import spiralcraft.common.ContextualException;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
+import spiralcraft.data.Field;
 import spiralcraft.data.Type;
 import spiralcraft.data.lang.AggregateIndexTranslator;
 import spiralcraft.data.lang.DataReflector;
@@ -34,9 +35,11 @@ import spiralcraft.data.session.BufferTuple;
 import spiralcraft.data.session.BufferType;
 
 import spiralcraft.lang.AccessException;
+import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
 import spiralcraft.lang.spi.TranslatorChannel;
@@ -296,6 +299,10 @@ public abstract class TupleEditor
   protected void save()
     throws DataException
   {
+    if (debug)
+    { log.fine(getErrorContext()+" starting save of "+getState());
+    }
+    
     if (phantom)
     {
       if (debug)
@@ -545,7 +552,7 @@ public abstract class TupleEditor
   }
   
   @Override
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected Focus<Buffer> bindExports(Focus<?> focus)
     throws ContextualException
   {
@@ -568,6 +575,30 @@ public abstract class TupleEditor
           ("Cannot bind a TupleEditor to an aggregate type "+type);
       }
     }
+    
+    for (Field<?> field:type.getFieldSet().fieldIterable())
+    {
+      if (field.getNewExpression()!=null)
+      { 
+        Assignment newAssignment
+          =new Assignment
+            (Expression.create(field.getName())
+            ,field.getNewExpression()
+            );
+        if (newAssignments!=null)
+        {
+          newAssignments
+            =ArrayUtil.append
+              (newAssignments
+              ,newAssignment
+              );
+        }
+        else
+        { newAssignments=new Assignment[] {newAssignment};
+        }
+      }
+    }
+    
     
     fixedSetters=bindAssignments(focus,fixedAssignments);
     defaultSetters=bindAssignments(focus,defaultAssignments);
