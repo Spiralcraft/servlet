@@ -15,6 +15,21 @@
 
     <detail>
       <scm:Change>
+        <release>-dev3
+        </release>
+        
+        <scm:Notes>
+          <scm:Note>TupleEditor runs Field.newExpression when it creates
+            a buffer for new data.
+          </scm:Note>
+        </scm:Notes>          
+        
+        <path>source/spiralcraft/modules/servlet/webui/components/TupleEditor.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
         <release>-dev2
         </release>
         
