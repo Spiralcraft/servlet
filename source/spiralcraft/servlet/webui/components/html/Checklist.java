@@ -19,6 +19,8 @@ import java.io.IOException;
 
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractSelectControl;
 
@@ -67,10 +69,13 @@ public class Checklist<Ttarget,Tvalue>
     
     @Override
     protected void renderAfter
-      (Dispatcher context)
+      (Dispatcher context
+      ,Message message
+      ,MessageHandlerChain next
+      )
       throws IOException
     { 
-      super.renderAfter(context);
+      super.renderAfter(context,message,next);
       ((ControlState<?>) context.getState()).setPresented(true);
     }
   };

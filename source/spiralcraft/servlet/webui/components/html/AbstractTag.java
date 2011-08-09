@@ -58,6 +58,7 @@ public abstract class AbstractTag
   
   private String attributes;
   protected int contentPosition;
+  protected int tagPosition;
   protected boolean shouldRender=true;
   
     
@@ -89,6 +90,10 @@ public abstract class AbstractTag
     this.attributes=attributes;
   }
 
+  public void setTagPosition(int position)
+  { this.tagPosition=position;
+  }
+  
   public void setAttributeBindings(DictionaryBinding<?>[] attributeBindings)
   { this.attributeBindings=attributeBindings;
   }
@@ -121,7 +126,7 @@ public abstract class AbstractTag
     
     boolean hasContent=hasContent();
 
-    renderBefore(context);
+    renderBefore(context,message,next);
     if (hasContent && contentPosition<0)
     { renderContent(context,message,next);
     }
@@ -162,7 +167,7 @@ public abstract class AbstractTag
       { renderContent(context,message,next);
       }
     }
-    renderAfter(context);
+    renderAfter(context,message,next);
   }  
   
   /**
@@ -172,7 +177,10 @@ public abstract class AbstractTag
    */
   protected void renderContent(Dispatcher context,Message message,MessageHandlerChain next)
     throws IOException
-  { next.handleMessage(context,message);
+  { 
+    if (tagPosition==0)
+    { next.handleMessage(context,message);
+    }
   }
   
   protected void appendAttribute(String name,String value)
@@ -417,9 +425,16 @@ public abstract class AbstractTag
    * @param context
    * @throws IOException
    */
-  protected void renderBefore(Dispatcher context)
+  protected void renderBefore
+    (Dispatcher context
+    ,Message message
+    ,MessageHandlerChain next
+    )
     throws IOException
-  {
+  { 
+    if (tagPosition>0)
+    { next.handleMessage(context,message);
+    }    
   }
   
   /**
@@ -427,9 +442,16 @@ public abstract class AbstractTag
    * @param context
    * @throws IOException
    */
-  protected void renderAfter(Dispatcher context)
+  protected void renderAfter
+    (Dispatcher context
+    ,Message message
+    ,MessageHandlerChain next
+    )
     throws IOException
   {
+    if (tagPosition<0)
+    { next.handleMessage(context,message);
+    }
   }
 
 
