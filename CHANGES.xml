@@ -15,6 +15,33 @@
 
     <detail>
       <scm:Change>
+        <release>-dev4
+        </release>
+        
+        <scm:Notes>
+          <scm:Note>Tag render location before, around, or after the containing
+            component's main content is now configurable
+          </scm:Note>
+          <scm:Note>ErrorTag defaults to being rendered before the component's
+            main content is rendered.
+          </scm:Note>
+        </scm:Notes>          
+        
+        <path>source/spiralcraft/modules/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>AbstractTag.java
+          </URI>
+          <URI>Checklist.java
+          </URI>
+          <URI>ErrorTag.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
         <release>-dev3
         </release>
         
