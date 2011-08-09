@@ -35,7 +35,11 @@ import spiralcraft.app.MessageHandlerChain;
 public class ErrorTag
     extends AbstractTag
 {
+  { tagPosition=-1;
+  }
+  
   private String tagName=null;
+  
 
   @Override
   protected String getTagName(Dispatcher context)
