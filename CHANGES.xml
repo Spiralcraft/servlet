@@ -15,6 +15,28 @@
 
     <detail>
       <scm:Change>
+        
+        <scm:Notes>
+          <scm:Note>ServiceContext.absoluteBackLink and 
+            ServiceContext.dataEncodedAbsoluteBackLink help facilitate 
+            returning to ongoing page conversations for functionality such
+            as login and registration.
+          </scm:Note>
+        </scm:Notes>          
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>ResourceSession.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
         <release>-dev4
         </release>
         
@@ -27,7 +49,7 @@
           </scm:Note>
         </scm:Notes>          
         
-        <path>source/spiralcraft/modules/servlet/webui/components/html
+        <path>source/spiralcraft/servlet/webui/components/html
         </path>
         
         <resources>
@@ -51,7 +73,7 @@
           </scm:Note>
         </scm:Notes>          
         
-        <path>source/spiralcraft/modules/servlet/webui/components/TupleEditor.java
+        <path>source/spiralcraft/servlet/webui/components/TupleEditor.java
         </path>
 
       </scm:Change>
@@ -66,7 +88,7 @@
           </scm:Note>
         </scm:Notes>          
         
-        <path>source/spiralcraft/modules/servlet/webui/
+        <path>source/spiralcraft/servlet/webui/
         </path>
         
         <resources>
@@ -91,7 +113,7 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/modules/servlet/webui/components/TupleEditor.java
+        <path>source/spiralcraft/servlet/webui/components/TupleEditor.java
         </path>
 
       </scm:Change>
@@ -105,7 +127,7 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/modules/servlet/webui/components/EditorBase.java
+        <path>source/spiralcraft/servlet/webui/components/EditorBase.java
         </path>
 
       </scm:Change>
@@ -119,7 +141,7 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/modules/servlet/webui/ControlGroup.java
+        <path>source/spiralcraft/servlet/webui/ControlGroup.java
         </path>
 
       </scm:Change>
@@ -134,7 +156,7 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/modules/servlet/webui/components/AbstractSelectControl.java
+        <path>source/spiralcraft/servlet/webui/components/AbstractSelectControl.java
         </path>
 
       </scm:Change>
@@ -150,7 +172,7 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/modules/servlet/webui/components/AggregateEditor.java
+        <path>source/spiralcraft/servlet/webui/components/AggregateEditor.java
         </path>
 
       </scm:Change>
@@ -165,7 +187,7 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/modules/servlet/webui/textgen/RootUnit.java
+        <path>source/spiralcraft/servlet/webui/textgen/RootUnit.java
         </path>
 
       </scm:Change>
@@ -183,7 +205,7 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/modules/servlet/webui/components/RequestData.java
+        <path>source/spiralcraft/servlet/webui/components/RequestData.java
         </path>
 
       </scm:Change>
@@ -198,7 +220,7 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/modules/servlet/autofilter/GuardFilter.java
+        <path>source/spiralcraft/servlet/autofilter/GuardFilter.java
         </path>
 
       </scm:Change>
