@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.app.StateFrame;
+import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.util.URIUtil;
 import spiralcraft.util.thread.ThreadLocalStack;
@@ -272,6 +273,13 @@ public class ServiceContext
     return response.encodeURL(rawUrl);
   }
   
+  public String getAbsoluteBackLink()
+  { return response.encodeURL(resourceSession.getAbsoluteBackLink(request));
+  }
+
+  public String getDataEncodedAbsoluteBackLink()
+  { return URLDataEncoder.encode(resourceSession.getAbsoluteBackLink(request));
+  }
 
   public Command<Void,Void,Void> redirectCommand(final String uriString)
   { 

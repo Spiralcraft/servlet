@@ -1,14 +1,18 @@
 package spiralcraft.servlet.webui;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.app.StateFrame;
 import spiralcraft.util.ListMap;
+import spiralcraft.util.URIUtil;
 
 
 import spiralcraft.app.State;
@@ -180,6 +184,25 @@ public class ResourceSession
       +"&lrs="+Integer.toString(sequence)
       +(encodedParameters!=null?"&"+encodedParameters:"")
       ;
+    
+  }
+  
+  /**
+   * @return A link back to the current resource that contains published
+   *  parameters and maintains the conversation state
+   */
+  String getAbsoluteBackLink(HttpServletRequest request)
+  {
+    String encodedParameters=parameterMap.generateEncodedForm();
+    URI requestURI=URI.create(request.getRequestURL().toString());
+    
+    URI backLink
+      =URIUtil.replaceRawQuery
+        (requestURI
+        ,"lrs="+Integer.toString(sequence)
+        +(encodedParameters!=null?"&"+encodedParameters:"")
+        );
+    return backLink.toString();
     
   }
   
