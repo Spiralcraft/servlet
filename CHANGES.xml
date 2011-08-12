@@ -4,6 +4,33 @@
 
   <scm:Change>
   
+    <revision>0.4.15.1
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+
+    <detail>
+      <scm:Change>
+        <notes>
+          <scm:Note>SecurityFilter.preauthenticate now reads the login ticket
+          </scm:Note>
+          <scm:Note>SecurityFilter.secureCookie now restricts reading and
+            writing the loging ticket to secure connections.
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/autofilter/SecurityFilter
+        </path>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.15
     </revision>
 
@@ -16,13 +43,13 @@
     <detail>
       <scm:Change>
         
-        <scm:Notes>
+        <notes>
           <scm:Note>ServiceContext.absoluteBackLink and 
             ServiceContext.dataEncodedAbsoluteBackLink help facilitate 
             returning to ongoing page conversations for functionality such
             as login and registration.
           </scm:Note>
-        </scm:Notes>          
+        </notes>          
         
         <path>source/spiralcraft/servlet/webui
         </path>
