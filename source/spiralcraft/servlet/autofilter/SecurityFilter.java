@@ -378,7 +378,11 @@ public class SecurityFilter
     }
     
     if (secureCookie && !contextLocal.get().request.isSecure())
-    { return;
+    { 
+      if (debug)
+      { log.fine("Not writing secure cookie to non-secure request");
+      }
+      return;
     }
       
       
@@ -536,6 +540,7 @@ public class SecurityFilter
     contextLocal.set(new SecurityFilterContext(request,response,qualifiedCookieName));
     
     
+    boolean preAuthenticatedWithCookie=false;
     if (isNew && preAuthenticate)
     {
       // XXX This will auto-log in a user with a ticket, but we want to make 
@@ -544,13 +549,46 @@ public class SecurityFilter
       //   securityFilter so we can lock-out people with tickets.
       LoginEntry loginEntry=new LoginEntry(authSessionChannel);
       readLoginCookie(loginEntry);
+      if (debug)
+      { log.debug("Preauthenticating new session");
+      }
+      if (authSession.authenticate())
+      {
+        preAuthenticatedWithCookie=true;
+        if (debug)
+        { log.debug("Session authenticated");
+        }
+        
+      }
       
-      
-      authSession.authenticate();
     }
+    else if (preAuthenticate 
+             && !authSession.isAuthenticated(ticketAuthModuleName)
+             )
+    {
+      // Check the cookie on every request to pick up an authentication
+      //   that comes in after the session is started.
+      
+      LoginEntry loginEntry=new LoginEntry(authSessionChannel);
+      if (readLoginCookie(loginEntry))
+      { 
+        if (debug)
+        { log.debug("Got a login cookie, preauthenticating session");
+        }
+        if (authSession.authenticate())
+        { 
+          preAuthenticatedWithCookie=true;
+          if (debug)
+          { log.debug("Session authenticated");
+          }
+        }
+      }
+    }
+    
     
     if (requireValidCookie 
         && authSession.isAuthenticated(ticketAuthModuleName)
+        && !preAuthenticatedWithCookie
         )
     { 
       
