@@ -16,10 +16,12 @@
     <detail>
       <scm:Change>
         <notes>
-          <scm:Note>SecurityFilter.preauthenticate now reads the login ticket
+          <scm:Note>SecurityFilter.preauthenticate now reads the login ticket,
+            and tries to check it on every request to an unauthenticated
+            session.
           </scm:Note>
           <scm:Note>SecurityFilter.secureCookie now restricts reading and
-            writing the loging ticket to secure connections.
+            writing the login ticket to secure connections.
           </scm:Note>
         </notes>          
         
