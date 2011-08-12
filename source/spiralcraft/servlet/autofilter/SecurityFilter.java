@@ -75,7 +75,8 @@ public class SecurityFilter
   private int minutesToPersist;
   private boolean requireValidCookie;
   private boolean disableLoginCookies;
-
+  private boolean secureCookie;
+  
   private boolean preAuthenticate;
   private String ticketAuthModuleName="local";
   private boolean qualifyCookieName=true;
@@ -187,6 +188,10 @@ public class SecurityFilter
     else
     { this.cookieDomain=cookieDomain;
     }
+  }
+  
+  public void setSecureCookie(boolean secureCookie)
+  { this.secureCookie=secureCookie;
   }
   
   /**
@@ -372,6 +377,13 @@ public class SecurityFilter
     { return;
     }
     
+    if (secureCookie && !contextLocal.get().request.isSecure())
+    { return;
+    }
+      
+      
+     
+    
     VariableMap map=new VariableMap();
     String username=authSessionChannel.get().getPrincipal().getName();
     String password=entry.getPasswordCleartext();
@@ -402,6 +414,9 @@ public class SecurityFilter
       }
       if (cookiePath!=null)
       { cookie.setPath(cookiePath);
+      }
+      if (secureCookie)
+      { cookie.setSecure(true);
       }
       writeLoginCookie(cookie);
       if (debug)
@@ -466,6 +481,7 @@ public class SecurityFilter
     
     AuthSession authSession
       =(AuthSession) session.getAttribute(attributeName);
+    boolean isNew=false;
     
     if (authSession==null)
     {
@@ -473,7 +489,6 @@ public class SecurityFilter
       // To avoid race condition of 2 threads associated with the same
       //   session where one overwrites the in-use auth session with
       //   an empty one.
-      boolean isNew=false;
       synchronized (session)
       {
         if (qualifiedCookieName==null
@@ -511,12 +526,7 @@ public class SecurityFilter
           }
         }
       }
-      if (isNew)
-      {
-        if (preAuthenticate)
-        { authSession.authenticate();
-        }
-      }
+
       
     }
     
@@ -525,6 +535,19 @@ public class SecurityFilter
     
     contextLocal.set(new SecurityFilterContext(request,response,qualifiedCookieName));
     
+    
+    if (isNew && preAuthenticate)
+    {
+      // XXX This will auto-log in a user with a ticket, but we want to make 
+      //   sure we don't override the requiresLoginPermission of the login 
+      //   control. The requiresLoginPermission should be moved into the
+      //   securityFilter so we can lock-out people with tickets.
+      LoginEntry loginEntry=new LoginEntry(authSessionChannel);
+      readLoginCookie(loginEntry);
+      
+      
+      authSession.authenticate();
+    }
     
     if (requireValidCookie 
         && authSession.isAuthenticated(ticketAuthModuleName)
