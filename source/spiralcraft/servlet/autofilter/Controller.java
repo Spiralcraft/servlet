@@ -199,6 +199,10 @@ public class Controller
   { this.codeURI=cleanURI("codeURI",codeURI);
   }
   
+  public void setDebug(boolean debug)
+  { this.debug=debug;
+  }
+  
   /**
    * Filter.init()
    */
@@ -302,6 +306,17 @@ public class Controller
     contextResourceMap.put("config",contextURI.resolve(configURI));
     contextResourceMap.put("files",contextURI.resolve(filesURI));
     contextResourceMap.put("code",contextURI.resolve(codeURI));
+    
+    if (debug)
+    {
+      log.debug("dataURI="+dataURI);
+      log.debug("configURI="+configURI);
+      log.debug("filesURI="+filesURI);
+      log.debug("codeURI="+codeURI);
+      for (String mapping:new String[]{"war","data","config","files","code"})
+      { log.debug("Mapped "+mapping+" to "+contextResourceMap.get(mapping));
+      }
+    }
     
     // contextResourceMap.setIsolate(true)
     try
