@@ -16,6 +16,38 @@
     <detail>
       <scm:Change>
       
+        <revision>-dev2
+        </revision>
+        
+        <notes>
+          <scm:Note>New ContextFilter to simplify using a Context
+            to publish data to downstream components.
+          </scm:Note>
+          <scm:Note>AutoFilter receives a reference to the resource container
+            it is managing via setContainer()
+          </scm:Note>
+          <scm:Note>FocusFilter makes HTTP Focus available when binding
+            b/c Contexts need to be bound with upstream available.
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/autofilter/
+        </path>
+        
+        <resources>
+          <URI>ContextFilter.java
+          </URI>
+          <URI>AutoFilter.java
+          </URI>
+          <URI>Controller.java
+          </URI>
+          <URI>spi/FocusFilter.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+      
         <revision>-dev1
         </revision>
         
