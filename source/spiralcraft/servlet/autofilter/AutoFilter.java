@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.servlet.AbstractFilter;
 import spiralcraft.util.Path;
+import spiralcraft.vfs.Resource;
 
 
 /**
@@ -66,6 +67,7 @@ public abstract class AutoFilter
   protected String pattern;
   protected AutoFilter parent;
   protected AutoFilter generalInstance;
+  protected Resource container;
   
 
   
@@ -138,11 +140,25 @@ public abstract class AutoFilter
   { return path;
   }
   
-  public void setPath(Path path)
+  void setPath(Path path)
   { 
 //    System.err.println("AutoFilter.setPath(): "+path.format("/"));
     
     this.path=path;
+  }
+  
+  void setContainer(Resource container)
+  { this.container=container;
+  }
+  
+  /**
+   * 
+   * @return The resource container that holds the filter definitions for
+   *   this part of the URI tree.
+   *   
+   */
+  public Resource getContainer()
+  { return container;
   }
   
   /**

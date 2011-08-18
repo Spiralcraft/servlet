@@ -950,6 +950,7 @@ public class Controller
         for (AutoFilter filter: localFilters)
         { 
           filter.setPath(container);
+          filter.setContainer(resource.getParent());
           // TODO: Make a Focus chain
           //   filter.bind(lastFilter.getFocus());
           //   
