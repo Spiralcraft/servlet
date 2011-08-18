@@ -26,6 +26,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.SimpleFocus;
+import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.util.ExpressionRenderer;
 import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.AutoFilter;
@@ -299,7 +300,7 @@ public abstract class FocusFilter<T>
         synchronized (this)
         { 
           if (!initialized)
-          { init(requestFocus);
+          { init(requestFocus,request,response);
           }
         }
       }
@@ -402,7 +403,11 @@ public abstract class FocusFilter<T>
   
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  private final void init(Focus<?> requestFocus)
+  private final void init
+    (Focus<?> requestFocus
+    ,ServletRequest request
+    ,ServletResponse response
+    )
     throws ContextualException
   {
   
@@ -422,42 +427,59 @@ public abstract class FocusFilter<T>
       { 
         httpFocus=new HttpFocus<Void>(requestFocus);
         requestFocus=httpFocus;
+        httpFocus.push
+          (config.getServletContext()
+          ,(HttpServletRequest) request
+          ,(HttpServletResponse) response
+          );
+
       }
-      if (whenX!=null)
-      { whenX.bind(requestFocus);
-      }
-      requestFocus=bindImports(requestFocus);
-      focus=createFocus(requestFocus);
-      // log.fine("Created "+focus);
-      if (alias!=null)
-      { focus.addAlias(alias);
-      }
-      exportFocus=bindExports(focus);
-      
-      if (renderWhenX!=null)
-      { renderWhenX.bind(exportFocus);
-      }
-      if (contentTypeX!=null)
-      { contentTypeX.bind(exportFocus);
-      }
-      if (responseCodeX!=null)
-      { responseCodeX.bind(exportFocus);
-      }
-      
-      Focus<?> renderFocus=focus;
-      if (outputX!=null)
+      try
       {
-        if (renderer==null)
-        { renderer=new ExpressionRenderer(outputX);
+        requestFocus=requestFocus.chain(requestFocus.getSubject());
+        requestFocus.addFacet(requestFocus.chain(new SimpleChannel(this,true)));
+        if (whenX!=null)
+        { whenX.bind(requestFocus);
         }
-        else
-        { renderFocus=renderFocus.chain(renderFocus.bind(outputX));
+        requestFocus=bindImports(requestFocus);
+        focus=createFocus(requestFocus);
+        // log.fine("Created "+focus);
+        if (alias!=null)
+        { focus.addAlias(alias);
+        }
+        exportFocus=bindExports(focus);
+      
+        if (renderWhenX!=null)
+        { renderWhenX.bind(exportFocus);
+        }
+        if (contentTypeX!=null)
+        { contentTypeX.bind(exportFocus);
+        }
+        if (responseCodeX!=null)
+        { responseCodeX.bind(exportFocus);
+        }
+      
+        Focus<?> renderFocus=focus;
+        if (outputX!=null)
+        {
+          if (renderer==null)
+          { renderer=new ExpressionRenderer(outputX);
+          }
+          else
+          { renderFocus=renderFocus.chain(renderFocus.bind(outputX));
+          }
+        }
+      
+        if (renderer!=null && renderer instanceof Contextual)
+        { ((Contextual) renderer).bind(renderFocus);
+        }        
+      }
+      finally
+      {
+        if (httpFocus!=null)
+        { httpFocus.pop();
         }
       }
-      
-      if (renderer!=null && renderer instanceof Contextual)
-      { ((Contextual) renderer).bind(renderFocus);
-      }        
     }
   }
   
