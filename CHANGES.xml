@@ -20,6 +20,28 @@
         </revision>
         
         <notes>
+          <scm:Note>Editors write buffers back to their source after save to
+            update known-stale data.
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>AggregateEditor.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+      
+        <revision>-dev2
+        </revision>
+        
+        <notes>
           <scm:Note>New ContextFilter to simplify using a Context
             to publish data to downstream components.
           </scm:Note>
