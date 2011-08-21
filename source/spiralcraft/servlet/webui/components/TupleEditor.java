@@ -310,7 +310,7 @@ public abstract class TupleEditor
       }
     }
     
-    Buffer buffer=getState().getValue();
+    BufferTuple buffer=getState().getValue();
     if (buffer!=null)
     { 
       if (preSaveSetters!=null)
@@ -350,13 +350,13 @@ public abstract class TupleEditor
           Setter.applyArray(fixedSetters);
         }
       
-        if (inspect((BufferTuple) buffer,getState()))
+        if (inspect(buffer,getState()))
         {
           if (debug)
           { logFine("Saving buffer "+buffer);
           }
           buffer.save();
-      
+          writeToModel(buffer);
           if (publishedAssignments!=null)
           {
             if (debug)

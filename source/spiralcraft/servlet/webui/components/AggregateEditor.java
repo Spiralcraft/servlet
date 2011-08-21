@@ -261,7 +261,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     { log.fine("Saving...");
     }
     
-    BufferAggregate<BufferTuple,?> aggregate=getState().getValue();
+    BufferAggregate<BufferTuple,Tcontent> aggregate=getState().getValue();
     
     if (aggregate==null)
     {
@@ -317,6 +317,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         { throw new DataException(contentRequiredMessage);
         }
         aggregate.reset();
+        writeToModel(aggregate);
       }
       else
       { 
