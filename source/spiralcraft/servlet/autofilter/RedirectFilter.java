@@ -91,6 +91,7 @@ public class RedirectFilter
     this.matchScheme=prefix!=null?prefix.getScheme():null;
     this.matchAuthority=prefix!=null?prefix.getAuthority():null;
     this.matchPath=prefix!=null?prefix.getPath():null;
+    
   }
   
   /**
@@ -125,6 +126,8 @@ public class RedirectFilter
     
     if (prefix!=null)
     {
+
+           
       if (matchScheme!=null 
           && !matchScheme.equals(requestURI.getScheme()))
       { 
@@ -133,6 +136,7 @@ public class RedirectFilter
         }
         chain.doFilter(request,response);
       }
+      
       if (matchAuthority!=null 
           && !matchAuthority.equals(requestURI.getAuthority()))
       { 
@@ -143,11 +147,11 @@ public class RedirectFilter
       }
 
       String absMatchPath
-        =matchPath==null
+        =(matchPath==null || matchPath.isEmpty())
         ?null
         :(matchPath.startsWith("/")
           ?matchPath
-          :getPath()+"/"+matchPath
+          :(getPath()+"/"+matchPath)
         );
       
       if (absMatchPath!=null 
