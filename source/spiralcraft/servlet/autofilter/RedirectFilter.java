@@ -173,7 +173,16 @@ public class RedirectFilter
       
       
       String newScheme=targetScheme!=null?targetScheme:matchScheme;
+
       String newAuthority=targetAuthority!=null?targetAuthority:matchAuthority;
+      
+      if (newScheme!=null && newAuthority==null)
+      { newAuthority=requestURI.getAuthority();
+      }
+      if (newAuthority!=null && newScheme==null)
+      { newScheme=requestURI.getScheme();
+      }
+      
       String newPath=targetPath!=null?targetPath+appendPath:appendPath;
       String newQuery=targetQuery!=null
         ?targetQuery+requestURI.getQuery():requestURI.getQuery();
