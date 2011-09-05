@@ -16,6 +16,22 @@
     <detail>
       <scm:Change>
       
+        <revision>-dev3
+        </revision>
+        
+        <notes>
+          <scm:Note>Fix SIOOB exception in RedirectFilter when no path
+            is specified in a URI set for the property "prefix"
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/autofilter/RedirectFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+      
         <revision>-dev2
         </revision>
         
