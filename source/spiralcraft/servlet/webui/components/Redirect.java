@@ -55,6 +55,7 @@ public class Redirect
   private Expression<Boolean> when;
   private Expression<URI> locationX;
   private String refererParameter;
+  private String redirectParameter;
   private boolean mergeQuery;
 
   { addHandler
@@ -87,6 +88,7 @@ public class Redirect
   { redirectURI=uri;
   }
   
+  
   public void setLocationX(Expression<URI> locationX)
   { this.locationX=locationX;
   }
@@ -95,8 +97,22 @@ public class Redirect
   { this.when=when;
   }
   
+  /**
+   * The query parameter in which to store the current URL 
+   * 
+   * @param refererParameter
+   */
   public void setRefererParameter(String refererParameter)
   { this.refererParameter=refererParameter;
+  }
+
+  /**
+   * The query parameter to read the redirectURI from
+   * 
+   * @param redirectParameter
+   */
+  public void setRedirectParameter(String redirectParameter)
+  { this.redirectParameter=redirectParameter;
   }
 
   public void setMergeQuery(boolean mergeQuery)
@@ -143,8 +159,23 @@ public class Redirect
     { throw new ServletException(x);
     }
     
-    URI redirectURI
-      =locationChannel==null?this.redirectURI:locationChannel.get();
+    URI redirectURI=null;
+    
+    if (redirectParameter!=null && context.getQuery()!=null)
+    { 
+      try
+      { redirectURI=new URI(context.getQuery().getFirst(redirectParameter));
+      }
+      catch (URISyntaxException e)
+      { this.handleException(context,e);
+      }
+    }
+        
+    if (redirectURI==null)
+    {
+      redirectURI
+        =locationChannel==null?this.redirectURI:locationChannel.get();
+    }
     if (redirectURI==null)
     { redirectURI=this.redirectURI;
     }
