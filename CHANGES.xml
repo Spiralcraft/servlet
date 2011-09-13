@@ -16,6 +16,38 @@
     <detail>
       <scm:Change>
       
+        <revision>-dev4
+        </revision>
+        
+        <notes>
+          <scm:Note>QueryValue component renders data encoded for use
+            in a URL query component.
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/components/QueryValue.java
+        </path>
+        
+      </scm:Change>
+      <scm:Change>
+      
+        <revision>-dev4
+        </revision>
+        
+        <notes>
+          <scm:Note>Redirect component can accept a URL query parameter 
+            specified in the "redirectParameter" property as the redirect
+            destination.
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/components/Redirect.java
+        </path>
+        
+      </scm:Change>
+      
+      <scm:Change>
+      
         <revision>-dev3
         </revision>
         
