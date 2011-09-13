@@ -157,7 +157,46 @@ public class FileServlet
     
     String filePath=getServletConfig().getServletContext()
       .getRealPath(relativePath);
-    return Resolver.getInstance().resolve(new File(filePath).toURI());
+    
+    mappedResource=Resolver.getInstance().resolve(new File(filePath).toURI());
+
+//  How do we get a fallback resource for this relative path? Ask a NavContext?
+//  or something else? Only NavContext can know virtual paths right now
+//    
+//    if (mappedResource.exists())
+//    { 
+//      return mappedResource;
+//    }
+//    
+//    try
+//    { contextURI=new URI("context://resources/"+relativePath);
+//    }
+//    catch (URISyntaxException x)
+//    { 
+//      throw new UnresolvableURIException
+//        (relativePath,"Could not resolve this path in the context: scheme ",x);
+//    }
+//    
+//    
+//    mappedResource
+//      =Resolver.getInstance().resolve(contextURI);
+//    if (mappedResource!=null)
+//    { 
+//      if (debugLevel.canLog(Level.DEBUG))
+//      { log.debug("FileServlet mapped "+relativePath+" to "+mappedResource.getURI());
+//      }
+//    }
+//    else
+//    {
+//      if (debugLevel.canLog(Level.DEBUG))
+//      { log.debug("context:"+relativePath+" did not resolve");
+//      }
+//    }
+
+    return mappedResource;
+    
+    
+    
   }
     
   @Override
