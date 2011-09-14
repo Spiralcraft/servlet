@@ -10,7 +10,7 @@
     <authorId>miketoth
     </authorId>
     
-    <date>
+    <date>2011-09-13
     </date>
 
     <detail>
@@ -29,6 +29,7 @@
         </path>
         
       </scm:Change>
+      
       <scm:Change>
       
         <revision>-dev4
