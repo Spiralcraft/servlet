@@ -528,6 +528,7 @@ public class Controller
           );
       }
 
+      // TODO: Recognize child paths that might be virtual  
       
       // Handle any new children
       for (Resource childResource: resource.asContainer().listChildren())
