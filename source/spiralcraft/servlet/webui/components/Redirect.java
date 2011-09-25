@@ -163,11 +163,15 @@ public class Redirect
     
     if (redirectParameter!=null && context.getQuery()!=null)
     { 
-      try
-      { redirectURI=new URI(context.getQuery().getFirst(redirectParameter));
-      }
-      catch (URISyntaxException e)
-      { this.handleException(context,e);
+      String redirectURIStr=context.getQuery().getFirst(redirectParameter);
+      if (redirectURIStr!=null)
+      {
+        try
+        { redirectURI=new URI(redirectURIStr);
+        }
+        catch (URISyntaxException e)
+        { this.handleException(context,e);
+        }
       }
     }
         
@@ -180,6 +184,12 @@ public class Redirect
     { redirectURI=this.redirectURI;
     }
       
+    if (redirectURI==null)
+    { 
+      // If no redirectURI, we don't redirect even if condition is true
+      return;
+    }
+    
     String redirectScheme=redirectURI.getScheme();
     if (redirectScheme==null)
     { redirectScheme=refererURI.getScheme();
