@@ -4,6 +4,33 @@
 
   <scm:Change>
   
+    <revision>0.4.15.2
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>2011-09-24
+    </date>
+
+    <detail>
+      <scm:Change>
+      
+        <notes>
+          <scm:Note>Fix NPE in redirect component to handle case where
+            redirectParameter is not present.
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/components/Redirect.java
+        </path>
+        
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.15.1
     </revision>
 
