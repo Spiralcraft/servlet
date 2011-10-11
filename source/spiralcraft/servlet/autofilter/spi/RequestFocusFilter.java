@@ -66,7 +66,7 @@ public abstract class RequestFocusFilter<T>
 
   
   /**
-   * <p>Called when the specified object is maide available in the Focus chain
+   * <p>Called when the specified object is made available in the Focus chain
    *   immediately before the resumption of request processing
    * </p>
    */
