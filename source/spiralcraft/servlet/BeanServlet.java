@@ -25,6 +25,7 @@ import javax.servlet.ServletResponse;
 
 import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
+import spiralcraft.servlet.kit.HttpServlet;
 
 
 /**
