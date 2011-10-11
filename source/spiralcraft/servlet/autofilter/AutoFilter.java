@@ -23,9 +23,11 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import spiralcraft.servlet.AbstractFilter;
+import spiralcraft.servlet.kit.AbstractFilter;
 import spiralcraft.util.Path;
 import spiralcraft.vfs.Resource;
 
@@ -58,11 +60,14 @@ import spiralcraft.vfs.Resource;
 public abstract class AutoFilter
   extends AbstractFilter
 {
-  
+  private static int ID=0;
   private boolean additive=true;
   private boolean overridable=true;
   private boolean global;
   private Path path;
+  private String sessionAttributeName
+    ="autoFilter."+Integer.toString(ID++)+".session";
+  
   protected boolean debug;
   protected String pattern;
   protected AutoFilter parent;
@@ -340,6 +345,35 @@ public abstract class AutoFilter
   { this.debug=debug;
   }
   
+  
+  protected Object newPrivateSessionState(HttpServletRequest request)
+  { return new Object();
+  }
+  
+  protected final void setPrivateSessionState
+    (HttpServletRequest request,Object privateSessionState)
+  { 
+    HttpSession session=request.getSession(true);
+    session.setAttribute(sessionAttributeName,privateSessionState);    
+  }
+  
+  @SuppressWarnings("unchecked")
+  protected final <X> X getPrivateSessionState
+    (HttpServletRequest request,boolean create)
+  { 
+    HttpSession session=request.getSession(create);
+    if (session!=null)
+    { 
+      Object privateSession=session.getAttribute(sessionAttributeName);
+      if (create)
+      { 
+        privateSession=newPrivateSessionState(request);
+        session.setAttribute(sessionAttributeName,privateSession);
+      }
+      return (X) privateSession;
+    }
+    return null;
+  }
 }
   
 
