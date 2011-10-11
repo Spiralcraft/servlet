@@ -16,7 +16,7 @@ package spiralcraft.servlet.vfs;
 
 import javax.servlet.ServletException;
 
-import spiralcraft.servlet.HttpServlet;
+import spiralcraft.servlet.kit.HttpServlet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

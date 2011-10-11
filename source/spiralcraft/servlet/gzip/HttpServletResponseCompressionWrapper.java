@@ -17,7 +17,7 @@ package spiralcraft.servlet.gzip;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletOutputStream;
 
-import spiralcraft.servlet.HttpServletResponseWrapper;
+import spiralcraft.servlet.kit.HttpServletResponseWrapper;
 
 import java.io.IOException;
 import java.io.PrintWriter;

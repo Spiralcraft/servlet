@@ -14,7 +14,6 @@
 //
 package spiralcraft.servlet.pages;
 
-import spiralcraft.servlet.HttpServlet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,9 +42,10 @@ import spiralcraft.textgen.compiler.DocletUnit;
 import spiralcraft.textgen.Element;
 
 
-import spiralcraft.servlet.HttpFocus;
 
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
+import spiralcraft.servlet.kit.HttpFocus;
+import spiralcraft.servlet.kit.HttpServlet;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;

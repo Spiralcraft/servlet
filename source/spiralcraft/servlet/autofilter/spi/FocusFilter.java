@@ -28,8 +28,8 @@ import spiralcraft.lang.Contextual;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.util.ExpressionRenderer;
-import spiralcraft.servlet.HttpFocus;
 import spiralcraft.servlet.autofilter.AutoFilter;
+import spiralcraft.servlet.kit.HttpFocus;
 import spiralcraft.text.Renderer;
 
 import javax.servlet.FilterChain;

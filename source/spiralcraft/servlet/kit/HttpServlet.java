@@ -12,7 +12,7 @@
 // Unless otherwise agreed to in writing, this software is distributed on an
 // "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
-package spiralcraft.servlet;
+package spiralcraft.servlet.kit;
 
 import java.io.IOException;
 import java.io.PrintWriter;

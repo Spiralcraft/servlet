@@ -51,7 +51,7 @@ import spiralcraft.lang.util.DictionaryBinding;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.net.http.VariableMapBinding;
 
-import spiralcraft.servlet.HttpServlet;
+import spiralcraft.servlet.kit.HttpServlet;
 
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
