@@ -34,10 +34,12 @@ import spiralcraft.command.CommandAdapter;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.lang.util.LangUtil;
 
 import spiralcraft.net.http.VariableMap;
 
@@ -80,6 +82,11 @@ public class SecurityFilter
   private boolean preAuthenticate;
   private String ticketAuthModuleName="local";
   private boolean qualifyCookieName=true;
+  private boolean invalidateSessionOnLogout=true;
+  private Channel<HttpServletRequest> httpRequestChannel;
+  
+  { this.setUsesRequest(true);
+  }
   
   public void setTicketAuthModuleName(String ticketAuthModuleName)
   { this.ticketAuthModuleName=ticketAuthModuleName;
@@ -100,6 +107,17 @@ public class SecurityFilter
   public void setDisableLoginCookies(boolean disableLoginCookies)
   { this.disableLoginCookies=disableLoginCookies;
   } 
+  
+  /**
+   * Invalidate the server session on logout. Defaults to true. Set to false
+   *   in special cases to maintain the session association for post-sign-out
+   *   activity.
+   *   
+   * @param expire
+   */
+  public void setInvalidateSessionOnLogout(boolean invalidate)
+  { this.invalidateSessionOnLogout=invalidate;
+  }
   
   /**
    * Attempt to authenticate the session as soon as it is created to
@@ -467,6 +485,10 @@ public class SecurityFilter
       =new SimpleFocus<AuthSession>(parentFocus,authSessionChannel);
     authSessionFocus.addFacet(new BeanFocus<SecurityFilter>(this));
     authenticator.bind(authSessionFocus);
+    
+    httpRequestChannel 
+      = LangUtil.findChannel(HttpServletRequest.class,parentFocus);
+    
     return authSessionFocus;
   }
   
@@ -649,6 +671,13 @@ public class SecurityFilter
     }
     writeLoginCookie(cookie);
     contextLocal.get().logoutPending=true;
+    if (invalidateSessionOnLogout)
+    { 
+      HttpSession session=httpRequestChannel.get().getSession(false);
+      if (session!=null)
+      { session.invalidate();
+      }
+    }
   }  
 
 }
