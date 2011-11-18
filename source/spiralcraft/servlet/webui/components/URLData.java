@@ -17,7 +17,7 @@ package spiralcraft.servlet.webui.components;
 import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.textgen.elements.Out;
 
-public class QueryValue<T>
+public class URLData<T>
   extends Out<T>
 {
   { renderer.setEncoder(URLDataEncoder.codec());
