@@ -6,6 +6,7 @@ import spiralcraft.textgen.compiler.TglUnit;
 
 
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.namespace.NamespaceContext;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.vfs.Resource;
@@ -27,7 +28,7 @@ public class RootUnit
     throws ContextualException
   { 
     if (contextX!=null)
-    { focus=bindContext(focus,null,null);
+    { focus=bindContext(focus,null,null,NamespaceContext.getPrefixResolver());
     }
     return (RootComponent) bind(focus,null,new RootComponent());
   }
