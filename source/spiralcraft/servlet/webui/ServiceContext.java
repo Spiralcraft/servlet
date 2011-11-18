@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import spiralcraft.app.StateFrame;
+import spiralcraft.servlet.PublicLocator;
+import spiralcraft.servlet.kit.ContextAdapter;
 import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.util.URIUtil;
@@ -72,9 +74,14 @@ public class ServiceContext
   { return threadContext.get();
   }
   
+  public static final String dataEncode(String data)
+  { return URLDataEncoder.encode(data);
+  }
+  
 //  private static final Charset UTF_8=Charset.forName("UTF-8");
   
   private ResourceSession resourceSession;
+  private ContextAdapter servletContext;
   private HttpServletRequest request;
   private HttpServletResponse response;
   private VariableMap post;
@@ -86,6 +93,7 @@ public class ServiceContext
   private String contentType;
   private boolean outOfSync;
   private boolean initial;
+  private PublicLocator publicLocator;
   
   
   public ServiceContext(Writer writer,boolean stateful,StateFrame frame)
@@ -257,6 +265,10 @@ public class ServiceContext
   { this.response=response;
   }
   
+  void setServletContext(ContextAdapter contextAdapter)
+  { this.servletContext=contextAdapter;
+  }
+  
   /**
    * The URL that can be used to issue asynchronous requests back to this
    *   page. The URL reflects the current state of the conversation.
@@ -276,11 +288,38 @@ public class ServiceContext
   public String getAbsoluteBackLink()
   { return response.encodeURL(resourceSession.getAbsoluteBackLink(request));
   }
+  
+  
+  public String secureLink(String relativePath)
+  { 
+
+    return getPublicLocator().secureLink(relativePath,request);
+  }
+  
+  public String standardLink(String relativePath)
+  { 
+    return getPublicLocator().standardLink(relativePath,request);
+  }
+  
+  public PublicLocator getPublicLocator()
+  {
+    if (publicLocator==null)
+    { publicLocator=PublicLocator.get(servletContext.getContext());
+    }
+    if (publicLocator==null)
+    { 
+      publicLocator
+        =PublicLocator.deriveFromContext(servletContext.getContext(),request);
+    }
+    return publicLocator;
+  }
 
   public String getDataEncodedAbsoluteBackLink()
   { return URLDataEncoder.encode(resourceSession.getAbsoluteBackLink(request));
   }
 
+
+  
   public Command<Void,Void,Void> redirectCommand(final String uriString)
   { 
     final URI uri=URI.create(uriString);

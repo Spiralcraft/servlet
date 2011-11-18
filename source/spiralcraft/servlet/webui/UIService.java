@@ -212,7 +212,7 @@ public class UIService
 
         serviceContext.setRequest(request);
         serviceContext.setResponse(response);
-
+        serviceContext.setServletContext(context);
         
         VariableMap query=serviceContext.getQuery();
         ResourceSession.RequestSyncStatus syncStatus
