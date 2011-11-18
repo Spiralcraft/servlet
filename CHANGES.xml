@@ -4,6 +4,165 @@
 
   <scm:Change>
   
+    <revision>0.4.16
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+
+    <detail>
+    
+      <scm:Change>
+      
+        <revision>-dev1
+        </revision>
+      
+        <notes>
+          <scm:Note>URLData component outputs a value encoded for inclusion
+            in a URL query string.
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>URLData.java
+          </URI>
+          <URI>QueryValue.java
+          </URI>
+        </resources>
+      
+      </scm:Change>
+          
+      <scm:Change>
+      
+        <revision>-dev1
+        </revision>
+      
+        <notes>
+          <scm:Note>PublicLocator class encapsulates details required to link
+            back to an application exposed via both secure and standard ports.
+          </scm:Note>
+          <scm:Note>PublicLocator requires the ServletContext to be available
+            from the ServiceContext
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>PublicLocator.java
+          </URI>
+          <URI>webui/ServiceContext.java
+          </URI>
+          <URI>webui/UIService.java
+          </URI>
+        </resources>
+      
+      </scm:Change>
+
+      <scm:Change>
+      
+        <revision>-dev1
+        </revision>
+      
+        <notes>
+          <scm:Note>
+            The http session is now invalidated on logout by
+            default. This can be turned off by setting 
+            SecurityFilter.invalidateSessionOnLogout to false
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+      
+      </scm:Change>
+
+      <scm:Change>
+      
+        <revision>-dev1
+        </revision>
+
+        <notes>
+          <scm:Note>All AutoFilters provide a facility to associate a 
+            session-scoped object with the filter instance
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/autofilter/AutoFilter.java
+        </path>
+      
+      </scm:Change>
+      
+      <scm:Change>
+      
+        <revision>-dev1
+        </revision>
+
+        <notes>
+          <scm:Note>Refactor various classes in spiralcraft.servlet package
+            to spiralcraft.servlet.kit
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>AbstractFilter.java
+          </URI>
+          <URI>ContextAdapter.java
+          </URI>
+          <URI>HttpFocus.java
+          </URI>
+          <URI>HttpServlet.java
+          </URI>
+          <URI>HttpServletResponseWrapper.java
+          </URI>
+          <URI>BeanServlet.java
+          </URI>
+          <URI>kit/AbstractFilter.java
+          </URI>
+          <URI>kit/ContextAdapter.java
+          </URI>
+          <URI>kit/HttpFocus.java
+          </URI>
+          <URI>kit/HttpServlet.java
+          </URI>
+          <URI>kit/HttpServletResponseWrapper.java
+          </URI>
+          <URI>autofilter/spi/FocusFilter.java
+          </URI>
+          <URI>flatfile/FormWriterServlet.java
+          </URI>
+          <URI>gzip/HttpServletResponseCompressionWrapper.java
+          </URI>
+          <URI>pages/GeneratorServlet.java
+          </URI>
+          <URI>util/StubServlet.java
+          </URI>
+          <URI>vfs/FileServlet.java
+          </URI>
+          <URI>webui/UIServlet.java
+          </URI>
+          <URI>webui/UIService.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+      
+      
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.15.2
     </revision>
 
