@@ -30,6 +30,7 @@ import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.functions.FromString;
 import spiralcraft.log.Level;
 
 import spiralcraft.servlet.webui.Control;
@@ -129,6 +130,7 @@ public class Redirect
   {
   }
   
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
@@ -137,7 +139,16 @@ public class Redirect
     { whenChannel=focus.bind(when);
     }
     if (locationX!=null)
-    { locationChannel=focus.bind(locationX);
+    { 
+      locationChannel=focus.bind(locationX);
+      if ( ((Class<?>) locationChannel.getContentType())==String.class)
+      { 
+        locationChannel
+          =new FromString<URI>(URI.class)
+            .bindChannel(  (Channel) locationChannel,focus,null );
+      }
+      locationChannel.assertContentType(URI.class);
+    
     }
     return super.bind(focus);
   }  
@@ -204,6 +215,14 @@ public class Redirect
     String redirectPath=redirectURI.getPath();
     if (redirectPath==null || redirectPath.length()==0)
     { redirectPath=refererURI.getPath();
+    }
+    
+    if (redirectPath!=null 
+        && !redirectPath.isEmpty()
+        && redirectPath.charAt(0)!='/'
+        )
+    { redirectPath
+        =URI.create(refererURI.getPath()).resolve(redirectPath).toString();
     }
     
     String redirectQuery=redirectURI.getRawQuery();
