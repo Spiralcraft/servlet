@@ -14,6 +14,41 @@
     </date>
 
     <detail>
+      <scm:Change>
+      
+        <revision>-dev2
+        </revision>
+      
+        <notes>
+          <scm:Note>Redirect.locationX will accept an expression that
+            provides either a String or a URI
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/components/Redirect.java
+        </path>
+        
+      
+      </scm:Change>
+    
+      <scm:Change>
+      
+      <scm:Change>
+      
+        <revision>-dev2
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix bug where AutoFilter private session object is
+            re-created on every request
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/autofilter/AutoFilter.java
+        </path>
+        
+      
+      </scm:Change>
     
       <scm:Change>
       
