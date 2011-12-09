@@ -30,9 +30,7 @@
         
       
       </scm:Change>
-    
-      <scm:Change>
-      
+          
       <scm:Change>
       
         <revision>-dev2
@@ -191,7 +189,6 @@
         </resources>
         
       </scm:Change>
-      
       
     </detail>
   </scm:Change>
