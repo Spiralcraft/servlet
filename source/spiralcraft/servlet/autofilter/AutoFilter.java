@@ -365,7 +365,7 @@ public abstract class AutoFilter
     if (session!=null)
     { 
       Object privateSession=session.getAttribute(sessionAttributeName);
-      if (create)
+      if (privateSession==null && create)
       { 
         privateSession=newPrivateSessionState(request);
         session.setAttribute(sessionAttributeName,privateSession);
