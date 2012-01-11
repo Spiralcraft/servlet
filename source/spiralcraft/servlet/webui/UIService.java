@@ -627,7 +627,15 @@ public class UIService
     { serviceContext.getResponse().setContentType(component.getContentType());
     }
     
-    serviceContext.getResponse().setStatus(200);
+    Integer code
+      =(Integer) serviceContext.getRequest().getAttribute
+        ("javax.servlet.error.status_code");
+    if (code!=null)
+    { serviceContext.getResponse().setStatus(code);
+    }
+    else
+    { serviceContext.getResponse().setStatus(200);
+    }
     serviceContext.getResponse().addHeader("Cache-Control","no-cache");
     serviceContext.dispatch(RenderMessage.INSTANCE,component,null);
     
