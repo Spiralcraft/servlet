@@ -15,6 +15,22 @@
 
     <detail>
       <scm:Change>
+     
+        <revision>-dev3
+        </revision>
+      
+        <notes>
+          <scm:Note>UIService detects and uses any error page status code 
+            attributed to the request in its response.
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/UIService.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
       
         <revision>-dev2
         </revision>
