@@ -16,6 +16,8 @@ package spiralcraft.servlet.webui;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Contextual;
+import spiralcraft.lang.util.LangUtil;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
@@ -34,6 +37,8 @@ import spiralcraft.servlet.kit.ContextAdapter;
 import spiralcraft.servlet.kit.HttpFocus;
 import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.RenderMessage;
+import spiralcraft.ui.NavContext;
+import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 
 
@@ -103,15 +108,23 @@ public class UIService
   private final ContextAdapter context;
   
   private UICache uiCache;
+  private String contextRelativePath;
+  private final HashMap<String,Resource> uiResourceMap
+    =new HashMap<String,Resource>();
+  private final HashSet<String> bypassSet
+    =new HashSet<String>();
   
   private URI defaultSessionTypeURI
-    =URI.create("class:/spiralcraft/servlet/webui/Session.assy");
+    =URI.create("class:/spiralcraft/servlet/webui/Session");
   
   private HttpFocus<?> httpFocus;
+  @SuppressWarnings("rawtypes")
+  private Focus<NavContext> navContextFocus;
   
-  public UIService(ContextAdapter context)
-  { this.context=context;
-  
+  public UIService(ContextAdapter context,String contextRelativePath)
+  { 
+    this.context=context;
+    this.contextRelativePath=contextRelativePath;
   }
   
   @Override
@@ -121,8 +134,131 @@ public class UIService
     httpFocus=new HttpFocus<Void>(focusChain);
     focusChain=httpFocus;
     uiCache=new UICache(focusChain);
+    navContextFocus
+      =LangUtil.findFocus(NavContext.class,focusChain);
     return httpFocus;
   }
+  
+  public NavContext<?,?> getNavContext()
+  { 
+    if (navContextFocus!=null)
+    { return navContextFocus.getSubject().get();
+    }
+    else
+    { return null;
+    }
+  }
+  
+  public RootComponent findComponent(String relativePath)
+    throws ContextualException,IOException,ServletException
+  {
+
+    if (bypassSet.contains(relativePath))
+    { return null;
+    }
+    
+    Resource resource=uiResourceMap.get(relativePath);
+    if (resource==null)
+    {
+      synchronized (uiResourceMap)
+      { 
+        synchronized (bypassSet)
+        {
+          if (bypassSet.contains(relativePath))
+          { return null;
+          }
+        }
+        
+        resource=uiResourceMap.get(relativePath);
+        if (resource==null)
+        { resource=findUIResource(relativePath);
+        }
+        if (resource!=null)
+        { uiResourceMap.put(relativePath,resource);
+        }
+        else
+        { bypassSet.add(relativePath);
+        }
+      }
+    }
+    
+    if (resource==null)
+    { return null;
+    }
+    
+    return getRootComponent(resource,relativePath);
+  }
+  
+  protected Resource findUIResource(String relativePath)
+    throws IOException, ServletException
+  {
+    
+    Resource resource=null;
+    String relativeResourcePath;
+    
+    
+    if (!relativePath.endsWith(".webui"))
+    { 
+      if (relativePath.endsWith("/"))
+      { relativeResourcePath=relativePath+"default.webui";
+      }
+      else
+      { 
+        if (context.getResource(relativePath).exists())
+        { 
+          // Static resource in standard context takes precedence
+          return null;
+        }
+        relativeResourcePath=relativePath+".webui";
+      }
+    }
+    else
+    { relativeResourcePath=relativePath;
+    }
+    
+    if (resource==null) 
+    { 
+      resource=context.getResource(relativeResourcePath);      
+      if (!resource.exists())
+      { resource=null;
+      }
+    }
+    
+    if (resource==null)
+    { 
+      resource=Resolver.getInstance().resolve
+        ("context://code"+relativeResourcePath);
+
+      if (!resource.exists())
+      { resource=null;
+      }
+    }
+    
+
+    // Fall back to data-driven UI
+    NavContext<?,?> navContext=getNavContext();
+    
+    if (resource==null && navContext!=null)
+    { 
+      URI viewResourceURI=navContext.getViewResourceURI();
+      if (viewResourceURI!=null)
+      {
+        if (viewResourceURI.isAbsolute())
+        { resource=Resolver.getInstance().resolve(viewResourceURI);
+        }
+        else
+        { resource=context.getResource(viewResourceURI.getPath());
+        }
+        if (!resource.exists())
+        { resource=null;
+        }
+      }
+      
+    }
+        
+    return resource;
+  }
+  
   
   public RootComponent getRootComponent
     (Resource uiResource
@@ -173,8 +309,8 @@ public class UIService
       Session session
         =Session.get
         (request
-        ,context.getResource(request.getServletPath())
-        ,sessionPath
+        ,context.getResource(contextRelativePath)
+        ,contextRelativePath
         ,defaultSessionTypeURI
         ,httpFocus
         ,true

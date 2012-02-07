@@ -16,6 +16,7 @@ package spiralcraft.servlet.webui;
 
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.kit.HttpServlet;
+import spiralcraft.servlet.vfs.FileServlet;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
@@ -26,12 +27,12 @@ import spiralcraft.lang.spi.SimpleChannel;
 
 
 import spiralcraft.vfs.NotStreamableException;
-import spiralcraft.vfs.Resolver;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
 import java.io.IOException;
@@ -85,23 +86,47 @@ public class UIServlet
  
 //  private Channel<RootComponent> dynamicComponent;
   
-  private final HashMap<String,UIService> pathMap
+  private final HashMap<String,UIService> placeMap
     =new HashMap<String,UIService>();
+    
+  private HttpServlet staticServlet;
   
-  private String defaultResourceName="default.webui";  
+  public void setStaticServlet(HttpServlet staticServlet)
+  { this.staticServlet=staticServlet;
+  }
   
+  @Override
+  public void init(ServletConfig config) 
+      throws ServletException
+  {
+    super.init(config);
+    if (staticServlet==null)
+    { staticServlet=new FileServlet();
+    }
+    staticServlet.init(config);
+  }
+  
+  /**
+   * Ensure that a UIServant is bound to the containing path of the requested
+   *   path so the binding can reference any Filters or other context
+   *   that defines this node of the content tree.
+   * 
+   * @param request
+   * @return
+   * @throws ServletException
+   */
   private UIService ensureContext(HttpServletRequest request)
     throws ServletException
   {
     String contextPath=getContextRelativePath(request);
     contextPath=contextPath.substring(0,contextPath.lastIndexOf("/")+1);
     
-    UIService uiServant=pathMap.get(contextPath);
+    UIService uiServant=placeMap.get(contextPath);
     if (uiServant==null)
     {
-      synchronized(pathMap)
+      synchronized(placeMap)
       {
-        uiServant=pathMap.get(contextPath);
+        uiServant=placeMap.get(contextPath);
         if (uiServant==null)
         {
           try
@@ -117,9 +142,9 @@ public class UIServlet
                 =new SimpleFocus<UIServlet>
                   (new SimpleChannel<UIServlet>(this,true));
             }
-            uiServant=new UIService(contextAdapter);
+            uiServant=new UIService(contextAdapter,contextPath);
             focus=uiServant.bind(focus);
-            pathMap.put(contextPath,uiServant);
+            placeMap.put(contextPath,uiServant);
             log.debug("Starting UIServlet for path ["+contextPath+"]");
           }
           catch (BindException x)
@@ -153,7 +178,7 @@ public class UIServlet
           );
       }
       else
-      { response.sendError(404,"Not Found");
+      { staticServlet.service(request,response);
       }
     }
     catch (NotStreamableException x)
@@ -183,7 +208,7 @@ public class UIServlet
         response.flushBuffer();
       }
       else
-      { response.sendError(404,"Not Found");
+      { staticServlet.service(request,response);
       }
     }
     catch (NotStreamableException x)
@@ -217,7 +242,7 @@ public class UIServlet
           );
       }
       else
-      { response.sendError(404,"Not Found");
+      { staticServlet.service(request,response);
       }
     }
     catch (NotStreamableException x)
@@ -228,12 +253,12 @@ public class UIServlet
           (response.encodeRedirectURL(request.getRequestURI()+"/"));
       }
     }
-  } 
+  }
   
   
   /**
    * <p>Resolve the UI component associated with this request, applying any
-   *   applicable resource mappings
+   *   applicable resource mappings.
    * </p>
    * 
    * 
@@ -242,47 +267,14 @@ public class UIServlet
    */
   private RootComponent resolveComponent(HttpServletRequest request,UIService uiServant)
     throws ServletException,IOException
-  { 
-    // Run the dynamic component instead of the default behavior for this
-    //   request
-//    if (dynamicComponent!=null)
-//    {
-//      RootComponent component=dynamicComponent.get();
-//      if (component!=null)
-//      { return component;
-//      }
-//    }
-    
+  {     
     
     String relativePath=getContextRelativePath(request);
-    if (relativePath.endsWith("/"))
-    { relativePath=relativePath.concat(defaultResourceName);
-    }
-   
-    
     try
-    { 
-      RootComponent component
-        =uiServant.getRootComponent
-          (getResource(relativePath)
-          ,relativePath
-          );
-      
-      if (component==null)
-      {
-        // Find it in the code overlay 
-        component
-          =uiServant.getRootComponent
-            (Resolver.getInstance().resolve("context://code"+relativePath)
-            ,relativePath
-            );        
-      }
-      return component;
+    { return uiServant.findComponent(relativePath);
     }
     catch (ContextualException x)
-    { 
-      throw new ServletException
-        ("Error loading webui Component for ["+relativePath+"]:"+x,x);
+    { throw new ServletException("Error instantiating component for "+relativePath,x);
     }
     
     

@@ -172,9 +172,12 @@ public class UIFilter<Tcontext>
     { resourceX.bind(focus);
     }
     
-    uiServant=new UIService(contextAdapter);    
-    uiServant.bind(focus);
+    uiServant=new UIService
+      (contextAdapter
+      ,getPath().isContainer()?getPath().toString():(getPath().toString()+"/")
+      );    
     
+    uiServant.bind(focus);
     if (x!=null)
     { return x.getReflector();
     }
