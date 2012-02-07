@@ -16,6 +16,63 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev4
+        </revision>
+      
+        <notes>
+          <scm:Note>Move UI resource resolution logic to UIService from
+            UIServlet
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>UIFilter.java
+          </URI>
+          <URI>UIService.java
+          </URI>
+          <URI>UIServlet.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+
+      <scm:Change>
+     
+        <revision>-dev4
+        </revision>
+      
+        <notes>
+          <scm:Note>Update currently unused local session logic to drop
+            references to obsolete XmlAssembly object.  
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/Session.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev4
+        </revision>
+      
+        <notes>
+          <scm:Note>Allow the static content type to be set on RootComponent
+          </scm:Note>
+        </notes>          
+        
+        <path>source/spiralcraft/servlet/webui/RootComponent.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev3
         </revision>
       
