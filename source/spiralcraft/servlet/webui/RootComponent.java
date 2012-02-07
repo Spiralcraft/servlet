@@ -76,6 +76,7 @@ public class RootComponent
   }
 
   private String instancePath;
+  private String contentType="text/html";
   protected ThreadLocalChannel<ServiceContext> threadLocal;
 
   
@@ -126,7 +127,16 @@ public class RootComponent
    *   Component
    */
   public String getContentType()
-  { return "text/html";
+  { return contentType;
+  }
+  
+  /**
+   * Set the static content type of this Component
+   * 
+   * @param contentType
+   */
+  public void setContentType(String contentType)
+  { this.contentType=contentType;
   }
   
   /**
