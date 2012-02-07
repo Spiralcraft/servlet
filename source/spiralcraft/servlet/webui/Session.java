@@ -15,7 +15,7 @@
 package spiralcraft.servlet.webui;
 
 import spiralcraft.data.persist.PersistenceException;
-import spiralcraft.data.persist.XmlAssembly;
+import spiralcraft.data.persist.XmlBean;
 import spiralcraft.lang.Focus;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
@@ -86,8 +86,8 @@ public class Session
     { return null;
     }
     
-    HashMap<String,XmlAssembly<Session>> sessionCache
-      =(HashMap<String,XmlAssembly<Session>>) 
+    HashMap<String,XmlBean<Session>> sessionCache
+      =(HashMap<String,XmlBean<Session>>) 
         session.getAttribute("spiralcraft.servlet.webui.sessionCache");
     
     if (sessionCache==null)
@@ -95,24 +95,24 @@ public class Session
       synchronized (session)
       {
         sessionCache
-          =(HashMap<String,XmlAssembly<Session>>) 
+          =(HashMap<String,XmlBean<Session>>) 
             session.getAttribute("spiralcraft.servlet.webui.sessionCache");  
         if (sessionCache==null)
         {
-          sessionCache=new HashMap<String,XmlAssembly<Session>>();
+          sessionCache=new HashMap<String,XmlBean<Session>>();
           session.setAttribute
             ("spiralcraft.servlet.webui.sessionCache",sessionCache);
         }
       }
     }
     
-    XmlAssembly<Session> uiSessionXmlAssembly
+    XmlBean<Session> uiSessionXmlAssembly
       =sessionCache.get(sessionPath);
     
     if (uiSessionXmlAssembly==null && create)
     { 
       uiSessionXmlAssembly
-        =createUiSessionXmlAssembly(contextResource,defaultSessionTypeURI);
+        =createUiSessionXmlBean(contextResource,defaultSessionTypeURI);
       uiSessionXmlAssembly.get().init(parentFocus);
       sessionCache.put(sessionPath, uiSessionXmlAssembly);
     }
@@ -125,8 +125,8 @@ public class Session
     }
   }
   
-  private static XmlAssembly<Session> 
-    createUiSessionXmlAssembly
+  private static XmlBean<Session> 
+    createUiSessionXmlBean
       (Resource containerResource
       ,URI defaultSessionTypeURI
       )
@@ -151,14 +151,14 @@ public class Session
 
     URI typeURI;
     if (sessionResource!=null && sessionResource.exists())
-    { typeURI=containerResource.getURI().resolve("Session.assy");
+    { typeURI=containerResource.getURI().resolve("Session");
     }
     else
     { typeURI=defaultSessionTypeURI;
     }
 
     try
-    { return new XmlAssembly<Session>(typeURI,null);
+    { return new XmlBean<Session>(typeURI,null);
     }
     catch (PersistenceException x)
     { 
