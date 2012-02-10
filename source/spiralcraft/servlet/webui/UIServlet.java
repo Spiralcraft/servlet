@@ -16,6 +16,7 @@ package spiralcraft.servlet.webui;
 
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.kit.HttpServlet;
+import spiralcraft.servlet.kit.StandardServletConfig;
 import spiralcraft.servlet.vfs.FileServlet;
 
 import spiralcraft.common.ContextualException;
@@ -37,6 +38,7 @@ import javax.servlet.ServletException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * <p>A Servlet which serves a WebUI Component tree.
@@ -91,6 +93,11 @@ public class UIServlet
     
   private HttpServlet staticServlet;
   
+  /**
+   * The servlet that will serve static requests
+   * 
+   * @param staticServlet
+   */
   public void setStaticServlet(HttpServlet staticServlet)
   { this.staticServlet=staticServlet;
   }
@@ -103,7 +110,13 @@ public class UIServlet
     if (staticServlet==null)
     { staticServlet=new FileServlet();
     }
-    staticServlet.init(config);
+    ServletConfig staticConfig
+      =new StandardServletConfig
+        (config.getServletName()+".static"
+        ,config.getServletContext()
+        ,new Properties()
+        );
+    staticServlet.init(staticConfig);
   }
   
   /**

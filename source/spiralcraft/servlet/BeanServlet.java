@@ -52,6 +52,7 @@ public class BeanServlet
   { 
     recognizedParameters=new HashSet<String>();
     recognizedParameters.add("resource");
+    recognizedParameters.add("typeURI");
   }
   
   @Override
@@ -79,6 +80,20 @@ public class BeanServlet
       { throwServletException("Error loading servlet bean", x);
       }
     }
+    
+    if (name.equals("typeURI"))
+    {
+      try
+      {
+        ref=AbstractXmlObject.<Servlet>instantiate(URI.create(value));
+        delegate=ref.get();
+        delegate.init(getServletConfig());
+      }
+      catch (BindException x)
+      { throwServletException("Error loading servlet bean", x);
+      }
+    }
+    
   }
 
   @Override
