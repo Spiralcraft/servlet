@@ -16,6 +16,32 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev5
+        </revision>
+      
+        <notes>
+          <scm:Note>Streamline Servlet API based instantiation of model
+            where UIServlet is the default servlet, delegating to a FileServlet
+            for static resources.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>BeanServlet.java
+          </URI>
+          <URI>kit/StandardServletConfig.java
+          </URI>
+          <URI>webui/UIServlet.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev4
         </revision>
       
