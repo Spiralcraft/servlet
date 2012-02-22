@@ -64,6 +64,7 @@ public class FileServlet
 {
   
 
+  @SuppressWarnings("unused")
   private static final long serialVersionUID = 1L;
   
   { autoConfigure=true;
