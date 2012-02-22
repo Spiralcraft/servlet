@@ -120,9 +120,14 @@ public class UIServlet
   }
   
   /**
-   * Ensure that a UIServant is bound to the containing path of the requested
+   * <p>Ensure that a UIServant is bound to the containing path of the requested
    *   path so the binding can reference any Filters or other context
    *   that defines this node of the content tree.
+   * </p>
+   * 
+   * <p>In this method, the containing path is defined as the deepest
+   *   container in the context relative path for the request.
+   * </p>
    * 
    * @param request
    * @return
