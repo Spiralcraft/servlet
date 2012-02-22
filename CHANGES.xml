@@ -16,6 +16,35 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev6
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issue in Controller where subfilter is erroneously
+            initialized with parameters intended for the Controller itself
+          </scm:Note>
+          <scm:Note>Controller initialization now uses servlet context
+            init parameters to resolve the "instance root" and 
+            standard data/config/file volumes.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/
+        </path>
+        
+        <resources>
+          <URI>autofilter/Controller.java
+          </URI>
+          <URI>kit/StandardFilterConfig.java
+          </URI>
+          <URI>kit/StandardServletConfig.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev5
         </revision>
       
