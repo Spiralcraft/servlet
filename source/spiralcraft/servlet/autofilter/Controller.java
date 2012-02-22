@@ -48,6 +48,7 @@ import spiralcraft.data.persist.PersistenceException;
 import spiralcraft.data.persist.XmlBean;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
+import spiralcraft.servlet.kit.StandardFilterConfig;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.time.Clock;
 import spiralcraft.time.Scheduler;
@@ -95,7 +96,7 @@ public class Controller
     =new PathTree<FilterSet>(null);
   
   private FilterConfig config;
-  private Resource root;
+  private Resource publishRoot;
   private long lastUpdate;
   private final ContextResourceMap contextResourceMap
     = new ContextResourceMap();
@@ -111,16 +112,14 @@ public class Controller
       ,true
       );
   
-  private URI dataURI=URI.create("WEB-INF/data/");
-  private URI configURI=URI.create("WEB-INF/config/");
-  private URI filesURI=URI.create("WEB-INF/files/");
-  private URI codeURI=URI.create("");
+  private URI dataURI=URI.create("data/");
+  private URI configURI=URI.create("config/");
+  private URI filesURI=URI.create("files/");
+  private URI codeURI=URI.create("webui/");
   
   private Scheduler scheduler;
 
-  private Focus<?> focus;
-  
-  
+  private Focus<?> focus;  
 
   /**
    * <p>The root URI where modifiable persistent data is kept. This is
@@ -215,11 +214,14 @@ public class Controller
     
     String realPath=context.getRealPath("/");
     if (realPath!=null)
-    { root=new FileResource(new File(realPath));
+    { publishRoot=new FileResource(new File(realPath));
     }
     if (debug)
-    { log.fine("Root is "+root.getURI());
+    { log.fine("Root is "+publishRoot.getURI());
     }
+    
+    resolveResourceVolumes(context);
+    
     
     initContextResourceMap(context);
     initContextDictionary(context);
@@ -239,16 +241,81 @@ public class Controller
     }
     
   }
+  
+  /**
+   * <p>Resolve locations for various contextual resource volumes
+   * </p>
+   * 
+   * @param context
+   */
+  private void resolveResourceVolumes(ServletContext context)
+  {
+    
+    URI webInfRoot=publishRoot.getURI().resolve("WEB-INF/");
+    
+    String instanceRoot
+      =context.getInitParameter("spiralcraft.instance.rootURI");
+
+    URI instanceRootURI;
+    if (instanceRoot!=null)
+    { 
+      instanceRootURI
+        =URIUtil.ensureTrailingSlash
+          (URI.create(instanceRoot)
+          );
+      
+      if (!instanceRootURI.isAbsolute())
+      { instanceRootURI=publishRoot.getURI().resolve(instanceRootURI);
+      }
+      
+      
+    }
+    else
+    { instanceRootURI=webInfRoot;
+    }
+    
+    dataURI=resolveResourceVolume
+      (context,instanceRootURI,dataURI,"spiralcraft.instance.dataURI");
+    configURI=resolveResourceVolume
+      (context,instanceRootURI,configURI,"spiralcraft.instance.configURI");
+    filesURI=resolveResourceVolume
+      (context,instanceRootURI,filesURI,"spiralcraft.instance.filesURI");
+    codeURI=resolveResourceVolume
+      (context,webInfRoot,codeURI,"spiralcraft.instance.codeURI");
+    
+  }
+  
+  private URI resolveResourceVolume
+    (ServletContext context
+    ,URI rootURI
+    ,URI defaultURI
+    ,String propName
+    )
+  {
+    String uriParam
+      =context.getInitParameter(propName);
+    URI ret=defaultURI;
+    if (uriParam!=null)
+    {
+      ret
+        =URIUtil.ensureTrailingSlash
+          (URI.create(uriParam)
+          );
+    }
+    
+    if (!ret.isAbsolute())
+    { ret=rootURI.resolve(ret);
+    }
+    
+    return ret;
+    
+  }
+  
 
   private URI cleanURI(String propName,URI uri)
   { 
     if (!uri.getPath().endsWith("/"))
-    { 
-      log.warning
-        ("URI "+uri+" must end with '/' for property '"+propName
-        +"'. Automatically correcting for non-canonical directory syntax."
-        );
-      return URIUtil.ensureTrailingSlash(uri);
+    { return URIUtil.ensureTrailingSlash(uri);
     }
     else
     { return uri;
@@ -437,7 +504,7 @@ public class Controller
   
   private synchronized void updateConfig()
   {
-    if (root==null)
+    if (publishRoot==null)
     { return;
     }
     
@@ -447,7 +514,7 @@ public class Controller
       throwable=null;
       // System.err.println("Controller.updateConfig(): scanning");
       try
-      { updateRecursive(pathTree,root,false);
+      { updateRecursive(pathTree,publishRoot,false);
       }
       catch (Throwable x)
       { 
@@ -955,7 +1022,7 @@ public class Controller
           // TODO: Make a Focus chain
           //   filter.bind(lastFilter.getFocus());
           //   
-          filter.init(config);
+          filter.init(new StandardFilterConfig(null,config,null));
         }
       }
       catch (PersistenceException x)
@@ -988,7 +1055,7 @@ public class Controller
       filter.setThrowable(x);
       filter.setPath(container);
       try
-      { filter.init(config);
+      { filter.init(new StandardFilterConfig(null,config,null));
       }
       catch (ServletException y)
       { 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 Michael Toth
+// Copyright (c) 2009,2009 Michael Toth
 // Spiralcraft Inc., All Rights Reserved
 //
 // This package is part of the Spiralcraft project and is licensed under
@@ -14,37 +14,37 @@
 //
 package spiralcraft.servlet.kit;
 
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
 
 /**
- * Standard implementation of ServletConfig
- * 
- * @author mike
- *
+ * Simple implementation of the ServletConfig interface
  */
-public class StandardServletConfig
-  implements javax.servlet.ServletConfig
+public class StandardFilterConfig
+  implements FilterConfig
 {
+  
   
   private ServletContext _context;
   private Properties _params=new Properties();
-  private String _servletName;
-  
-  public StandardServletConfig(String name,ServletContext context,Properties params)
+  private String _filterName;
+
+  public StandardFilterConfig(String name,ServletContext context,Properties params)
   {
-    _servletName=name;
+    _filterName=name;
     _context=context;
     if (params!=null)
     { _params=params;
     }
   }
 
-  public StandardServletConfig(String name,StandardServletConfig config)
+  public StandardFilterConfig(String name,FilterConfig config)
   { 
-    _servletName=name;
+    _filterName=name;
     _context=config.getServletContext();
     Enumeration<?> e=config.getInitParameterNames();
     while (e.hasMoreElements())
@@ -53,12 +53,21 @@ public class StandardServletConfig
       _params.put(key,config.getInitParameter(key));
     }
   }
+  
+  public StandardFilterConfig(String name,FilterConfig config,Properties params)
+  { 
+    _filterName=name;
+    _context=config.getServletContext();
+    if (params!=null)
+    { _params=params;
+    }
+  }
 
   /** 
-   * Return a shallow copy with a differet Servlet name
+   * Return a shallow copy with a differet Filter name
    */
-  public StandardServletConfig getClone(String name)
-  { return new StandardServletConfig(name,_context,_params);
+  public StandardFilterConfig getClone(String name)
+  { return new StandardFilterConfig(name,_context,_params);
   }
 
   @Override
@@ -67,8 +76,8 @@ public class StandardServletConfig
   }
 
   @Override
-  public String getServletName()
-  { return _servletName;
+  public String getFilterName()
+  { return _filterName;
   }
 
   @Override
@@ -80,7 +89,6 @@ public class StandardServletConfig
   public Enumeration<?> getInitParameterNames()
   { return _params.keys();
   }
-
 
   
 }
