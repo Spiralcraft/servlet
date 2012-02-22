@@ -33,11 +33,16 @@ import spiralcraft.servlet.kit.HttpServlet;
  *   a configuration file via the spiralcraft.data.persist mechanism.
  * </p>
  * 
- * <p>A single initialization parameter named 'resource' is supplied, which
- *   points to a spiralcraft.data xml file that provides an instance of the 
- *   servlet.
+ * <p>If the initialization parameter named 'resource' is supplied, a
+ *   spiralcraft.data xml file or other data resource referenced by 
+ *   the specified URI contains the servlet definition.
  * </p>
  *  
+ * <p>If the initialization parameter named 'type' is supplied, the
+ *   type resolved from the specified URI (e.g. an AssemblyClass or a Java
+ *   class) is instantiated to provide the servlet.
+ * </p>
+
  * @author mike
  *
  */
