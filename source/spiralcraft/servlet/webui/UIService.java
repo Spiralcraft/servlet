@@ -235,25 +235,28 @@ public class UIService
     }
     
 
-    // Fall back to data-driven UI
-    NavContext<?,?> navContext=getNavContext();
+    if (resource==null)
+    {
+      // Fall back to data-driven UI
+      NavContext<?,?> navContext=getNavContext();
     
-    if (resource==null && navContext!=null)
-    { 
-      URI viewResourceURI=navContext.getViewResourceURI();
-      if (viewResourceURI!=null)
-      {
-        if (viewResourceURI.isAbsolute())
-        { resource=Resolver.getInstance().resolve(viewResourceURI);
+      if (navContext!=null)
+      { 
+        URI viewResourceURI=navContext.getViewResourceURI();
+        if (viewResourceURI!=null)
+        {
+          if (viewResourceURI.isAbsolute())
+          { resource=Resolver.getInstance().resolve(viewResourceURI);
+          }
+          else
+          { resource=context.getResource(viewResourceURI.getPath());
+          }
+          if (!resource.exists())
+          { resource=null;
+          }
         }
-        else
-        { resource=context.getResource(viewResourceURI.getPath());
-        }
-        if (!resource.exists())
-        { resource=null;
-        }
+        
       }
-      
     }
         
     return resource;
