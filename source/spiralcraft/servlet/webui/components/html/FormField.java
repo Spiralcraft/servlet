@@ -70,7 +70,6 @@ public class FormField<T>
   { return errorTag;
   }
   
-  // Needs a div tag here
   
   @Override
   protected List<TglUnit> expandChildren(Focus<?> focus,List<TglUnit> children)
