@@ -26,6 +26,7 @@ import java.util.List;
 import spiralcraft.app.StateFrame;
 import spiralcraft.servlet.PublicLocator;
 import spiralcraft.servlet.kit.ContextAdapter;
+import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.textgen.EventContext;
 import spiralcraft.util.URIUtil;
@@ -80,7 +81,7 @@ public class ServiceContext
   
 //  private static final Charset UTF_8=Charset.forName("UTF-8");
   
-  private ResourceSession resourceSession;
+  private PortSession portSession;
   private ContextAdapter servletContext;
   private HttpServletRequest request;
   private HttpServletResponse response;
@@ -146,10 +147,10 @@ public class ServiceContext
   { 
     HttpSession session=request.getSession(false);
     if (session!=null)
-    { return "s:"+session.getId()+":"+resourceSession.getLocalURI();
+    { return "s:"+session.getId()+":"+portSession.getLocalURI();
     }
     else
-    { return resourceSession.getLocalURI();
+    { return portSession.getLocalURI();
     }
   }
   
@@ -158,7 +159,7 @@ public class ServiceContext
    */
   void release()
   {
-    resourceSession=null;
+    portSession=null;
     request=null;
     response=null;
     if (post!=null)
@@ -176,7 +177,7 @@ public class ServiceContext
     threadContext.pop();
   }
   
-  URI getRedirectURI()
+  public URI getRedirectURI()
   { return redirectURI;
   }
   
@@ -187,12 +188,12 @@ public class ServiceContext
    * <p>Called once at the start of every request
    * </p>
    * 
-   * @param resourceSession The ResourceSession that stores data and
+   * @param resourceSession The PortSession that stores data and
    *   objects for a user's session that are associated with the 
    *   containing WebUI user interface resource
    */
-  void setResourceSession(ResourceSession resourceSession)
-  { this.resourceSession=resourceSession;
+  public void setPortSession(PortSession resourceSession)
+  { this.portSession=resourceSession;
   }  
     
   /**
@@ -201,8 +202,8 @@ public class ServiceContext
    *   objects for a user's session that are associated with the 
    *   containing WebUI user interface resource
    */
-  public ResourceSession getResourceSession()
-  { return resourceSession;
+  public PortSession getPortSession()
+  { return portSession;
   }
 
   
@@ -276,17 +277,17 @@ public class ServiceContext
    * @return
    */
   public String getAsyncURL()
-  { return resourceSession.getAsyncURL();
+  { return portSession.getAsyncURL();
   }
   
   public String registerAction(Action action)
   {
-    String rawUrl=resourceSession.registerAction(action);
+    String rawUrl=portSession.registerAction(action);
     return response.encodeURL(rawUrl);
   }
   
   public String getAbsoluteBackLink()
-  { return response.encodeURL(resourceSession.getAbsoluteBackLink(request));
+  { return response.encodeURL(portSession.getAbsoluteBackLink(request));
   }
   
   
@@ -315,7 +316,7 @@ public class ServiceContext
   }
 
   public String getDataEncodedAbsoluteBackLink()
-  { return URLDataEncoder.encode(resourceSession.getAbsoluteBackLink(request));
+  { return URLDataEncoder.encode(portSession.getAbsoluteBackLink(request));
   }
 
 
@@ -361,10 +362,10 @@ public class ServiceContext
     
     String query=rawURI.getRawQuery();
     
-    if (resourceSession==null)
+    if (portSession==null)
     { throw new RuntimeException("??? null resource session "+this);
     }
-    String encodedParameters=resourceSession.getEncodedParameters();
+    String encodedParameters=portSession.getEncodedParameters();
     
     if (encodedParameters!=null)
     { 
@@ -429,7 +430,7 @@ public class ServiceContext
    * @param values
    */
   public void setActionParameter(String name,List<String> values)
-  { resourceSession.setActionParameter(name,values);
+  { portSession.setActionParameter(name,values);
   }
   
   /**
@@ -440,7 +441,7 @@ public class ServiceContext
    * @param values
    */
   public void setActionParameter(String name,String ... values)
-  { resourceSession.setActionParameter(name,values);
+  { portSession.setActionParameter(name,values);
   }
       
   /**
@@ -448,7 +449,7 @@ public class ServiceContext
    *   when an action URI is rendered or a redirect is sent 
    */
   public void clearParameters()
-  { resourceSession.clearParameters();
+  { portSession.clearParameters();
   }
   
   /**
@@ -551,7 +552,7 @@ public class ServiceContext
    * 
    * @param actionName
    */
-  List<String> dequeueActions()
+  public List<String> dequeueActions()
   { 
     List<String> list=queuedActions;
     queuedActions=null;

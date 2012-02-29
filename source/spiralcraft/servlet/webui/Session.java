@@ -17,6 +17,7 @@ package spiralcraft.servlet.webui;
 import spiralcraft.data.persist.PersistenceException;
 import spiralcraft.data.persist.XmlBean;
 import spiralcraft.lang.Focus;
+import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
 
@@ -189,7 +190,7 @@ public class Session
    * 
    * @param component
    */
-  public synchronized ResourceSession
+  public synchronized PortSession
     getResourceSession(RootComponent component)
   {
     StateReference ref=stateMap.get(component.getInstancePath());
@@ -218,7 +219,7 @@ public class Session
    * @param component
    */
   public synchronized void
-    setResourceSession(RootComponent component,ResourceSession localSession)
+    setResourceSession(RootComponent component,PortSession localSession)
   {
     StateReference ref=stateMap.get(component.getInstancePath());
     if (ref==null)
@@ -234,6 +235,6 @@ public class Session
 
 class StateReference
 {
-  public ResourceSession localSession;
+  public PortSession localSession;
   public RootComponent component;
 }

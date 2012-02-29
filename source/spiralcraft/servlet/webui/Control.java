@@ -470,6 +470,7 @@ public abstract class Control<Ttarget>
   }
   
   @SuppressWarnings("unchecked")
+  @Override
   protected <X> ControlState<X> getState(Dispatcher context)
   { return (ControlState<X>) context.getState();
   }

@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -35,6 +34,7 @@ import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.kit.ContextAdapter;
 import spiralcraft.servlet.kit.HttpFocus;
+import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.RenderMessage;
 import spiralcraft.ui.NavContext;
@@ -101,9 +101,6 @@ public class UIService
     =ClassLog.getInitialDebugLevel(UIService.class,null);
   
   private static final Message INITIALIZE_MESSAGE=new InitializeMessage();
-  private static final Message PREPARE_MESSAGE=new PrepareMessage();
-  private static final Message COMMAND_MESSAGE=new CommandMessage();
-  private static final Message REQUEST_MESSAGE=new RequestMessage();
   
   private final ContextAdapter context;
   
@@ -325,7 +322,7 @@ public class UIService
         // Interactive mode maintains a session scoped state for a resource
         //   which must be synchronized.
 
-        ResourceSession localSession=session.getResourceSession(component);
+        PortSession localSession=session.getResourceSession(component);
 
         if (localSession==null)
         { 
@@ -335,7 +332,7 @@ public class UIService
             localSession=session.getResourceSession(component);
             if (localSession==null)
             {
-              localSession=new ResourceSession();
+              localSession=new PortSession();
               localSession.setLocalURI
               (request.getRequestURI()
               );
@@ -346,95 +343,22 @@ public class UIService
 
         // Set up the ServiceContext with the last frame used.
         serviceContext
-        =new ServiceContext
-        (response.getWriter(),true,localSession.currentFrame());
+          =new ServiceContext
+          (response.getWriter(),true,localSession.currentFrame());
 
         serviceContext.setRequest(request);
         serviceContext.setResponse(response);
         serviceContext.setServletContext(context);
+        serviceContext.setPortSession(localSession);
         
-        VariableMap query=serviceContext.getQuery();
-        ResourceSession.RequestSyncStatus syncStatus
-          =localSession.getRequestSyncStatus(query);
-
-        String outOfBand
-          =query!=null
-          ?query.getFirst("oob")
-          :null;
-          
-        if (outOfBand!=null && !outOfBand.isEmpty())
-        {
-          // Process out-of-band request
-          outOfBand=outOfBand.intern(); 
-          
-          if (outOfBand=="sessionSync")
-          { 
-            switch (syncStatus)
-            {
-              case INITIATED:
-              case OUTOFSYNC:
-                response.getWriter().write("0");
-                break;
-              default:
-                response.getWriter().write
-                  (Integer.toString
-                    (request.getSession().getMaxInactiveInterval()*1000)
-                  );
-                break;
-
-            }
-            response.setContentType("text/plain");
-            response.setHeader("Cache-Control","no-cache");
-            response.setIntHeader("Max-Age",0);
-            response.setDateHeader("Expires",0);
-            
-            response.setStatus(200);
-
-          }
-          response.getWriter().flush();
-          response.flushBuffer();
-        }
-        else
-        {
-          // Process interactive request
-          
-          if (syncStatus==ResourceSession.RequestSyncStatus.OUTOFSYNC)
-          { 
-            serviceContext.setCurrentFrame(localSession.nextFrame());
-            serviceContext.setOutOfSync(true);
-            // Clear any pending responsive actions for an out of sync request
-            localSession.clearActions();
-            if (debugLevel.isDebug())
-            { 
-              log.debug
-              ("Out of sync request, ignoring pending responsive actions");
-            }
-          }
-          else if (syncStatus==ResourceSession.RequestSyncStatus.INITIATED)
-          { 
-            serviceContext.setInitial(true);
-            serviceContext.setCurrentFrame(localSession.nextFrame());
-            if (debugLevel.isDebug())
-            { log.debug("Initializing session for "+localSession.getLocalURI());
-            }
-          }
-  
-  
-          serviceContext.setResourceSession(localSession);
-  
-          synchronized (localSession)
-          { 
-            // Resource state is not multi-threaded
-            sequence(component,serviceContext);
-          }
-        }
+        serviceRootPort(serviceContext,component,request,response);
       }
       else
       {
         // Non-interactive mode doesn't have to synchronize on the local
         //   resource session and does not maintain session state for the
         //   resource.
-        ResourceSession localSession=new ResourceSession();
+        PortSession localSession=new PortSession();
 
         serviceContext
         =new ServiceContext(response.getWriter(),true,new StateFrame());
@@ -445,7 +369,7 @@ public class UIService
         localSession.setLocalURI
         (request.getRequestURI()
         );
-        serviceContext.setResourceSession(localSession);
+        serviceContext.setPortSession(localSession);
         sequence(component,serviceContext);
 
       }
@@ -463,6 +387,94 @@ public class UIService
     }
   }
   
+  private void serviceRootPort
+    (ServiceContext serviceContext
+    ,Component component
+    ,HttpServletRequest request
+    ,HttpServletResponse response
+    )
+    throws IOException,ServletException
+  {
+    PortSession localSession=serviceContext.getPortSession();
+    
+    VariableMap query=serviceContext.getQuery();
+    String requestedState=query!=null?query.getFirst("lrs"):null;
+    PortSession.RequestSyncStatus syncStatus
+      =localSession.getRequestSyncStatus(requestedState);
+
+    String outOfBand
+      =query!=null
+      ?query.getFirst("oob")
+      :null;
+      
+    if (outOfBand!=null && !outOfBand.isEmpty())
+    {
+      // Process out-of-band request
+      outOfBand=outOfBand.intern(); 
+      
+      if (outOfBand=="sessionSync")
+      { 
+        switch (syncStatus)
+        {
+          case INITIATED:
+          case OUTOFSYNC:
+            response.getWriter().write("0");
+            break;
+          default:
+            response.getWriter().write
+              (Integer.toString
+                (request.getSession().getMaxInactiveInterval()*1000)
+              );
+            break;
+
+        }
+        response.setContentType("text/plain");
+        response.setHeader("Cache-Control","no-cache");
+        response.setIntHeader("Max-Age",0);
+        response.setDateHeader("Expires",0);
+        
+        response.setStatus(200);
+
+      }
+      response.getWriter().flush();
+      response.flushBuffer();
+    }
+    else
+    {
+      // Process interactive request
+      
+      if (syncStatus==PortSession.RequestSyncStatus.OUTOFSYNC)
+      { 
+        serviceContext.setCurrentFrame(localSession.nextFrame());
+        serviceContext.setOutOfSync(true);
+        // Clear any pending responsive actions for an out of sync request
+        localSession.clearActions();
+        if (debugLevel.isDebug())
+        { 
+          log.debug
+          ("Out of sync request, ignoring pending responsive actions");
+        }
+      }
+      else if (syncStatus==PortSession.RequestSyncStatus.INITIATED)
+      { 
+        serviceContext.setInitial(true);
+        serviceContext.setCurrentFrame(localSession.nextFrame());
+        if (debugLevel.isDebug())
+        { log.debug("Initializing session for "+localSession.getLocalURI());
+        }
+      }
+
+
+
+      synchronized (localSession)
+      { 
+        // Resource state is not multi-threaded
+        sequence(component,serviceContext);
+      }
+    }
+        
+        // End Port Specific Processing
+  }
   
   /**
    * <p>Service a request for the  given component with the specified
@@ -475,14 +487,14 @@ public class UIService
    * @throws IOException
    * @throws ServletException
    */
-  private void sequence(RootComponent component,ServiceContext serviceContext)
+  private void sequence(Component component,ServiceContext serviceContext)
     throws IOException,ServletException
   {
-    HttpServletRequest request=serviceContext.getRequest();
+//    HttpServletRequest request=serviceContext.getRequest();
     HttpServletResponse response=serviceContext.getResponse();
-    ResourceSession localSession=serviceContext.getResourceSession();
+    PortSession localSession=serviceContext.getPortSession();
 
-    State oldState=localSession.getRootState();
+    State oldState=localSession.getState();
     if (oldState==null)
     { 
       if (debugLevel.isDebug())
@@ -500,11 +512,6 @@ public class UIService
       // Restore state
       serviceContext.setState(oldState);
     }
-      
-    if (request.getContentLength()>0)
-    {
-    
-    }
 
     boolean done=false;
     
@@ -516,7 +523,7 @@ public class UIService
       log.fine("Dispatching REQUEST message for frame "
         +serviceContext.getFrame());
     }
-    serviceContext.dispatch(REQUEST_MESSAGE,component,null);
+    serviceContext.dispatch(RequestMessage.INSTANCE,component,null);
     done=processRedirect(serviceContext);
     
     if (!done)
@@ -538,11 +545,12 @@ public class UIService
       generateResponse(serviceContext,localSession,component);
     }
     
+    
     State newState=serviceContext.getState();
     if (newState!=oldState)
     { 
       // Cache the state for the next iteration
-      localSession.setRootState(newState);
+      localSession.setState(newState);
     }
       
     response.getWriter().flush();
@@ -562,8 +570,8 @@ public class UIService
    */
   private void generateResponse
     (ServiceContext serviceContext
-    ,ResourceSession localSession
-    ,RootComponent component
+    ,PortSession localSession
+    ,Component component
     ) throws ServletException, IOException
   {
     
@@ -591,7 +599,7 @@ public class UIService
         log.fine("Dispatching PREPARE message for frame "
           +serviceContext.getFrame());
       }
-      serviceContext.dispatch(PREPARE_MESSAGE,component,null);
+      serviceContext.dispatch(PrepareMessage.INSTANCE,component,null);
       done=processRedirect(serviceContext);
     }
     
@@ -613,7 +621,7 @@ public class UIService
         log.fine("Dispatching COMMAND message for frame "
             +serviceContext.getFrame());
       }
-      serviceContext.dispatch(COMMAND_MESSAGE,component,null);
+      serviceContext.dispatch(CommandMessage.INSTANCE,component,null);
       done=processRedirect(serviceContext);
     }
 
@@ -669,7 +677,7 @@ public class UIService
    * @param context
    */
   private void handleAction
-    (RootComponent component
+    (Component component
     ,ServiceContext context
     )
   {
@@ -719,20 +727,19 @@ public class UIService
    * @param actionName
    */
   private void fireAction
-    (RootComponent component,ServiceContext context,String actionName)
+    (Component component,ServiceContext context,String actionName)
   {
     List<Action> actions
-      =context.getResourceSession().getActions(actionName);
+      =context.getPortSession().getActions(actionName);
     if (actions!=null && !actions.isEmpty())
     {
       for (Action action:actions)
       {
-        LinkedList<Integer> path=new LinkedList<Integer>();
-
-        for (int i:action.getTargetPath())
-        { path.add(i);
-        }
-        context.dispatch(new ActionMessage(action),component,path);
+        context.dispatch
+          (new ActionMessage(action)
+          ,component
+          ,action.getTargetPath()
+          );
       }
     }
     else
@@ -752,7 +759,7 @@ public class UIService
    * @throws ServletException
    */
   private void render
-    (RootComponent component
+    (Component component
     ,ServiceContext serviceContext
     )
     throws IOException,ServletException

@@ -23,8 +23,8 @@ import spiralcraft.command.Command;
 import spiralcraft.log.ClassLog;
 import spiralcraft.rules.RuleException;
 import spiralcraft.rules.Violation;
-import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.MementoState;
+import spiralcraft.util.Sequence;
 
 /**
  * <p>An ElementState associated with a named Form control.
@@ -36,7 +36,7 @@ import spiralcraft.textgen.MementoState;
  *
  */
 public class ControlState<Tbuf>
-  extends ElementState
+  extends ComponentState
 {  
   protected static final ClassLog log=ClassLog.getInstance(ControlState.class);
 
@@ -55,7 +55,7 @@ public class ControlState<Tbuf>
 
   public ControlState(Control<?> control)
   { 
-    super(control.getChildCount());
+    super(control);
     this.control=control;
   }
    
@@ -86,7 +86,7 @@ public class ControlState<Tbuf>
   }
   
   @Override
-  public void link(State parentState,int[] path)
+  public void link(State parentState,Sequence<Integer> path)
   { 
     super.link(parentState,path);
     // controlGroupState=getParent().findElementState(ControlGroupState.class);

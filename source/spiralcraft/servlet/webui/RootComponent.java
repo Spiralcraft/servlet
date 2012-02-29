@@ -76,7 +76,7 @@ public class RootComponent
   }
 
   private String instancePath;
-  private String contentType="text/html";
+
   protected ThreadLocalChannel<ServiceContext> threadLocal;
 
   
@@ -122,22 +122,7 @@ public class RootComponent
   }
   
   
-  /**
-   * @return The mime type of the content returned by this
-   *   Component
-   */
-  public String getContentType()
-  { return contentType;
-  }
-  
-  /**
-   * Set the static content type of this Component
-   * 
-   * @param contentType
-   */
-  public void setContentType(String contentType)
-  { this.contentType=contentType;
-  }
+
   
   /**
    * Returns the time this UI was last modified. By default,

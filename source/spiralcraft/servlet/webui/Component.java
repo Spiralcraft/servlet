@@ -58,6 +58,37 @@ public abstract class Component
   extends Element
 {
 
+  protected String contentType="text/html";
+  
+  /**
+   * @return The mime type of the content returned by this
+   *   Component
+   */
+  public String getContentType()
+  { return contentType;
+  }
+  
+  /**
+   * Set the static content type of this Component
+   * 
+   * @param contentType
+   */
+  public void setContentType(String contentType)
+  { this.contentType=contentType;
+  }
+  
+  
+  @Override
+  public ComponentState createState()
+  { return new ComponentState(this);
+  }
+  
+  @SuppressWarnings("unchecked")
+  protected <X> ComponentState getState(Dispatcher context)
+  { return (ComponentState) context.getState();
+  }
+  
+  
   
   @Override
   public void message
@@ -70,44 +101,42 @@ public abstract class Component
     { log.fine(this.toString()+" message="+message+" state="+context.getState());
     }
     
-
     
-      if (message.getType()==RequestMessage.TYPE)
-      { handleRequest((ServiceContext) context);
-      }
-      else if (message.getType()==ActionMessage.TYPE)
-      {
-        if (((ActionMessage) message).getAction().getTargetPath()
-            ==context.getState().getPath()
-        )
-        { 
-          handleAction
-          ((ServiceContext) context
-              ,((ActionMessage) message).getAction()
-          );
-        }
-      }
-      else if (message.getType()==CommandMessage.TYPE)
-      { handleCommand((ServiceContext) context);
-      }
-      else if (message.getType()==PrepareMessage.TYPE)
+    if (message.getType()==RequestMessage.TYPE)
+    { handleRequest((ServiceContext) context);
+    }
+    else if (message.getType()==ActionMessage.TYPE)
+    {
+      if (((ActionMessage) message).getAction().getTargetPath()
+          ==context.getState().getPath()
+      )
       { 
-        handlePrepare((ServiceContext) context);
+        handleAction
+        ((ServiceContext) context
+            ,((ActionMessage) message).getAction()
+        );
       }
-      else if (message.getType()==InitializeMessage.TYPE)
-      { handleInitialize((ServiceContext) context);
-      }
+    }
+    else if (message.getType()==CommandMessage.TYPE)
+    { handleCommand((ServiceContext) context);
+    }
+    else if (message.getType()==PrepareMessage.TYPE)
+    { 
+      handlePrepare((ServiceContext) context);
+    }
+    else if (message.getType()==InitializeMessage.TYPE)
+    { handleInitialize((ServiceContext) context);
+    }
 
 
-      super.message(context,message);
-
-      if (message.getType()==PrepareMessage.TYPE)
-      { postPrepare((ServiceContext) context);
-      }
-
-      if (message.getType()==CommandMessage.TYPE)
-      { handleCommand((ServiceContext) context);
-      }
+    super.message(context,message);
+    
+    if (message.getType()==PrepareMessage.TYPE)
+    { postPrepare((ServiceContext) context);
+    }
+    if (message.getType()==CommandMessage.TYPE)
+    { handleCommand((ServiceContext) context);
+    }
 
 
   }
