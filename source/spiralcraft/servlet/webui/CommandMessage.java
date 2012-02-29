@@ -23,6 +23,7 @@ public class CommandMessage
   
 
   public static final Type TYPE=new Type();
+  public static final CommandMessage INSTANCE=new CommandMessage();  
   
   { multicast=true;
   }

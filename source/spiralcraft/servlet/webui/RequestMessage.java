@@ -30,6 +30,7 @@ public class RequestMessage
   
 
   public static final Type TYPE=new Type();
+  public static final RequestMessage INSTANCE=new RequestMessage();
   
   { multicast=true;
   }
