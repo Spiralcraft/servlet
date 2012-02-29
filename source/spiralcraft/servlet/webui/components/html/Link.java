@@ -29,7 +29,7 @@ import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.components.LinkAcceptor;
 
-import spiralcraft.util.ArrayUtil;
+import spiralcraft.util.Sequence;
 
 import java.io.IOException;
 
@@ -178,9 +178,9 @@ public class Link
   
   protected Action createAction(Dispatcher context)
   {
-    int[] path=context.getState().getPath();
+    Sequence<Integer> path=context.getState().getPath();
     
-    String pathString=ArrayUtil.format(path,".",null);
+    String pathString=path.format(".");
 
     return new Action(pathString,path)
     {

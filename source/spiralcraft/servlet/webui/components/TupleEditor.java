@@ -642,7 +642,7 @@ public abstract class TupleEditor
         {
           logFine
             ("Editor: Action invoked: "+getName()+"@"
-            +ArrayUtil.format(getTargetPath(),".",null)
+            +getTargetPath().format(".")
             );
         }
         try

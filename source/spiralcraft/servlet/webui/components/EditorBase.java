@@ -59,7 +59,6 @@ import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.Message;
 import spiralcraft.app.kit.AbstractMessageHandler;
 
-import spiralcraft.util.ArrayUtil;
 
 /**
  * <p>Provides common functionality for Editors
@@ -865,7 +864,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         {
           logFine
             ("Editor: Action invoked: "+getName()+"@"
-            +ArrayUtil.format(getTargetPath(),".",null)
+            +getTargetPath().format(".")
             );
         }
         try

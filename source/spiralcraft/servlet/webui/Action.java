@@ -14,6 +14,8 @@
 //
 package spiralcraft.servlet.webui;
 
+import spiralcraft.util.Sequence;
+
 /**
  * <p>A potential user input directed at a specific webui Component instance
  *   or Component State instance
@@ -26,10 +28,10 @@ public abstract class Action
 {
   
   private final String name;
-  private final int[] targetPath;
+  private final Sequence<Integer> targetPath;
   protected boolean responsive=true;
 
-  public Action(String name,int[] targetPath)
+  public Action(String name,Sequence<Integer> targetPath)
   { 
     this.name=name;
     this.targetPath=targetPath;
@@ -62,7 +64,7 @@ public abstract class Action
    * @return The path through the component tree to the component which
    *   is the target of this action
    */
-  public int[] getTargetPath()
+  public Sequence<Integer> getTargetPath()
   { return targetPath;
   }
   

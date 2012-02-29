@@ -39,6 +39,7 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.common.ContextualException;
+import spiralcraft.util.Sequence;
 
 /**
  * <p>Accepts a user input action and sequences the processing behavior of 
@@ -110,11 +111,11 @@ public abstract class Acceptor<T>
    */
   protected Action createResetAction(EventContext context,final boolean isClearable)
   {
-    int[] path=context.getState().getPath();
+    Sequence<Integer> path=context.getState().getPath();
     
     String pathString;
     if (isClearable)
-    { pathString=ArrayUtil.format(path,".",null);
+    { pathString=path.format(".");
     }
     else
     { pathString=resetActionName;
@@ -134,7 +135,7 @@ public abstract class Acceptor<T>
         { 
           log.fine
             (getLogPrefix()+":Reset action invoked: "
-            +ArrayUtil.format(getTargetPath(),"/",null)
+            +getTargetPath().format(".")
             );
         }
         // XXX Need to do this recursively?
@@ -147,8 +148,8 @@ public abstract class Acceptor<T>
   
   protected abstract boolean wasActioned(ServiceContext context);
 
-  protected String pathToActionName(int[] path)
-  { return ArrayUtil.format(path,".",null);
+  protected String pathToActionName(Sequence<Integer> path)
+  { return path.format(".");
   }
   
   /**
@@ -160,7 +161,7 @@ public abstract class Acceptor<T>
    */
   protected Action createAction(Dispatcher context,final boolean isClearable)
   {
-    int[] path=context.getState().getPath();
+    Sequence<Integer> path=context.getState().getPath();
     
     String pathString;
     if (isClearable)
@@ -184,7 +185,7 @@ public abstract class Acceptor<T>
         {
           log.fine
             (getLogPrefix()+": Accept action invoked: "
-            +ArrayUtil.format(getTargetPath(),"/",null)
+            +getTargetPath().format(".")
             );
         }
 

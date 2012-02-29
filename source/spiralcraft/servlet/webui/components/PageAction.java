@@ -18,20 +18,20 @@ package spiralcraft.servlet.webui.components;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.command.Command;
 import spiralcraft.common.ContextualException;
+import spiralcraft.util.Sequence;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.Component;
+import spiralcraft.servlet.webui.ComponentState;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 
 
-import spiralcraft.textgen.ElementState;
 import spiralcraft.textgen.EventContext;
 
-import spiralcraft.util.ArrayUtil;
 
 
 /**
@@ -160,8 +160,8 @@ public class PageAction
     String actionName=this.actionName;
     if (actionName==null)
     { 
-      int[] path=context.getState().getPath();
-      actionName=ArrayUtil.format(path,".",null); 
+      Sequence<Integer> path=context.getState().getPath();
+      actionName=path.format("."); 
     }
     
     return new Action(actionName,context.getState().getPath())
@@ -217,10 +217,11 @@ public class PageAction
   }  
   
   @Override
-  public ElementState createState()
+  public ActionState createState()
   { return new ActionState(this);
   }
   
+  @Override
   protected ActionState getState(Dispatcher context)
   { return (ActionState) context.getState();
   }
@@ -228,12 +229,12 @@ public class PageAction
 }
 
 class ActionState
-  extends ElementState
+  extends ComponentState
 {
   private Command<?,?,?> command;
   
   public ActionState(PageAction comp)
-  { super(comp.getChildCount());
+  { super(comp);
   }
   
   public void queueCommand(Command<?,?,?> command)

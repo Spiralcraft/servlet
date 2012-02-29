@@ -52,7 +52,6 @@ import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.SaveMessage;
 
-import spiralcraft.util.ArrayUtil;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.MessageHandlerChain;
@@ -752,7 +751,7 @@ public abstract class Editor
         {
           log.fine
             ("Editor: Action invoked: "
-            +ArrayUtil.format(getTargetPath(),"/",null)
+            +getTargetPath().format(".")
             );
         }
         try

@@ -37,8 +37,8 @@ import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.net.http.VariableMap;
 
 import spiralcraft.servlet.webui.Component;
+import spiralcraft.servlet.webui.ComponentState;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.textgen.ElementState;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
@@ -200,12 +200,13 @@ public class DataSessionComponent
 
   
   @Override
-  public ElementState createState()
+  public DataSessionState createState()
   { 
     return new DataSessionState
-      (dataSessionFocus.newDataSession(),getChildCount());
+      (dataSessionFocus.newDataSession(),this);
   }
   
+  @Override
   protected DataSessionState getState(Dispatcher context)
   { return (DataSessionState) context.getState();
   }
@@ -346,16 +347,16 @@ public class DataSessionComponent
 }
 
 class DataSessionState
-  extends ElementState
+  extends ComponentState
 {
 
   private DataSession session;
   private boolean initialized;
   private boolean requestBindingsApplied;
   
-  public DataSessionState(DataSession session,int childCount)
+  public DataSessionState(DataSession session,DataSessionComponent comp)
   { 
-    super(childCount);
+    super(comp);
     this.session=session;
     
   }

@@ -40,7 +40,6 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.util.ArrayUtil;
 
 
 /**
@@ -118,7 +117,7 @@ public class Paginate<Ttarget,Titem>
         {
           log.fine
             ("Paginate: Action invoked: "+getName()+"@"
-            +ArrayUtil.format(getTargetPath(),".",null)
+            +getTargetPath().format(".")
             );
         }
         getState(context).setCurrentPage(0);
