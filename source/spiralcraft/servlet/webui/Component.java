@@ -47,9 +47,6 @@ import spiralcraft.app.InitializeMessage;
  *   Actions delivered to components from the containing servlet.
  * </p>
  * 
- * <p>Node: Component is in transition while webui is migrated to the
- *   common spiralcraft.app.Component model
- * </p>
  * 
  * @author mike
  *
