@@ -43,11 +43,9 @@ import spiralcraft.lang.Setter;
 import spiralcraft.log.Level;
 
 /**
- * <p>A Component that provides a view or an interaction point bound a model
+ * <p>A Component that provides a view or an interaction point bound to a model
  *   object specified by an expression
  * </p>
- * 
- * 
  * 
  * @author mike
  *
