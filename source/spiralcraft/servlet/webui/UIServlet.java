@@ -93,6 +93,9 @@ public class UIServlet
     
   private HttpServlet staticServlet;
   
+  { autoConfigure=true;
+  }
+  
   /**
    * The servlet that will serve static requests
    * 
@@ -108,7 +111,11 @@ public class UIServlet
   {
     super.init(config);
     if (staticServlet==null)
-    { staticServlet=new FileServlet();
+    { 
+      FileServlet fileServlet
+        =new FileServlet();
+      fileServlet.setDebugLevel(debugLevel);
+      staticServlet=fileServlet;
     }
     ServletConfig staticConfig
       =new StandardServletConfig
@@ -163,7 +170,9 @@ public class UIServlet
             uiServant=new UIService(contextAdapter,contextPath);
             focus=uiServant.bind(focus);
             placeMap.put(contextPath,uiServant);
-            log.debug("Starting UIServlet for path ["+contextPath+"]");
+            if (debugLevel.isConfig())
+            { log.config("Starting UIServlet for path ["+contextPath+"]");
+            }
           }
           catch (BindException x)
           { throw new ServletException(x.toString(),x);
@@ -187,6 +196,9 @@ public class UIServlet
       RootComponent component=resolveComponent(request,uiServant);
       if (component!=null)
       { 
+        if (debugLevel.isFine())
+        { log.fine("Resolved "+request.getServletPath()+" to "+component);
+        }
         uiServant.service
           (component
           ,request.getServletPath()
@@ -196,7 +208,11 @@ public class UIServlet
           );
       }
       else
-      { staticServlet.service(request,response);
+      { 
+        if (debugLevel.isFine())
+        { log.fine("Delegating "+request.getServletPath());
+        }
+        staticServlet.service(request,response);
       }
     }
     catch (NotStreamableException x)
@@ -295,7 +311,7 @@ public class UIServlet
     { throw new ServletException("Error instantiating component for "+relativePath,x);
     }
     
-    
+   
   }
 
 

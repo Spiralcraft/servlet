@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+
 /**
  * A simple FilterChain implementation based on a linked list pattern
  *
@@ -32,6 +33,21 @@ public class LinkedFilterChain
 
   private final Filter filter;
   private FilterChain next;
+  
+  
+  public LinkedFilterChain(Filter[] filters,FilterChain end)
+  { this(filters,0,end);
+  }
+  protected LinkedFilterChain(Filter[] filters,int start,FilterChain end)
+  {
+    this.filter=filters[start];
+    if (start<filters.length-1)
+    { this.next=new LinkedFilterChain(filters,++start,end);
+    }
+    else
+    { this.next=end;
+    }
+  }
   
   public LinkedFilterChain(Filter filter)
   { this.filter=filter;

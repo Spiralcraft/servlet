@@ -16,6 +16,8 @@ package spiralcraft.servlet.vfs;
 
 import javax.servlet.ServletException;
 
+import spiralcraft.servlet.autofilter.PathContext;
+import spiralcraft.servlet.autofilter.PathContextFilter;
 import spiralcraft.servlet.kit.HttpServlet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,7 @@ import spiralcraft.vfs.Resource;
 
 import spiralcraft.vfs.Container;
 import spiralcraft.vfs.UnresolvableURIException;
+import spiralcraft.vfs.context.ContextResourceMap;
 
 import java.text.SimpleDateFormat;
 
@@ -120,9 +123,15 @@ public class FileServlet
   }
 
   
-  private Resource translatePath(String relativePath)
+  private Resource translatePath(String relativePath,HttpServletRequest request)
     throws UnresolvableURIException,IOException
   { 
+    
+    //
+    // Attempt to resolve the resource using the full context relative path
+    //   from the root of the context
+    //
+    
     URI contextURI;
     try
     { contextURI=new URI("context:"+relativePath);
@@ -151,15 +160,40 @@ public class FileServlet
     else
     {
       if (debugLevel.canLog(Level.DEBUG))
-      { log.debug("context:"+relativePath+" did not resolve");
+      { log.debug("context:"+relativePath+" did not resolve: "+ContextResourceMap.get());
       }
     }
     
+
+    //
+    // Ask the servlet container to resolve the resource
+    //
+    //
     
     String filePath=getServletConfig().getServletContext()
       .getRealPath(relativePath);
     
     mappedResource=Resolver.getInstance().resolve(new File(filePath).toURI());
+    if (mappedResource!=null && mappedResource.exists())
+    { return mappedResource;
+    }
+    
+    //
+    // Ask the PathContext to resolve the resource
+    //
+    PathContext pathContext=PathContextFilter.get(request);
+    if (pathContext!=null)
+    {
+      if (debugLevel.canLog(Level.DEBUG))
+      { log.fine("Checking pathContext "+pathContext.toString());
+      }
+      String pathContextRelativePath=pathContext.relativize(relativePath);
+      mappedResource=pathContext.resolveContent(pathContextRelativePath);
+      if (mappedResource!=null && mappedResource.exists())
+      { return mappedResource;
+      }
+    }
+    
 
 //  How do we get a fallback resource for this relative path? Ask a NavContext?
 //  or something else? Only NavContext can know virtual paths right now
@@ -200,6 +234,7 @@ public class FileServlet
     
   }
     
+
   @Override
   public void service(HttpServletRequest request,HttpServletResponse response)
     throws IOException,ServletException
@@ -240,12 +275,22 @@ public class FileServlet
     
     Resource resource;
     try
-    { resource=translatePath(contextPath);
+    { resource=translatePath(contextPath,request);
     }
     catch (UnresolvableURIException x)
     { 
       log.warning("Invalid URI syntax "+contextPath);
       send400(request,response);
+      return;
+    }
+    
+    if (resource==null)
+    { 
+      if (debugLevel.canLog(Level.DEBUG))
+      { log.log(Level.DEBUG,"Null resource for "+contextPath);
+      }
+      
+      send404(request,response);
       return;
     }
 

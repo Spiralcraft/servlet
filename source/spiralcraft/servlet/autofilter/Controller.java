@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 1998,2012 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -16,17 +16,13 @@ package spiralcraft.servlet.autofilter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Contextual;
@@ -44,8 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.common.ContextualException;
-import spiralcraft.data.persist.PersistenceException;
-import spiralcraft.data.persist.XmlBean;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.kit.StandardFilterConfig;
@@ -87,7 +81,6 @@ public class Controller
   private static final ClassLog log=ClassLog.getInstance(Controller.class);
   
   private int updateIntervalMs=10000;
-  private String controlFileName=".control.xml";
   
   private final HashMap<String,CacheEntry> uriCache
     =new HashMap<String,CacheEntry>();
@@ -209,7 +202,7 @@ public class Controller
   public void init(FilterConfig config)
     throws ServletException
   {
-    this.config=config;
+    this.config=new StandardFilterConfig(null,config.getServletContext(),null);
     ServletContext context=config.getServletContext();
     
     String realPath=context.getRealPath("/");
@@ -554,17 +547,12 @@ public class Controller
     
       if (filterSet==null)
       {
-        Resource controlResource
-          =resource.asContainer().getChild(controlFileName);
-        if (controlResource.exists())
-        { 
-//          System.err.println
-//            ("Controller.updateRecursive(): Found "
-//            +controlResource.getURI()+"!"
-//            );
-              
-          dirty=true;
-          filterSet=new FilterSet(resource,node.getPath(),node);          
+        filterSet=new FilterSet(resource,node,config);
+        if (!filterSet.isNull())
+        { dirty=true;
+        }
+        else
+        { filterSet=null;
         }
       }
       
@@ -576,7 +564,7 @@ public class Controller
       { uriCache.clear();
       }
       
-      if (filterSet!=null && filterSet.exception!=null)
+      if (filterSet!=null && filterSet.getException()!=null)
       { 
         log.fine("Aborting recursion");
         // Don't bother with sub-filters if there was a problem here
@@ -697,7 +685,7 @@ public class Controller
     LinkedFilterChain first=null;
     LinkedFilterChain last=null;
     
-    for (AutoFilter autoFilter: filterSet.effectiveFilters)
+    for (AutoFilter autoFilter: filterSet.getEffectiveFilters())
     {
       if (autoFilter.appliesToPath(path))
       {
@@ -766,306 +754,6 @@ public class Controller
     FilterChain chain;
   }
   
-  /**
-   * All the Filters configured for a resource node (directory)
-   */
-  class FilterSet
-  {
-    final ArrayList<AutoFilter> effectiveFilters
-      =new ArrayList<AutoFilter>();
-    
-    final ArrayList<AutoFilter> localFilters
-      =new ArrayList<AutoFilter>();
-    
-    Resource resource;
-    long lastModified;
-    Throwable exception;
-
-    PathTree<FilterSet> node;
-    
-    public FilterSet(Resource containerResource,Path path,PathTree<FilterSet> node)
-      throws IOException
-    { 
-      try
-      { 
-        loadResource
-          (containerResource.asContainer().getChild(controlFileName)
-          ,node.getPath()
-          );
-        node.set(this);
-        this.node=node;
-        
-        Resource errorResource
-          =containerResource.asContainer().getChild(controlFileName+".err");
-        try
-        {
-          if (exception==null)
-          {
-            if (errorResource.exists())
-            { errorResource.delete();
-            }
-          }
-          else
-          { 
-            OutputStream out=errorResource.getOutputStream();
-            PrintStream pout=new PrintStream(out);
-            pout.println("Error processing filter definitions");
-            pout.println(exception.toString());
-            pout.println("Stack trace ----------------------------------------");
-            exception.printStackTrace(pout);
-            pout.flush();
-            out.flush();
-            out.close();
-          }
-        }
-        catch (IOException y)
-        { System.err.println("Controller: error writing contol file success: "+y);
-        }
-        
-      }
-      catch (Throwable x)
-      { 
-        
-        Resource errorResource
-          =containerResource.asContainer().getChild(controlFileName+".err");
-        try
-        {
-          PrintStream out=new PrintStream(errorResource.getOutputStream());
-          out.println("Uncaught error processing filter definitions");
-          out.println(x.toString());
-          out.println("Stack trace ----------------------------------------");
-          x.printStackTrace(out);
-          out.flush();
-          out.close();
-        }
-        catch (IOException y)
-        { System.err.println("Controller: error writing contol file error: "+y);
-        }
-        
-        loadError(node.getPath(), x);
-        
-      }      
-    }
-    
-    /**
-     * Check to see if a Resource has been modified
-     */
-    public boolean checkDirtyResource()
-    {
-      
-      if (resource!=null)
-      {
-        try
-        {
-          if (!resource.exists())
-          { return true;
-          }
-          else if (resource.getLastModified()!=lastModified)
-          { return true;
-          }
-        }
-        catch (IOException x)
-        { return true;
-        }
-      }
-      return false;
-    }
-    
-    
-    /**
-     * Called when a resource is detected as being removed or changed
-     */
-    public void clear()
-    { 
-      for (AutoFilter filter: localFilters)
-      { filter.destroy();
-      }
-      exception=null;
-      resource=null;
-      localFilters.clear();
-      effectiveFilters.clear();
-      lastModified=0;
-    }
-    
-    private boolean patternsIntersect(String pattern1, String pattern2)
-    {
-      if (pattern1.equals("*"))
-      { return true;
-      }
-      else if (pattern2.equals("*"))
-      { return true;
-      }
-      else if (pattern1.equals(pattern2))
-      { return true;
-      }
-      return false;
-    }
-    
-    /**
-     * Called to recompute the effective filters
-     */
-    public void compute()
-    { 
-//      System.err.println("Controller.FilterSet.compute()");
-      effectiveFilters.clear();
-      
-      ArrayList<AutoFilter> localExcludes
-        =new ArrayList<AutoFilter>();
-      
-      
-      FilterSet parentSet=findParentSet();
-      if (parentSet!=null)
-      {
-        // Integrate the parent filter set into this level
-        for (AutoFilter parentFilter: parentSet.effectiveFilters)
-        { 
-          if (parentFilter.isGlobal())
-          { 
-            // Only global filters are considered for inheritance
-            
-            boolean addParent=true;
-            for (AutoFilter localFilter : localFilters)
-            {
-              if (localFilter.getCommonType()
-                  .isAssignableFrom(parentFilter.getClass())
-                  )
-              {
-                
-                if (patternsIntersect
-                      (parentFilter.getPattern(),localFilter.getPattern()))
-                {
-                
-                  // Determine how the parent filter relates to a local filter
-                  //   of a compatible type and an intersecting pattern
-                
-                  if (parentFilter.isOverridable())
-                  {
-                    if (!localFilter.isAdditive())
-                    { 
-                      // Completely override the parent
-                      addParent=false;
-                    }
-
-                    // Let the filter and it's parent figure out what to do
-                    localFilter.setGeneralInstance(parentFilter);
-                  }
-                  else
-                  { 
-                    if (!localFilter.isAdditive())
-                    { 
-                      // Completely ignore the local filter
-                      localExcludes.add(localFilter);
-                    }
-                    else
-                    { 
-                      // Let the filter and it's parent figure out what to do
-                      localFilter.setGeneralInstance(parentFilter);
-                    }
-                  }
-                }
-              }
-            }
-            
-            if (addParent)
-            { effectiveFilters.add(parentFilter);
-            }
-          }
-          
-        }
-      }
-      
-      for (AutoFilter filter: localFilters)
-      { 
-        if (!localExcludes.contains(filter))
-        { effectiveFilters.add(filter);
-        }
-      }
-    }
-    
-    private FilterSet findParentSet()
-    { 
-      // Called from compute()
-      PathTree<FilterSet> parentNode=node.getParent();
-      FilterSet parentSet=null;
-      while (parentNode!=null && parentSet==null)
-      {
-        parentSet=parentNode.get();
-        parentNode=parentNode.getParent();
-      }
-      return parentSet;
-    }
-    
-    public void loadResource(Resource resource,Path container)
-    { 
-      exception=null;
-      try
-      {
-        this.resource=resource;
-        this.lastModified=resource.getLastModified();
-      
-        // XXX Set a context so that resources can access the web root
-        //   file system in a context independent manner
-      
-        XmlBean <List<AutoFilter>> bean
-          =new XmlBean<List<AutoFilter>>
-            (URI.create("class:/spiralcraft/servlet/autofilter/AutoFilter.list")
-            ,resource.getURI()
-            );
-      
-        List<AutoFilter> filters=bean.get();
-        localFilters.addAll(filters);
-      
-        for (AutoFilter filter: localFilters)
-        { 
-          filter.setPath(container);
-          filter.setContainer(resource.getParent());
-          // TODO: Make a Focus chain
-          //   filter.bind(lastFilter.getFocus());
-          //   
-          filter.init(new StandardFilterConfig(null,config,null));
-        }
-      }
-      catch (PersistenceException x)
-      { 
-        log.log(Level.WARNING,"Controller.loadResource() failed",x);
-        loadError(container,x);
-      }
-      catch (ServletException x)
-      { 
-        log.log(Level.WARNING,"Controller.loadResource() failed",x);
-        loadError(container,x);
-      }
-      catch (IOException x)
-      { 
-        log.log(Level.WARNING,"Controller.loadResource() failed",x);
-        loadError(container,x);
-      }
-      catch (RuntimeException x)
-      { 
-        log.log(Level.WARNING,"Controller.loadResource() failed",x);
-        throw x;
-      }
-
-    }
-
-    public void loadError(Path container,Throwable x)
-    {
-      ErrorFilter filter=new ErrorFilter();
-      exception=x;
-      filter.setThrowable(x);
-      filter.setPath(container);
-      try
-      { filter.init(new StandardFilterConfig(null,config,null));
-      }
-      catch (ServletException y)
-      { 
-        // Never happens
-        y.printStackTrace();
-        x.printStackTrace();
-      }
-      localFilters.add(filter);
-    }
-  }
 
   @Override
   public Focus<?> bind(Focus<?> focusChain)
