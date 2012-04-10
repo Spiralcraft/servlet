@@ -4,6 +4,36 @@
 
   <scm:Change>
   
+    <revision>0.4.17
+    </revision>
+
+    <authorId>miketoth
+    </authorId>
+    
+    <date>
+    </date>
+
+    <detail>
+    
+      <scm:Change>
+     
+        <revision>-dev1
+        </revision>
+      
+        <notes>
+          <scm:Note>BeanServlet should not pass its own init parameters to 
+            the target servlet.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/BeanServlet.java
+        </path>
+      </scm:Change>
+    </detail>
+  </scm:Change>
+
+  <scm:Change>
+  
     <revision>0.4.16
     </revision>
 
