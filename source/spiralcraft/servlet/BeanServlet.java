@@ -16,9 +16,12 @@ package spiralcraft.servlet;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Properties;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -26,6 +29,7 @@ import javax.servlet.ServletResponse;
 import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
 import spiralcraft.servlet.kit.HttpServlet;
+import spiralcraft.servlet.kit.StandardServletConfig;
 
 
 /**
@@ -79,7 +83,13 @@ public class BeanServlet
           , resourceURI
           );
         delegate=ref.get();
-        delegate.init(getServletConfig());
+        delegate.init
+          (new StandardServletConfig
+            (getServletConfig().getServletName()
+            ,getServletConfig().getServletContext()
+            ,filterProperties(getServletConfig())
+            )
+          );
       }
       catch (BindException x)
       { throwServletException("Error loading servlet bean", x);
@@ -92,7 +102,13 @@ public class BeanServlet
       {
         ref=AbstractXmlObject.<Servlet>instantiate(URI.create(value));
         delegate=ref.get();
-        delegate.init(getServletConfig());
+        delegate.init
+          (new StandardServletConfig
+            (getServletConfig().getServletName()
+            ,getServletConfig().getServletContext()
+            ,filterProperties(getServletConfig())
+            )
+          );
       }
       catch (BindException x)
       { throwServletException("Error loading servlet bean", x);
@@ -108,6 +124,21 @@ public class BeanServlet
     super.destroy();
   }
 
+  private Properties filterProperties(ServletConfig config)
+  {
+    Properties props=new Properties();
+    @SuppressWarnings("unchecked")
+    Enumeration<String> names=config.getInitParameterNames();
+    while (names.hasMoreElements())
+    {
+      String name=names.nextElement();
+      if (!recognizedParameters.contains(name))
+      { props.put(name,config.getInitParameter(name));
+      }
+    }
+    return props;
+  }
+  
 
   @Override
   public String getServletInfo()
