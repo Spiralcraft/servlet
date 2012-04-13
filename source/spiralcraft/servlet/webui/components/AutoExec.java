@@ -34,7 +34,7 @@ import spiralcraft.servlet.webui.ServiceContext;
  *
  */
 public class AutoExec<Tcontext,Tresult>
-  extends AbstractCommandControl<Tcontext,Tresult>
+  extends AbstractActionControl<Tcontext,Tresult>
 {
   
 
@@ -103,7 +103,7 @@ public class AutoExec<Tcontext,Tresult>
   
     if (whenX==null || Boolean.TRUE.equals(whenX.get()))
     { 
-      executeCommand(context);
+      fireAction(context);
       if (state.getValue()!=null)
       { state.setBypass(true);
       }
@@ -146,7 +146,7 @@ public class AutoExec<Tcontext,Tresult>
 }
 
 class AutoExecState<Tcontext,Tresult>
-  extends CommandState<Tcontext,Tresult>
+  extends ActionControlState<Tcontext,Tresult>
 {
   private boolean bypass;
   

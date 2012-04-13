@@ -23,10 +23,10 @@ import spiralcraft.servlet.webui.ControlState;
  * @author mike
  *
  */
-public class CommandState<Tcontext,Tresult>
+public class ActionControlState<Tcontext,Tresult>
   extends ControlState<Command<?,Tcontext,Tresult>>
 {
-  public CommandState(AbstractCommandControl<Tcontext,Tresult> comp)
+  public ActionControlState(AbstractActionControl<Tcontext,Tresult> comp)
   { super(comp);
   }
   

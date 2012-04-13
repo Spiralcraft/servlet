@@ -21,9 +21,13 @@ import spiralcraft.command.Command;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Binding;
+import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.servlet.webui.Control;
+import spiralcraft.task.Eval;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.lang.BindException;
 
@@ -35,7 +39,7 @@ import spiralcraft.app.Message;
  * @author mike
  *
  */
-public abstract class AbstractCommandControl<Tcontext,Tresult>
+public abstract class AbstractActionControl<Tcontext,Tresult>
   extends Control<Command<?,Tcontext,Tresult>>
 {  
   
@@ -45,6 +49,7 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   protected Binding<Void> onSuccess;
   protected Binding<Void> onError;
   protected Focus<?> focus;
+  protected Expression<Tresult> onAction;
   
   
   @Override
@@ -62,7 +67,18 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
     { popState(context);
     }
   }
-      
+  
+  /**
+   * The expression to fire when the component is actioned. Use in place
+   *   of the 'x' property to evaluate an expression instead of firing 
+   *   a Command.
+   *   
+   * @param onAction
+   */
+  public void setOnAction(Expression<Tresult> onAction)
+  { this.onAction=onAction;
+  }
+  
   public void setContextX(Binding<Tcontext> contextX)
   { this.contextX=contextX;
   }
@@ -75,6 +91,22 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
   { this.onError=onError;
   }
 
+  @Override
+  protected Channel<Command<?,Tcontext,Tresult>> 
+    resolveDefaultTarget(Focus<?> focus)
+      throws ContextualException
+  {
+    if (onAction!=null)
+    { 
+      Eval<Tcontext,Tresult> eval=new Eval<Tcontext,Tresult>(onAction);
+      eval.bind(focus);
+      return new SimpleChannel<Eval<Tcontext,Tresult>>(eval,true)
+        .resolve(focus,"command",new Expression[0]);
+      
+    }
+    return null;
+  }
+  
   /**
    * <p>Obtain a new Command instance from the target channel or other source,
    *   apply any specified contextual parameters, execute the command, 
@@ -85,12 +117,13 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
    * 
    * @param context
    */
-  protected void executeCommand(Dispatcher context)
+  protected void fireAction(Dispatcher context)
   {    
     try
     {
-      final CommandState<Tcontext,Tresult> state=getState(context);
-    
+      final ActionControlState<Tcontext,Tresult> state=getState(context);
+      
+      
       Command<?,Tcontext,Tresult> command=state.getValue();
       if (command==null 
           || command.isStarted()
@@ -180,15 +213,15 @@ public abstract class AbstractCommandControl<Tcontext,Tresult>
 
   
   @Override
-  public CommandState<Tcontext,Tresult> createState()
-  { return new CommandState<Tcontext,Tresult>(this);
+  public ActionControlState<Tcontext,Tresult> createState()
+  { return new ActionControlState<Tcontext,Tresult>(this);
   }  
   
 
   @SuppressWarnings("unchecked")
   @Override
-  protected CommandState<Tcontext,Tresult> getState(Dispatcher context)
-  { return (CommandState<Tcontext,Tresult>) context.getState();
+  protected ActionControlState<Tcontext,Tresult> getState(Dispatcher context)
+  { return (ActionControlState<Tcontext,Tresult>) context.getState();
   }
   
   protected final void pushState(Dispatcher context)

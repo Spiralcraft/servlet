@@ -503,8 +503,18 @@ public abstract class Control<Ttarget>
     }
   }
   
-
-
+  /**
+   * Override to provide a default target if none is specified. Defaults to
+   *   the subject or context published by the parent component.
+   *   
+   * @param focus
+   * @return
+   * @throws ContextualException
+   */
+  protected Channel<Ttarget> resolveDefaultTarget(Focus<?> focus) 
+    throws ContextualException
+  { return null;
+  }
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
@@ -520,7 +530,10 @@ public abstract class Control<Ttarget>
       }
       else
       { 
-        target=(Channel<Ttarget>) focus.getSubject();
+        target=resolveDefaultTarget(focus);
+        if (target==null)
+        { target=(Channel<Ttarget>) focus.getSubject();
+        }
         if (target==null)
         { target=(Channel<Ttarget>) focus.getContext();
         }

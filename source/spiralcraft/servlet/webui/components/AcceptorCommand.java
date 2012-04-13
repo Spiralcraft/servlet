@@ -48,7 +48,7 @@ import spiralcraft.net.http.VariableMap;
  *
  */
 public class AcceptorCommand<Tcontext,Tresult>
-  extends AbstractCommandControl<Tcontext,Tresult>
+  extends AbstractActionControl<Tcontext,Tresult>
 {
 
   private String name;
@@ -143,7 +143,7 @@ public class AcceptorCommand<Tcontext,Tresult>
           );
       }
       
-      executeCommand(context);
+      fireAction(context);
       
     }
     else

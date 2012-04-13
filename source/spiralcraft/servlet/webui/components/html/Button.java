@@ -19,8 +19,8 @@ import java.io.IOException;
 import spiralcraft.app.Dispatcher;
 
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.servlet.webui.components.AbstractCommandControl;
-import spiralcraft.servlet.webui.components.CommandState;
+import spiralcraft.servlet.webui.components.AbstractActionControl;
+import spiralcraft.servlet.webui.components.ActionControlState;
 
 import spiralcraft.net.http.VariableMap;
 
@@ -39,7 +39,7 @@ import spiralcraft.net.http.VariableMap;
  *
  */
 public class Button<Tcontext,Tresult>
-  extends AbstractCommandControl<Tcontext,Tresult>
+  extends AbstractActionControl<Tcontext,Tresult>
 {
 
   private String name;
@@ -60,7 +60,7 @@ public class Button<Tcontext,Tresult>
     protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     {   
-      CommandState<Tcontext,Tresult> state=getState(context);
+      ActionControlState<Tcontext,Tresult> state=getState(context);
       renderAttribute(out,"type",Button.this.type);
       renderAttribute(out,"name",state.getVariableName());
       renderAttribute(out,"value",value);
@@ -113,7 +113,7 @@ public class Button<Tcontext,Tresult>
   @Override
   public void gather(ServiceContext context)
   {
-    CommandState<Tcontext,Tresult> state=getState(context);
+    ActionControlState<Tcontext,Tresult> state=getState(context);
     VariableMap post=context.getPost();
     boolean gotPost=false;
     if (post!=null)
@@ -121,7 +121,7 @@ public class Button<Tcontext,Tresult>
     }
 
     if (gotPost)
-    { executeCommand(context);
+    { fireAction(context);
     }
     
     if (debug)
