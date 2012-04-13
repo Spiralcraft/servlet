@@ -17,6 +17,68 @@
     
       <scm:Change>
      
+        <revision>-dev2
+        </revision>
+      
+        <notes>
+          <scm:Note>Enhanced the flexiblity of action triggering components
+            (buttons, etc) to accept an onAction expression when no "x"
+            (command expression) is specified.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>Control.java
+          </URI>
+          <URI>components/AbstractActionControl.java
+          </URI>
+          <URI>components/AbstractCommandControl.java
+          </URI>
+          <URI>components/AcceptorCommand.java
+          </URI>
+          <URI>components/ActionControlState.java
+          </URI>
+          <URI>components/AutoExec.java
+          </URI>
+          <URI>components/CommandState.java
+          </URI>
+          <URI>components/html/Button.java
+          </URI>
+          <URI>components/html/ImageButton.java
+          </URI>
+          <URI>components/html/SubmitButton.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev2
+        </revision>
+      
+        <notes>
+          <scm:Note>Changes to Expression API- construction is by static method
+            instead of constructor.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/ParameterBinding.java
+          </URI>
+          <URI>webui/components/RequestBinding.java
+          </URI>
+        </resources>
+      </scm:Change>
+      
+      
+      <scm:Change>
+     
         <revision>-dev1
         </revision>
       
