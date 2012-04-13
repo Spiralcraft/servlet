@@ -133,7 +133,7 @@ public class RequestBinding<Tval>
       
       Channel<Tval> targetChannel
         =focus.bind
-          (new Expression<Tval>
+          (Expression.<Tval>create
             ( ((AssignmentNode<Tval,Tval>)target.getRootNode()).getTarget())
           );
       if (debug)
@@ -145,7 +145,7 @@ public class RequestBinding<Tval>
         ,name
         ,new ExpressionStringConverter<Tval>
           (focus
-          ,new Expression<Tval>
+          ,Expression.<Tval>create
             ( ((AssignmentNode<Tval,Tval>) target.getRootNode()).getSource()
             )
           ,targetChannel.getReflector()
