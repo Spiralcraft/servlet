@@ -53,14 +53,14 @@ public abstract class AbstractActionControl<Tcontext,Tresult>
   
   
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context,Message message)
   { 
     try
     { 
       pushState(context);
       
-      super.message(context,message);
+      super.messageStandard(context,message);
     
     }
     finally

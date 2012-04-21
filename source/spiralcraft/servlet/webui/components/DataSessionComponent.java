@@ -65,7 +65,7 @@ public class DataSessionComponent
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  public Focus<?> bindStandard(Focus<?> focus)
     throws  ContextualException
   { 
     if (debug)
@@ -108,7 +108,7 @@ public class DataSessionComponent
     defaultSetters=Assignment.bindArray(defaultAssignments,focus);
     setters=Assignment.bindArray(assignments,focus);
     bindRequestBindings(focus);
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }
   
 //  @Override
@@ -167,7 +167,7 @@ public class DataSessionComponent
   }
   
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context
     ,Message message
     ) 
@@ -185,7 +185,7 @@ public class DataSessionComponent
       }
     
       
-      super.message(context,message);
+      super.messageStandard(context,message);
       if (debug)
       { 
         log.fine

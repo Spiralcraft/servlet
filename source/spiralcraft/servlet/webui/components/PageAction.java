@@ -139,13 +139,13 @@ public class PageAction
   }
   
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     if (commandExpression!=null)
     { commandChannel=focus.bind(commandExpression);
     }
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }  
   
   /**

@@ -111,10 +111,10 @@ public class CheckboxInput
   }
 
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
-    super.bind(focus);
+    super.bindStandard(focus);
     
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");

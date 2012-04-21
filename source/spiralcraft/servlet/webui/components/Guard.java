@@ -75,13 +75,13 @@ public class Guard
   }
 
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     setupSession(focus);
     focus=focus.chain(sessionChannel);
     focus.addFacet(getAssembly().getFocus());
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }  
   
 
@@ -137,7 +137,7 @@ public class Guard
   }
 
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context
     ,Message message
     )
@@ -158,7 +158,7 @@ public class Guard
       }
     }
     else
-    { super.message(context,message);
+    { super.messageStandard(context,message);
     }
   }
   

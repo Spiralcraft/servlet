@@ -86,7 +86,7 @@ public abstract class ControlGroup<Ttarget>
   }
 
   @Override
-  public void message(Dispatcher context, Message message)
+  protected void messageStandard(Dispatcher context, Message message)
   {
 
     // Put our state into ThreadLocal storage so subcontrols can bind to
@@ -129,7 +129,7 @@ public abstract class ControlGroup<Ttarget>
     {
       
 
-      super.message(context, message);
+      super.messageStandard(context, message);
 
       ControlGroupState<Ttarget> state =getState(context);      
       if (transaction!=null && state.isErrorState())
@@ -251,7 +251,7 @@ public abstract class ControlGroup<Ttarget>
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   // Not using generic versions
-  public final Focus<?> bind(Focus<?> focus) 
+  public final Focus<?> bindStandard(Focus<?> focus) 
       throws ContextualException
   {
     try
@@ -354,6 +354,8 @@ public abstract class ControlGroup<Ttarget>
       focus=bindExports(focus);
   
       bindChildren(focus);
+      onBind(focus);
+      bindComplete(focus);
       return focus;
     }
     catch (ContextualException x)

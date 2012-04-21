@@ -88,7 +88,7 @@ public class Response
   }
   
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
 
@@ -104,7 +104,7 @@ public class Response
     for (Assignment<?> assignment: assignments)
     { setters.add(assignment.bind(focus));
     }
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }  
   
 

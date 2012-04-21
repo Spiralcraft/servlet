@@ -132,7 +132,7 @@ public class Redirect
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     if (when!=null)
@@ -150,7 +150,7 @@ public class Redirect
       locationChannel.assertContentType(URI.class);
     
     }
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }  
   
 

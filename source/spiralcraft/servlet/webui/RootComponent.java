@@ -83,7 +83,7 @@ public class RootComponent
   @Override
   @SuppressWarnings({"unchecked","rawtypes"})
   // Not using generic versions
-  public final Focus<?> bind(Focus<?> focus) 
+  public final Focus<?> bindStandard(Focus<?> focus) 
     throws ContextualException
   {
     if (debug)
@@ -100,7 +100,7 @@ public class RootComponent
         (BeanReflector.<ServiceContext>getInstance(ServiceContext.class));
     compoundFocus.addFacet
       (new SimpleFocus(threadLocal));
-    return super.bind(focus);
+    return super.bindStandard(focus);
   }
   /**
    * 
@@ -137,7 +137,7 @@ public class RootComponent
   }
 
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context,Message message)
   {
     if (threadLocal==null)
@@ -146,7 +146,7 @@ public class RootComponent
     
     threadLocal.push((ServiceContext) context);
     try
-    { super.message(context,message);
+    { super.messageStandard(context,message);
     }
     finally
     { threadLocal.pop();

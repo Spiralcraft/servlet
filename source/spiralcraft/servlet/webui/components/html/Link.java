@@ -148,7 +148,7 @@ public class Link
   }
   
   @Override
-  public Focus<?> bind(Focus<?> focus)
+  public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     if (commandExpression!=null)
@@ -160,7 +160,7 @@ public class Link
     if (fragmentX!=null)
     { fragmentX.bind(focus);
     }
-    return super.bind(focus);    
+    return super.bindStandard(focus);    
   }
   
   public void setQueueActions(String[] actionNames)

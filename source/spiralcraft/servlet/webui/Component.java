@@ -21,6 +21,7 @@ import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.app.InitializeMessage;
+import spiralcraft.common.ContextualException;
 
 
 /**
@@ -74,7 +75,6 @@ public abstract class Component
   { this.contentType=contentType;
   }
   
-  
   @Override
   public ComponentState createState()
   { return new ComponentState(this);
@@ -84,11 +84,18 @@ public abstract class Component
   protected <X> ComponentState getState(Dispatcher context)
   { return (ComponentState) context.getState();
   }
-  
+
   
   
   @Override
-  public void message
+  protected void addHandlers()
+    throws ContextualException
+  { super.addHandlers();
+  }
+  
+  
+  @Override
+  protected void messageStandard
     (Dispatcher context
     ,Message message
     )
@@ -126,7 +133,7 @@ public abstract class Component
     }
 
 
-    super.message(context,message);
+    super.messageStandard(context,message);
     
     if (message.getType()==PrepareMessage.TYPE)
     { postPrepare((ServiceContext) context);
