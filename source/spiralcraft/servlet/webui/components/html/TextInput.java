@@ -103,6 +103,15 @@ public class TextInput<Ttarget>
   public ErrorTag getErrorTag()
   { return errorTag;
   }
+  
+  public void setPeerJSTag(PeerJSTag scriptTag)
+  { 
+    tag.generateId=true;
+    tag.tagPosition=-1;
+    scriptTag.setTagPosition(1);
+    addHandler(scriptTag);
+    
+  }
 
 }
 

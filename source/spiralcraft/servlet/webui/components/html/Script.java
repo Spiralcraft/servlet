@@ -1,5 +1,5 @@
 //
-//Copyright (c) 2011 Michael Toth
+//Copyright (c) 2012 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -11,58 +11,86 @@
 //
 //Unless otherwise agreed to in writing, this software is distributed on an
 //"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
-//
 package spiralcraft.servlet.webui.components.html;
 
-import java.io.IOException;
-
+import spiralcraft.common.ContextualException;
 import spiralcraft.servlet.webui.Component;
-import spiralcraft.app.Dispatcher;
+import spiralcraft.text.MessageFormat;
 
-/**
- * References a client side script. Placeholder for addition of capabilites
- *   to manage compressed or in-lined scripts.
- * 
- * @author mike
- *
- */
 public class Script
   extends Component
 {
 
-  private String type="text/javascript";
-  private String src;
-  
-  private AbstractTag tag
-    =new AbstractTag()
+  public static enum Target
   {
-    @Override
-    protected String getTagName(Dispatcher dispatcher)
-    { return "script";
-    }
-
-
-    @Override
-    protected void renderAttributes(Dispatcher context,Appendable out)
-      throws IOException
-    {   
-      renderAttribute(out,"type",Script.this.type);
-      renderAttribute(out,"src",src);
-      
-      super.renderAttributes(context,out);
-      
-    }    
-
-
-    @Override
-    protected boolean hasContent()
-    { return true;
-    }
-
-  };
-  
-  
-  { addHandler(tag);
+    HEAD
+    ,BODY
+    ,FOOT
   }
-
+  
+  private Target target;
+  private boolean targetOptional;
+  private ScriptTag scriptTag
+    =new ScriptTag();
+  
+  public void setCode(MessageFormat code)
+  { scriptTag.setCode(code);
+  }
+  
+  public void setTarget(Target target)
+  { this.target=target;
+  }
+  
+  public void setTargetOptional(boolean targetOptional)
+  { this.targetOptional=targetOptional;
+  }
+  
+  public void setSrc(String src)
+  { scriptTag.setSrc(src);
+  }
+  
+  public void setType(String type)
+  { scriptTag.setType(type);
+  }
+  
+  @Override
+  protected void addHandlers() 
+    throws ContextualException
+  {
+    
+    if (target!=null)
+    {
+      Page page=this.findComponent(Page.class);
+      if (page!=null)
+      { 
+        switch (target)
+        {
+          case HEAD:
+            scriptTag.setTagPosition(-1);
+            page.addTagToHead(scriptTag);
+            break;
+          case BODY:
+            scriptTag.setTagPosition(-1);
+            page.addTagToBody(scriptTag);
+            break;
+          case FOOT:
+            scriptTag.setTagPosition(1);
+            page.addTagToBody(scriptTag);
+            break;
+        }
+      }
+      else if (!targetOptional)
+      { throw new ContextualException("No Page exists in context");
+      }
+      else
+      { addHandler(scriptTag);
+      }
+    }
+    else
+    { addHandler(scriptTag);
+    }
+    
+    super.addHandlers();
+    
+  }
 }

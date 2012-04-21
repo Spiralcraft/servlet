@@ -23,6 +23,7 @@ import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.DictionaryBinding;
+import spiralcraft.servlet.webui.ComponentState;
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.RenderMessage;
 
@@ -57,10 +58,11 @@ public abstract class AbstractTag
     =new AttributeEncoder();
   
   private String attributes;
+  protected boolean generateId;
   protected int contentPosition;
   protected int tagPosition;
   protected boolean shouldRender=true;
-  
+  protected boolean addNewLine;
     
   protected abstract String getTagName(Dispatcher context);
   
@@ -135,24 +137,35 @@ public abstract class AbstractTag
     if (shouldRender && name!=null && name.length()>0)
     {
       Appendable out=OutputContext.get();
+      if (addNewLine)
+      { out.append("\r\n");
+      }
       out.append("<");
       out.append(getTagName(context));
-      out.append(" ");
     
       renderAttributes(context,out);
     
       if (hasContent && contentPosition==0)
       { 
         out.append(">");
+        if (addNewLine)
+        { out.append("\r\n");
+        }
    
         renderContent(context,message,next);
     
+        if (addNewLine)
+        { out.append("\r\n");
+        }
         out.append("</");
         out.append(getTagName(context));
         out.append(">");
       }
       else
-      { out.append("/>");
+      { out.append(" />");
+      }
+      if (addNewLine)
+      { out.append("\r\n");
       }
 
       if (hasContent && contentPosition>0)
@@ -370,23 +383,24 @@ public abstract class AbstractTag
   protected void renderAttribute(Appendable out,String name,String value)
     throws IOException
   {
+    out.append(" ");
     out.append(name);
     if (value!=null)
     {
       out.append("=\"");
       attributeEncoder.encode(value,out);
-      out.append("\" ");
-    }
-    else
-    { out.append(" ");
+      out.append("\"");
     }
   }
   
   protected void renderAttributes(Dispatcher context,Appendable out)
     throws IOException
   { 
+    if (generateId)
+    { renderId(out,context);
+    }
     if (attributes!=null)
-    { out.append(attributes+" ");
+    { out.append(" "+attributes);
     }
     if (standardAttributeBindings!=null)
     { renderBoundAttributes(out,standardAttributeBindings);
@@ -396,6 +410,15 @@ public abstract class AbstractTag
     }
   }
 
+  protected void renderId(Appendable out,Dispatcher context)
+    throws IOException
+  {
+    ComponentState state=(ComponentState) context.getState();
+    if (state!=null)
+    { renderAttribute(out,"id",state.getId());
+    }
+  }
+    
   protected void renderBoundAttributes
     (Appendable out,DictionaryBinding<?>[] bindings)
     throws IOException
@@ -417,8 +440,6 @@ public abstract class AbstractTag
    * @return Whether the tag has content.
    */
   protected abstract boolean hasContent();
-  
-
   
   /**
    * 

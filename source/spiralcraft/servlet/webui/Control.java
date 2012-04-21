@@ -22,10 +22,12 @@ import spiralcraft.rules.Violation;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.State;
 
 import spiralcraft.textgen.elements.Iterate;
 import spiralcraft.util.ArrayUtil;
 
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -467,6 +469,33 @@ public abstract class Control<Ttarget>
   { return new ControlState<Ttarget>(this);
   }
   
+  
+  public URI registerPort(String componentId)
+  { 
+    ComponentState state=getChildState(componentId);
+    if (state!=null)
+    { 
+      return URI.create
+        (ServiceContext.get().registerPort(state.getId(),state.getPath()));
+    }
+    else
+    { throw new RuntimeException("Unrecognized port name "+componentId);
+    }
+  }
+  
+  private ComponentState getChildState(String id)
+  {
+    Integer index=getChildIndex(id);
+    if (index!=null)
+    { 
+      State childState=getState().getChild(index);
+      if (childState instanceof ComponentState)
+      { return ((ComponentState) childState);
+      }
+    }
+    return null;
+  }
+  
   @SuppressWarnings("unchecked")
   @Override
   protected <X> ControlState<X> getState(Dispatcher context)
@@ -518,7 +547,7 @@ public abstract class Control<Ttarget>
   
   @Override
   @SuppressWarnings("unchecked") // Not using generic versions
-  public Focus<?> bind(Focus<?> focus)
+  public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     try
@@ -561,6 +590,8 @@ public abstract class Control<Ttarget>
       bindHandlers(focus);
       
       bindChildren(focus);
+      onBind(focus);
+      bindComplete(focus);
       return focus;
     }
     catch (ContextualException x)
@@ -647,7 +678,7 @@ public abstract class Control<Ttarget>
   }
   
   @Override
-  public void message
+  protected void messageStandard
     (Dispatcher context
     ,Message message
     )
@@ -696,7 +727,7 @@ public abstract class Control<Ttarget>
     } 
     
     try
-    { super.message(context,message);
+    { super.messageStandard(context,message);
     }
     catch (RuntimeException x)
     { 

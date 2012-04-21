@@ -30,12 +30,14 @@ import spiralcraft.lang.Contextual;
 import spiralcraft.lang.util.LangUtil;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
+import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.autofilter.PathContext;
 import spiralcraft.servlet.kit.ContextAdapter;
 import spiralcraft.servlet.kit.HttpFocus;
 import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.servlet.webui.kit.UISequencer;
 import spiralcraft.ui.NavContext;
+import spiralcraft.util.Sequence;
 import spiralcraft.util.URIUtil;
 import spiralcraft.vfs.Container;
 import spiralcraft.vfs.Resolver;
@@ -348,7 +350,21 @@ public class UIService
         serviceContext.setRequest(request);
         serviceContext.setResponse(response);
         serviceContext.setServletContext(context);
-        sequencer.service(serviceContext,component,localSession);
+        
+        
+        VariableMap query=serviceContext.getQuery();
+        
+        String port
+          =query!=null
+          ?query.getFirst("port")
+          :null;
+
+        if (port!=null && !port.isEmpty())
+        { callPort(serviceContext,component,localSession,port);
+        }
+        else
+        { sequencer.service(serviceContext,component,localSession);
+        }
       }
       else
       {
@@ -383,4 +399,40 @@ public class UIService
     }
   }
   
+  private void callPort
+    (ServiceContext serviceContext
+    ,Component component
+    ,PortSession localSession
+    ,String port
+    )
+  {
+    HttpServletResponse response=serviceContext.getResponse();
+    if (localSession.getState()==null)
+    {
+      
+      log.warning
+        ("No state found on port request for "
+        +localSession.getLocalURI()
+        );
+      response.setStatus(500);
+      try
+      {
+        response.getWriter().flush();
+        response.flushBuffer();
+      }
+      catch (IOException x)
+      {
+      }
+    }
+    
+    serviceContext.setState(localSession.getState());
+    Sequence<Integer> path=localSession.getPort(port);
+    if (path!=null)
+    { serviceContext.dispatch(PortMessage.INSTANCE,component,path);
+    }
+    else
+    { serviceContext.getResponse().setStatus(404);
+    }
+    
+  }
 }

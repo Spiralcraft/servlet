@@ -29,6 +29,7 @@ import spiralcraft.servlet.kit.ContextAdapter;
 import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.textgen.EventContext;
+import spiralcraft.util.Sequence;
 import spiralcraft.util.URIUtil;
 import spiralcraft.util.thread.ThreadLocalStack;
 
@@ -283,6 +284,12 @@ public class ServiceContext
   public String registerAction(Action action)
   {
     String rawUrl=portSession.registerAction(action);
+    return response.encodeURL(rawUrl);
+  }
+
+  public String registerPort(String stateId,Sequence<Integer> path)
+  {
+    String rawUrl=portSession.registerPort(stateId,path);
     return response.encodeURL(rawUrl);
   }
   

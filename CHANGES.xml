@@ -17,6 +17,100 @@
     
       <scm:Change>
      
+        <revision>-dev3
+        </revision>
+      
+        <notes>
+          <scm:Note>Enhancements to support client-side binding of
+            javascript controls to async ports.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+        
+          <URI>ComponentState.java
+          </URI>
+          <URI>Control.java
+          </URI>
+          <URI>PortMessage.java
+          </URI>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>UIService.java
+          </URI>
+          <URI>components/Port.java
+          </URI>
+          <URI>components/html/AbstractTag.java
+          </URI>
+          <URI>components/html/Div.java
+          </URI>
+          <URI>components/html/FormField.java
+          </URI>
+          <URI>components/html/LinkTag.java
+          </URI>
+          <URI>components/html/Page.java
+          </URI>
+          <URI>components/html/PeerJSTag.java
+          </URI>
+          <URI>components/html/Script.java
+          </URI>
+          <URI>components/html/ScriptTag.java
+          </URI>
+          <URI>components/html/TextInput.java
+          </URI>
+          <URI>kit/PortHandler.java
+          </URI>
+          <URI>kit/PortSession.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev3
+        </revision>
+      
+        <notes>
+          <scm:Note>Changes to Element protected interface.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>Component.java
+          </URI>
+          <URI>Control.java
+          </URI>
+          <URI>ControlGroup.java
+          </URI>
+          <URI>RootComponent.java
+          </URI>
+          <URI>components/AbstractActionControl.java
+          </URI>
+          <URI>components/DataSessionComponent.java
+          </URI>
+          <URI>components/Guard.java
+          </URI>
+          <URI>components/PageAction.java
+          </URI>
+          <URI>components/Redirect.java
+          </URI>
+          <URI>components/Response.java
+          </URI>
+          <URI>components/html/CheckboxInput.java
+          </URI>
+          <URI>components/html/Link.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev2
         </revision>
       

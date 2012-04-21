@@ -22,6 +22,8 @@ public class PortMessage
 {
 
   public static final Type TYPE=new Type();
+  public static final PortMessage INSTANCE
+    =new PortMessage();
   
   { 
     multicast=false;

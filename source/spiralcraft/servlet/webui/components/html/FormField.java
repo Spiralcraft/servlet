@@ -17,6 +17,8 @@ package spiralcraft.servlet.webui.components.html;
 import java.util.List;
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Scaffold;
+import spiralcraft.common.ContextualException;
 //import spiralcraft.data.Tuple;
 //import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
@@ -72,7 +74,8 @@ public class FormField<T>
   
   
   @Override
-  protected List<TglUnit> expandChildren(Focus<?> focus,List<TglUnit> children)
+  protected List<Scaffold<?>> expandChildren(Focus<?> focus,List<TglUnit> children)
+    throws ContextualException
   { 
     
     
@@ -91,6 +94,6 @@ public class FormField<T>
 //      }
 //    }
     
-    return children;
+    return super.expandChildren(focus,children);
   }
 }

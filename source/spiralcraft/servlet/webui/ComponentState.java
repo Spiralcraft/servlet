@@ -18,12 +18,15 @@ package spiralcraft.servlet.webui;
 import spiralcraft.app.StateFrame;
 import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.textgen.ElementState;
+import spiralcraft.util.Sequence;
+import spiralcraft.util.string.StringPool;
 
 public class ComponentState
   extends ElementState
 {
 
   private volatile PortSession portSession;
+  private String id;
     
   public ComponentState(Component component)
   { super(component.getChildCount());
@@ -39,6 +42,27 @@ public class ComponentState
     }
     return portSession;
   }
+  
+  public String getId()
+  {
+    if (id==null)
+    { id=StringPool.INSTANCE.get(pathToId(getPath()));
+    }
+    return id;
+  }
+  
+  private String pathToId(Sequence<Integer> path)
+  {
+    StringBuilder builder=new StringBuilder();
+    builder.append("sid");
+    for (Integer integer:path)
+    {
+      builder.append("-");
+      builder.append(integer);
+    }
+    return builder.toString();
+  }
+  
   
   @Override
   public void enterFrame(StateFrame frame)
