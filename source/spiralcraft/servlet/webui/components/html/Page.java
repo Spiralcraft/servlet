@@ -258,8 +258,8 @@ public class Page
    */
   public void setScripts(URI[] scripts)
   {
-    for (URI link:links)
-    { requireScript(link);
+    for (URI script:scripts)
+    { requireScript(script);
     }
   }
 

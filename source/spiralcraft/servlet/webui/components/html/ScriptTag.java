@@ -32,6 +32,7 @@ public class ScriptTag
   
   private MessageFormat code;
   private URI[] requiredScripts;
+  private String type;
   
   { addNewLine=true;
   }
@@ -46,8 +47,8 @@ public class ScriptTag
     setType("text/javascript");
   }
   
-  public void setType(String value)
-  { appendAttribute("type",value);
+  public void setType(String type)
+  { this.type=type;
   }
   
   public void setSrc(String value)
@@ -80,6 +81,10 @@ public class ScriptTag
         }
       }
     }    
+    if (type==null)
+    { type="text/javascript";
+    }
+    appendAttribute("type",type);
     return super.bind(focus);
   }
   
