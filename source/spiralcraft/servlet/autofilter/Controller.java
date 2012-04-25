@@ -39,7 +39,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import spiralcraft.common.ContextualException;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.kit.StandardFilterConfig;
@@ -109,6 +108,7 @@ public class Controller
   private URI configURI=URI.create("config/");
   private URI filesURI=URI.create("files/");
   private URI codeURI=URI.create("webui/");
+  private URI themeURI=URI.create("webui/theme/");
   
   private Scheduler scheduler;
 
@@ -133,7 +133,7 @@ public class Controller
    * @param dataURI
    */
   public void setDataURI(URI dataURI)
-  { this.dataURI=cleanURI("dataURI",dataURI);
+  { this.dataURI=cleanURI(dataURI);
   }
       
   /**
@@ -155,7 +155,7 @@ public class Controller
    * @param dataURI
    */
   public void setConfigURI(URI configURI)
-  { this.configURI=cleanURI("configURI",configURI);
+  { this.configURI=cleanURI(configURI);
   }
       
   /**
@@ -176,7 +176,7 @@ public class Controller
    * @param dataURI
    */
   public void setFilesURI(URI filesURI)
-  { this.filesURI=cleanURI("filesURI",filesURI);
+  { this.filesURI=cleanURI(filesURI);
   }
   
   /**
@@ -188,7 +188,18 @@ public class Controller
    * @param codeURI
    */
   public void setCodeURI(URI codeURI)
-  { this.codeURI=cleanURI("codeURI",codeURI);
+  { this.codeURI=cleanURI(codeURI);
+  }
+  
+  /**
+   * <p>The URI for the context://theme authority used to locate components
+   *   in extensible themes.
+   * </p>
+   * 
+   * @param codeURI
+   */
+  public void setThemeURI(URI themeURI)
+  { this.themeURI=cleanURI(themeURI);
   }
   
   public void setDebug(boolean debug)
@@ -203,6 +214,10 @@ public class Controller
     throws ServletException
   {
     this.config=new StandardFilterConfig(null,config.getServletContext(),null);
+    if ("true".equals(config.getInitParameter("debug")))
+    { debug=true;
+    }
+    
     ServletContext context=config.getServletContext();
     
     String realPath=context.getRealPath("/");
@@ -275,6 +290,8 @@ public class Controller
       (context,instanceRootURI,filesURI,"spiralcraft.instance.filesURI");
     codeURI=resolveResourceVolume
       (context,webInfRoot,codeURI,"spiralcraft.instance.codeURI");
+    themeURI=resolveResourceVolume
+      (context,webInfRoot,themeURI,"spiralcraft.instance.themeURI");
     
   }
   
@@ -290,10 +307,12 @@ public class Controller
     URI ret=defaultURI;
     if (uriParam!=null)
     {
-      ret
-        =URIUtil.ensureTrailingSlash
-          (URI.create(uriParam)
-          );
+      ret=URI.create(uriParam);
+      if (!ret.isOpaque())
+      {
+        ret
+          =URIUtil.ensureTrailingSlash(ret);
+      }
     }
     
     if (!ret.isAbsolute())
@@ -305,7 +324,7 @@ public class Controller
   }
   
 
-  private URI cleanURI(String propName,URI uri)
+  private URI cleanURI(URI uri)
   { 
     if (!uri.getPath().endsWith("/"))
     { return URIUtil.ensureTrailingSlash(uri);
@@ -366,6 +385,7 @@ public class Controller
     contextResourceMap.put("config",contextURI.resolve(configURI));
     contextResourceMap.put("files",contextURI.resolve(filesURI));
     contextResourceMap.put("code",contextURI.resolve(codeURI));
+    contextResourceMap.put("theme",contextURI.resolve(themeURI));
     
     if (debug)
     {
@@ -373,21 +393,23 @@ public class Controller
       log.debug("configURI="+configURI);
       log.debug("filesURI="+filesURI);
       log.debug("codeURI="+codeURI);
-      for (String mapping:new String[]{"war","data","config","files","code"})
+      log.debug("themeURI="+themeURI);
+      for (String mapping:new String[]{"war","data","config","files","code","theme"})
       { log.debug("Mapped "+mapping+" to "+contextResourceMap.get(mapping));
       }
     }
     
+        
     // contextResourceMap.setIsolate(true)
     try
     { contextResourceMap.bind(focus);
     }
-    catch (ContextualException x)
+    catch (Exception x)
     { 
       try
       {
         throw new ServletException
-          ("Error binding contextResourceMap in "
+          ("Error binding Controller in "
           +context.getResource("/").toString()
           ,x
           );
