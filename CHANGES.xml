@@ -17,6 +17,60 @@
     
       <scm:Change>
      
+        <revision>-dev4
+        </revision>
+      
+        <notes>
+          <scm:Note>Minor fixes
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>Page.java
+          </URI>
+          <URI>ScriptTag.java
+          </URI>
+        </resources> 
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev4
+        </revision>
+      
+        <notes>
+          <scm:Note>Stylesheet html component generates a stylesheet link.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/html/Stylesheet.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev4
+        </revision>
+      
+        <notes>
+          <scm:Note>Added context://theme authority to Controller to support
+            the use of Themes in all webui apps.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+        
+      </scm:Change>
+      
+      
+      <scm:Change>
+     
         <revision>-dev3
         </revision>
       
