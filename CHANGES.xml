@@ -17,6 +17,23 @@
     
       <scm:Change>
      
+        <revision>-dev5
+        </revision>
+      
+        <notes>
+          <scm:Note>The default context://config resource is now 
+            [instanceRoot]/config.${spiralcraft.config.id} to support the modularization
+            of deployment scenarios.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev4
         </revision>
       
