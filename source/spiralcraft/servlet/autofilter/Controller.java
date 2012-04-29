@@ -213,6 +213,17 @@ public class Controller
   public void init(FilterConfig config)
     throws ServletException
   {
+    String configId
+      =config.getServletContext().getInitParameter("spiralcraft.config.id");
+    if (configId!=null)
+    { 
+      this.configURI
+        =URI.create("config."+configId+"/");
+    }
+    
+    
+    // Run autoconfig here
+    
     this.config=new StandardFilterConfig(null,config.getServletContext(),null);
     if ("true".equals(config.getInitParameter("debug")))
     { debug=true;
