@@ -40,6 +40,7 @@ import spiralcraft.ui.NavContext;
 import spiralcraft.util.Sequence;
 import spiralcraft.util.URIUtil;
 import spiralcraft.vfs.Container;
+import spiralcraft.vfs.Package;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 
@@ -171,10 +172,17 @@ public class UIService
       { 
         if (context.getResource(relativePath).exists())
         { 
-          // Static resource in standard context takes precedence
+          // Ignore any resource that doesn't end in .webui that exists
+          //   in the standard www document tree. This will be handled by
+          //   the caller in some other way as it is not a webui resource.
           return null;
         }
-        relativeResourcePath=relativePath+".webui";
+        else
+        { 
+          // Search for an appropriate .webui generator for a non-existent 
+          //   static resource
+          relativeResourcePath=relativePath+".webui";
+        }
       }
     }
     else
@@ -183,6 +191,7 @@ public class UIService
     
     if (resource==null) 
     { 
+      // Search for the .webui file in the standard www document tree
       resource=context.getResource(relativeResourcePath);      
       if (!resource.exists())
       { resource=null;
@@ -191,17 +200,40 @@ public class UIService
     
     if (resource==null)
     { 
+      // Search for the .webui file in the "code" context and all 
+      //   associated packages
       resource=Resolver.getInstance().resolve
         ("context://code"+relativeResourcePath);
 
       if (!resource.exists())
-      { resource=null;
+      { 
+        Package pkg=null;
+        try
+        {
+          pkg = Package.fromContainer
+            (resource.getParent());
+        }
+        catch (ContextualException x)
+        { 
+          log.log
+            (Level.WARNING
+            ,"Error resolving package in "+resource.getParent().getURI()
+            ,x
+            );
+        }
+        if (pkg!=null)
+        { resource=pkg.searchForBaseResource(resource);
+        }
+        else
+        { resource=null;
+        }
       }
     }
-    
 
     if (resource==null && pathContextFocus!=null)
     { 
+      // Look in the PathContext object
+      //   XXX: Now that we have packages, we might not need this anymore
       PathContext pathContext=pathContextFocus.getSubject().get();
       if (pathContext!=null)
       {
