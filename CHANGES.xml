@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev6
+        </revision>
+      
+        <notes>
+          <scm:Note>webui resources will now be found if they are reachable
+            via the spiralcraft.vfs.Package system.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/UIService.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev5
         </revision>
       
