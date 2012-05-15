@@ -17,6 +17,48 @@
     
       <scm:Change>
      
+        <revision>-dev7
+        </revision>
+      
+        <notes>
+          <scm:Note>Package extension hierarchy created where
+            class://spiralcraft/servlet/webui/components extends 
+            class://spiralcraft/textgen/elements
+            and class://spiracraft/servlet/webui/components/html
+            extends class://spiralcraft/servlet/webui/components
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>package.xml
+          </URI>
+          <URI>html/package.xml
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev6
+        </revision>
+      
+        <notes>
+          <scm:Note>webui resources will now be found if they are reachable
+            via the spiralcraft.vfs.Package system.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/UIService.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev6
         </revision>
       
