@@ -17,6 +17,37 @@
     
       <scm:Change>
      
+        <revision>-dev8
+        </revision>
+      
+        <notes>
+          <scm:Note>Search for PathContexts in the context://code tree
+          </scm:Note>
+          <scm:Note>Fix minor configuration bugs for PathContext filters
+          </scm:Note>
+          <scm:Note>PathContext now provides pathInfo for components to
+            use URI remainder as input data.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>CompoundFilter.java
+          </URI>
+          <URI>Controller.java
+          </URI>
+          <URI>PathContext.java
+          </URI>
+          <URI>PathContextFilter.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev7
         </revision>
       
