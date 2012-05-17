@@ -17,9 +17,14 @@ package spiralcraft.servlet.autofilter;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.servlet.http.HttpServletRequest;
+
+import spiralcraft.lang.Binding;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.kit.AbstractChainableContext;
 import spiralcraft.lang.spi.SimpleChannel;
+import spiralcraft.lang.util.LangUtil;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.Path;
 import spiralcraft.util.URIUtil;
@@ -52,6 +57,8 @@ public class PathContext
   private PathContext baseContext;
   private PlaceContext placeContext;
   private AutoFilter[] filters;
+  private Binding<URI> codeX;
+  private Channel<HttpServletRequest> requestChannel;
   // private PathContext parent;
   
   /**
@@ -113,6 +120,13 @@ public class PathContext
   { this.filters=filters;
   }
 
+  public void setCodeX(Binding<URI> codeX)
+  { 
+    if (codeX!=null)
+    { codeX.setTargetType(URI.class);
+    }
+    this.codeX=codeX;
+  }
   /**
    * Relativize the given absolute path against the absolute path of
    *   this PathContext.
@@ -185,36 +199,60 @@ public class PathContext
   { 
   
     Resource ret=null;
-    if (codeBaseURI!=null)
-    {
-      ret=Resolver.getInstance().resolve
-        (codeBaseURI.resolve(relativePath));
-      if (ret!=null && ret.exists())
-      { return ret;
-      }
-      else
-      { ret=null;
-      }
+    ret=Resolver.getInstance().resolve
+      (getEffectiveCodeBaseURI().resolve(relativePath));
+    if (ret!=null && ret.exists())
+    { return ret;
     }
-    else if (defaultCodeBaseURI!=null)
-    {
-      ret=Resolver.getInstance().resolve
-        (defaultCodeBaseURI.resolve(relativePath));
-      if (ret!=null && ret.exists())
-      { return ret;
-      }
-      else
-      { ret=null;
-      }
+    else
+    { ret=null;
     }
     
     
     if (ret==null && baseContext!=null)
     { ret=baseContext.resolveCode(relativePath);
     }
+    
+    if (ret==null && codeX!=null)
+    { 
+      URI codeURI=codeX.get();
+      if (codeURI!=null)
+      { 
+        if (codeURI.isAbsolute())
+        { ret=Resolver.getInstance().resolve(codeURI);
+        }
+        else
+        { 
+          codeURI=getEffectiveCodeBaseURI().resolve(codeURI);
+          ret=Resolver.getInstance().resolve(codeURI);
+        }
+      }
+    }
     return ret;
   }
 
+  private URI getEffectiveCodeBaseURI()
+  { return codeBaseURI!=null?codeBaseURI:defaultCodeBaseURI;
+  }
+  
+  
+  /**
+   * <p>Return the contents of the current requestURI after the part that
+   *   addresses the nearest containing PathContext. The path will never start
+   *   with a leading slash.
+   * </p>
+   * 
+   * @return
+   */
+  public String getPathInfo()
+  { 
+    HttpServletRequest request=requestChannel.get();
+    return relativize
+      (request.getServletPath()
+        +(request.getPathInfo()!=null?request.getPathInfo():"")
+      );
+  }
+  
   /**
    * Return a URI to the container that provides the context for
    *   the relative path.
@@ -233,7 +271,7 @@ public class PathContext
    */
   void setAbsolutePath(Path path)
   { 
-    this.absolutePath=path;
+    this.absolutePath=path.asContainer();
     this.absolutePathString=absolutePath.format("/");
   }
   
@@ -256,21 +294,32 @@ public class PathContext
   { // this.parent=parentContext;
   }
   
+  @Override
+  protected Focus<?> bindPeers(Focus<?> focus)
+    throws ContextualException
+  { 
+    focus=super.bindPeers(focus);
+    if (codeX!=null)
+    { codeX.bind(focus);
+    }
+    return focus;
+  }
   
   AutoFilter[] getFilters()
   { 
-    return 
-      (filters!=null && baseContext!=null)
-      ?ArrayUtil.concat(filters,baseContext.getFilters())
-      :filters==null
-      ?baseContext.getFilters()
-      :filters;
+    return ArrayUtil.concat
+      (AutoFilter[].class
+      ,filters
+      ,baseContext!=null?baseContext.getFilters():null
+      );
   }
   
   @Override
   protected Focus<?> bindImports(Focus<?> chain)
     throws ContextualException
   { 
+    requestChannel=LangUtil.findChannel(HttpServletRequest.class,chain);
+
     if (baseContext!=null)
     { chain=baseContext.bind(chain);
     }
@@ -279,6 +328,7 @@ public class PathContext
     if (placeContext!=null)
     { chain(placeContext);
     }
+    
     return chain;
   }
 
@@ -297,6 +347,7 @@ public class PathContext
     if (baseContext!=null)
     { baseContext.pop();
     }
+    super.popLocal();
     
   }  
   @Override

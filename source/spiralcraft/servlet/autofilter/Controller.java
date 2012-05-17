@@ -49,9 +49,12 @@ import spiralcraft.util.ContextDictionary;
 import spiralcraft.util.Path;
 import spiralcraft.util.URIUtil;
 import spiralcraft.util.tree.PathTree;
+import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
+import spiralcraft.vfs.UnresolvableURIException;
 import spiralcraft.vfs.context.ContextResourceMap;
 import spiralcraft.vfs.file.FileResource;
+import spiralcraft.vfs.ovl.OverlayResource;
 
 
 
@@ -89,6 +92,7 @@ public class Controller
   
   private FilterConfig config;
   private Resource publishRoot;
+  private Resource publishOverlay;
   private long lastUpdate;
   private final ContextResourceMap contextResourceMap
     = new ContextResourceMap();
@@ -238,7 +242,9 @@ public class Controller
     if (debug)
     { log.fine("Root is "+publishRoot.getURI());
     }
-    
+       
+
+
     resolveResourceVolumes(context);
     
     
@@ -253,7 +259,19 @@ public class Controller
     
     push();
     try
-    { updateConfig();
+    {
+      publishOverlay
+        =new OverlayResource
+          (publishRoot.getURI()
+          ,publishRoot
+          ,Resolver.getInstance().resolve("context://code/")
+          );
+      updateConfig();
+    }
+    catch (UnresolvableURIException x)
+    { 
+      throw new ServletException
+        ("Error resolving overlay for "+publishRoot.getURI(),x);
     }
     finally
     { pop();
@@ -530,17 +548,18 @@ public class Controller
   
   private synchronized void updateConfig()
   {
-    if (publishRoot==null)
+    if (publishOverlay==null)
     { return;
     }
     
+
     long time=Clock.instance().approxTimeMillis();
     if (time==0 || (updateIntervalMs>0 && time-lastUpdate>updateIntervalMs))
     { 
       throwable=null;
       // System.err.println("Controller.updateConfig(): scanning");
       try
-      { updateRecursive(pathTree,publishRoot,false);
+      { updateRecursive(pathTree,publishOverlay,false);
       }
       catch (Throwable x)
       { 
@@ -616,7 +635,7 @@ public class Controller
           );
       }
 
-      // TODO: Recognize child paths that might be virtual  
+      
       
       // Handle any new children
       for (Resource childResource: resource.asContainer().listChildren())

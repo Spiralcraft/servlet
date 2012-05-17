@@ -92,11 +92,15 @@ public class PathContextFilter
     
   }
   
+  { setUsesRequest(true);
+  }
   
   private URI codeSearchRoot;
   private PathContext context;
   private URI resourceURI;
   private AutoFilter filterSet;
+  
+
   
   @SuppressWarnings("unchecked")
   @Override
@@ -104,6 +108,10 @@ public class PathContextFilter
     Focus<?> parentFocus)
     throws ContextualException
   {
+    if (debug)
+    { log.fine("Binding PathContextFilter for "+getPath());
+    }
+
     Focus<Object> chain=(Focus<Object>) parentFocus;
     PathContext parentContext
        =LangUtil.findInstance(PathContext.class,chain);
@@ -112,8 +120,10 @@ public class PathContextFilter
       // Find the PathContext object.
       // 
       // 
-      codeSearchRoot=URI.create
-        ("context://code"+getPath().format('/')+"/");
+      codeSearchRoot=
+        URIUtil.ensureTrailingSlash
+          (URI.create("context://code"+getPath().format('/'))
+          );
       resourceURI=codeSearchRoot.resolve("PathContext.assy.xml");
       Resource resource
         =Resolver.getInstance().resolve(resourceURI);
@@ -145,6 +155,13 @@ public class PathContextFilter
         }
         else
         { 
+          if (debug)
+          {
+            log.fine
+              ("Parent context path for "
+                +getPath()+" is "+parentContext.getAbsolutePath()
+              );
+          }
           codeSearchRoot
             =parentContext.mapRelativePath
               (parentContext.getAbsolutePath().relativize(getPath())
@@ -191,6 +208,7 @@ public class PathContextFilter
             filterSet.setPath(getPath());
             filterSet.setPattern(getPattern());
             filterSet.setGlobal(isGlobal());
+            filterSet.setContainer(getContainer());
             filterSet.init(config);
           }
           catch (ServletException x)
@@ -206,7 +224,7 @@ public class PathContextFilter
     catch (UnresolvableURIException x)
     { 
       throw new ContextualException
-        ("Unable to resolve code root for path "+getPath().format('/'),x);
+        ("Unable to resolve code root for path "+getPath().format('/')+": tried "+codeSearchRoot,x);
     }
     catch (IOException x)
     {

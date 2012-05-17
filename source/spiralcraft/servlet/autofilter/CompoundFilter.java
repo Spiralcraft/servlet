@@ -25,6 +25,7 @@ import javax.servlet.ServletResponse;
 
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.util.Path;
+import spiralcraft.vfs.Resource;
 
 /**
  * Aggregates a set of filters into a single filter
@@ -72,6 +73,15 @@ public class CompoundFilter
     super.setPattern(pattern);
     for (AutoFilter filter:filters)
     { filter.setPattern(pattern);
+    }
+  }
+  
+  @Override
+  void setContainer(Resource container)
+  { 
+    super.setContainer(container);
+    for (AutoFilter filter:filters)
+    { filter.setContainer(container);
     }
   }
   
