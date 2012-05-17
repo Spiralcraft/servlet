@@ -115,6 +115,17 @@ public class UIService
     }
   }
   
+  /**
+   * <p>Find the component that services the provided context-relative 
+   *   request path, if one exists
+   * </p>
+   * 
+   * @param relativePath
+   * @return
+   * @throws ContextualException
+   * @throws IOException
+   * @throws ServletException
+   */
   public RootComponent findComponent(String relativePath)
     throws ContextualException,IOException,ServletException
   {
@@ -155,6 +166,17 @@ public class UIService
     return getRootComponent(resource,relativePath);
   }
   
+  /**
+   *   
+   * <p>Find a code resource that generates a component for the
+   *   specified context-relative request path
+   * </p>
+   *
+   * @param relativePath
+   * @return
+   * @throws IOException
+   * @throws ServletException
+   */
   protected Resource findUIResource(String relativePath)
     throws IOException, ServletException
   {
