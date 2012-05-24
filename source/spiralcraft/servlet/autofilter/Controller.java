@@ -43,6 +43,7 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.kit.StandardFilterConfig;
 import spiralcraft.servlet.util.LinkedFilterChain;
+import spiralcraft.text.html.URLEncoder;
 import spiralcraft.time.Clock;
 import spiralcraft.time.Scheduler;
 import spiralcraft.util.ContextDictionary;
@@ -298,7 +299,7 @@ public class Controller
     { 
       instanceRootURI
         =URIUtil.ensureTrailingSlash
-          (URI.create(instanceRoot)
+          (URI.create(URLEncoder.encode(instanceRoot))
           );
       
       if (!instanceRootURI.isAbsolute())
