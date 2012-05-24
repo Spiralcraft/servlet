@@ -17,6 +17,20 @@
     
       <scm:Change>
      
+        <revision>-dev9
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix URI encoding issues with configured paths
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev8
         </revision>
       
