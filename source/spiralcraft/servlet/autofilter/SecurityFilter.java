@@ -471,9 +471,7 @@ public class SecurityFilter
     (Focus<?> parentFocus)
     throws ContextualException
   { 
-    if (authenticator==null)
-    { authenticator=new TestAuthenticator();
-    }
+    
     this.attributeName=this.getPath().format("/")
       +"!spiralcraft.security.AuthSession";
     
@@ -484,10 +482,22 @@ public class SecurityFilter
     SimpleFocus<AuthSession> authSessionFocus
       =new SimpleFocus<AuthSession>(parentFocus,authSessionChannel);
     authSessionFocus.addFacet(new BeanFocus<SecurityFilter>(this));
-    authenticator.bind(authSessionFocus);
     
     httpRequestChannel 
       = LangUtil.findChannel(HttpServletRequest.class,parentFocus);
+    
+    if (authenticator!=null)
+    { authenticator.bind(authSessionFocus);
+    }
+    else
+    {
+      authenticator=LangUtil.findInstance(Authenticator.class,parentFocus);
+      if (authenticator==null)
+      { 
+        authenticator=new TestAuthenticator();
+        authenticator.bind(authSessionFocus);
+      }
+    }
     
     return authSessionFocus;
   }
