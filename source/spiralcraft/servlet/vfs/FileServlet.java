@@ -173,7 +173,22 @@ public class FileServlet
     String filePath=getServletConfig().getServletContext()
       .getRealPath(relativePath);
     
-    mappedResource=Resolver.getInstance().resolve(new File(filePath).toURI());
+    if (filePath!=null)
+    { mappedResource=Resolver.getInstance().resolve(new File(filePath).toURI());
+    }
+    else
+    { 
+      try
+      { mappedResource=contextAdapter.getResource(relativePath);
+      }
+      catch (ServletException x)
+      { 
+        if (debugLevel.isInfo())
+        { log.info("Non-fatal Exception resolving "+relativePath+": "+x);
+        }
+      }
+    }
+    
     if (mappedResource!=null && mappedResource.exists())
     { return mappedResource;
     }
@@ -228,7 +243,7 @@ public class FileServlet
 //      }
 //    }
 
-    return mappedResource;
+    return null;
     
     
     

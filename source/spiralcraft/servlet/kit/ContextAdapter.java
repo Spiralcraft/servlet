@@ -10,6 +10,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import spiralcraft.util.URIUtil;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
@@ -63,6 +64,25 @@ public class ContextAdapter
     if (path!=null)
     { return new FileResource(new File(path).getAbsoluteFile());
     }
+
+    
+    // Fallback case: Handle VFS based doc root
+    
+    try
+    {
+      URI rootURI=(URI) context.getAttribute("spiralcraft.context.root.uri");
+      if (rootURI!=null)
+      { 
+        // context.log("Resolving "+contextRelativePath+" in "+rootURI);
+        return Resolver.getInstance().resolve
+          (URIUtil.addPathSegment(rootURI,contextRelativePath.substring(1)));
+      }
+    }
+    catch (UnresolvableURIException x)
+    {
+      throwServletException
+        ("Error getting resource ["+contextRelativePath+"]",x);
+    }
     
     // Fallback case: Use getResource()
     //
@@ -78,7 +98,7 @@ public class ContextAdapter
     catch (MalformedURLException x)
     { 
       throwServletException
-        ("Error getting resource ["+contextRelativePath+"]:"+x,x);
+        ("Error getting resource ["+contextRelativePath+"]:",x);
     }
     
     if (url==null)
