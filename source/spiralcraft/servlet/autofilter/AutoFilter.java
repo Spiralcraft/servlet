@@ -145,6 +145,12 @@ public abstract class AutoFilter
   { return path;
   }
   
+  protected Path getRelativePath(HttpServletRequest request)
+  {
+    Path path=Path.create(contextAdapter.getRelativePath(request));
+    return getPath().relativize(path);
+  }
+    
   void setPath(Path path)
   { 
 //    System.err.println("AutoFilter.setPath(): "+path.format("/"));
