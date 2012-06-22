@@ -196,10 +196,11 @@ public class PathContextFilter
         context.setContentResource(getContainer().asContainer());
         context.setDefaultCodeBaseURI(codeSearchRoot);
         context.setParent(parentContext);
+        
         chain=(Focus<Object>) context.bind(parentFocus);
         
         AutoFilter[] filters=context.getFilters();
-        if (filters!=null)
+        if (filters!=null && filters.length>0)
         { 
           filterSet=new CompoundFilter(filters);
         
