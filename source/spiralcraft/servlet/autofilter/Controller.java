@@ -17,13 +17,15 @@ package spiralcraft.servlet.autofilter;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import spiralcraft.bundle.Bundle;
+import spiralcraft.bundle.BundleClassLoader;
+import spiralcraft.bundle.Library;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Focus;
@@ -50,10 +52,13 @@ import spiralcraft.util.ContextDictionary;
 import spiralcraft.util.Path;
 import spiralcraft.util.URIUtil;
 import spiralcraft.util.tree.PathTree;
+import spiralcraft.vfs.Container;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
+import spiralcraft.vfs.context.Authority;
 import spiralcraft.vfs.context.ContextResourceMap;
+import spiralcraft.vfs.context.Redirect;
 import spiralcraft.vfs.file.FileResource;
 import spiralcraft.vfs.ovl.OverlayResource;
 
@@ -115,9 +120,32 @@ public class Controller
   private URI codeURI=URI.create("webui/");
   private URI themeURI=URI.create("webui/theme/");
   
+  private HashMap<String,Path> bundleMountPointMap
+    =new HashMap<String,Path>();
+  {
+    bundleMountPointMap.put("war-js",Path.create("js"));
+    bundleMountPointMap.put("war-css",Path.create("css"));
+    bundleMountPointMap.put("war-public",Path.create(""));
+    bundleMountPointMap.put("war-public-images",Path.create("images"));
+  }
+  
+  private BundleClassLoader bundleClassLoader;
+  private ThreadLocal<ClassLoader> oldContextClassLoader
+    =new ThreadLocal<ClassLoader>();
+  
+  private Authority rootAuthority;
+  
   private Scheduler scheduler;
 
   private Focus<?> focus;  
+  
+  private AppContextFilter appContextFilter
+    =new AppContextFilter();
+  { 
+    appContextFilter.setGlobal(true);
+    appContextFilter.setPattern("*");
+  }
+  
 
   /**
    * <p>The root URI where modifiable persistent data is kept. This is
@@ -234,50 +262,158 @@ public class Controller
     { debug=true;
     }
     
+    
+    
     ServletContext context=config.getServletContext();
     
     String realPath=context.getRealPath("/");
     if (realPath!=null)
-    { publishRoot=new FileResource(new File(realPath));
+    { 
+      publishRoot=new FileResource(new File(realPath));
+      if (debug)
+      { log.fine("Root is "+publishRoot.getURI());
+      }
     }
-    if (debug)
-    { log.fine("Root is "+publishRoot.getURI());
+    else
+    { 
+      URI publishURI=(URI) context.getAttribute("spiralcraft.context.root.uri");
+      if (publishURI!=null)
+      { 
+        try
+        { publishRoot=Resolver.getInstance().resolve(publishURI);
+        }
+        catch (UnresolvableURIException x)
+        { throw new ServletException("Unable to resolve "+publishURI,x);
+        }
+      }
     }
-       
+    
 
-
+    if (publishRoot==null)
+    { 
+      throw new ServletException
+        ("Unable to determine publish root URI from ServletContext "
+        +" (Context is not filesystem based and "
+        +"'spiralcraft.context.root.uri' init parameter is not defined)"
+        );
+    }
+    
     resolveResourceVolumes(context);
     
     
     initContextResourceMap(context);
     initContextDictionary(context);
     
+    initLibrary();
+    
     if (config.getInitParameter("updateIntervalMs")!=null)
     { 
       updateIntervalMs
         =Integer.parseInt(config.getInitParameter("updateIntervalMs"));
     }
+
+    appContextFilter.setContainer(publishRoot.asContainer());
+    appContextFilter.init(config);
     
     push();
+    
     try
     {
+      Resource defaultCodeContext;
+      try
+      { 
+        defaultCodeContext
+          =Resolver.getInstance().resolve("context://code/");
+      }
+      catch (UnresolvableURIException x)
+      { 
+        throw new ServletException
+          ("Error resolving context://code/",x);
+      }
+    
       publishOverlay
         =new OverlayResource
           (publishRoot.getURI()
           ,publishRoot
-          ,Resolver.getInstance().resolve("context://code/")
+          ,defaultCodeContext
           );
+
       updateConfig();
-    }
-    catch (UnresolvableURIException x)
-    { 
-      throw new ServletException
-        ("Error resolving overlay for "+publishRoot.getURI(),x);
+      
     }
     finally
     { pop();
     }
     
+  }
+  
+  
+  private void initLibrary()
+    throws ServletException
+  {
+    try
+    {
+      Resource packagesResource
+        =Resolver.getInstance()
+          .resolve(publishRoot.getURI().resolve("WEB-INF/packages"));
+    
+      Container packagesContainer
+        =packagesResource.asContainer();
+    
+      if (packagesContainer!=null)
+      { Library.set(new Library(packagesContainer));
+      }
+      
+      // TODO: We need make loading system bundles a context parameter, and/or
+      //   express isolation as part of the package library configuration
+      Bundle[] bundles
+        =Library.get().getAllBundles();
+      
+      ArrayList<String> classBundles=new ArrayList<String>();
+      ArrayList<String> jarLibBundles=new ArrayList<String>();
+      
+      for (Bundle bundle: bundles)
+      { 
+        Path mountPoint=mountPointForBundle(bundle);
+        if (mountPoint!=null)
+        {
+          rootAuthority.mapPath
+            (mountPoint.toString()
+            ,new Redirect
+              (URI.create(mountPoint.toString()),bundle.getBundleURI())
+            );
+          log.fine("Mounted "+bundle.getBundleURI()+" to "+mountPoint);
+        }
+        
+        if (bundle.getBundleName().equals("war-classes"))
+        { classBundles.add(bundle.getAuthorityName());
+        }
+        else if (bundle.getBundleName().equals("war-lib"))
+        { jarLibBundles.add(bundle.getAuthorityName());
+        }
+      }
+      
+      bundleClassLoader
+        =new BundleClassLoader
+          (classBundles.toArray(new String[classBundles.size()])
+          ,jarLibBundles.toArray(new String[jarLibBundles.size()])
+          );
+     
+    }
+    catch (IOException x)
+    { throw new ServletException(x);
+    } 
+  }
+  
+  private Path mountPointForBundle(Bundle bundle)
+  {
+    Path root=bundleMountPointMap.get(bundle.getBundleName());
+    if (root==null)
+    { return null;
+    }
+    else
+    { return root.append(bundle.getPackage().getName()).asContainer();
+    }
   }
   
   /**
@@ -381,36 +517,14 @@ public class Controller
   private void initContextResourceMap(ServletContext context)
     throws ServletException
   {
-    URI contextURI=null;
-    try
-    { 
-      contextURI = context.getResource("/").toURI();
-      if (debug)
-      { log.fine("Context is "+contextURI);
-      }
-    }
-    catch (URISyntaxException x)
-    { 
-      try
-      {
-        throw new ServletException
-          ("Error reading context URL '"
-          +context.getResource("/").toString()
-          ,x);
-      }
-      catch (MalformedURLException y)
-      { y.printStackTrace();
-      }
-    }
-    catch (MalformedURLException x)
-    { x.printStackTrace();
-    }
+    URI contextURI=publishRoot.getURI();
+    rootAuthority=new Authority("",contextURI);
 //    System.err.println
 //      ("Controller.init(): path="+realPath+" contextURI="+contextURI);
     
     // Bind the "context://www","context://data" resources to this thread.
     contextResourceMap.put("war",contextURI);
-    contextResourceMap.putDefault(contextURI);
+    contextResourceMap.put(rootAuthority);
     contextResourceMap.put("data",contextURI.resolve(dataURI));
     contextResourceMap.put("config",contextURI.resolve(configURI));
     contextResourceMap.put("files",contextURI.resolve(filesURI));
@@ -436,17 +550,11 @@ public class Controller
     }
     catch (Exception x)
     { 
-      try
-      {
-        throw new ServletException
-          ("Error binding Controller in "
-          +context.getResource("/").toString()
-          ,x
-          );
-      }
-      catch (MalformedURLException y)
-      { y.printStackTrace();
-      }
+      throw new ServletException
+        ("Error binding Controller in "
+        +contextURI.toString()
+        ,x
+        );
     }
     
     
@@ -530,10 +638,20 @@ public class Controller
     { scheduler=new Scheduler();
     }
     Scheduler.push(scheduler);
+    if (bundleClassLoader!=null)
+    {
+      oldContextClassLoader.set(Thread.currentThread().getContextClassLoader());
+      Thread.currentThread().setContextClassLoader(bundleClassLoader);
+    }
   }
   
   protected void pop()
   {
+    if (bundleClassLoader!=null)
+    { 
+      Thread.currentThread().setContextClassLoader(oldContextClassLoader.get());
+      oldContextClassLoader.remove();
+    }
     Scheduler.pop();
     contextResourceMap.pop();
     ContextDictionary.popInstance();
@@ -735,35 +853,21 @@ public class Controller
       return endpoint;
     }
 
-    LinkedFilterChain first=null;
-    LinkedFilterChain last=null;
+    LinkedFilterChain first=new LinkedFilterChain(appContextFilter);
+    LinkedFilterChain last=first;
     
     for (AutoFilter autoFilter: filterSet.getEffectiveFilters())
     {
       if (autoFilter.appliesToPath(path))
       {
-        if (first==null)
-        { 
-          first=new LinkedFilterChain(autoFilter);
-          last=first;
-        }
-        else
-        { 
-          LinkedFilterChain next=last;
-          last=new LinkedFilterChain(autoFilter);
-          next.setNext(last);
-        }
+        LinkedFilterChain next=last;
+        last=new LinkedFilterChain(autoFilter);
+        next.setNext(last);
       }
     }
     
-    if (last!=null)
-    { 
-      last.setNext(endpoint);
-      return first;
-    }
-    else
-    { return endpoint;
-    }
+    last.setNext(endpoint);
+    return first;
     
   }
   
