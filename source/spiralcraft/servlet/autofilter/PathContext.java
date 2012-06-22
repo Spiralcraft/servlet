@@ -23,7 +23,6 @@ import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.kit.AbstractChainableContext;
-import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.util.LangUtil;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.Path;
@@ -323,7 +322,7 @@ public class PathContext
     if (baseContext!=null)
     { chain=baseContext.bind(chain);
     }
-    chain=chain.chain(new SimpleChannel<PathContext>(this,true));
+    chain=chain.chain(LangUtil.constantChannel(this));
     
     if (placeContext!=null)
     { chain(placeContext);
