@@ -34,6 +34,7 @@ import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Permission;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.text.html.URLDataEncoder;
+import spiralcraft.util.Path;
 
 /**
  * Protects access to a resource, allowing access when a specified
@@ -55,6 +56,7 @@ public class GuardFilter
   private Channel<AuthSession> authSessionX;
   private URI loginURI;
   private boolean authenticate;
+  private Path[] bypassPaths;
   
   private int responseCode=501;
   
@@ -63,6 +65,9 @@ public class GuardFilter
     setPattern("*");
   }
 
+  public void setBypassPaths(Path[] bypassPaths)
+  { this.bypassPaths=bypassPaths;
+  }
   
   public void setResponseCode(int responseCode)
   { this.responseCode=responseCode;
@@ -158,51 +163,69 @@ public class GuardFilter
       }
     }
     
-    Boolean val=guardX!=null?guardX.get():null;
+    if (pathBypassed(httpRequest))
+    {
+      chain.doFilter(request,response);
+    }
+    else
+    {
+      doGuard(httpRequest,response,chain);
+    }
+  }
+  
+  private void doGuard
+    (HttpServletRequest httpRequest
+    ,ServletResponse response
+    ,FilterChain chain
+    )
+    throws IOException,ServletException
+  {
+    
+    Boolean passedTest=guardX!=null?guardX.get():null;
     boolean failedAuthentication=false;
     
-    if (val==null || Boolean.TRUE.equals(val) && authenticate)
+    if (passedTest==null || Boolean.TRUE.equals(passedTest) && authenticate)
     { 
       
       if (authSessionX==null)
-      { val=false;
+      { passedTest=false;
       }
       else
       {
         AuthSession session=authSessionX.get();
         if (session==null)
-        { val=false;
+        { passedTest=false;
         }
         else
         { 
           if (session.isAuthenticated())
-          { val=true;
+          { passedTest=true;
           }
           else
           { 
-            val=false;
+            passedTest=false;
             failedAuthentication=true;
           }
         }
       }
     }
     
-    if (val==null || Boolean.TRUE.equals(val) && (permissionsX!=null))
+    if (passedTest==null || Boolean.TRUE.equals(passedTest) && (permissionsX!=null))
     {
       if (authSessionX==null)
-      { val=false;
+      { passedTest=false;
       }
       else
       {
         AuthSession session=authSessionX.get();
         if (session==null)
-        { val=false;
+        { passedTest=false;
         }
         else
         { 
           Permission[] permissions=permissionsX.get();
           if (permissions!=null)
-          { val=session.hasPermissions(permissions);
+          { passedTest=session.hasPermissions(permissions);
           }
         }
             
@@ -210,7 +233,7 @@ public class GuardFilter
     }
         
     
-    if (!Boolean.TRUE.equals(val))
+    if (!Boolean.TRUE.equals(passedTest))
     {
       if (debug)
       { log.debug("GuardFilter rejected request");
@@ -221,7 +244,7 @@ public class GuardFilter
 
       if (failedAuthentication && loginURI!=null)
       {
-        String referer=((HttpServletRequest) request).getRequestURL().toString();
+        String referer=httpRequest.getRequestURL().toString();
         URI redirectURI
           =URI.create
             (loginURI.getPath()+"?referer="+URLDataEncoder.encode(referer));
@@ -263,7 +286,7 @@ public class GuardFilter
       if (debug)
       { log.debug("GuardFilter passed request");
       }
-      chain.doFilter(request,response);
+      chain.doFilter(httpRequest,response);
     }
   }
 
@@ -271,4 +294,19 @@ public class GuardFilter
   { return "guard";
   }
 
+  private boolean pathBypassed(HttpServletRequest request)
+  { 
+    if (bypassPaths!=null)
+    {
+      Path relativePath=getRelativePath(request);
+      for (Path path:bypassPaths)
+      { 
+        if (relativePath.startsWith(path))
+        { return true;
+        }
+      }
+    }
+    return false;
+    
+  }
 }
