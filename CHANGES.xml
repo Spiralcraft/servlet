@@ -14,7 +14,125 @@
     </date>
 
     <detail>
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>Incorporate bundle library and bundle mount points into
+            Controller filter. 
+          </scm:Note>
+          <scm:Note>Add AppContext to incorporate a top-level filter set into
+            the Controller.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>AppContext.java
+          </URI>
+          <URI>AppContextFilter.java
+          </URI>
+          <URI>Controller.java
+          </URI>
+        </resources>
+      </scm:Change>
     
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>Add AutoFilter.getRelativePath(HttpServletRequest) to
+            simplify "pathInfo" based logic.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/AutoFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>Minor refactoring / defensive code
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>PathContext.java
+          </URI>
+          <URI>PathContextFilter.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>Decoupled the Authenticator configuration from the
+            SecurityFilter. The Authenticator can now be defined in the
+            FocusChain that is visible to the SecurityFilter if it is not
+            defined locally.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>GuardFilter.bypassPaths property will allow specified
+            paths (e.g. a login page) by bypassing the security check
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/GuardFilter.java
+        </path>
+      </scm:Change>
+      
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issues related to serving content out of 
+            non file-based VFS containers where ServletContext.getRealPath()
+            returns null
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>kit/ContextAdapter.java
+          </URI>
+          <URI>vfs/FileServlet.java
+          </URI>
+        </resources>
+      </scm:Change>
+
       <scm:Change>
      
         <revision>-dev9
