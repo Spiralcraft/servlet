@@ -639,6 +639,9 @@ public class SecurityFilter
   @Override
   protected void popSubject(HttpServletRequest request)
   {
+    if (contextLocal.get().logoutQueued)
+    { doLogout();
+    }
     contextLocal.remove();
     authSessionChannel.pop();
     
@@ -661,8 +664,12 @@ public class SecurityFilter
       };
   }
     
-  private void logout()
-  { 
+  public void logout()
+  { contextLocal.get().logoutQueued=true;
+  }  
+  
+  private void doLogout()
+  {
     if (debug)
     { 
       log.fine
@@ -688,7 +695,8 @@ public class SecurityFilter
       { session.invalidate();
       }
     }
-  }  
+    
+  }
 
 }
 
@@ -699,6 +707,7 @@ class SecurityFilterContext
   private final String cookieName;
   
   public boolean logoutPending;
+  boolean logoutQueued;
   private Cookie loginCookie;
   private volatile boolean checkedCookies;
   
