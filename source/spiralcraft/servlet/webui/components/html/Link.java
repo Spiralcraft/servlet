@@ -28,6 +28,7 @@ import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.components.LinkAcceptor;
+import spiralcraft.task.Eval;
 
 import spiralcraft.util.Sequence;
 
@@ -57,6 +58,8 @@ public class Link
   private LinkAcceptor<?> linkAcceptor;
   private String fragment;
   private Binding<String> fragmentX;
+  private Expression<Void> onAction;
+  
   
   
   { 
@@ -64,6 +67,15 @@ public class Link
     addHandler(tag);
   }
   
+  /**
+   * An Expression to be evaluated when the link is clicked
+   * 
+   * @param onAction
+   */
+  public void setOnAction(Expression<Void> onAction)
+  { this.onAction=onAction;
+  }
+
   /**
    * An Expression which evaluates to the command that will be invoked when
    *   the link is clicked.
@@ -73,6 +85,8 @@ public class Link
   public void setX(Expression<Command<?,?,?>> expression)
   { commandExpression=expression;
   }
+  
+  
   
   /**
    * <p>An Expression which evaluates to the fragment portion of the URL that
@@ -151,7 +165,15 @@ public class Link
   public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
-    if (commandExpression!=null)
+    if (onAction!=null)
+    { 
+      Eval<Void,Void> eval=new Eval<Void,Void>(onAction);
+      eval.bind(focus);
+      commandChannel=LangUtil.constantChannel(eval)
+        .resolve(focus,"command",new Expression[0]);
+      
+    }
+    else if (commandExpression!=null)
     { commandChannel=focus.bind(commandExpression);
     }
 
