@@ -1,6 +1,0 @@
-<vfs:Package
-  xmlns:vfs="class:/spiralcraft/vfs/"
-  >
-  <base>class:/spiralcraft/servlet/webui/components
-  </base>
-</vfs:Package>
