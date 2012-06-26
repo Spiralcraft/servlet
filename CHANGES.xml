@@ -20,6 +20,70 @@
         </revision>
       
         <notes>
+          <scm:Note>SecurityFilter now queues a logout request until the
+            filter has completed executing.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>Use LangUtil.constantChannel
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/AbstractActionControl.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>The link component can now evaluate an expression
+            when it is actioned instead of requiring a command object.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Link.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>Changed package extension hierarchy so that content-type
+            specific components (e.g. webui/components/html) are in a different
+            namespace than generic components (e.g. webui/components)
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/package.xml
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
           <scm:Note>Incorporate bundle library and bundle mount points into
             Controller filter. 
           </scm:Note>
