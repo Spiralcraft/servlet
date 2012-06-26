@@ -24,8 +24,8 @@ import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.lang.util.LangUtil;
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.task.Eval;
 import spiralcraft.app.Dispatcher;
@@ -100,7 +100,7 @@ public abstract class AbstractActionControl<Tcontext,Tresult>
     { 
       Eval<Tcontext,Tresult> eval=new Eval<Tcontext,Tresult>(onAction);
       eval.bind(focus);
-      return new SimpleChannel<Eval<Tcontext,Tresult>>(eval,true)
+      return LangUtil.constantChannel(eval)
         .resolve(focus,"command",new Expression[0]);
       
     }
