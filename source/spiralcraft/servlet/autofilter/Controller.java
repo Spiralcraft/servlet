@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import spiralcraft.bundle.Bundle;
 import spiralcraft.bundle.BundleClassLoader;
 import spiralcraft.bundle.Library;
+import spiralcraft.common.LifecycleException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Focus;
@@ -134,6 +135,7 @@ public class Controller
     =new ThreadLocal<ClassLoader>();
   
   private Authority rootAuthority;
+  private Authority codeAuthority;
   
   private Scheduler scheduler;
 
@@ -391,6 +393,22 @@ public class Controller
         else if (bundle.getBundleName().equals("war-lib"))
         { jarLibBundles.add(bundle.getAuthorityName());
         }
+        else if (bundle.getBundleName().equals("war-webui"))
+        { 
+          String packageName=bundle.getPackage().getName();
+          codeAuthority.mapPath
+            (packageName
+            ,new Redirect
+              (URI.create(packageName)
+              ,bundle.getBundleURI()
+              )
+            );
+          log.fine("Mounted "
+                  +bundle.getBundleURI()
+                  +" to context://code/"
+                  +packageName
+                  );
+        }
       }
       
       bundleClassLoader
@@ -398,11 +416,15 @@ public class Controller
           (classBundles.toArray(new String[classBundles.size()])
           ,jarLibBundles.toArray(new String[jarLibBundles.size()])
           );
-     
+      bundleClassLoader.start();
+      // bundleClassLoader.setLogLevel(Level.FINE);
     }
     catch (IOException x)
     { throw new ServletException(x);
     } 
+    catch (LifecycleException x)
+    { throw new ServletException(x);
+    }
   }
   
   private Path mountPointForBundle(Bundle bundle)
@@ -528,7 +550,9 @@ public class Controller
     contextResourceMap.put("data",contextURI.resolve(dataURI));
     contextResourceMap.put("config",contextURI.resolve(configURI));
     contextResourceMap.put("files",contextURI.resolve(filesURI));
-    contextResourceMap.put("code",contextURI.resolve(codeURI));
+    
+    codeAuthority=new Authority("code",contextURI.resolve(codeURI));
+    contextResourceMap.put(codeAuthority);
     contextResourceMap.put("theme",contextURI.resolve(themeURI));
     
     if (debug)
@@ -662,7 +686,18 @@ public class Controller
    */
   @Override
   public void destroy()
-  { deleteRecursive(pathTree);
+  { 
+    
+    if (bundleClassLoader!=null)
+    { 
+      try
+      { bundleClassLoader.stop();
+      }
+      catch (LifecycleException x)
+      { log.log(Level.WARNING,"Error stopping Bundle ClassLoader",x);
+      }
+    }
+    deleteRecursive(pathTree);
   }
   
   private synchronized void updateConfig()
