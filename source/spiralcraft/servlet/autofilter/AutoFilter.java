@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import spiralcraft.common.declare.Declarable;
+import spiralcraft.common.declare.DeclarationInfo;
 import spiralcraft.servlet.kit.AbstractFilter;
 import spiralcraft.util.Path;
 import spiralcraft.vfs.Resource;
@@ -59,6 +61,7 @@ import spiralcraft.vfs.Resource;
  */
 public abstract class AutoFilter
   extends AbstractFilter
+  implements Declarable
 {
   private static int ID=0;
   private boolean additive=true;
@@ -73,7 +76,7 @@ public abstract class AutoFilter
   protected AutoFilter parent;
   protected AutoFilter generalInstance;
   protected Resource container;
-  
+  protected DeclarationInfo declarationInfo;
 
   
   /**
@@ -380,6 +383,17 @@ public abstract class AutoFilter
     }
     return null;
   }
+  
+  @Override
+  public void setDeclarationInfo(
+    DeclarationInfo declarationInfo)
+  { this.declarationInfo=declarationInfo;
+  }
+
+  @Override
+  public DeclarationInfo getDeclarationInfo()
+  { return declarationInfo;
+  }  
 }
   
 
