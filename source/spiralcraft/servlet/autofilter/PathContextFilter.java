@@ -101,18 +101,20 @@ public class PathContextFilter
   private AutoFilter filterSet;
   
 
-  
-  @SuppressWarnings("unchecked")
   @Override
-  protected Focus<Object> createFocus(
-    Focus<?> parentFocus)
+  protected void preInitialize(Focus<?> chain)
+    throws ContextualException
+  { 
+    ensurePathContext(chain);
+    this.preFilters=context.getPreFilters();
+  }
+  
+  protected void ensurePathContext(Focus<?> chain)
     throws ContextualException
   {
-    if (debug)
-    { log.fine("Binding PathContextFilter for "+getPath());
+    if (context!=null)
+    { return;
     }
-
-    Focus<Object> chain=(Focus<Object>) parentFocus;
     PathContext parentContext
        =LangUtil.findInstance(PathContext.class,chain);
     try
@@ -189,38 +191,6 @@ public class PathContextFilter
             (codeSearchRoot.resolve("PathContext"))
               .get();
       }
-
-      if (context!=null)
-      { 
-        context.setAbsolutePath(getPath());
-        context.setContentResource(getContainer().asContainer());
-        context.setDefaultCodeBaseURI(codeSearchRoot);
-        context.setParent(parentContext);
-        
-        chain=(Focus<Object>) context.bind(parentFocus);
-        
-        AutoFilter[] filters=context.getFilters();
-        if (filters!=null && filters.length>0)
-        { 
-          filterSet=new CompoundFilter(filters);
-        
-          try
-          { 
-            filterSet.setPath(getPath());
-            filterSet.setPattern(getPattern());
-            filterSet.setGlobal(isGlobal());
-            filterSet.setContainer(getContainer());
-            filterSet.init(config);
-          }
-          catch (ServletException x)
-          {
-            throw new ContextualException
-              ("Error initializing filter set for "+resourceURI,x);
-          }        
-        }
-        
-
-      }
     }
     catch (UnresolvableURIException x)
     { 
@@ -232,6 +202,56 @@ public class PathContextFilter
       throw new ContextualException
         ("Error accessing "+resourceURI,x);
     }
+    finally
+    {
+    }
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  protected Focus<Object> createFocus(
+    Focus<?> parentFocus)
+    throws ContextualException
+  {
+    if (debug)
+    { log.fine("Binding PathContextFilter for "+getPath());
+    }
+
+    Focus<Object> chain=(Focus<Object>) parentFocus;
+    PathContext parentContext
+       =LangUtil.findInstance(PathContext.class,chain);
+    if (context!=null)
+    { 
+      context.setAbsolutePath(getPath());
+      context.setContentResource(getContainer().asContainer());
+      context.setDefaultCodeBaseURI(codeSearchRoot);
+      context.setParent(parentContext);
+        
+      chain=(Focus<Object>) context.bind(parentFocus);
+        
+      AutoFilter[] filters=context.getFilters();
+      if (filters!=null && filters.length>0)
+      { 
+        filterSet=new CompoundFilter(filters);
+        
+        try
+        { 
+          filterSet.setPath(getPath());
+          filterSet.setPattern(getPattern());
+          filterSet.setGlobal(isGlobal());
+          filterSet.setContainer(getContainer());
+          filterSet.init(config);
+        }
+        catch (ServletException x)
+        {
+          throw new ContextualException
+            ("Error initializing filter set for "+resourceURI,x);
+        }        
+      }
+        
+
+    }
+
     
       
     if (context!=null)

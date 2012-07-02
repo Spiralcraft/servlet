@@ -30,9 +30,12 @@ import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.util.ExpressionRenderer;
 import spiralcraft.servlet.autofilter.AutoFilter;
 import spiralcraft.servlet.kit.HttpFocus;
+import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.text.Renderer;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -111,7 +114,10 @@ public abstract class FocusFilter<T>
   private URI alias;
   private Renderer renderer;
   private Expression<?> outputX;
+  private volatile boolean preInitialized;
   private volatile boolean initialized;
+  private final LocalFilter localFilter=new LocalFilter();
+  protected Filter[] preFilters;
   
   
   // Default to global, to implement Focus hierarchy
@@ -280,9 +286,62 @@ public abstract class FocusFilter<T>
   }
   
   @Override
-  public void doFilter(ServletRequest request, ServletResponse response,
-      FilterChain chain) throws IOException, ServletException
+  public final void doFilter
+    (ServletRequest request
+    , ServletResponse response
+    ,FilterChain chain
+    ) 
+    throws IOException, ServletException
+  { 
+    FilterChain localChain
+      =new LinkedFilterChain(localFilter,chain);
+    
+    FilterChain preChain;
+    
+    if (!preInitialized)
+    { 
+      synchronized (this)
+      {
+        if (!preInitialized)
+        { 
+          Focus<?> requestFocus=(Focus<?>) request.getAttribute(attributeName);
+          try
+          { preInitialize(requestFocus);
+          }
+          catch (ContextualException x)
+          { throw new ServletException(x);
+          }
+          preInitialized=true;
+        }
+      }
+    }
+    
+    
+    if (preFilters!=null && preFilters.length>0)
+    { preChain=new LinkedFilterChain(preFilters,localChain);
+    }
+    else
+    { preChain=localChain;
+    }
+    preChain.doFilter(request,response);
+  }
+  
+
+  protected void preInitialize
+    (Focus<?> requestFocus)
+    throws ContextualException
+  { 
+    
+    
+  }
+  
+  private final void doLocalFilter
+    (ServletRequest request
+    , ServletResponse response
+    ,FilterChain chain
+    ) throws IOException, ServletException
   {
+    
     boolean httpPushed=false;
     // XXX Implement a pattern include and exclude list
     
@@ -483,4 +542,28 @@ public abstract class FocusFilter<T>
     }
   }
   
+  private class LocalFilter
+    implements Filter
+  {
+    @Override
+    public final void doFilter
+      (ServletRequest request
+      , ServletResponse response
+      ,FilterChain chain
+      ) 
+      throws IOException, ServletException
+    { doLocalFilter(request,response,chain);
+    }
+
+    @Override
+    public void destroy()
+    { }
+
+    @Override
+    public void init(
+      FilterConfig arg0)
+      throws ServletException
+    { }
+    
+  }
 }

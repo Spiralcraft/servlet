@@ -55,6 +55,7 @@ public class PathContext
   private URI defaultCodeBaseURI;
   private PathContext baseContext;
   private PlaceContext placeContext;
+  private AutoFilter[] preFilters;
   private AutoFilter[] filters;
   private Binding<URI> codeX;
   private Channel<HttpServletRequest> requestChannel;
@@ -110,13 +111,28 @@ public class PathContext
   }
 
   /**
-   * The filter chain to be used for all requests prior to calling the
+   * The filter chain to be used for all requests. The filters are chained
+   *   within the scope of the PathContext, prior to invoking the
    *   external filter chain.
    * 
    * @param placeContext
    */
   public void setFilters(AutoFilter[] filters)
   { this.filters=filters;
+  }
+  
+  /**
+   * The filter chain to be used for all requests to provide context for the
+   *   PathContext, chained prior to the PathContext itself.
+   * 
+   * @param placeContext
+   */
+  public void setPreFilters(AutoFilter[] filters)
+  { this.preFilters=filters;
+  }
+  
+  public AutoFilter[] getPreFilters()
+  { return preFilters;
   }
 
   public void setCodeX(Binding<URI> codeX)
