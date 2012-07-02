@@ -20,6 +20,49 @@
         </revision>
       
         <notes>
+          <scm:Note>PathContext now provides a way to set up preFilters,
+            which are chained before the PathContext and can provide it
+            with external context.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>PathContext.java
+          </URI>
+          <URI>PathContextFilter.java
+          </URI>
+          <URI>spi/FocusFilter.java
+          </URI>
+        
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
+          <scm:Note>The AutoFilter abstract class is now Declarable, allowing
+            builder subtypes to be addressed by type name.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/AutoFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
           <scm:Note>SecurityFilter now queues a logout request until the
             filter has completed executing.
           </scm:Note>
@@ -89,6 +132,8 @@
           </scm:Note>
           <scm:Note>Add AppContext to incorporate a top-level filter set into
             the Controller.
+          </scm:Note>
+          <scm:Note>Bundles are mapped into the context://code authority
           </scm:Note>
         </notes>
         
