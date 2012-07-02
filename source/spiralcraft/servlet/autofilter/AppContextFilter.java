@@ -91,7 +91,7 @@ public class AppContextFilter
           codeSearchRoot
             =URIUtil.ensureTrailingSlash(URI.create(defaultContainer));
           resourceURI
-            =codeSearchRoot.resolve("PathContext.assy.xml");
+            =codeSearchRoot.resolve("AppContext.assy.xml");
           resource
             =Resolver.getInstance().resolve(resourceURI);
           if (resource.exists())
