@@ -1,6 +1,8 @@
 <vfs:Package
   xmlns:vfs="class:/spiralcraft/vfs/"
   >
-  <base>class:/spiralcraft/textgen/elements
+  <base>class:/spiralcraft/textgen/elements/
   </base>
+  <logLevel>INFO
+  </logLevel>
 </vfs:Package>
