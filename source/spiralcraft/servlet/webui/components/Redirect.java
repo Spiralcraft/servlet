@@ -30,7 +30,7 @@ import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.functions.FromString;
+import spiralcraft.lang.util.LangUtil;
 import spiralcraft.log.Level;
 
 import spiralcraft.servlet.webui.Control;
@@ -140,15 +140,12 @@ public class Redirect
     }
     if (locationX!=null)
     { 
-      locationChannel=focus.bind(locationX);
-      if ( ((Class<?>) locationChannel.getContentType())==String.class)
-      { 
-        locationChannel
-          =new FromString<URI>(URI.class)
-            .bindChannel(  (Channel) locationChannel,focus,null );
-      }
-      locationChannel.assertContentType(URI.class);
-    
+      locationChannel
+        =LangUtil.ensureType
+          (focus.bind(locationX)
+          ,URI.class
+          ,focus
+          );    
     }
     return super.bindStandard(focus);
   }  
