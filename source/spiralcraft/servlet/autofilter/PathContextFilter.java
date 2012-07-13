@@ -183,6 +183,9 @@ public class PathContextFilter
             { context=new PathContext();
             }
           }
+          else
+          { context=new PathContext();
+          }
         }
       }
       else
