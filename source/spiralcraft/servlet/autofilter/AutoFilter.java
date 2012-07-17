@@ -154,14 +154,14 @@ public abstract class AutoFilter
     return getPath().relativize(path);
   }
     
-  void setPath(Path path)
+  public void setPath(Path path)
   { 
 //    System.err.println("AutoFilter.setPath(): "+path.format("/"));
     
     this.path=path;
   }
   
-  void setContainer(Resource container)
+  public void setContainer(Resource container)
   { this.container=container;
   }
   

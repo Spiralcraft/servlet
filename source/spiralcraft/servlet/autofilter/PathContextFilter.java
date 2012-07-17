@@ -30,6 +30,7 @@ import spiralcraft.data.persist.XmlBean;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.LangUtil;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
+import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.util.URIUtil;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
@@ -100,7 +101,14 @@ public class PathContextFilter
   private URI resourceURI;
   private AutoFilter filterSet;
   
+  PathContextFilter()
+  { debug=true;
+  }
 
+  void setCodeSearchRoot(URI codeSearchRoot)
+  { this.codeSearchRoot=URIUtil.ensureTrailingSlash(codeSearchRoot);
+  }
+  
   @Override
   protected void preInitialize(Focus<?> chain)
     throws ContextualException
@@ -122,10 +130,13 @@ public class PathContextFilter
       // Find the PathContext object.
       // 
       // 
-      codeSearchRoot=
-        URIUtil.ensureTrailingSlash
-          (URI.create("context://code"+getPath().format('/'))
-          );
+      if (codeSearchRoot==null)
+      {
+        codeSearchRoot=
+          URIUtil.ensureTrailingSlash
+            (URI.create("context://code"+getPath().format('/'))
+            );
+      }
       resourceURI=codeSearchRoot.resolve("PathContext.assy.xml");
       Resource resource
         =Resolver.getInstance().resolve(resourceURI);
@@ -164,27 +175,44 @@ public class PathContextFilter
                 +getPath()+" is "+parentContext.getAbsolutePath()
               );
           }
-          codeSearchRoot
-            =parentContext.mapRelativePath
-              (parentContext.getAbsolutePath().relativize(getPath())
-                .format('/'));
-          if (codeSearchRoot!=null)
+          
+          URI altCodeSearchRoot
+            =URIUtil.ensureTrailingSlash
+              (parentContext.mapRelativePath
+                  (parentContext.getAbsolutePath().relativize(getPath())
+                  .format('/')
+                  )
+              );
+          if (altCodeSearchRoot!=null)
           {
             resourceURI
-              =codeSearchRoot.resolve("PathContext.assy.xml");
+              =altCodeSearchRoot.resolve("PathContext.assy.xml");
             resource
               =Resolver.getInstance().resolve(resourceURI);
             if (resource.exists())
             { 
+              log.fine
+                ("Loading PathContext for "+getPath()
+                +" from "+resource.getURI()
+                );
               context=XmlBean.<PathContext>instantiate
-               (codeSearchRoot.resolve("PathContext")).get();
-            }
-            else
-            { context=new PathContext();
+               (altCodeSearchRoot.resolve("PathContext")).get();
+              codeSearchRoot=altCodeSearchRoot;
             }
           }
-          else
-          { context=new PathContext();
+          
+          if (context==null)
+          { 
+            if (debug)
+            { 
+              log.fine
+                ("Creating default PathContext for "+getPath()+" with code at "
+                +codeSearchRoot
+                );
+            }
+            context=new PathContext();
+            context.setCodeBaseURI(codeSearchRoot);
+           
           }
         }
       }
@@ -312,6 +340,16 @@ public class PathContextFilter
     ,HttpServletResponse response
     ) throws IOException, ServletException
   {
+    
+    if (context!=null)
+    {
+      // Insert dynamic filters into chain
+      AutoFilter requestPathFilter=context.getRequestPathFilter(request,config);
+      if (requestPathFilter!=null)
+      { chain=new LinkedFilterChain(requestPathFilter,chain);
+      }
+    }
+    
     if (filterSet!=null)
     { filterSet.doFilter(request,response,chain);
     }

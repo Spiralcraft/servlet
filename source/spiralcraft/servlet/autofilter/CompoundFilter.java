@@ -54,7 +54,7 @@ public class CompoundFilter
   }
   
   @Override
-  void setPath(Path path)
+  public void setPath(Path path)
   {
     super.setPath(path);
     for (AutoFilter filter:filters)
@@ -77,7 +77,7 @@ public class CompoundFilter
   }
   
   @Override
-  void setContainer(Resource container)
+  public void setContainer(Resource container)
   { 
     super.setContainer(container);
     for (AutoFilter filter:filters)
