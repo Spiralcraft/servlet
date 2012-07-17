@@ -366,58 +366,62 @@ public class Controller
       { Library.set(new Library(packagesContainer));
       }
       
-      // TODO: We need make loading system bundles a context parameter, and/or
-      //   express isolation as part of the package library configuration
-      Bundle[] bundles
-        =Library.get().getAllBundles();
+      Library library=Library.get();
+      if (library!=null)
+      {
+        // TODO: We need make loading system bundles a context parameter, and/or
+        //   express isolation as part of the package library configuration
+        Bundle[] bundles
+          =library.getAllBundles();
       
-      ArrayList<String> classBundles=new ArrayList<String>();
-      ArrayList<String> jarLibBundles=new ArrayList<String>();
+        ArrayList<String> classBundles=new ArrayList<String>();
+        ArrayList<String> jarLibBundles=new ArrayList<String>();
       
-      for (Bundle bundle: bundles)
-      { 
-        Path mountPoint=mountPointForBundle(bundle);
-        if (mountPoint!=null)
-        {
-          rootAuthority.mapPath
-            (mountPoint.toString()
-            ,new Redirect
-              (URI.create(mountPoint.toString()),bundle.getBundleURI())
-            );
-          log.fine("Mounted "+bundle.getBundleURI()+" to "+mountPoint);
+        for (Bundle bundle: bundles)
+        { 
+          Path mountPoint=mountPointForBundle(bundle);
+          if (mountPoint!=null)
+          {
+            rootAuthority.mapPath
+              (mountPoint.toString()
+              ,new Redirect
+                (URI.create(mountPoint.toString()),bundle.getBundleURI())
+              );
+            log.fine("Mounted "+bundle.getBundleURI()+" to "+mountPoint);
+          }
+        
+          if (bundle.getBundleName().equals("war-classes"))
+          { classBundles.add(bundle.getAuthorityName());
+          }
+          else if (bundle.getBundleName().equals("war-lib"))
+          { jarLibBundles.add(bundle.getAuthorityName());
+          }
+          else if (bundle.getBundleName().equals("war-webui"))
+          { 
+            String packageName=bundle.getPackage().getName();
+            codeAuthority.mapPath
+              (packageName
+              ,new Redirect
+                (URI.create(packageName)
+                ,bundle.getBundleURI()
+                )
+              );
+            log.fine("Mounted "
+                    +bundle.getBundleURI()
+                    +" to context://code/"
+                    +packageName
+                    );
+          }
         }
         
-        if (bundle.getBundleName().equals("war-classes"))
-        { classBundles.add(bundle.getAuthorityName());
-        }
-        else if (bundle.getBundleName().equals("war-lib"))
-        { jarLibBundles.add(bundle.getAuthorityName());
-        }
-        else if (bundle.getBundleName().equals("war-webui"))
-        { 
-          String packageName=bundle.getPackage().getName();
-          codeAuthority.mapPath
-            (packageName
-            ,new Redirect
-              (URI.create(packageName)
-              ,bundle.getBundleURI()
-              )
+        bundleClassLoader
+          =new BundleClassLoader
+            (classBundles.toArray(new String[classBundles.size()])
+            ,jarLibBundles.toArray(new String[jarLibBundles.size()])
             );
-          log.fine("Mounted "
-                  +bundle.getBundleURI()
-                  +" to context://code/"
-                  +packageName
-                  );
-        }
-      }
-      
-      bundleClassLoader
-        =new BundleClassLoader
-          (classBundles.toArray(new String[classBundles.size()])
-          ,jarLibBundles.toArray(new String[jarLibBundles.size()])
-          );
-      bundleClassLoader.start();
+        bundleClassLoader.start();
       // bundleClassLoader.setLogLevel(Level.FINE);
+      }
     }
     catch (IOException x)
     { throw new ServletException(x);
