@@ -255,13 +255,21 @@ public class UIService
     if (resource==null && pathContextFocus!=null)
     { 
       // Look in the PathContext object
-      //   XXX: Now that we have packages, we might not need this anymore
       PathContext pathContext=pathContextFocus.getSubject().get();
       if (pathContext!=null)
       {
         String pathContextRelativePath
           =pathContext.relativize(relativeResourcePath);
         resource=pathContext.resolveCode(pathContextRelativePath);
+        if (logLevel.isDebug())
+        { 
+          log.fine
+            ("PathContext in "+pathContext.getAbsolutePath()
+            +" with code at "+pathContext.getEffectiveCodeBaseURI()
+            +" .resolveCode("+pathContextRelativePath+") returned "
+            +resource
+            );
+        }
         if (resource==null || !resource.exists())
         { resource=null;
         }
