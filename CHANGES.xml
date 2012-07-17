@@ -20,6 +20,36 @@
         </revision>
       
         <notes>
+          <scm:Note>PathContext generic internals promoted to core 
+            application component model.
+          </scm:Note>
+          <scm:Note>Provide a mechanism to define PathContext sub-paths 
+            internally
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>PathContext.java
+          </URI>
+          <URI>PathContextFilter.java
+          </URI>
+          <URI>AutoFilter.java
+          </URI>
+          <URI>CompoundFilter.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
           <scm:Note>PathContext now provides a way to set up preFilters,
             which are chained before the PathContext and can provide it
             with external context.
