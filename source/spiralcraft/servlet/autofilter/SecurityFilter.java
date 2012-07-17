@@ -665,8 +665,22 @@ public class SecurityFilter
   }
     
   public void logout()
-  { contextLocal.get().logoutQueued=true;
+  { 
+    clearCookie();
+    contextLocal.get().logoutQueued=true;
   }  
+
+  private void clearCookie()
+  {
+    Cookie cookie=new Cookie(qualifiedCookieName,"");
+    if (cookieDomain!=null)
+    { cookie.setDomain(cookieDomain);
+    }
+    if (cookiePath!=null)
+    { cookie.setPath(cookiePath);
+    }
+    writeLoginCookie(cookie);
+  }
   
   private void doLogout()
   {
@@ -678,15 +692,7 @@ public class SecurityFilter
     
     authSessionChannel.get().logout();
     // Delete the login cookie
-    
-    Cookie cookie=new Cookie(qualifiedCookieName,"");
-    if (cookieDomain!=null)
-    { cookie.setDomain(cookieDomain);
-    }
-    if (cookiePath!=null)
-    { cookie.setPath(cookiePath);
-    }
-    writeLoginCookie(cookie);
+    clearCookie();
     contextLocal.get().logoutPending=true;
     if (invalidateSessionOnLogout)
     { 
