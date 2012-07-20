@@ -162,8 +162,15 @@ public class PathContextFilter
                (codeSearchRoot.resolve("PathContext")).get();
             }
             else
-            { context=new PathContext();
+            { 
+              context=new PathContext();
+              context.setCodeBaseURI(codeSearchRoot);
             }
+          }
+          else
+          { 
+            context=new PathContext();
+            context.setCodeBaseURI(codeSearchRoot);
           }
         }
         else
