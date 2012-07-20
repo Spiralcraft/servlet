@@ -362,6 +362,9 @@ public class Controller
       Container packagesContainer
         =packagesResource.asContainer();
     
+      if (debug)
+      { log.fine("Initializing library for "+toString());
+      }
       if (packagesContainer!=null)
       { Library.set(new Library(packagesContainer));
       }
@@ -399,18 +402,41 @@ public class Controller
           else if (bundle.getBundleName().equals("war-webui"))
           { 
             String packageName=bundle.getPackage().getName();
-            codeAuthority.mapPath
-              (packageName
-              ,new Redirect
-                (URI.create(packageName)
-                ,bundle.getBundleURI()
-                )
-              );
-            log.fine("Mounted "
+            
+            Resource overlay
+              =Resolver.getInstance().resolve
+                (URIUtil.ensureTrailingSlash
+                  (URIUtil.addPathSegment
+                    (codeAuthority.getRootURI(),packageName)
+                  )
+                );
+            if (!overlay.exists())
+            {
+              codeAuthority.mapPath
+                (packageName
+                ,new Redirect
+                  (URI.create(packageName)
+                  ,bundle.getBundleURI()
+                  )
+                );
+              log.fine("Mounted "
                     +bundle.getBundleURI()
                     +" to context://code/"
                     +packageName
                     );
+              
+            }
+            else
+            {
+              log.fine("Did not mount "
+                    +bundle.getBundleURI()
+                    +" to context://code/"
+                    +packageName
+                    +" because mount point already exists"
+                    );
+              // TODO: Verify that the mount point eventually 
+              //   leads to the bundle
+            }
           }
         }
         
