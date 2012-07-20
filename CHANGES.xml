@@ -165,6 +165,10 @@
           </scm:Note>
           <scm:Note>Bundles are mapped into the context://code authority
           </scm:Note>
+          <scm:Note>A bundle can be extended by a directory in 
+            context://code/{package-name} that has a package.xml definition
+            that points back to the bundle.
+          </scm:Note>
         </notes>
         
         <path>source/spiralcraft/servlet/autofilter
