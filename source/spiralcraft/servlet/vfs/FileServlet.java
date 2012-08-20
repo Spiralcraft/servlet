@@ -434,6 +434,9 @@ public class FileServlet
   
   private boolean hidden(String pathString)
   {
+    if (pathString==null)
+    { return false;
+    }
     Path path=new Path(pathString,'/');
     if (hiddenPaths!=null)
     {
