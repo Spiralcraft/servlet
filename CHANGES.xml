@@ -20,6 +20,22 @@
         </revision>
       
         <notes>
+          <scm:Note>Removed references to CommandProcessor in ServiceContext.
+            This mechanism is not longer userd.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/ServiceContext.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev10
+        </revision>
+      
+        <notes>
           <scm:Note>PathContext generic internals promoted to core 
             application component model.
           </scm:Note>
