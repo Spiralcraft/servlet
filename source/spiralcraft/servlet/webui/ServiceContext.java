@@ -48,7 +48,6 @@ import spiralcraft.vfs.StreamUtil;
 
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
-import spiralcraft.command.CommandProcessor;
 
 /**
  * Provides webui components with the resources they need
@@ -88,7 +87,6 @@ public class ServiceContext
   private HttpServletResponse response;
   private VariableMap post;
   private VariableMap query;
-  private CommandProcessor commandProcessor;
   private URI redirectURI;
   private List<String> queuedActions;
   private URI contextURI;
@@ -173,7 +171,6 @@ public class ServiceContext
       query.clear();
       query=null;
     }
-    commandProcessor=null;
     redirectURI=null;
     threadContext.pop();
   }
@@ -459,14 +456,6 @@ public class ServiceContext
   { portSession.clearParameters();
   }
   
-  /**
-   * @param commandProcessor The CommandProcessor associated with this 
-   *    context- called by components that wish to supply a
-   *    a CommandProcessor.
-   */
-  public void setCommandProcessor(CommandProcessor commandProcessor)
-  { this.commandProcessor=commandProcessor;
-  }
   
   public boolean isSameReferer()
   { 
@@ -506,13 +495,6 @@ public class ServiceContext
 
   }
   
-  /**
-   * 
-   * @return The CommandProcessor associated with this context
-   */
-  public CommandProcessor getCommandProcessor()
-  { return commandProcessor;
-  }
   
   public VariableMap getPost()
   { return post;
