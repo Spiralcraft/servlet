@@ -16,6 +16,76 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev11
+        </revision>
+      
+        <notes>
+          <scm:Note>Use vfs packages to resolve webui code resources
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/PathContextFilter.java
+          </URI>
+          <URI>webui/UIService.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev11
+        </revision>
+      
+        <notes>
+          <scm:Note>Redirect directory references that are missing a trailing
+            slash to the canonical form.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>PathContext.java
+          </URI>
+          <URI>PathContextFilter.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev11
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issue where filters defined in PathContext and in
+            FocusFilter were run regardless of the pattern setting.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/CompoundFilter.java
+          </URI>
+          <URI>autofilter/spi/FocusFilter.java
+          </URI>
+          <URI>util/LinkedFilterChain.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev10
         </revision>
       
