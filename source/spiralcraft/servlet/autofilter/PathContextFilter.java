@@ -32,9 +32,9 @@ import spiralcraft.lang.util.LangUtil;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.util.URIUtil;
-import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.UnresolvableURIException;
+import spiralcraft.vfs.Package;
 
 /**
  * <p>Provides a context for functionality within the subtree addressed by a 
@@ -139,9 +139,9 @@ public class PathContextFilter
       }
       resourceURI=codeSearchRoot.resolve("PathContext.assy.xml");
       Resource resource
-        =Resolver.getInstance().resolve(resourceURI);
+        =Package.findResource(resourceURI);
       
-      if (!resource.exists())
+      if (resource==null)
       {
         if (parentContext==null)
         { 
@@ -155,8 +155,8 @@ public class PathContextFilter
             resourceURI
               =codeSearchRoot.resolve("PathContext.assy.xml");
             resource
-              =Resolver.getInstance().resolve(resourceURI);
-            if (resource.exists())
+              =Package.findResource(resourceURI);
+            if (resource!=null)
             { 
               context=XmlBean.<PathContext>instantiate
                (codeSearchRoot.resolve("PathContext")).get();
@@ -195,8 +195,8 @@ public class PathContextFilter
             resourceURI
               =altCodeSearchRoot.resolve("PathContext.assy.xml");
             resource
-              =Resolver.getInstance().resolve(resourceURI);
-            if (resource.exists())
+              =Package.findResource(resourceURI);
+            if (resource!=null)
             { 
               log.fine
                 ("Loading PathContext for "+getPath()
@@ -350,6 +350,13 @@ public class PathContextFilter
     
     if (context!=null)
     {
+      String requestPath=contextAdapter.getRelativePath(request);
+      String redirectPath=context.getCanonicalRedirectPath(requestPath);
+      if (redirectPath!=null)
+      { 
+        response.sendRedirect(request.getContextPath()+redirectPath);
+        return;
+      }
       // Insert dynamic filters into chain
       AutoFilter requestPathFilter=context.getRequestPathFilter(request,config);
       if (requestPathFilter!=null)
