@@ -104,6 +104,18 @@ public class PathContext
     String pathInfo=getPathInfo();
     return StringUtil.discardAfter(pathInfo,'/');
   }
+  
+  public String getCanonicalRedirectPath(String contextRelativeRequestPath)
+  {
+    if (getAbsolutePathString().length()==contextRelativeRequestPath.length()+1
+        && getAbsolutePathString().startsWith(contextRelativeRequestPath)
+        )
+    { return getAbsolutePathString();
+    }
+    else
+    { return null;
+    }
+  }
 
   
   AutoFilter[] getFilters()
