@@ -220,36 +220,16 @@ public class UIService
       }
     }
     
+//    if (resource==null)
+//    { 
+//      // XXX: This is dangerous. Find some way to mark content as
+//      //   executable, because this could point to user upload paths.
+//      resource=Package.findResource("context:"+relativeResourcePath);
+//    }
+    
+    
     if (resource==null)
-    { 
-      // Search for the .webui file in the "code" context and all 
-      //   associated packages
-      resource=Resolver.getInstance().resolve
-        ("context://code"+relativeResourcePath);
-
-      if (!resource.exists())
-      { 
-        Package pkg=null;
-        try
-        {
-          pkg = Package.fromContainer
-            (resource.getParent());
-        }
-        catch (ContextualException x)
-        { 
-          log.log
-            (Level.WARNING
-            ,"Error resolving package in "+resource.getParent().getURI()
-            ,x
-            );
-        }
-        if (pkg!=null)
-        { resource=pkg.searchForBaseResource(resource);
-        }
-        else
-        { resource=null;
-        }
-      }
+    { resource=Package.findResource("context://code"+relativeResourcePath);
     }
 
     if (resource==null && pathContextFocus!=null)
