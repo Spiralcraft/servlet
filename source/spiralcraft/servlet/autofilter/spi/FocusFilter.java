@@ -29,6 +29,7 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.util.ExpressionRenderer;
 import spiralcraft.servlet.autofilter.AutoFilter;
+import spiralcraft.servlet.autofilter.CompoundFilter;
 import spiralcraft.servlet.kit.HttpFocus;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.text.Renderer;
@@ -117,7 +118,8 @@ public abstract class FocusFilter<T>
   private volatile boolean preInitialized;
   private volatile boolean initialized;
   private final LocalFilter localFilter=new LocalFilter();
-  protected Filter[] preFilters;
+  protected AutoFilter[] preFilters;
+  protected CompoundFilter preFilter;
   
   
   // Default to global, to implement Focus hierarchy
@@ -318,7 +320,13 @@ public abstract class FocusFilter<T>
     
     
     if (preFilters!=null && preFilters.length>0)
-    { preChain=new LinkedFilterChain(preFilters,localChain);
+    { 
+      if (preFilter==null)
+      { 
+        preFilter=new CompoundFilter(preFilters);
+        preFilter.init(this.config);
+      }
+      preChain=new LinkedFilterChain(preFilter,localChain);
     }
     else
     { preChain=localChain;

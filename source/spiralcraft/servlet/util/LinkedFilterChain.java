@@ -15,6 +15,7 @@
 package spiralcraft.servlet.util;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -35,9 +36,21 @@ public class LinkedFilterChain
   private FilterChain next;
   
   
+  public LinkedFilterChain(LinkedList<Filter> filters,FilterChain end)
+  {
+    this.filter=filters.remove(0);
+    if (filters.size()>0)
+    { this.next=new LinkedFilterChain(filters,end);
+    }
+    else
+    { this.next=end;
+    }
+  }
+  
   public LinkedFilterChain(Filter[] filters,FilterChain end)
   { this(filters,0,end);
   }
+  
   protected LinkedFilterChain(Filter[] filters,int start,FilterChain end)
   {
     this.filter=filters[start];

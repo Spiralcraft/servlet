@@ -15,6 +15,7 @@
 package spiralcraft.servlet.autofilter;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -22,6 +23,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.util.Path;
@@ -72,7 +74,10 @@ public class CompoundFilter
   {
     super.setPattern(pattern);
     for (AutoFilter filter:filters)
-    { filter.setPattern(pattern);
+    { 
+      if (filter.getPattern()==null)
+      { filter.setPattern(pattern);
+      }
     }
   }
   
@@ -101,7 +106,16 @@ public class CompoundFilter
     throws IOException,
     ServletException
   {
-    FilterChain newChain=new LinkedFilterChain(filters,chain);
+    HttpServletRequest httpRequest=(HttpServletRequest) request;
+    LinkedList<Filter> filterList=new LinkedList<Filter>();
+    Path requestPath=Path.create(contextAdapter.getRelativePath(httpRequest));
+    for (AutoFilter filter:filters)
+    { 
+      if (filter.appliesToPath(requestPath))
+      { filterList.add(filter);
+      }
+    }
+    FilterChain newChain=new LinkedFilterChain(filterList,chain);
     newChain.doFilter(request,response);    
   }
 }
