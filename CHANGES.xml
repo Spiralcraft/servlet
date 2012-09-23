@@ -16,6 +16,63 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev12
+        </revision>
+      
+        <notes>
+          <scm:Note>Enhancements for client-side JS integration, JS binding
+            support for for simple HTML containers.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>Div.java
+          </URI>
+          <URI>JSClient.java
+          </URI>
+          <URI>PeerJSTag.java
+          </URI>
+          <URI>kit/HtmlContainer.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev12
+        </revision>
+      
+        <notes>
+          <scm:Note>bindStandard() should be protected
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>RootComponent.java
+          </URI>
+          <URI>components/DataSessionComponent.java
+          </URI>
+          <URI>components/Guard.java
+          </URI>
+          <URI>components/PageAction.java
+          </URI>
+          <URI>components/Response.java
+          </URI>
+          <URI>components/html/Link.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev11
         </revision>
       
