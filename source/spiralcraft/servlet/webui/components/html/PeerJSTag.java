@@ -39,6 +39,7 @@ public class PeerJSTag
   private String registerJSFunction="SPIRALCRAFT.webui.bindPeer";
   private MessageFormat onRegisterJS;
   private MessageFormat onBodyLoadJS;
+  private String[] events;
   
   { tagPosition=-1;
   }
@@ -50,6 +51,10 @@ public class PeerJSTag
   
   public PeerJSTag()
   {
+  }
+  
+  public void setEvents(String[] events)
+  { this.events=events;
   }
   
   public void setDataJS(MessageFormat js)
@@ -91,28 +96,80 @@ public class PeerJSTag
     out.append( ((ComponentState) dispatcher.getState()).getId());
     out.append("\"");
     out.append(",\r\n");
+    
+    out.append("element: function() {return SPIRALCRAFT.webui.getElement(this.id);},\r\n");
+    
     if (onRegisterJS!=null)
     { 
-      addMember(out,"onRegister",onRegisterJS);
+      addMethod(out,"onRegister",onRegisterJS);
       out.append(",\r\n");
     }
     if (onBodyLoadJS!=null)
     { 
-      addMember(out,"onBodyLoad",onBodyLoadJS);
+      addMethod(out,"onBodyLoad",onBodyLoadJS);
       out.append(",\r\n");
     }
+    
+    
+    if (events!=null)
+    { 
+      addField(out,"events",makeEventObject());
+      out.append(",\r\n");
+    }
+    
     out.append(" data: ");
     super.renderContent(dispatcher,message,next);
     out.append("\r\n})\r\n");
   }
   
-  private void addMember(Appendable out,String name,MessageFormat body)
+  private String makeEventObject()
+  {
+    StringBuilder out=new StringBuilder();
+    out.append("  {\r\n");
+    boolean first=true;
+    for (String eventName:events)
+    { 
+      out.append("    ");
+      if (!first)
+      { out.append(",");
+      }
+      else
+      { first=false;
+      }
+      out.append(eventName+": new SPIRALCRAFT.webui.dispatcher()");
+      
+    }
+    out.append("\r\n  }");
+    return out.toString();
+  }
+  
+  
+  private void addField(Appendable out,String name,String body)
+    throws IOException
+  { 
+    out.append(name);
+    out.append(": ");
+    out.append(body);
+  }
+
+  
+  private void addMethod(Appendable out,String name,MessageFormat body)
     throws IOException
   { 
     out.append(name);
     out.append(": ");
     out.append("function(self) {\r\n");
     body.render(out);
+    out.append("\r\n}");
+  }
+  
+  private void addMethod(Appendable out,String name,String body)
+    throws IOException
+  { 
+    out.append(name);
+    out.append(": ");
+    out.append("function(self) {\r\n");
+    out.append(body);
     out.append("\r\n}");
   }
 

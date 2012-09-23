@@ -16,7 +16,7 @@ package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.app.Dispatcher;
 
-import spiralcraft.servlet.webui.Component;
+import spiralcraft.servlet.webui.components.html.kit.HtmlContainer;
 
 /**
  * <p>An arbitrary container that has a server-side representation
@@ -26,8 +26,9 @@ import spiralcraft.servlet.webui.Component;
  *
  */
 public class Div
-  extends Component
+  extends HtmlContainer
 {
+  
   
   private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag();
@@ -55,7 +56,6 @@ public class Div
     
   }
   
-  
   public Tag getTag()
   { return tag;
   }
@@ -63,5 +63,8 @@ public class Div
   public ErrorTag getErrorTag()
   { return errorTag;
   }
+
+  
+  
   
 }
