@@ -65,7 +65,7 @@ public class DataSessionComponent
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
-  public Focus<?> bindStandard(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
     throws  ContextualException
   { 
     if (debug)

@@ -75,7 +75,7 @@ public class Guard
   }
 
   @Override
-  public Focus<?> bindStandard(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     setupSession(focus);

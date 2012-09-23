@@ -83,7 +83,7 @@ public class RootComponent
   @Override
   @SuppressWarnings({"unchecked","rawtypes"})
   // Not using generic versions
-  public final Focus<?> bindStandard(Focus<?> focus) 
+  protected final Focus<?> bindStandard(Focus<?> focus) 
     throws ContextualException
   {
     if (debug)

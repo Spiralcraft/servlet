@@ -162,7 +162,7 @@ public class Link
   }
   
   @Override
-  public Focus<?> bindStandard(Focus<?> focus)
+  protected Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
     if (onAction!=null)
