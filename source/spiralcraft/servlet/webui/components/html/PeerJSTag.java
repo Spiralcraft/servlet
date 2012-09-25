@@ -41,7 +41,9 @@ public class PeerJSTag
   private MessageFormat onBodyLoadJS;
   private String[] events;
   
-  { tagPosition=-1;
+  {
+    tagPosition=-1;
+    setCode(MessageFormat.create("{}"));
   }
 
   
@@ -97,7 +99,16 @@ public class PeerJSTag
     out.append("\"");
     out.append(",\r\n");
     
-    out.append("element: function() {return SPIRALCRAFT.webui.getElement(this.id);},\r\n");
+    out.append("element: function() {\r\n");
+    out.append("  return SPIRALCRAFT.webui.getElement(this.id);\r\n");
+    out.append("},\r\n");
+    
+    out.append("export: function(fn) {\r\n");
+    out.append("  var self=this;\r\n");
+    out.append("  return function() {\r\n");
+    out.append("    fn.apply(self,arguments);\r\n");
+    out.append("  };\r\n");
+    out.append("},\r\n");
     
     if (onRegisterJS!=null)
     { 
@@ -117,6 +128,7 @@ public class PeerJSTag
       out.append(",\r\n");
     }
     
+
     out.append(" data: ");
     super.renderContent(dispatcher,message,next);
     out.append("\r\n})\r\n");
