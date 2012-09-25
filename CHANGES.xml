@@ -16,6 +16,25 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev13
+        </revision>
+      
+        <notes>
+          <scm:Note>Add "export" function to javascript peer object so
+            listeners can run in proper context
+          </scm:Note>
+          <scm:Note>Make sure "data" proprty is initialized to avoid a javascript
+            syntax error.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/PeerJSTag.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev12
         </revision>
       
