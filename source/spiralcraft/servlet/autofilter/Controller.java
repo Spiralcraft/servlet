@@ -390,7 +390,9 @@ public class Controller
               ,new Redirect
                 (URI.create(mountPoint.toString()),bundle.getBundleURI())
               );
-            log.fine("Mounted "+bundle.getBundleURI()+" to "+mountPoint);
+            if (debug)
+            { log.fine("Mounted "+bundle.getBundleURI()+" to "+mountPoint);
+            }
           }
         
           if (bundle.getBundleName().equals("war-classes"))
@@ -419,21 +421,27 @@ public class Controller
                   ,bundle.getBundleURI()
                   )
                 );
-              log.fine("Mounted "
+              if (debug)
+              {
+                log.fine("Mounted "
                     +bundle.getBundleURI()
                     +" to context://code/"
                     +packageName
                     );
+              }
               
             }
             else
             {
-              log.fine("Did not mount "
+              if (debug)
+              {
+                log.fine("Did not mount "
                     +bundle.getBundleURI()
                     +" to context://code/"
                     +packageName
                     +" because mount point already exists"
                     );
+              }
               // TODO: Verify that the mount point eventually 
               //   leads to the bundle
             }

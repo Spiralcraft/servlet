@@ -102,7 +102,7 @@ public class PathContextFilter
   private AutoFilter filterSet;
   
   PathContextFilter()
-  { debug=true;
+  { // debug=true;
   }
 
   void setCodeSearchRoot(URI codeSearchRoot)
@@ -198,10 +198,13 @@ public class PathContextFilter
               =Package.findResource(resourceURI);
             if (resource!=null)
             { 
-              log.fine
-                ("Loading PathContext for "+getPath()
-                +" from "+resource.getURI()
-                );
+              if (debug)
+              {
+                log.fine
+                  ("Loading PathContext for "+getPath()
+                  +" from "+resource.getURI()
+                  );
+              }
               context=XmlBean.<PathContext>instantiate
                (altCodeSearchRoot.resolve("PathContext")).get();
               codeSearchRoot=altCodeSearchRoot;
