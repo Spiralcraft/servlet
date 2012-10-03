@@ -175,6 +175,7 @@ public class PeerJSTag
     out.append("\r\n}");
   }
   
+  @SuppressWarnings("unused")
   private void addMethod(Appendable out,String name,String body)
     throws IOException
   { 
