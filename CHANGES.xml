@@ -16,6 +16,24 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev14
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issue where nested editors will still try to save after
+            an error is encountered in the parent editor. In the event of an
+            error, the save message is consumed and all messages and commands
+            are dequeued.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/PeerJSTag.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev13
         </revision>
       
