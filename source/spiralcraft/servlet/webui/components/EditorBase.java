@@ -127,17 +127,25 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           {
             // Save on descent
             try
-            { save();
+            { 
+              save();
             }
             catch (DataException x)
             { handleException(context,x);
             }
-          }
-          
-          next.handleMessage(context,message);
-          
-          if (message.getType()==SaveMessage.TYPE)
-          {
+
+            if (!state.isErrorState())
+            { 
+              
+              next.handleMessage(context,message);
+            }
+            else
+            {
+              // Abort the message if error saving this
+              state.dequeueCommands();
+              state.dequeueMessages();
+            }
+            
             // Run post-save command on ascent
             Command<?,?,?> postSaveCommand=state.getPostSaveCommand();
             if (postSaveCommand!=null)
@@ -155,6 +163,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
               }
               state.setPostSaveCommand(null);
             }
+          }
+          else
+          { 
+            // All other messages
+            next.handleMessage(context,message);
           }
           
           if (state.isRedirect())
