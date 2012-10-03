@@ -170,6 +170,7 @@ public class PathContext
         if (contextURI!=null)
         {
           filter=new PathContextFilter();
+          filter.setDebug(logLevel.isDebug());
           filter.setPath(this.getAbsolutePath().append(path));
           filter.setContainer
             (Resolver.getInstance().resolve
