@@ -508,16 +508,22 @@ public class Controller
     { instanceRootURI=webInfRoot;
     }
     
+    log.info("web instance root: "+instanceRootURI);
     dataURI=resolveResourceVolume
       (context,instanceRootURI,dataURI,"spiralcraft.instance.dataURI");
+    log.info("context://data = "+dataURI);
     configURI=resolveResourceVolume
       (context,instanceRootURI,configURI,"spiralcraft.instance.configURI");
+    log.info("context://config = "+configURI);
     filesURI=resolveResourceVolume
       (context,instanceRootURI,filesURI,"spiralcraft.instance.filesURI");
+    log.info("context://files = "+filesURI);
     codeURI=resolveResourceVolume
       (context,webInfRoot,codeURI,"spiralcraft.instance.codeURI");
+    log.info("context://code = "+codeURI);
     themeURI=resolveResourceVolume
       (context,webInfRoot,themeURI,"spiralcraft.instance.themeURI");
+    log.info("context://theme = "+themeURI);
     
   }
   
