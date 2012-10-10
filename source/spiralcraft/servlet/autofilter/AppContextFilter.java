@@ -217,8 +217,8 @@ public class AppContextFilter
   {
     StringBuffer buf=new StringBuffer();
     buf.append(super.toString())
-      .append("{\r\nURI Path: ").append(getPath().format('/'))
-      .append("\r\nContent loc: ").append(getContainer().getURI())
+      .append("{\r\nURI Path: ").append(getPath()!=null?getPath().format('/'):"")
+      .append("\r\nContent loc: ").append(getContainer()!=null?getContainer().getURI():"")
       .append("\r\nCode search root: ").append(codeSearchRoot)
       .append("\r\nPathContext: ").append(context)
       .append("}");
