@@ -16,6 +16,34 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev15
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix NPE
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/autofilter/AppContextFilter.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev15
+        </revision>
+      
+        <notes>
+          <scm:Note>Controller logs VFS authority mappings on startup.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev14
         </revision>
       
