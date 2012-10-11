@@ -314,6 +314,7 @@ public abstract class ControlGroup<Ttarget>
   
         myFocus.addFacet(getAssembly().getFocus());
         focus=myFocus;
+        bindExportContextuals(focus);
         bindRules(target.getReflector(),focus);
       } 
       else
@@ -328,6 +329,7 @@ public abstract class ControlGroup<Ttarget>
         bindSelfFocus(focus);
         myFocus.addFacet(getAssembly().getFocus());
         focus=myFocus;      
+        bindExportContextuals(focus);
         bindRules
           (((Channel<Ttarget>) focus.getSubject()).getReflector()
           ,focus

@@ -1,5 +1,5 @@
 //
-//Copyright (c) 1998,2007 Michael Toth
+//Copyright (c) 2009 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -12,26 +12,25 @@
 //Unless otherwise agreed to in writing, this software is distributed on an
 //"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
-package spiralcraft.servlet.webui;
+package spiralcraft.servlet.webui.components;
 
-import spiralcraft.app.Message;
+import spiralcraft.servlet.webui.ControlGroupState;
 
-
-public class GatherMessage
-  extends Message
+/**
+ * Holds state for a CommandControl
+ * 
+ * @author mike
+ *
+ */
+public class AcceptorState<T>
+  extends ControlGroupState<T>
 {
   
-
-  public static final Type TYPE=new Type();
-  public static final GatherMessage INSTANCE = new GatherMessage();
+  boolean saveRequested;
   
-  { multicast=true;
+  public AcceptorState(Acceptor<T> comp)
+  { super(comp);
   }
   
-  
-  @Override
-  public Type getType()
-  { return TYPE;
-  }    
   
 }

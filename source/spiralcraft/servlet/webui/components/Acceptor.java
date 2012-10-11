@@ -21,14 +21,15 @@ import javax.servlet.ServletException;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.textgen.PrepareMessage;
 
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.Level;
+import spiralcraft.servlet.webui.SaveMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
-import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.CommandMessage;
 import spiralcraft.servlet.webui.GatherMessage;
 
@@ -53,24 +54,35 @@ public abstract class Acceptor<T>
   extends ControlGroup<T>
 {
   
-  private static final GatherMessage GATHER_MESSAGE=new GatherMessage();
-  private static final CommandMessage COMMAND_MESSAGE=new CommandMessage();
-  private static final PrepareMessage PREPARE_MESSAGE=new PrepareMessage();
+  private static final GatherMessage GATHER_MESSAGE=GatherMessage.INSTANCE;
+  private static final CommandMessage COMMAND_MESSAGE=CommandMessage.INSTANCE;
+  private static final PrepareMessage PREPARE_MESSAGE=PrepareMessage.INSTANCE;
+  private static final SaveMessage SAVE_MESSAGE=SaveMessage.INSTANCE;
   
   private Expression<Command<?,?,?>> onPost;
   private Channel<Command<?,?,?>> onPostChannel;
+  private Binding<Void> onSaveX;
     
   private String clientPostActionName;
   private String resetActionName;
   
   private Channel<ServiceContext> serviceContextChannel;
-
+  private boolean autoSave;
   
   public void setOnPost(Expression<Command<?,?,?>> onPost)
   { this.onPost=onPost;
   }
   
+  public void setAutoSave(boolean autoSave)
+  { this.autoSave=autoSave;
+  }
 
+  public void setOnSave(Binding<Void> onSaveX)
+  { 
+    this.removeExportContextual(this.onSaveX);
+    this.onSaveX=onSaveX;
+    this.addExportContextual(this.onSaveX);
+  }
   
   public void setClientPostActionName(String name)
   { this.clientPostActionName=name;
@@ -79,7 +91,7 @@ public abstract class Acceptor<T>
   public void setResetActionName(String name)
   { this.resetActionName=name;
   }
-  
+   
   @Override
   public String getVariableName()
   { return null;
@@ -189,7 +201,8 @@ public abstract class Acceptor<T>
             );
         }
 
-        ControlGroupState<T> formState=getState(context);
+        AcceptorState<T> formState=getState(context);
+        formState.saveRequested=false;
         
         if (wasActioned(context))
         {
@@ -231,13 +244,25 @@ public abstract class Acceptor<T>
           { onPostChannel.get().execute();
           }
           
+          if ( (autoSave || formState.saveRequested) 
+                && !formState.isErrorState()
+             )
+          { save(context);
+
+          }
         }
         
       }
     };
   }
     
-  
+  protected void save(Dispatcher context)
+  {            
+    relayMessage(context,SAVE_MESSAGE);
+    if (onSaveX!=null && !getState().isErrorState())
+    { onSaveX.get();
+    }
+  }
   
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
@@ -251,6 +276,22 @@ public abstract class Acceptor<T>
         .getSubject();
     return focus;
     
+  }
+  
+  public Command<Void,Void,Void> saveCommand()
+  {
+    return new CommandAdapter<Void,Void,Void>()
+    {
+      { name="save";
+      }
+          
+      @Override
+      public void run()
+      { 
+        getState().saveRequested=true;
+      }
+  
+    };
   }
   
   public Command<Void,Void,Void> redirectCommand(final String redirectURI)
@@ -272,6 +313,22 @@ public abstract class Acceptor<T>
       }
   
     };
-  }   
+  } 
+  
+  
+  @Override
+  public AcceptorState<T> createState()
+  { return new AcceptorState<T>(this);
+  }
+  
+  @Override
+  public AcceptorState<T> getState()
+  { return (AcceptorState<T>) super.getState();
+  }
 
+  @SuppressWarnings("unchecked")
+  @Override
+  public <X> AcceptorState<X> getState(Dispatcher context)
+  { return (AcceptorState<X>) super.getState(context);
+  }
 }

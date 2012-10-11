@@ -24,6 +24,7 @@ public class SaveMessage
   extends UIMessage
 {
   public static final Type TYPE=new Type();
+  public static final SaveMessage INSTANCE = new SaveMessage();
 
   
   public SaveMessage()
