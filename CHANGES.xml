@@ -16,6 +16,36 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev16
+        </revision>
+      
+        <notes>
+          <scm:Note>Acceptors (eg. Forms) can now initiate the SAVE process and
+            alow for save-on-action via the autoSave property. An onSave
+            property allows for post-save execution such as redirect.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ControlGroup.java
+          </URI>
+          <URI>GatherMessage.java
+          </URI>
+          <URI>SaveMessage.java
+          </URI>
+          <URI>components/Acceptor.java
+          </URI>
+          <URI>components/AcceptorState.java
+          </URI>
+        
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev15
         </revision>
       
