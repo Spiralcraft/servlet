@@ -324,7 +324,11 @@ public abstract class FocusFilter<T>
       if (preFilter==null)
       { 
         preFilter=new CompoundFilter(preFilters);
-        preFilter.init(this.config);
+        preFilter.setPath(getPath());
+        preFilter.setPattern(getPattern());
+        preFilter.setGlobal(isGlobal());
+        preFilter.setContainer(getContainer());
+        preFilter.init(config);
       }
       preChain=new LinkedFilterChain(preFilter,localChain);
     }

@@ -201,6 +201,9 @@ public abstract class AutoFilter
    */
   public boolean appliesToPath(Path path)
   {
+    if (getPath()==null)
+    { throw new IllegalStateException("Filter not initialized- local path not set");
+    }
     Path relativePath=path.subPath(getPath().size());
 //    System.err.println("AutoFilter.appliesToPath(): "+pattern+"->"+relativePath.format("/"));
     if (this.isGlobal())
