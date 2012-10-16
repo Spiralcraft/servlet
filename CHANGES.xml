@@ -14,6 +14,45 @@
     </date>
 
     <detail>
+    
+      <scm:Change>
+     
+        <revision>-dev17
+        </revision>
+      
+        <notes>
+          <scm:Note>Add String constructor to RequestBinding to simplify
+            the most common case of an assignment to a member of the same
+            name as the request parameter.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/RequestBinding.java
+        </path>
+
+      </scm:Change>
+      
+      <scm:Change>
+     
+        <revision>-dev17
+        </revision>
+      
+        <notes>
+          <scm:Note>Make sure pre-filters are initialized properly
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>AutoFilter.java
+          </URI>
+          <URI>FocusFilter.java
+          </URI>
+        </resources>
+      </scm:Change>
+
       <scm:Change>
      
         <revision>-dev16
