@@ -60,6 +60,16 @@ public class RequestBinding<Tval>
   
   private VariableMapBinding<Tval> binding;
 
+  public RequestBinding(String name)
+  { 
+    this.name=name;
+    this.target=Expression.create(name);
+  }
+  
+  public RequestBinding()
+  {
+  }
+  
   public String getName()
   { return name;
   }
