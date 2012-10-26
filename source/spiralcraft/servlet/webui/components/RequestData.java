@@ -44,11 +44,18 @@ import spiralcraft.util.ArrayUtil;
 public class RequestData<T>
   extends ExpressionFocusElement<T>
 {
+  public static enum Source
+  { 
+    QUERY,
+    POST;
+  }
+  
   private RequestBinding<?>[] requestBindings;
   private ThreadLocalChannel<T> prevalue;
   private String[] excludedNames;
   private String[] publishNames;
   private boolean autoMap;
+  private Source source=Source.QUERY;
   
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
@@ -150,6 +157,10 @@ public class RequestData<T>
   { this.publishNames=publishNames;
   }
   
+  public void setSource(Source source)
+  { this.source=source;
+  }
+  
   /**
    * An optional set of mappings to use for specific request fields
    * 
@@ -172,7 +183,11 @@ public class RequestData<T>
         ServiceContext context=ServiceContext.get();
         for (RequestBinding<?> requestBinding:requestBindings)
         { 
-          requestBinding.read(context.getQuery());
+          requestBinding.read
+            (source==Source.QUERY
+              ?context.getQuery()
+              :context.getPost()
+             );
           requestBinding.publish(context);
         }
       }
@@ -183,6 +198,7 @@ public class RequestData<T>
     }
     
   }
+  
   
 }
 
