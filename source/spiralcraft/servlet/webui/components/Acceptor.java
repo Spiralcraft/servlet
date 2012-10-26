@@ -59,8 +59,9 @@ public abstract class Acceptor<T>
   private static final PrepareMessage PREPARE_MESSAGE=PrepareMessage.INSTANCE;
   private static final SaveMessage SAVE_MESSAGE=SaveMessage.INSTANCE;
   
-  private Expression<Command<?,?,?>> onPost;
+  private Expression<?> onPost;
   private Channel<Command<?,?,?>> onPostChannel;
+  private Binding<Void> onPostX;
   private Binding<Void> onSaveX;
     
   private String clientPostActionName;
@@ -82,6 +83,13 @@ public abstract class Acceptor<T>
     this.removeExportContextual(this.onSaveX);
     this.onSaveX=onSaveX;
     this.addExportContextual(this.onSaveX);
+  }
+  
+  public void setOnPostX(Binding<Void> onPostX)
+  {
+    this.removeExportContextual(this.onPostX);
+    this.onPostX=onPostX;
+    this.addExportContextual(this.onPostX);
   }
   
   public void setClientPostActionName(String name)
@@ -244,6 +252,10 @@ public abstract class Acceptor<T>
           { onPostChannel.get().execute();
           }
           
+          if (onPostX!=null && !formState.isErrorState())
+          { onPostX.get();
+          }
+
           if ( (autoSave || formState.saveRequested) 
                 && !formState.isErrorState()
              )
@@ -264,12 +276,21 @@ public abstract class Acceptor<T>
     }
   }
   
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Focus<?> bindExports(Focus<?> focus)
     throws ContextualException
   {
     if (onPost!=null)
-    { onPostChannel=focus.bind(onPost);
+    { 
+      onPostChannel=(Channel) focus.bind(onPost);
+      if ( ((Channel<?>) onPostChannel).getContentType()!=Command.class)
+      { 
+        // Allow for onPost to be an expression
+        onPostX=new Binding<Void>((Expression) onPost);
+        onPostX.bind(focus);
+        onPostChannel=null;
+      }
     }
     serviceContextChannel
       =focus.<ServiceContext>findFocus(ServiceContext.FOCUS_URI)
