@@ -17,6 +17,37 @@
     
       <scm:Change>
      
+        <revision>-dev18
+        </revision>
+      
+        <notes>
+          <scm:Note>onPost can be now set to a simple expression, which will be
+            evaluated on posting.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/Acceptor.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev18
+        </revision>
+      
+        <notes>
+          <scm:Note>Support RequestData from a POST
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/RequestData.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev17
         </revision>
       
