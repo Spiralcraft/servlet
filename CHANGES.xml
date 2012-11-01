@@ -17,6 +17,21 @@
     
       <scm:Change>
      
+        <revision>-dev19
+        </revision>
+      
+        <notes>
+          <scm:Note>Catch 'normal' IOExceptions when flushing the response.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/kit/UISequencer.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev18
         </revision>
       
