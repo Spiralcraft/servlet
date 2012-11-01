@@ -177,7 +177,12 @@ public class UISequencer
         sequence(serviceContext,component,localSession);
         
         response.getWriter().flush();
-        response.flushBuffer();   
+        try
+        { response.flushBuffer();   
+        }
+        catch (IOException x)
+        { log.warning("Caught IOException finishing response: "+x.getMessage());
+        }
       }
     }
     catch (IOException x)
