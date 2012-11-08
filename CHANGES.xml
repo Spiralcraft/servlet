@@ -17,6 +17,40 @@
     
       <scm:Change>
      
+        <revision>-dev20
+        </revision>
+      
+        <notes>
+          <scm:Note>All tags accept classX properties to dynamically set the
+            CSS class.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/html/AbstractTag.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev20
+        </revision>
+      
+        <notes>
+          <scm:Note>When GuardFilter.authenticate is set, the filter will
+            now redirect to the login page when guardX fails and the user
+            is not authenticated, regardless of what redirectURI is set to.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/autofilter/GuardFilter.java
+        </path>
+
+      </scm:Change>
+
+
+      <scm:Change>
+     
         <revision>-dev19
         </revision>
       
