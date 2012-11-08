@@ -28,7 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.parser.LiteralNode;
 import spiralcraft.lang.util.LangUtil;
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Permission;
@@ -85,6 +87,14 @@ public class GuardFilter
   { this.redirectUriX=redirectUriX;
   }
   
+  public void setRedirectUri(URI redirectURI)
+  { 
+    this.redirectUriX
+      =new Binding<URI>
+       (Expression.<URI>create
+         (new LiteralNode<URI>(redirectURI)));
+  }
+  
   public void setPermissionsX(Binding<Permission[]> permissionsX)
   { this.permissionsX=permissionsX;
   }
@@ -109,7 +119,9 @@ public class GuardFilter
       }
     }
     if (redirectUriX!=null)
-    { redirectUriX.bind(focus);
+    { 
+      redirectUriX.setTargetType(URI.class);
+      redirectUriX.bind(focus);
     }
     if (guardX!=null)
     { 
@@ -184,6 +196,19 @@ public class GuardFilter
     Boolean passedTest=guardX!=null?guardX.get():null;
     boolean failedAuthentication=false;
     
+    if (Boolean.FALSE.equals(passedTest) && authenticate)
+    {
+      if (authSessionX!=null)
+      {
+        AuthSession session=authSessionX.get();
+        if (session!=null && !session.isAuthenticated())
+        { failedAuthentication=true;
+        }
+      }
+      
+    }
+    
+    
     if (passedTest==null || Boolean.TRUE.equals(passedTest) && authenticate)
     { 
       
@@ -209,6 +234,8 @@ public class GuardFilter
         }
       }
     }
+    
+    
     
     if (passedTest==null || Boolean.TRUE.equals(passedTest) && (permissionsX!=null))
     {
