@@ -234,6 +234,16 @@ public abstract class AbstractTag
   public void setClazz(String val)
   { appendAttribute("class",val);
   }
+  
+  public void setClassX(Expression<?>[] exprA)
+  { 
+    if (exprA!=null)
+    {
+      for (Expression<?> expr:exprA)
+      { addStandardBinding("class",expr);
+      }
+    }
+  }
 
   public void setStyle(String val)
   { appendAttribute("style",val);
