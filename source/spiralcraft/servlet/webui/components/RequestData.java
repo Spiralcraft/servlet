@@ -122,7 +122,11 @@ public class RequestData<T>
     if (requestBindings!=null)
     { 
       for (RequestBinding<?> requestBinding:requestBindings)
-      { requestBinding.bind(prefocus);
+      { 
+        requestBinding.bind(prefocus);
+        if (debug)
+        { log.fine("Bound "+requestBinding+" for "+requestBinding.getName());
+        }
       }
     }
     return focusChain;
