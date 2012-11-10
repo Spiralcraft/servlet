@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev21
+        </revision>
+      
+        <notes>
+          <scm:Note>In RequestBinding, if target is not specified then
+            create an expression from the 'name' property.  
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/RequestBinding.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev20
         </revision>
       
