@@ -164,6 +164,9 @@ public class RequestBinding<Tval>
     }
     else
     { 
+      if (target==null)
+      { target=Expression.create(name);
+      }
       Channel<Tval> targetChannel=focus.bind(target);
       if (debug)
       { log.fine("Bound target "+targetChannel);
