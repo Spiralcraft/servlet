@@ -17,6 +17,21 @@
     
       <scm:Change>
      
+        <revision>-dev22
+        </revision>
+      
+        <notes>
+          <scm:Note>"export" is a reserved word
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/html/PeerJSTag.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev21
         </revision>
       
