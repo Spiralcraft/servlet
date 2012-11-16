@@ -103,7 +103,7 @@ public class PeerJSTag
     out.append("  return SPIRALCRAFT.webui.getElement(this.id);\r\n");
     out.append("},\r\n");
     
-    out.append("export: function(fn) {\r\n");
+    out.append("exportFn: function(fn) {\r\n");
     out.append("  var self=this;\r\n");
     out.append("  return function() {\r\n");
     out.append("    fn.apply(self,arguments);\r\n");
