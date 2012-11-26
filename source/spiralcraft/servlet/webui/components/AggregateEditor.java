@@ -33,6 +33,7 @@ import spiralcraft.data.session.BufferTuple;
 import spiralcraft.data.session.BufferType;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
@@ -72,6 +73,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   private boolean contentRequired;
   private String contentRequiredMessage="At least one entry is required";
   
+  private Binding<?> onSave;
   
   public Command<BufferAggregate<BufferTuple,Tcontent>,Void,Void>
     deleteCommand(final BufferTuple buffer)
@@ -161,6 +163,10 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   public void setContentRequiredMessage(String contentRequiredMessage)
   { this.contentRequiredMessage=contentRequiredMessage;
   }
+
+  public void setOnSave(Binding<?> onSave)
+  { this.onSave=onSave;
+  }
   
   @Override
   protected void scatter(ServiceContext context)
@@ -188,7 +194,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
     }
 
   }
-
+  
   private void makePadding(BufferAggregate<BufferTuple,?> aggregate)
   { 
     int padCount=0;
@@ -316,8 +322,17 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
         if (contentRequired && saveCount==0)
         { throw new DataException(contentRequiredMessage);
         }
+        
         aggregate.reset();
         writeToModel(aggregate);
+
+        if (onSave!=null)
+        { 
+          Object result=onSave.get();
+          if (debug)
+          { log.fine("onSave returned "+result);
+          }
+        }        
       }
       else
       { 
@@ -480,7 +495,9 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
       preSaveSetters=bindAssignments(childFocus,preSaveAssignments);
       bindRequestAssignments(requestBindings);
       bindRequestAssignments(redirectBindings);
-      
+      if (onSave!=null)
+      { onSave.bind(focus);
+      }
       if (padSize>0 && padX==null)
       { 
         if (padFieldNames.size()==0)
