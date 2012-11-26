@@ -23,10 +23,20 @@
           <scm:Note>Log a warning for duplicate redirects instead of throwing
             an exception
           </scm:Note>
+          <scm:Note>Redirect.ignoreDuplicate property to suppress warning for
+            multiple redirects
+          </scm:Note>
         </notes>
 
-        <path>source/spiralcraft/servlet/webui/ServiceContext.java
+        <path>source/spiralcraft/servlet/webui
         </path>
+        
+        <resources>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>components/Redirect.java
+          </URI>
+        </resources>
 
       </scm:Change>
     
