@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev23
+        </revision>
+      
+        <notes>
+          <scm:Note>Add onSave property to AggregateEditor to invoke
+            expressions after save.
+          </scm:Note>
+        </notes>
+
+        <path>source/spiralcraft/servlet/webui/components/AggregateEditor.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev22
         </revision>
       
