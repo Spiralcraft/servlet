@@ -356,7 +356,7 @@ public class ServiceContext
 
     if (redirectURI!=null)
     { 
-      throw new ServletException
+      log.warning
         ("Duplicate redirect "+rawURI+": Already redirecting to "+redirectURI);
     }
     
