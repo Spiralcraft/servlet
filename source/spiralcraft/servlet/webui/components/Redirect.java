@@ -58,6 +58,7 @@ public class Redirect
   private String refererParameter;
   private String redirectParameter;
   private boolean mergeQuery;
+  private boolean ignoreDuplicate;
 
   { addHandler
       (new RenderHandler () 
@@ -96,6 +97,10 @@ public class Redirect
   
   public void setWhen(Expression<Boolean> when)
   { this.when=when;
+  }
+  
+  public void setIgnoreDuplicate(boolean ignore)
+  { this.ignoreDuplicate=ignore;
   }
   
   /**
@@ -280,7 +285,19 @@ public class Redirect
         if (debug)
         { log.fine("Setting up redirect to "+redirect);
         }         
-        context.redirect(redirect);
+        if (context.getRedirectURI()!=null)
+        { 
+          if (!ignoreDuplicate)
+          {
+            logInfo
+              ("Skipping redirect to "+redirect
+              +", already redirecting to "+context.getRedirectURI()
+              );
+          }
+        }
+        else
+        { context.redirect(redirect);
+        }
       }
     }
     catch (URISyntaxException x)
