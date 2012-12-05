@@ -39,7 +39,6 @@ import spiralcraft.textgen.EventContext;
 import spiralcraft.textgen.RenderMessage;
 import spiralcraft.textgen.compiler.TglCompiler;
 import spiralcraft.textgen.compiler.DocletUnit;
-import spiralcraft.textgen.Element;
 
 
 
@@ -47,6 +46,7 @@ import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.kit.HttpFocus;
 import spiralcraft.servlet.kit.HttpServlet;
 
+import spiralcraft.app.Component;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 
@@ -200,7 +200,7 @@ class ResourceEntry
   private long lastRead;
   private DocletUnit unit;
 
-  private Element element;
+  private Component element;
   private Exception exception;
   
   public ResourceEntry(Resource resource,HttpFocus<?> focus)
