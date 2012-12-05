@@ -16,6 +16,19 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev24
+        </revision>
+      
+        <notes>
+          <scm:Note>Textgen source can now instantiate generic Components.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/pages/GeneratorServlet.java
+        </path>
+
+      <scm:Change>
+     
         <revision>-dev23
         </revision>
       
