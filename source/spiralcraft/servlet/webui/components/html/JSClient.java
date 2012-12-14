@@ -47,7 +47,7 @@ public class JSClient
     throws IOException
   { 
     StringBuilder out=new StringBuilder();
-    out.append("SPIRALCRAFT.webui.getPeer('");
+    out.append("$SC('");
     out.append(serverPeer.getState().getId());
     out.append("').events.");
     out.append(event);
@@ -61,7 +61,7 @@ public class JSClient
     throws IOException
   { 
     StringBuilder out=new StringBuilder();
-    out.append("SPIRALCRAFT.webui.getPeer('");
+    out.append("$SC('");
     out.append(serverPeer.getState().getId());
     out.append("').events.");
     out.append(event);

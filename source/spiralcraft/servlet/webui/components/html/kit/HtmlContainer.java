@@ -39,6 +39,7 @@ public class HtmlContainer
 {
   
   protected JSClient jsClient;
+  protected PeerJSTag peerJSTag;
   
   
   private StateReferenceHandler<ComponentState> stateRef
@@ -54,7 +55,20 @@ public class HtmlContainer
     if (jsClient==null)
     { jsClient=new JSClient();
     }
-    addHandler(scriptTag);
+    if (scriptTag!=peerJSTag)
+    { 
+      // TODO: removeHandler(this.peerJSTag);
+      peerJSTag=scriptTag;
+      addHandler(scriptTag);
+    }
+  }
+  
+  public PeerJSTag getPeerJSTag()
+  {
+    if (peerJSTag==null)
+    { setPeerJSTag(new PeerJSTag());
+    }
+    return peerJSTag;
   }
   
   @Override
