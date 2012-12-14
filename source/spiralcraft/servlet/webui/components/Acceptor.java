@@ -315,6 +315,10 @@ public abstract class Acceptor<T>
     };
   }
   
+  public void save()
+  { getState().saveRequested=true;
+  }
+  
   public Command<Void,Void,Void> redirectCommand(final String redirectURI)
   {
     return new CommandAdapter<Void,Void,Void>()
