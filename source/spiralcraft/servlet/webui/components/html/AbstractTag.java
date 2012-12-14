@@ -29,8 +29,10 @@ import spiralcraft.textgen.RenderMessage;
 
 import java.io.IOException;
 
+import spiralcraft.text.MessageFormat;
 import spiralcraft.text.xml.AttributeEncoder;
 import spiralcraft.util.ArrayUtil;
+import spiralcraft.util.KeyValue;
 
 /**
  * <p>A representation of an HTML 4.0 tag for use by components that render
@@ -68,6 +70,7 @@ public abstract class AbstractTag
   
   private DictionaryBinding<?>[] attributeBindings;
   private DictionaryBinding<?>[] standardAttributeBindings;
+  private KeyValue<String,MessageFormat>[] attributeFormats;
   
   { type=RenderMessage.TYPE;
   }
@@ -223,6 +226,23 @@ public abstract class AbstractTag
     }
   }
 
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  protected void addStandardBinding(String name,MessageFormat format)
+  { 
+    KeyValue<String,MessageFormat> binding
+      =new KeyValue<String,MessageFormat>(name,format);
+    
+    if (attributeFormats!=null)
+    {
+      attributeFormats
+        =ArrayUtil.append
+          (attributeFormats, binding);
+    }
+    else
+    { attributeFormats=new KeyValue[] {binding};
+    }
+  }
+  
   public void setId(String val)
   { appendAttribute("id",val);
   }
@@ -231,8 +251,14 @@ public abstract class AbstractTag
   { addStandardBinding("id",expr);
   }
 
-  public void setClazz(String val)
-  { appendAttribute("class",val);
+  public void setClazz(MessageFormat[] formatA)
+  { 
+    if (formatA!=null)
+    {
+      for (MessageFormat format:formatA)
+      { addStandardBinding("class",format);
+      }
+    }
   }
   
   public void setClassX(Expression<?>[] exprA)
@@ -369,6 +395,12 @@ public abstract class AbstractTag
       { binding.bind(focus);
       }
     }
+    if (attributeFormats!=null)
+    {
+      for (KeyValue<String,MessageFormat> format : attributeFormats)
+      { format.getValue().bind(focus);
+      }
+    }
     return focus;
   }
   
@@ -418,6 +450,9 @@ public abstract class AbstractTag
     if (attributeBindings!=null)
     { renderBoundAttributes(out,attributeBindings);
     }
+    if (attributeFormats!=null)
+    { renderAttributeFormats(out,attributeFormats);
+    }
   }
 
   protected void renderId(Appendable out,Dispatcher context)
@@ -441,6 +476,19 @@ public abstract class AbstractTag
       }
     }
   }
+  
+  protected void renderAttributeFormats
+    (Appendable out,KeyValue<String,MessageFormat>[] bindings)
+    throws IOException
+  {
+    for (KeyValue<String,MessageFormat> binding : bindings)
+    { 
+      String val=binding.getValue().render();
+      if (val!=null)
+      { renderAttribute(out,binding.getKey(),val);
+      }
+    }
+  }  
   
   /**
    * <p> Override to indicate whether this tag should render itself as an open
