@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/spiralcraft-modules-textgen"/>
 	<classpathentry kind="lib" path="lib/spiralcraft-core.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/spiralcraft-json.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

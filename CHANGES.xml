@@ -16,6 +16,77 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev25
+        </revision>
+      
+        <notes>
+          <scm:Note>Support the use of MessageFormat in tag attributes to 
+            better support dynamic values. Make the "clazz" attribute
+            a MessageFormat.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/AbstractTag.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev25
+        </revision>
+      
+        <notes>
+          <scm:Note>Add the textarea "placeholder" attribute as a MessageFormat
+            for TextArea control tag emitter
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/TextArea.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev25
+        </revision>
+      
+        <notes>
+          <scm:Note>Streamline the javascript code emitted from the JSClient
+            and PeerJSTag and simplify configuration by generating JSON
+            automatically.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>JSClient.java
+          </URI>
+          <URI>PeerJSTag.java
+          </URI>
+          <URI>kit/HtmlContainer.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev25
+        </revision>
+      
+        <notes>
+          <scm:Note>Acceptor.save() method sends a save message to all
+            children once the incoming data is processed.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Acceptor.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev24
         </revision>
       
@@ -26,6 +97,7 @@
         
         <path>source/spiralcraft/servlet/pages/GeneratorServlet.java
         </path>
+      </scm:Change>
 
       <scm:Change>
      

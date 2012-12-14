@@ -2,13 +2,14 @@
 
 	
   <property name="module" value="servlet"/>
-  <property name="buildVersion" value="0.4.17-dev24"/>
+  <property name="buildVersion" value="0.4.17-dev25"/>
 	
   <path id="classpath">
     <pathelement location="lib/spiralcraft-core.jar"/>
     <pathelement location="lib/spiralcraft-net.jar"/>
     <pathelement location="lib/spiralcraft-textgen.jar"/>
     <pathelement location="lib/servlet-api.jar"/>
+    <pathelement location="lib/spiralcraft-json.jar"/>
   </path>
 
   <property name="classpath" refid="classpath"/>
