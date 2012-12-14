@@ -24,6 +24,7 @@ import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.Message;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
+import spiralcraft.text.MessageFormat;
 import spiralcraft.textgen.OutputContext;
 
 public class TextArea<Ttarget>
@@ -108,6 +109,9 @@ public class TextArea<Ttarget>
     { appendAttribute("readonly",val);
     }
     
+    public void setPlaceholder(MessageFormat val)
+    { this.addStandardBinding("placeholder",val);
+    }
     
   }  
   
