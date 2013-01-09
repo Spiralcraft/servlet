@@ -14,43 +14,22 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import spiralcraft.servlet.webui.components.html.kit.AbstractTextInput;
+import java.util.Date;
 
-public class TextInput<Ttarget>
-  extends AbstractTextInput<Ttarget>
+import spiralcraft.servlet.webui.components.html.kit.AbstractTextInput;
+import spiralcraft.util.string.DateToString;
+
+public class DateInput
+  extends AbstractTextInput<Date>
 {
-  
-  private boolean password;
-  
-  
-  /**
-   * Whether the control is in password mode
-   * 
-   * @param password
-   */
-  public void setPassword(boolean password)
-  { this.password=password;
-  }
-  
   
   @Override
   protected TextTag createTag()
-  { return new Tag();
+  { return new TextTag();
   }
-  
-  public class Tag 
-    extends TextTag
-  {    
     
-    @Override
-    protected String getInputType()
-    { return password?"password":"text";
-    }
-    
-    @Override
-    protected boolean shouldRenderValue()
-    { return !password;
-    }
+  public void setFormat(String format)
+  { this.setConverter(new DateToString(format));
   }
   
 }

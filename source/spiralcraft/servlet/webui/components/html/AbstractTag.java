@@ -95,6 +95,10 @@ public abstract class AbstractTag
     this.attributes=attributes;
   }
 
+  public void setGenerateId(boolean generateId)
+  { this.generateId=generateId;
+  }
+  
   public void setTagPosition(int position)
   { this.tagPosition=position;
   }
