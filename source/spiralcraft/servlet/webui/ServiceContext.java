@@ -348,6 +348,20 @@ public class ServiceContext
    *   still finish processing actions, or if preparing, will finish preparing)
    * </p>
    * 
+   * @param uriStr A properly escaped string representation of the uri
+   *   to redirect to
+   * 
+   */
+  public void redirect(String uriStr)
+    throws URISyntaxException,ServletException
+  { redirect(new URI(uriStr));
+  }
+  
+  /**
+   * <p>Directs that a redirect should occur before rendering (the page will
+   *   still finish processing actions, or if preparing, will finish preparing)
+   * </p>
+   * 
    * @param rawURI 
    */
   public void redirect(URI rawURI)
