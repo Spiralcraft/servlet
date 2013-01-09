@@ -16,6 +16,47 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev26
+        </revision>
+      
+        <notes>
+          <scm:Note>Added ServiceContext.redirect(String) so client code
+            does not have to instantiate a URI to use the redirect method.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/ServiceContext.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev26
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide a DateInput HTML component to simplify formatted
+            date entry.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>AbstractTag.java
+          </URI>
+          <URI>DateInput.java
+          </URI>
+          <URI>TextInput.java
+          </URI>
+          <URI>kit/AbstractTextInput.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev25
         </revision>
       
