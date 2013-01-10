@@ -20,6 +20,24 @@
         </revision>
       
         <notes>
+          <scm:Note>Added RequestData.includedNames to simplify mapping partial
+            request data to an object
+          </scm:Note>
+          <scm:Note>Added RequestData.onRequest to perform any computations
+            after the request data is read.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/RequestData.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev26
+        </revision>
+      
+        <notes>
           <scm:Note>Added ServiceContext.redirect(String) so client code
             does not have to instantiate a URI to use the redirect method.
           </scm:Note>
