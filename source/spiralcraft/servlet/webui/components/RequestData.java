@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Reflector;
@@ -52,10 +53,12 @@ public class RequestData<T>
   
   private RequestBinding<?>[] requestBindings;
   private ThreadLocalChannel<T> prevalue;
+  private String[] includedNames;
   private String[] excludedNames;
   private String[] publishNames;
   private boolean autoMap;
   private Source source=Source.QUERY;
+  private Binding<?> onRequest;
   
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
@@ -83,6 +86,15 @@ public class RequestData<T>
           }
         }
         
+        HashSet<String> includedNames=null;
+        if (this.includedNames!=null && this.includedNames.length>0)
+        { 
+          includedNames=new HashSet<String>();
+          for (String name:this.includedNames)
+          { includedNames.add(name);
+          }
+        }
+        
         if (requestBindings!=null)
         { 
           for (RequestBinding requestBinding: requestBindings)
@@ -95,6 +107,9 @@ public class RequestData<T>
         for (Signature sig:sigs)
         {
           if (sig.getParameters()==null 
+              && (includedNames==null
+                  || includedNames.contains(sig.getName())
+                 )
               && !excludedNames.contains(sig.getName())
               && !sig.getName().startsWith("@")
               )
@@ -129,6 +144,9 @@ public class RequestData<T>
         }
       }
     }
+    if (onRequest!=null)
+    { onRequest.bind(prefocus);
+    }
     return focusChain;
     
   }
@@ -148,8 +166,22 @@ public class RequestData<T>
    * 
    * @param excludedNames
    */
-  public void setExcludedNames(String[] excludedNames)
+  public void setExcludeNames(String[] excludedNames)
   { this.excludedNames=excludedNames;
+  }
+  
+  /**
+   * Include the specified property names in automatic mapping and turn
+   *   automatic mapping on if the included names are not empty
+   *   
+   * @param includedNames
+   */
+  public void setIncludeNames(String[] includedNames)
+  { 
+    if (includedNames!=null && includedNames.length>0)
+    { setAutoMap(true);
+    }
+    this.includedNames=includedNames;
   }
   
   /**
@@ -174,6 +206,15 @@ public class RequestData<T>
   { this.requestBindings=requestBindings;
   }
   
+  /**
+   * An expression to evaluate once the request data has been read
+   * 
+   * @param onRequest
+   */
+  public void setOnRequest(Binding<?> onRequest)
+  { this.onRequest=onRequest;
+  }
+  
   @Override
   protected T computeExportValue(ValueState<T> state)
   {
@@ -194,6 +235,9 @@ public class RequestData<T>
              );
           requestBinding.publish(context);
         }
+      }
+      if (onRequest!=null)
+      { onRequest.get();
       }
       return value;
     }
