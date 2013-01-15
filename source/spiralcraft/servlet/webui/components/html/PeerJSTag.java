@@ -165,6 +165,8 @@ public class PeerJSTag
       out.append(");\r\n");
     }
     
+    // TODO: Pull ports from parent component and make a named interface for
+    //   each port. $SC(id).myPort.postForm(formData,responseHandler)
   }
   
   private String makeEventObject()
