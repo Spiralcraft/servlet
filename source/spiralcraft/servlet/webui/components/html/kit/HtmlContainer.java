@@ -47,7 +47,6 @@ public class HtmlContainer
   
   { 
     addSelfFacet=true;
-    addHandler(stateRef);
   }
   
   public void setPeerJSTag(PeerJSTag scriptTag)
@@ -56,10 +55,7 @@ public class HtmlContainer
     { jsClient=new JSClient();
     }
     if (scriptTag!=peerJSTag)
-    { 
-      // TODO: removeHandler(this.peerJSTag);
-      peerJSTag=scriptTag;
-      addHandler(scriptTag);
+    { peerJSTag=scriptTag;
     }
   }
   
@@ -111,6 +107,15 @@ public class HtmlContainer
     else
     { throw new RuntimeException("Unrecognized port name "+componentId);
     }
+  }
+ 
+  @Override
+  protected void addHandlers()
+    throws ContextualException
+  {
+    super.addHandlers();
+    addHandler(stateRef);
+    addHandler(peerJSTag);
   }
   
   private ComponentState getChildState(String id)

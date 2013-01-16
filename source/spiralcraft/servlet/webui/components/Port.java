@@ -18,6 +18,7 @@ import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.kit.AbstractMessageHandler;
+import spiralcraft.common.ContextualException;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ComponentState;
 import spiralcraft.servlet.webui.PortMessage;
@@ -82,16 +83,28 @@ public class Port
     }
   }
   
-  private UISequencer sequencer=new UISequencer();
+  private final UISequencer sequencer=new UISequencer();
   
-  private ThreadLocalStack<Boolean> portCall
+  protected final ThreadLocalStack<Boolean> portCall
     =new ThreadLocalStack<Boolean>();
   
   private boolean isolatePort;
   
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   { 
+    
+    super.addHandlers();
+    addExternalHandlers();
     addHandler(new PortHandler());
     addHandler(new BlockerHandler());
+  }
+
+  protected void addExternalHandlers()
+    throws ContextualException
+  { 
+    
   }
   
   public void setIsolatePort(boolean isolatePort)

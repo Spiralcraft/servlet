@@ -43,6 +43,11 @@ public class JSClient
     return focusChain;
   }
 
+  public String ref()
+  {
+    return "$SC('"+serverPeer.getState().getId()+"')";
+  }
+  
   public String notifyJS(String event,String data) 
     throws IOException
   { 

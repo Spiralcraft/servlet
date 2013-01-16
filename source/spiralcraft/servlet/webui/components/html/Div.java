@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 
 import spiralcraft.servlet.webui.components.html.kit.HtmlContainer;
 
@@ -32,12 +33,6 @@ public class Div
   
   private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag();
-  
-  { 
-    addHandler(errorTag);
-    addHandler(tag);
-  }
-  
   
   public class Tag extends AbstractTag
   {
@@ -64,6 +59,14 @@ public class Div
   { return errorTag;
   }
 
+  @Override
+  public void addHandlers()
+    throws ContextualException
+  { 
+    super.addHandlers();
+    addHandler(errorTag);
+    addHandler(tag);
+  }
   
   
   
