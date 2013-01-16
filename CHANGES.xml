@@ -16,11 +16,40 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev28
+        </revision>
+      
+        <notes>
+          <scm:Note>JSPort emits a named member of the js peer object for its
+            container to facilitate communication with the server-side port.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>Port.java
+          </URI>
+          <URI>html/Div.java
+          </URI>
+          <URI>html/JSClient.java
+          </URI>
+          <URI>html/JSPort.java
+          </URI>
+          <URI>html/kit/HtmlContainer.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev26
         </revision>
       
         <notes>
-          <scm:Note>Added RequestData.includedNames to simplify mapping partial
+          <scm:Note>Added RequestData.includeNames to simplify mapping partial
             request data to an object
           </scm:Note>
           <scm:Note>Added RequestData.onRequest to perform any computations
