@@ -16,6 +16,22 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev29
+        </revision>
+      
+        <notes>
+          <scm:Note>Add additional logging, exception handling for autoKey
+            resolution.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/EditorBase.java
+        </path>
+      </scm:Change>
+      
+      <scm:Change>
+     
         <revision>-dev28
         </revision>
       
