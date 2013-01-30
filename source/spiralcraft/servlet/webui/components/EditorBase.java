@@ -53,6 +53,7 @@ import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.SaveMessage;
+import spiralcraft.util.ArrayUtil;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.MessageHandlerChain;
@@ -954,7 +955,10 @@ public abstract class EditorBase<Tbuffer extends Buffer>
       if (debug)
       { log.fine("Applying key "+key);
       }
-      localKeyChannel.set(key);
+      Tuple localKey=localKeyChannel.get();
+      if (!key.equals(localKey))
+      { localKeyChannel.set(key);
+      }
     }
   }
   
@@ -1010,7 +1014,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     { 
       Field<?> field=fieldChannel.get();
       if (debug)
-      { log.debug(this.getLogPrefix()+"Got field metadata for "+field.getURI());
+      { 
+        log.debug
+          (this.getLogPrefix()+"Got field metadata for "+field.getURI()
+            +" found through "+source.trace(null).toString()
+          );
       }
       if (field instanceof RelativeField)
       {
@@ -1031,7 +1039,17 @@ public abstract class EditorBase<Tbuffer extends Buffer>
             
         Key<Tuple> localKey
           =(Key<Tuple>) type.findKey(parentKey.getImportedKey().getFieldNames());
-        localKeyChannel=localKey.bindChannel(source,focus,null);
+        if (localKey!=null)
+        { localKeyChannel=localKey.bindChannel(source,focus,null);
+        }
+        else
+        {
+          throw new ContextualException
+            ("No key in "+type.getURI()+" for "
+              +ArrayUtil.format
+              (parentKey.getImportedKey().getFieldNames(),",","")
+            );
+        }
       }
       else
       {
