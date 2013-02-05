@@ -16,6 +16,21 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev30
+        </revision>
+      
+        <notes>
+          <scm:Note>Add placeholder attribute to TextInput
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/kit/AbstractTextInput.java
+        </path>
+      </scm:Change>
+          
+      <scm:Change>
+     
         <revision>-dev29
         </revision>
       
