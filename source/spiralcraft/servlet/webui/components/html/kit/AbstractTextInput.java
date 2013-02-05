@@ -26,6 +26,7 @@ import spiralcraft.servlet.webui.components.AbstractTextControl;
 import spiralcraft.servlet.webui.components.html.AbstractTag;
 import spiralcraft.servlet.webui.components.html.ErrorTag;
 import spiralcraft.servlet.webui.components.html.PeerJSTag;
+import spiralcraft.text.MessageFormat;
 
 public abstract class AbstractTextInput<Ttarget>
   extends AbstractTextControl<Ttarget>
@@ -48,6 +49,10 @@ public abstract class AbstractTextInput<Ttarget>
 
     public void setMaxlength(int maxlength)
     { this.appendAttribute("maxlength",Integer.toString(maxlength));
+    }
+ 
+    public void setPlaceholder(MessageFormat val)
+    { this.addStandardBinding("placeholder",val);
     }
     
     @Override
