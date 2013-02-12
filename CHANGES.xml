@@ -16,6 +16,35 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev31
+        </revision>
+      
+        <notes>
+          <scm:Note>Refactoring to provide ability to load web application
+            contexts in a batch container for maintenance/utility purposes.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/Controller.java
+          </URI>
+          <URI>kit/WebApplicationContext.java
+          </URI>
+          <URI>task/WebBatchContext.java
+          </URI>
+          <URI>util/ServletURLClassLoader.java
+          </URI>
+          <URI>util/WARClassLoader.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev30
         </revision>
       
