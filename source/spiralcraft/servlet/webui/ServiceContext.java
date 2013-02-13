@@ -175,6 +175,13 @@ public class ServiceContext
     threadContext.pop();
   }
   
+  /**
+   * If not null, WebUI will respond to the client with an http redirect
+   *   instead of rendering the page after the request processing phase
+   *   has been completed.
+   * 
+   * @return The redirect URI in effect, if any.
+   */
   public URI getRedirectURI()
   { return redirectURI;
   }
