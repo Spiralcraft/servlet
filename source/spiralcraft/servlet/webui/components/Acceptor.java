@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui.components;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
 
@@ -69,6 +70,7 @@ public abstract class Acceptor<T>
   
   private Channel<ServiceContext> serviceContextChannel;
   private boolean autoSave;
+  private boolean reloadAfterAction;
   
   public void setOnPost(Expression<Command<?,?,?>> onPost)
   { this.onPost=onPost;
@@ -103,6 +105,16 @@ public abstract class Acceptor<T>
   @Override
   public String getVariableName()
   { return null;
+  }
+  
+  /**
+   * Force the client to redirect back to this page after an action
+   *   is performed so the reload button does not resubmit the form.
+   * 
+   * @param reloadAfterAction
+   */
+  public void setReloadAfterAction(boolean reloadAfterAction)
+  { this.reloadAfterAction=reloadAfterAction;
   }
   
     
@@ -261,6 +273,19 @@ public abstract class Acceptor<T>
              )
           { save(context);
 
+          }
+          
+          if (reloadAfterAction && context.getRedirectURI()==null)
+          { 
+            try
+            { context.redirect(context.getAbsoluteBackLink());
+            }
+            catch (URISyntaxException x)
+            { log.log(Level.WARNING,"Could not redirect to "+context.getAbsoluteBackLink());
+            }
+            catch (ServletException x)
+            { log.log(Level.WARNING,"Could not redirect to "+context.getAbsoluteBackLink(),x);
+            }
           }
         }
         
