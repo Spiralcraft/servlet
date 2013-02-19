@@ -16,6 +16,23 @@
     <detail>
       <scm:Change>
      
+        <revision>-dev32
+        </revision>
+      
+        <notes>
+          <scm:Note>Added a "reloadAfterAction" property to the Acceptor (base
+            class of html:Form and rpc:Controller) to reload the page after
+            a post.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Acceptor.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev31
         </revision>
       
