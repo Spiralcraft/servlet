@@ -211,6 +211,20 @@ public class Login
       );
   }
 
+  public void login()
+  { 
+    getState().queueCommand
+      (new CommandAdapter<LoginEntry,Void,Void>()
+        {
+          @Override
+          public void run()
+          { login(true);
+          }
+        
+        }
+      );
+  }
+  
   @Override
   public LoginState createState()
   {
