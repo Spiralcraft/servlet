@@ -72,6 +72,10 @@ public abstract class AbstractTag
   private DictionaryBinding<?>[] standardAttributeBindings;
   private KeyValue<String,MessageFormat>[] attributeFormats;
   
+  private DictionaryBinding<?>[] classBindings;
+  private MessageFormat[] classFormats;
+  protected String[] standardClasses={"sc-webui"};
+  
   { type=RenderMessage.TYPE;
   }
   
@@ -215,36 +219,49 @@ public abstract class AbstractTag
   @SuppressWarnings({ "unchecked", "rawtypes" })
   protected void addStandardBinding(String name,Expression expr)
   { 
-    DictionaryBinding<?> binding=new DictionaryBinding();
-    binding.setName(name);
-    binding.setTarget(expr);
-    
-    if (standardAttributeBindings!=null)
-    {
-      standardAttributeBindings
-        =ArrayUtil.append
-          (standardAttributeBindings, binding);
+
+    if (name.equals("class"))
+    { addClassBinding(expr);
     }
     else
-    { standardAttributeBindings=new DictionaryBinding[] {binding};
+    { 
+      DictionaryBinding<?> binding=new DictionaryBinding(name,expr);
+      standardAttributeBindings
+        =ArrayUtil.append
+          (standardAttributeBindings, binding,DictionaryBinding.class);
     }
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   protected void addStandardBinding(String name,MessageFormat format)
   { 
-    KeyValue<String,MessageFormat> binding
-      =new KeyValue<String,MessageFormat>(name,format);
-    
-    if (attributeFormats!=null)
-    {
-      attributeFormats
-        =ArrayUtil.append
-          (attributeFormats, binding);
+    if (name.equals("class"))
+    { addClassBinding(format);
     }
     else
-    { attributeFormats=new KeyValue[] {binding};
+    {
+      KeyValue<String,MessageFormat> binding
+        =new KeyValue<String,MessageFormat>(name,format);
+      attributeFormats
+        =ArrayUtil.append
+          (attributeFormats, binding,KeyValue.class);
     }
+  }
+
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  protected void addClassBinding(Expression<?> expr)
+  { 
+    DictionaryBinding<?> binding=new DictionaryBinding("class",expr);
+    classBindings
+      =ArrayUtil.append(classBindings,binding,DictionaryBinding.class);
+  }
+
+  protected void addClassBinding(MessageFormat format)
+  { classFormats=ArrayUtil.append(classFormats,format,MessageFormat.class);
+  }
+  
+  protected void addStandardClass(String classname)
+  { standardClasses=ArrayUtil.append(standardClasses,classname,String.class);
   }
   
   public void setId(String val)
@@ -254,13 +271,17 @@ public abstract class AbstractTag
   public void setIdX(Expression<?> expr)
   { addStandardBinding("id",expr);
   }
+  
+  public void setAutofocus(Expression<Boolean> expr)
+  { addStandardBinding("autofocus",expr);
+  }
 
   public void setClazz(MessageFormat[] formatA)
   { 
     if (formatA!=null)
     {
       for (MessageFormat format:formatA)
-      { addStandardBinding("class",format);
+      { addClassBinding(format);
       }
     }
   }
@@ -270,7 +291,7 @@ public abstract class AbstractTag
     if (exprA!=null)
     {
       for (Expression<?> expr:exprA)
-      { addStandardBinding("class",expr);
+      { addClassBinding(expr);
       }
     }
   }
@@ -405,6 +426,8 @@ public abstract class AbstractTag
       { format.getValue().bind(focus);
       }
     }
+    
+    
     return focus;
   }
   
@@ -445,6 +468,7 @@ public abstract class AbstractTag
     if (generateId)
     { renderId(out,context);
     }
+    renderClass(context,out);
     if (attributes!=null)
     { out.append(" "+attributes);
     }
@@ -459,6 +483,7 @@ public abstract class AbstractTag
     }
   }
 
+  
   protected void renderId(Appendable out,Dispatcher context)
     throws IOException
   {
@@ -467,16 +492,73 @@ public abstract class AbstractTag
     { renderAttribute(out,"id",state.getId());
     }
   }
+
+  protected void renderClass(Dispatcher context,Appendable out)
+    throws IOException
+  { 
+    if (standardClasses!=null || classBindings!=null || classFormats!=null)
+    {
+      out.append(" class=\"");
+      
+      if (standardClasses!=null)
+      {
+        for (String stdclass: standardClasses)
+        { 
+          attributeEncoder.encode(stdclass,out);
+          out.append(" ");
+        }
+      }
+      
+      if (classBindings!=null)
+      {
+        for (DictionaryBinding<?> binding: classBindings)
+        { 
+          String value=binding.get();
+          if (value!=null)
+          { 
+            attributeEncoder.encode(value,out);
+            out.append(" ");
+          }
+        }
+      }
+      
+      if (classFormats!=null)
+      { 
+        for (MessageFormat format: classFormats)
+        { 
+          String value=format.render();
+          if (value!=null)
+          { 
+            attributeEncoder.encode(value,out);
+            out.append(" ");
+          }
+        }
+      }
+    }
+    out.append("\"");
     
+  }
+
+  @SuppressWarnings("unchecked")
   protected void renderBoundAttributes
     (Appendable out,DictionaryBinding<?>[] bindings)
     throws IOException
   {
     for (DictionaryBinding<?> binding : bindings)
     { 
-      String val=binding.get();
-      if (val!=null)
-      { renderAttribute(out,binding.getName(),val);
+      if (binding.getTargetChannel().getContentType()==Boolean.class)
+      { 
+        // Special case for boolean attributes
+        if ( ((DictionaryBinding<Boolean>) binding).getTargetChannel().get())
+        { renderAttribute(out,binding.getName(),binding.getName());
+        }
+      }
+      else
+      {  
+        String val=binding.get();
+        if (val!=null)
+        { renderAttribute(out,binding.getName(),val);
+        }
       }
     }
   }
