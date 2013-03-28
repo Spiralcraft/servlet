@@ -17,6 +17,7 @@ package spiralcraft.servlet.webui.components.html;
 import java.io.IOException;
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.AbstractActionControl;
@@ -51,6 +52,9 @@ public class Button<Tcontext,Tresult>
   public class Tag
     extends AbstractTag
   {
+    { addStandardClass("sc-webui-button");
+    }
+    
     @Override
     protected String getTagName(Dispatcher context)
     { return "button";
@@ -78,9 +82,14 @@ public class Button<Tcontext,Tresult>
   private ErrorTag errorTag=new ErrorTag();
   
   
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   { 
+    tag.addStandardClass("sc-webui-button");
     addHandler(errorTag);
     addHandler(tag);
+    super.addHandlers();
   }
   
   public Tag getTag()
