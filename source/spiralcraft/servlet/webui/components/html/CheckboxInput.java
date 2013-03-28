@@ -52,6 +52,9 @@ public class CheckboxInput
   private class Tag
     extends AbstractTag
   {
+    { addStandardClass("sc-webui-checkbox-input sc-webui-checkbox");
+    }
+    
     @Override
     protected String getTagName(Dispatcher context)
     { return "input";
@@ -82,9 +85,21 @@ public class CheckboxInput
   private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag();
   
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   { 
     addHandler(errorTag);
     addHandler(tag);
+    
+    FormField<?> formField=this.findComponent(FormField.class);
+    if (formField!=null)
+    { 
+      addHandler(formField.newInputHandler());
+      tag.setGenerateId(true);
+    }
+    
+    super.addHandlers();
   }
   
   public void setName(String name)
