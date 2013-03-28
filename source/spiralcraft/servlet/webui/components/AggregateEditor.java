@@ -260,7 +260,7 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
   
       
   @Override
-  protected void save()
+  protected void doSave()
     throws DataException
   {
     if (debug)

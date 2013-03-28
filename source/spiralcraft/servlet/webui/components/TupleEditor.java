@@ -296,7 +296,7 @@ public abstract class TupleEditor
   }
       
   @Override
-  protected void save()
+  protected void doSave()
     throws DataException
   {
     if (debug)

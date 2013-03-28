@@ -129,7 +129,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
             // Save on descent
             try
             { 
-              save();
+              doSave();
             }
             catch (DataException x)
             { handleException(context,x);
@@ -285,7 +285,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
   { this.redirectOnSaveParameter=param;
   }
   
-  protected abstract void save()
+  protected abstract void doSave()
     throws DataException;
   
   protected void setupSession(Focus<?> parentFocus)
@@ -626,6 +626,29 @@ public abstract class EditorBase<Tbuffer extends Buffer>
     return saveCommand(new CommandBlock(postSaveCommandList));
   }
       
+  /**
+   * Trigger a deferred save programmatically from a descendant.
+   */
+  public void save()
+  { 
+    getState().queueCommand(
+      new CommandAdapter<Tbuffer,Void,Void>()
+        { 
+          { name="save";
+          }
+          
+          @Override
+          public void run()
+          { 
+            if (!getState().isErrorState())
+            { getState().queueMessage(SAVE_MESSAGE);
+            }
+            
+          }
+        }      
+    );
+  }
+  
   public Command<Tbuffer,Void,Void> saveCommand(final Command<?,?,?> postSaveCommand)
   { 
     return new QueuedCommand<Tbuffer,Void,Void>
