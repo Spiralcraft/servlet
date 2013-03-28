@@ -390,23 +390,37 @@ public class ServiceContext
     if (portSession==null)
     { throw new RuntimeException("??? null resource session "+this);
     }
-    String encodedParameters=portSession.getEncodedParameters();
+    VariableMap sessionMap=portSession.getActionParameters();
     
-    if (encodedParameters!=null)
+    if (sessionMap!=null && !sessionMap.isEmpty())
     { 
+      // We may need to merge the session parameters
+      
       if (query==null || query.isEmpty())
-      { query=encodedParameters;
+      {
+        // No query specified, just use the session map
+        query=sessionMap.generateEncodedForm();
       }
       else
-      { query=query+"&"+encodedParameters;
+      { 
+        // Query parameters override session map parameters
+        VariableMap queryMap=VariableMap.fromUrlEncodedString(query);
+        for (String key: sessionMap.keySet())
+        { 
+          if (!queryMap.containsKey(key))
+          { queryMap.put(key,sessionMap.get(key));
+          }
+        }
+        query=queryMap.generateEncodedForm();
       }
     }
+    
     
     if (debugLevel.canLog(Level.DEBUG))
     {
       log.debug
         ("Encoding redirect to "+rawURI
-        +"  parameters="+encodedParameters
+        +"  session="+sessionMap.generateEncodedForm()
         +"  query="+query
         );
     }
