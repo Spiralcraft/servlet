@@ -261,12 +261,15 @@ public class PortSession
   }
   
    
-
+  public VariableMap getActionParameters()
+  { return parameterMap;
+  }
   
   public String getEncodedParameters()
   { return parameterMap.generateEncodedForm();
   }
 
+  
   public void setActionParameter(String name,String[] values)
   { setActionParameter(name,Arrays.asList(values));
   }
