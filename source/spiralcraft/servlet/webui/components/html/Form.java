@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 
 // import spiralcraft.log.ClassLog;
 
@@ -47,6 +48,9 @@ public class Form<T>
   {
   	private String tagName="form";
   	private String name;
+  	
+  	{ addStandardClass("sc-webui-form");
+  	}
   	
     @Override
     protected String getTagName(Dispatcher dispatcher)
@@ -88,10 +92,13 @@ public class Form<T>
   
   private final ErrorTag errorTag=new ErrorTag();
   
-  
+  @Override
+  public void addHandlers()
+    throws ContextualException
   { 
     addHandler(errorTag);
     addHandler(tag);
+    super.addHandlers();
   }
   
   /**

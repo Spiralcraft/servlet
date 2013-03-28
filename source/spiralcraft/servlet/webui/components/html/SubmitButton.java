@@ -17,6 +17,7 @@ package spiralcraft.servlet.webui.components.html;
 import java.io.IOException;
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.AbstractActionControl;
@@ -52,6 +53,9 @@ public class SubmitButton<Tcontext,Tresult>
     { return "input";
     }
 
+    { addStandardClass("sc-webui-submit-button");
+    }
+    
     @Override
     protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
@@ -72,10 +76,13 @@ public class SubmitButton<Tcontext,Tresult>
     
   private ErrorTag errorTag=new ErrorTag();
   
-  
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   { 
     addHandler(errorTag);
     addHandler(tag);
+    super.addHandlers();
   }
   
   public Tag getTag()
