@@ -49,9 +49,13 @@ public class Login
   private ErrorTag errorTag
     =new ErrorTag();
   
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   { 
     addHandler(errorTag);
     addHandler(tag);
+    super.addHandlers();
   }
   
   public Tag getTag()
