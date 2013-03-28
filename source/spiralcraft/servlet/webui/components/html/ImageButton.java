@@ -115,6 +115,9 @@ public class ImageButton<Tcontext,Tresult>
   public class Tag
     extends AbstractTag
   {
+    { addStandardClass("sc-webui-image-button");
+    }
+    
     private String height;
     private String width;
     private String border;

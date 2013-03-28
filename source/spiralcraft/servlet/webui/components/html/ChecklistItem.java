@@ -50,6 +50,9 @@ public class ChecklistItem<Ttarget,Tvalue>
   class Tag 
     extends AbstractTag
   {
+    { addStandardClass("sc-webui-checklis-item sc-webui-checkbox");
+    }
+    
     @Override
     protected String getTagName(Dispatcher context)
     { return "input";

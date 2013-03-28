@@ -38,6 +38,9 @@ public class HiddenInput<Ttarget>
   class Tag 
     extends AbstractTag
   {
+    { addStandardClass("sc-webui-hidden-input");
+    }
+    
     @Override
     protected String getTagName(Dispatcher dispatcher)
     { return "input";

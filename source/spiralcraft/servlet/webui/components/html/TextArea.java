@@ -53,6 +53,9 @@ public class TextArea<Ttarget>
   public class Tag
     extends AbstractTag
   {
+    { addStandardClass("sc-webui-text-area");
+    }
+    
     @Override
     protected String getTagName(Dispatcher dispatcher)
     { return "textarea";

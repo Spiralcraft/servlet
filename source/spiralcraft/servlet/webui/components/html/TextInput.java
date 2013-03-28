@@ -41,6 +41,8 @@ public class TextInput<Ttarget>
   public class Tag 
     extends TextTag
   {    
+    { addStandardClass("sc-webui-text-input");
+    }
     
     @Override
     protected String getInputType()
