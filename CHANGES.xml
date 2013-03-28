@@ -14,6 +14,184 @@
     </date>
 
     <detail>
+    
+      <scm:Change>
+     
+        <revision>-dev33
+        </revision>
+      
+        <notes>
+          <scm:Note>New FieldSet to manage html analogue
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>FormField.java
+          </URI>
+          <URI>kit/AbstractTextInput.java
+          </URI>
+        </resources>
+        
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev33
+        </revision>
+      
+        <notes>
+          <scm:Note>FormField, FieldSet and input components collaborate to 
+            associate html labels with generated field ids.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>FormField.java
+          </URI>
+          <URI>FieldSet.java
+          </URI>
+          <URI>kit/AbstractTextInput.java
+          </URI>
+        </resources>
+        
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev33
+        </revision>
+      
+        <notes>
+          <scm:Note>Added flexibility to CSS class management configurability
+            by emitting standard class names for server generated elements
+            and by combining multiple sources of classes into one "class"
+            attribute.
+          </scm:Note>
+          <scm:Note>Move tag handler installation into designated protected
+            method addHandlers() from init block.
+          </scm:Note>
+          <scm:Note>Boolean attributes are rendered according to HTML5 spec.
+            attribute="attribute"
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>AbstractTag.java
+          </URI>
+          <URI>Button.java
+          </URI>
+          <URI>CheckboxInput.java
+          </URI>
+          <URI>ChecklistItem.java
+          </URI>
+          <URI>Form.java
+          </URI>
+          <URI>HiddenInput.java
+          </URI>
+          <URI>ImageButton.java
+          </URI>
+          <URI>Login.java
+          </URI>
+          <URI>SubmitButton.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev33
+        </revision>
+      
+        <notes>
+          <scm:Note>Added a public login() method for descendants to
+            initiate a login from within an expression or from Java code after
+            credential input has been read.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Login.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev33
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide a public save() method for descendants to
+            request a buffer save after input has been read
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>AggregateEditor.java
+          </URI>
+          <URI>EditorBase.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev33
+        </revision>
+      
+        <notes>
+          <scm:Note>When redirecting to a URL with a specified query string,
+            make sure that the specified query string parameters override any 
+            automatically published (sticky) request parameters with the same
+            name.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>kit/PortSession.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev33
+        </revision>
+      
+        <notes>
+          <scm:Note>Make sure that context is null when pre-initializing so
+            that definition will be cleanly reloaded after errors in source
+            are fixed.
+          </scm:Note>
+
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/PathContextFilter.java
+        </path>
+      </scm:Change>
+
       <scm:Change>
      
         <revision>-dev32
