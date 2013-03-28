@@ -19,12 +19,14 @@ import java.io.IOException;
 
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 
 
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
 import spiralcraft.servlet.webui.components.html.AbstractTag;
 import spiralcraft.servlet.webui.components.html.ErrorTag;
+import spiralcraft.servlet.webui.components.html.FormField;
 import spiralcraft.servlet.webui.components.html.PeerJSTag;
 import spiralcraft.text.MessageFormat;
 
@@ -38,6 +40,9 @@ public abstract class AbstractTextInput<Ttarget>
   public class TextTag 
     extends AbstractTag
   {
+    { addStandardClass("sc-webui-abstract-text-input");
+    }
+    
     @Override
     protected String getTagName(Dispatcher dispatcher)
     { return "input";
@@ -87,10 +92,20 @@ public abstract class AbstractTextInput<Ttarget>
   
   private ErrorTag errorTag=new ErrorTag();
   
-  
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   { 
     addHandler(errorTag);
     addHandler(tag);
+    
+    FormField<?> formField=this.findComponent(FormField.class);
+    if (formField!=null)
+    { 
+      addHandler(formField.newInputHandler());
+      tag.setGenerateId(true);
+    }
+    super.addHandlers();
   }
   
   public TextTag getTag()
