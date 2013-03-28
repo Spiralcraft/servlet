@@ -113,6 +113,7 @@ public class PathContextFilter
   protected void preInitialize(Focus<?> chain)
     throws ContextualException
   { 
+    context=null;
     ensurePathContext(chain);
     this.preFilters=context.getPreFilters();
   }
