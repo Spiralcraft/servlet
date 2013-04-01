@@ -18,7 +18,9 @@ package spiralcraft.servlet.webui.components;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.kit.Callable;
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -41,6 +43,8 @@ public abstract class AbstractTextControl<Ttarget>
   private String name;
   private StringConverter<Ttarget> converter;
   private boolean required;
+  private Binding<?> onInput;
+  private Callable<Ttarget,?> onInputFn;
 //  private boolean ignoreEmptyInput;
   
   public void setName(String name)
@@ -58,6 +62,10 @@ public abstract class AbstractTextControl<Ttarget>
   
   public void setConverter(StringConverter<Ttarget> converter)
   { this.converter=converter;
+  }
+  
+  public void setOnInput(Binding<?> onInput)
+  { this.onInput=onInput;
   }
   
 //  /**
@@ -113,6 +121,11 @@ public abstract class AbstractTextControl<Ttarget>
       else
       { converter=target.getReflector().getStringConverter();
       }
+      
+      if (onInput!=null)
+      { onInputFn=new Callable(getSelfFocus(),target.getReflector(),onInput);
+      }
+
     }
     if (target==null)
     { log.fine(getLogPrefix()+"Not bound to anything (formvar name="+name+")");
@@ -235,6 +248,9 @@ public abstract class AbstractTextControl<Ttarget>
             }
           }
           
+          if (onInputFn!=null)
+          { onInputFn.evaluate(tval);
+          }
         }
         catch (AccessException x)
         { handleException(context,x);
