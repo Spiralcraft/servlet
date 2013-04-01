@@ -17,6 +17,23 @@
     
       <scm:Change>
      
+        <revision>-dev34
+        </revision>
+      
+        <notes>
+          <scm:Note>New "onInput" property for text controls provides the
+            ability to evaluate an expression in the context of the input data
+            immediately after the control receives input.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/AbstractTextControl.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev33
         </revision>
       
