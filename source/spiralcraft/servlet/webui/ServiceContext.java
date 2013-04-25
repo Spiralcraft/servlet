@@ -58,6 +58,7 @@ import spiralcraft.command.CommandAdapter;
  */
 public class ServiceContext
   extends EventContext
+  implements UIContext
 {
   public static final URI FOCUS_URI
     =URI.create("class:/spiralcraft/servlet/webui/ServiceContext");
@@ -207,11 +208,13 @@ public class ServiceContext
    *   objects for a user's session that are associated with the 
    *   containing WebUI user interface resource
    */
+  @Override
   public PortSession getPortSession()
   { return portSession;
   }
 
   
+  @Override
   public HttpServletRequest getRequest()
   { return request;
   }
@@ -263,6 +266,7 @@ public class ServiceContext
 
   }
   
+  @Override
   public HttpServletResponse getResponse()
   { return response;
   }
@@ -275,12 +279,14 @@ public class ServiceContext
   { this.servletContext=contextAdapter;
   }
   
+  
   /**
    * The URL that can be used to issue asynchronous requests back to this
    *   page. The URL reflects the current state of the conversation.
    *   
    * @return
    */
+  @Override
   public String getAsyncURL()
   { return portSession.getAsyncURL();
   }
@@ -297,6 +303,7 @@ public class ServiceContext
     return response.encodeURL(rawUrl);
   }
   
+  @Override
   public String getAbsoluteBackLink()
   { return response.encodeURL(portSession.getAbsoluteBackLink(request));
   }
@@ -313,6 +320,7 @@ public class ServiceContext
     return getPublicLocator().standardLink(relativePath,request);
   }
   
+  @Override
   public PublicLocator getPublicLocator()
   {
     if (publicLocator==null)
@@ -326,6 +334,7 @@ public class ServiceContext
     return publicLocator;
   }
 
+  @Override
   public String getDataEncodedAbsoluteBackLink()
   { return URLDataEncoder.encode(portSession.getAbsoluteBackLink(request));
   }
@@ -359,6 +368,7 @@ public class ServiceContext
    *   to redirect to
    * 
    */
+  @Override
   public void redirect(String uriStr)
     throws URISyntaxException,ServletException
   { redirect(new URI(uriStr));
@@ -371,6 +381,7 @@ public class ServiceContext
    * 
    * @param rawURI 
    */
+  @Override
   public void redirect(URI rawURI)
     throws ServletException
   {
@@ -531,10 +542,12 @@ public class ServiceContext
   }
   
   
+  @Override
   public VariableMap getPost()
   { return post;
   }
   
+  @Override
   public VariableMap getQuery()
   { return query;
   }
