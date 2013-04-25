@@ -456,10 +456,9 @@ public abstract class Control<Ttarget>
       for (Command<Ttarget,?,?> command : commands)
       {
         log.warning
-          ("Unexecuted command queued post-prepare- results may not "
-          +" be rendered: "+command
+          ("Unexecuted command queued post-prepare- discarding: "+command
           );
-        state.queueCommand(command);
+        // state.queueCommand(command);
       }
     }
   }
