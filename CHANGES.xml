@@ -17,6 +17,48 @@
     
       <scm:Change>
      
+        <revision>-dev35
+        </revision>
+      
+        <notes>
+          <scm:Note>Commands that are still queued after "prepare" are now
+            discarded.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/Control.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev35
+        </revision>
+      
+        <notes>
+          <scm:Note>New "UI" class in the components dir to simplify API
+            access to the UIContext, eg. redirects, back-links, request,
+            response, public URL etc.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>UIContext.java
+          </URI>
+          <URI>components/UI.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev34
         </revision>
       
