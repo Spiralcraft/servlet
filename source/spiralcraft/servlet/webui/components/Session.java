@@ -19,6 +19,7 @@ import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.kit.AbstractMessageHandler;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ServiceContext;
@@ -38,8 +39,12 @@ public class Session<T>
   extends spiralcraft.textgen.elements.Session<T>
 {
   private RequestBinding<?>[] requestBindings;
-  
-  { addHandler(new AbstractMessageHandler()
+
+  @Override
+  protected void addHandlers()
+    throws ContextualException
+  {
+    addHandler(new AbstractMessageHandler()
       {
         { this.type=PrepareMessage.TYPE;
         }
@@ -65,6 +70,7 @@ public class Session<T>
         
       }
     );
+    super.addHandlers();
   }
   
   public void setRequestBindings(RequestBinding<?>[] requestBindings)
