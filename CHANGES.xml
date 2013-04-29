@@ -17,6 +17,18 @@
     
       <scm:Change>
      
+        <revision>-dev36
+        </revision>
+      
+        <notes>
+          <scm:Note>Recompile only for return type change in core
+          </scm:Note>
+        </notes>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev35
         </revision>
       
