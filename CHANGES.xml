@@ -17,6 +17,20 @@
     
       <scm:Change>
      
+        <revision>-dev37
+        </revision>
+      
+        <notes>
+          <scm:Note>Text input has programmatic disabled attribute
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/kit/AbstractTextInput.java
+        </path>        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev36
         </revision>
       
