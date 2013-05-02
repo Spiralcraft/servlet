@@ -22,6 +22,7 @@ import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 
 
+import spiralcraft.lang.Expression;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractTextControl;
 import spiralcraft.servlet.webui.components.html.AbstractTag;
@@ -58,6 +59,10 @@ public abstract class AbstractTextInput<Ttarget>
  
     public void setPlaceholder(MessageFormat val)
     { this.addStandardBinding("placeholder",val);
+    }
+    
+    public void setDisabled(Expression<Boolean> val)
+    { this.addStandardBinding("disabled",val);
     }
     
     @Override
