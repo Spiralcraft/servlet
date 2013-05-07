@@ -17,7 +17,7 @@ package spiralcraft.servlet.webui.components.html;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 
-import spiralcraft.servlet.webui.components.html.kit.HtmlContainer;
+import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlContainer;
 
 /**
  * <p>An arbitrary container that has a server-side representation
@@ -27,7 +27,7 @@ import spiralcraft.servlet.webui.components.html.kit.HtmlContainer;
  *
  */
 public class FieldSet
-  extends HtmlContainer
+  extends AbstractHtmlContainer
 {
   
   

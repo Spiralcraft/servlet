@@ -34,7 +34,7 @@ import spiralcraft.servlet.webui.components.html.PeerJSTag;
  * @author mike
  *
  */
-public class HtmlContainer
+public class AbstractHtmlContainer
   extends Component
 {
   
