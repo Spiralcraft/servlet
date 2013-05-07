@@ -21,7 +21,8 @@ import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Contextual;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.LangUtil;
-import spiralcraft.servlet.webui.components.html.kit.HtmlContainer;
+import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlContainer;
+import spiralcraft.servlet.webui.components.html.kit.ServerPeer;
 
 /**
  * Provides client-side javascript support for HTML components
@@ -33,13 +34,13 @@ public class JSClient
   implements Contextual
 {
 
-  private HtmlContainer serverPeer;
+  private ServerPeer serverPeer;
   
   @Override
   public Focus<?> bind(Focus<?> focusChain)
     throws ContextualException
   {
-    serverPeer=LangUtil.findInstance(HtmlContainer.class,focusChain);
+    serverPeer=LangUtil.findInstance(AbstractHtmlContainer.class,focusChain);
     return focusChain;
   }
 

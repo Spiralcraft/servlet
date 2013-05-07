@@ -17,11 +17,11 @@ package spiralcraft.servlet.webui.components.html;
 import java.io.IOException;
 
 import spiralcraft.app.Dispatcher;
-import spiralcraft.common.ContextualException;
+
 
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.servlet.webui.components.AbstractActionControl;
 import spiralcraft.servlet.webui.components.ActionControlState;
+import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlActionControl;
 import spiralcraft.net.http.VariableMap;
 
 /**
@@ -37,13 +37,14 @@ import spiralcraft.net.http.VariableMap;
  *
  */
 public class SubmitButton<Tcontext,Tresult>
-  extends AbstractActionControl<Tcontext,Tresult>
+  extends AbstractHtmlActionControl<Tcontext,Tresult>
 {
 
-  private String name;
+
   private String label;
   
-  private Tag tag=new Tag();
+  { tag=new Tag();
+  }
   
   public class Tag
     extends AbstractTag
@@ -74,37 +75,14 @@ public class SubmitButton<Tcontext,Tresult>
     }
   }
     
-  private ErrorTag errorTag=new ErrorTag();
   
-  @Override
-  protected void addHandlers()
-    throws ContextualException
-  { 
-    addHandler(errorTag);
-    addHandler(tag);
-    super.addHandlers();
-  }
-  
+  @SuppressWarnings("unchecked")
   public Tag getTag()
-  { return tag;
+  { return (Tag) tag;
   }
-  
-  public ErrorTag getErrorTag()
-  { return errorTag;
-  }
-  
-  public void setName(String name)
-  { this.name=name;
-  }
-  
+
   public void setLabel(String label)
   { this.label=label;
-  }
-
-
-  @Override
-  public String getVariableName()
-  { return name;
   }
 
   

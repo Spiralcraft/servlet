@@ -26,6 +26,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.ComponentState;
 import spiralcraft.text.MessageFormat;
 import spiralcraft.textgen.OutputContext;
+import spiralcraft.util.ArrayUtil;
 
 import spiralcraft.json.ToJson;
 
@@ -45,6 +46,7 @@ public class PeerJSTag
   private String[] events;
   private Binding<Object> dataX;
   private Channel<String> toJson;
+  private MessageFormat[] onClickJS;
   
   {
     tagPosition=-1;
@@ -99,6 +101,14 @@ public class PeerJSTag
   { this.onBodyLoadJS=js;
   }
    
+  public void setOnClickJS(MessageFormat[] onClickJS)
+  { this.onClickJS=onClickJS;
+  }
+  
+  public void addOnClickJS(MessageFormat onClickJS)
+  { this.onClickJS=ArrayUtil.append(this.onClickJS,onClickJS,MessageFormat.class);
+  }
+  
   @Override
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
@@ -114,9 +124,23 @@ public class PeerJSTag
       dataX.bind(focus);
       toJson=new ToJson<Object>().bindChannel(dataX,focus,null);
     }
+    bind(onClickJS,focus);
     return super.bind(focus);
   }
   
+  private void bind(MessageFormat[] formats,Focus<?> focusChain)
+    throws ContextualException
+  { 
+    if (formats==null)
+    { return;
+    }
+    else
+    {
+      for (MessageFormat format:formats)
+      { format.bind(focusChain);
+      }
+    }
+  }
   
   @Override
   protected void renderContent
@@ -156,6 +180,16 @@ public class PeerJSTag
       out.append(");\r\n");
     }
     
+    if (onClickJS!=null)
+    { 
+      for (MessageFormat format:onClickJS)
+      {
+        out.append(peerFunction);
+        out.append(".attachHandler('onclick',function() {\r\n");
+        format.render(out);
+        out.append(";\r\n});");
+      }
+    }
     
     if (events!=null)
     { 

@@ -19,8 +19,8 @@ import java.io.IOException;
 import spiralcraft.app.Dispatcher;
 
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.servlet.webui.components.AbstractActionControl;
 import spiralcraft.servlet.webui.components.ActionControlState;
+import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlActionControl;
 
 import spiralcraft.net.http.VariableMap;
 
@@ -38,35 +38,24 @@ import spiralcraft.net.http.VariableMap;
  *
  */
 public class ImageButton<Tcontext,Tresult>
-  extends AbstractActionControl<Tcontext,Tresult>
+  extends AbstractHtmlActionControl<Tcontext,Tresult>
 {
 
-  private String name;
   private String src;
   private String alt;
   
-  private Tag tag
-    =new Tag();
-  
-  private ErrorTag errorTag=new ErrorTag();
-  
   { 
-    addHandler(errorTag);
-    addHandler(tag);
+    tag
+      =new Tag();
   }
   
   
+  
+  @SuppressWarnings("unchecked")
   public Tag getTag()
-  { return tag;
+  { return (Tag) tag;
   }
 
-  public ErrorTag getErrorTag()
-  { return errorTag;
-  }
-  
-  public void setName(String name)
-  { this.name=name;
-  }
   
   public void setSrc(String src)
   { this.src=src;
@@ -75,13 +64,6 @@ public class ImageButton<Tcontext,Tresult>
   public void setAlt(String alt)
   { this.alt=alt;
   }
-  
-
-  @Override
-  public String getVariableName()
-  { return name;
-  }
-
   
   @Override
   public void gather(ServiceContext context)
