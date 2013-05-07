@@ -195,22 +195,25 @@ public abstract class AggregateEditor<Tcontent extends DataComposite>
 
   }
   
+  public boolean isPadding(BufferTuple buffer)
+  {
+    childChannel.push(buffer);
+    try
+    { return Boolean.TRUE.equals(isPadChannel.get());
+    }
+    finally
+    { childChannel.pop();
+    }      
+  }
+  
   private void makePadding(BufferAggregate<BufferTuple,?> aggregate)
   { 
     int padCount=0;
     for (BufferTuple buffer: aggregate)
-    {
-    
-      childChannel.push(buffer);
-      try
-      {
-        if (Boolean.TRUE.equals(isPadChannel.get()))
-        { padCount++;
-        }
+    { 
+      if (isPadding(buffer))
+      { padCount++;
       }
-      finally
-      { childChannel.pop();
-      }      
     }
     
     try
