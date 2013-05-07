@@ -36,6 +36,7 @@ import spiralcraft.servlet.webui.components.html.PeerJSTag;
  */
 public class AbstractHtmlContainer
   extends Component
+  implements ServerPeer
 {
   
   protected JSClient jsClient;
@@ -86,7 +87,7 @@ public class AbstractHtmlContainer
   { this.jsClient=jsClient;
   }
   
-  
+  @Override
   public ComponentState getState()
   { return stateRef.get();
   }
