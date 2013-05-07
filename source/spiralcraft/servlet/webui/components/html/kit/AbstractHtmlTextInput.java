@@ -31,7 +31,7 @@ import spiralcraft.servlet.webui.components.html.FormField;
 import spiralcraft.servlet.webui.components.html.PeerJSTag;
 import spiralcraft.text.MessageFormat;
 
-public abstract class AbstractTextInput<Ttarget>
+public abstract class AbstractHtmlTextInput<Ttarget>
   extends AbstractTextControl<Ttarget>
 {
 

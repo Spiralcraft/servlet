@@ -14,10 +14,10 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import spiralcraft.servlet.webui.components.html.kit.AbstractTextInput;
+import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlTextInput;
 
 public class TextInput<Ttarget>
-  extends AbstractTextInput<Ttarget>
+  extends AbstractHtmlTextInput<Ttarget>
 {
   
   private boolean password;

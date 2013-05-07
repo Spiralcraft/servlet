@@ -16,11 +16,11 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.util.Date;
 
-import spiralcraft.servlet.webui.components.html.kit.AbstractTextInput;
+import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlTextInput;
 import spiralcraft.util.string.DateToString;
 
 public class DateInput
-  extends AbstractTextInput<Date>
+  extends AbstractHtmlTextInput<Date>
 {
   
   @Override
