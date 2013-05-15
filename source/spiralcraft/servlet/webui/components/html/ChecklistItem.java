@@ -18,7 +18,9 @@ import java.io.IOException;
 
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 
+import spiralcraft.lang.Binding;
 import spiralcraft.servlet.webui.components.AbstractSelectItemControl;
 import spiralcraft.servlet.webui.components.SelectItemState;
 
@@ -50,7 +52,7 @@ public class ChecklistItem<Ttarget,Tvalue>
   class Tag 
     extends AbstractTag
   {
-    { addStandardClass("sc-webui-checklis-item sc-webui-checkbox");
+    { addStandardClass("sc-webui-checklist-item sc-webui-checkbox");
     }
     
     @Override
@@ -68,7 +70,9 @@ public class ChecklistItem<Ttarget,Tvalue>
       renderAttribute(out,"type","checkbox");
       renderAttribute
         (out,"name",state.getSelectState().getVariableName());
-      if (state.isSelected())
+      if ((renderStateX!=null && Boolean.TRUE==renderStateX.get())
+           || state.isSelected()
+         )
       { renderAttribute(out,"checked","checked");
       }
       if (converter!=null)
@@ -104,10 +108,15 @@ public class ChecklistItem<Ttarget,Tvalue>
   
   private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag();
+  private Binding<Boolean> renderStateX;
   
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   { 
     addHandler(errorTag);
     addHandler(tag);
+    super.addHandlers();
   }
   
   public Tag getTag()
@@ -116,6 +125,21 @@ public class ChecklistItem<Ttarget,Tvalue>
   
   public ErrorTag getErrorTag()
   { return errorTag;
+  }
+  
+  /**
+   * An expression to determine the checked state of the item regardless
+   *   of the state of the underlying data model. When not provided, the
+   *   checkbox rendered state will reflect the state of the underlying
+   *   data model
+   * 
+   * @param renderStateX
+   */
+  public void setRenderStateX(Binding<Boolean> renderStateX)
+  {
+    this.removeParentContextual(this.renderStateX);
+    this.renderStateX=renderStateX;
+    this.addParentContextual(renderStateX);
   }
      
 }
