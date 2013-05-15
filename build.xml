@@ -2,7 +2,7 @@
 
 	
   <property name="module" value="servlet"/>
-  <property name="buildVersion" value="0.4.17-dev38"/>
+  <property name="buildVersion" value="0.4.17-dev39"/>
 	
   <path id="classpath">
     <pathelement location="lib/spiralcraft-core.jar"/>

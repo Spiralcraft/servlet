@@ -17,6 +17,19 @@
     
       <scm:Change>
      
+        <revision>-dev39
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix error in implementation of renderStateX
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/servlet/webui/components/html/ChecklistItem.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev38
         </revision>
       
