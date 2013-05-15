@@ -21,6 +21,21 @@
         </revision>
       
         <notes>
+          <scm:Note>ChecklistItem "renderStateX" property to render
+            a "checked" state based on something other than the underlying data
+            model.
+          </scm:Note>
+        </notes>
+        <path>source/spiralcraft/servlet/webui/components/html/ChecklistItem.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev38
+        </revision>
+      
+        <notes>
           <scm:Note>Buttons, ImageButtons and SubmitButtons have capability
             to set the fragment of their parent form's action URL when
             clicked via client-side bindings.
