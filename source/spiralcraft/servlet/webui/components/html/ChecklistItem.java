@@ -70,11 +70,20 @@ public class ChecklistItem<Ttarget,Tvalue>
       renderAttribute(out,"type","checkbox");
       renderAttribute
         (out,"name",state.getSelectState().getVariableName());
-      if ((renderStateX!=null && Boolean.TRUE==renderStateX.get())
-           || state.isSelected()
-         )
-      { renderAttribute(out,"checked","checked");
+      
+      if (renderStateX!=null)
+      {
+        if (Boolean.TRUE==renderStateX.get())
+        { renderAttribute(out,"checked","checked");
+        }
       }
+      else
+      {
+        if (state.isSelected())
+        { renderAttribute(out,"checked","checked");
+        }
+      }
+      
       if (converter!=null)
       { 
         renderAttribute
