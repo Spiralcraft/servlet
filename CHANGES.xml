@@ -17,6 +17,41 @@
     
       <scm:Change>
      
+        <revision>-dev40
+        </revision>
+      
+        <notes>
+          <scm:Note>Support "GET" method for Forms
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>components/AbstractSelectControl.java
+          </URI>
+          <URI>components/AbstractTextControl.java
+          </URI>
+          <URI>components/AcceptorCommand.java
+          </URI>
+          <URI>components/html/Button.java
+          </URI>
+          <URI>components/html/CheckboxInput.java
+          </URI>
+          <URI>components/html/Form.java
+          </URI>
+          <URI>components/html/ImageButton.java
+          </URI>
+          <URI>components/html/SubmitButton.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev39
         </revision>
       
