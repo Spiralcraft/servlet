@@ -109,7 +109,7 @@ public class AcceptorCommand<Tcontext,Tresult>
         }
       }
       
-      VariableMap post=context.getPost();
+      VariableMap post=context.getForm();
       if (!triggered && post!=null)
       {
         List<String> result=post.get("command");

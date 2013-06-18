@@ -106,7 +106,7 @@ public class Button<Tcontext,Tresult>
   public void gather(ServiceContext context)
   {
     ActionControlState<Tcontext,Tresult> state=getState(context);
-    VariableMap post=context.getPost();
+    VariableMap post=context.getForm();
     boolean gotPost=false;
     if (post!=null)
     { gotPost=post.getFirst(state.getVariableName())!=null;
@@ -120,7 +120,7 @@ public class Button<Tcontext,Tresult>
     { 
       log.fine
         ("Button: readPost- "+state.getVariableName()+"="
-            +context.getPost().getFirst(state.getVariableName())
+            +context.getForm().getFirst(state.getVariableName())
         );
     }
   }

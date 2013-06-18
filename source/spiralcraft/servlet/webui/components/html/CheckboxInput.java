@@ -163,9 +163,9 @@ public class CheckboxInput
     ControlState<Boolean> state=getState(context);
     
     // Only update if changed
-    if (context.getPost()!=null)
+    if (context.getForm()!=null)
     {
-      String post=context.getPost().getFirst(state.getVariableName());
+      String post=context.getForm().getFirst(state.getVariableName());
 
       Boolean value=post!=null && post.equals("on");
       Boolean previousValue=Boolean.TRUE.equals(state.getPreviousValue());

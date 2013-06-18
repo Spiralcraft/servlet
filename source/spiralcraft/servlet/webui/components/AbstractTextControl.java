@@ -184,10 +184,10 @@ public abstract class AbstractTextControl<Ttarget>
     //System.err.println("TextInput: readPost");
       
     // Only update if changed
-    if (context.getPost()!=null)
+    if (context.getForm()!=null)
     {
     
-      String postVal=context.getPost().getFirst(state.getVariableName());
+      String postVal=context.getForm().getFirst(state.getVariableName());
       if (debug)
       { log.fine(getLogPrefix()+"Got posted value "+postVal);
       }

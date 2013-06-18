@@ -90,7 +90,7 @@ public class SubmitButton<Tcontext,Tresult>
   public void gather(ServiceContext context)
   {
     ActionControlState<Tcontext,Tresult> state=getState(context);
-    VariableMap post=context.getPost();
+    VariableMap post=context.getForm();
     boolean gotPost=false;
     if (post!=null)
     { gotPost=post.getFirst(state.getVariableName())!=null;
@@ -105,7 +105,7 @@ public class SubmitButton<Tcontext,Tresult>
     { 
       log.fine
         ("SubmitButton: readPost- "+state.getVariableName()+"="
-            +context.getPost().getFirst(state.getVariableName())
+            +context.getForm().getFirst(state.getVariableName())
         );
     }
   }

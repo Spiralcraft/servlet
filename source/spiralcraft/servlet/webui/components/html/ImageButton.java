@@ -69,7 +69,7 @@ public class ImageButton<Tcontext,Tresult>
   public void gather(ServiceContext context)
   {
     ActionControlState<Tcontext,Tresult> state=getState(context);
-    VariableMap post=context.getPost();
+    VariableMap post=context.getForm();
     boolean gotPost=false;
     if (post!=null)
     { 
@@ -88,7 +88,7 @@ public class ImageButton<Tcontext,Tresult>
     { 
       log.fine
         ("ImageButton: readPost- "+state.getVariableName()+"="
-            +context.getPost().getFirst(state.getVariableName())
+            +context.getForm().getFirst(state.getVariableName())
         );
     }
   }

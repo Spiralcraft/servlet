@@ -88,6 +88,7 @@ public class ServiceContext
   private HttpServletResponse response;
   private VariableMap post;
   private VariableMap query;
+  private VariableMap form;
   private URI redirectURI;
   private List<String> queuedActions;
   private URI contextURI;
@@ -172,6 +173,7 @@ public class ServiceContext
       query.clear();
       query=null;
     }
+    form=null;
     redirectURI=null;
     threadContext.pop();
   }
@@ -552,6 +554,14 @@ public class ServiceContext
   { return query;
   }
 
+  public void setForm(VariableMap form)
+  { this.form=form;
+  }
+  
+  public VariableMap getForm()
+  { return form!=null?form:post;
+  }
+  
   /**
    * <p>Queue an Action for execution during this request processing
    *   cycle. This only has an effect when called during the action 

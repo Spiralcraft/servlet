@@ -131,12 +131,12 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   public void gather(ServiceContext context)
   {
     SelectState<Ttarget,Tvalue> state=getState(context);
-    if (context.getPost()==null)
+    if (context.getForm()==null)
     { return;
     }
 
     Ttarget val;
-    List<String> strings=context.getPost().get(state.getVariableName());
+    List<String> strings=context.getForm().get(state.getVariableName());
     if (debug)
     { log.fine("Read ["+strings+"] from posted formvar "+state.getVariableName());
     }

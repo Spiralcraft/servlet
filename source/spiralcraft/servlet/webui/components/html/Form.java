@@ -38,10 +38,13 @@ public class Form<T>
   extends Acceptor<T>
 {
   // private static final ClassLog log=ClassLog.getInstance(Form.class);  
+
   
   private boolean mimeEncoded;
   
   private final Tag tag=new Tag();
+  
+  private boolean useGet;
   
   class Tag
     extends AbstractTag
@@ -82,7 +85,7 @@ public class Form<T>
       
       renderPresentAttribute(out,"name",name);
       renderAttribute(out,"action",actionURI);
-      renderAttribute(out,"method","post");
+      renderAttribute(out,"method",useGet?"get":"post");
       if (mimeEncoded)
       { renderAttribute(out,"enctype","multipart/form-data");
       }
@@ -99,6 +102,15 @@ public class Form<T>
     addHandler(errorTag);
     addHandler(tag);
     super.addHandlers();
+  }
+  
+  /**
+   * Set method to "get" or "post" (default)
+   * 
+   * @param method
+   */
+  public void setUseGet(boolean useGet)
+  { this.useGet=useGet;
   }
   
   /**
@@ -120,7 +132,15 @@ public class Form<T>
   
   @Override
   protected boolean wasActioned(ServiceContext context)
-  { return context.getPost()!=null;
+  { 
+    if (useGet)
+    { 
+      context.setForm(context.getQuery());
+      return true;
+    }
+    else
+    { return context.getPost()!=null;
+    }
   }
 
   
