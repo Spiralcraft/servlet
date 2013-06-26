@@ -426,7 +426,18 @@ public abstract class AbstractTag
       { format.getValue().bind(focus);
       }
     }
-    
+    if (classFormats!=null)
+    {
+      for (MessageFormat format : classFormats)
+      { format.bind(focus);
+      }
+    }
+    if (classBindings!=null)
+    {
+      for (DictionaryBinding<?> binding: classBindings)
+      { binding.bind(focus);
+      }
+    }
     
     return focus;
   }
