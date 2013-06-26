@@ -17,6 +17,20 @@
     
       <scm:Change>
      
+        <revision>-dev41
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix failure to bind "class" expressions in tags
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/AbstractTag.java
+        </path>
+      </scm:Change>
+      
+      <scm:Change>
+     
         <revision>-dev40
         </revision>
       
