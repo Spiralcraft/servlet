@@ -17,6 +17,36 @@
     
       <scm:Change>
      
+        <revision>-dev42
+        </revision>
+      
+        <notes>
+          <scm:Note>Allow Option tag to be accessed from tgl and add "disabled"
+            attribute and property
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Option.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev42
+        </revision>
+      
+        <notes>
+          <scm:Note>Added an html:Label component to simplify binding to
+            associated control id.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Label.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev41
         </revision>
       
