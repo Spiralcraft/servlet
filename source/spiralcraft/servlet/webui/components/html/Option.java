@@ -18,8 +18,10 @@ import java.io.IOException;
 
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 
 
+import spiralcraft.lang.Expression;
 import spiralcraft.servlet.webui.components.AbstractSelectItemControl;
 import spiralcraft.servlet.webui.components.SelectItemState;
 
@@ -48,14 +50,18 @@ public class Option<Ttarget,Tvalue>
 {
 
   
-  private AbstractTag tag
-    =new AbstractTag()
+  public class Tag
+    extends AbstractTag
   {
     @Override
     protected String getTagName(Dispatcher dispatcher)
     { return "option";
     }
 
+    public void setDisabled(Expression<Boolean> disabled)
+    { addStandardBinding("disabled",disabled);
+    }
+    
     @Override
     protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
@@ -96,12 +102,24 @@ public class Option<Ttarget,Tvalue>
     
   };
   
+  private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag();
   
+  public Tag getTag()
+  { return tag;
+  }
   
+  public void setDisabled(Expression<Boolean> disabled)
+  { tag.setDisabled(disabled);
+  }
+  
+  @Override
+  protected void addHandlers() 
+    throws ContextualException
   { 
     addHandler(errorTag);
     addHandler(tag);
+    super.addHandlers();
   }
 
     
