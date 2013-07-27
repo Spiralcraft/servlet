@@ -17,6 +17,28 @@
     
       <scm:Change>
      
+        <revision>-dev43
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issue where WebBatchContext and FilterSet didn't
+            shut down contained resources
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/FilterSet.java
+          </URI>
+          <URI>task/WebBatchContext.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev42
         </revision>
       
