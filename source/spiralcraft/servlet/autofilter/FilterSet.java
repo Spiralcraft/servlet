@@ -184,6 +184,9 @@ class FilterSet
     for (AutoFilter filter: localFilters)
     { filter.destroy();
     }
+    if (pathContextFilter!=null)
+    { pathContextFilter.destroy();
+    }
     exception=null;
     resource=null;
     localFilters.clear();

@@ -7,6 +7,7 @@ import java.net.URI;
 import spiralcraft.app.PlaceContext;
 import spiralcraft.classloader.Archive;
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.Lifecycle;
 import spiralcraft.common.LifecycleException;
 import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.Expression;
@@ -24,6 +25,7 @@ import spiralcraft.vfs.UnresolvableURIException;
 
 public class WebBatchContext
   extends WebApplicationContext
+  implements Lifecycle
 {
   
   private ClassLoader contextClassLoader;
@@ -325,6 +327,24 @@ public class WebBatchContext
       return placeContainer.getFocus();
     }
     return focus;
+  }
+
+  @Override
+  public void start()
+    throws LifecycleException
+  { log.info("Started WebBatchContext for "+publishRoot.getURI());
+  }
+  
+  @Override
+  public void stop()
+    throws LifecycleException
+  { 
+    log.info("Stopping WebBatchContext for "+publishRoot.getURI());
+    if (rootPlace!=null)
+    { rootPlace.stop();
+    }
+    super.stop();
+    log.info("Stopped WebBatchContext for "+publishRoot.getURI());
   }
   
 }
