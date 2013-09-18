@@ -17,6 +17,21 @@
     
       <scm:Change>
      
+        <revision>-dev44
+        </revision>
+      
+        <notes>
+          <scm:Note>Added property 'checkedValue' to indicate what value to
+            send to the server when the checkbox is checked. The default is "on"
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev43
         </revision>
       
