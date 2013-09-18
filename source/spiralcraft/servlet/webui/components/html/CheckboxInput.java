@@ -46,6 +46,7 @@ public class CheckboxInput
     =ClassLog.getInstance(TextInput.class);
   
   private String name;
+  private String checkedValue="on";
   private boolean reverse;
   
   
@@ -67,7 +68,7 @@ public class CheckboxInput
       ControlState<Boolean> state=getState(context);
       renderAttribute(out,"type","checkbox");
       renderAttribute(out,"name",state.getVariableName());
-      renderAttribute(out,"value","on");
+      renderAttribute(out,"value",checkedValue);
       Boolean val=state.getValue();
       if (val!=null && val)
       { renderAttribute(out,"checked","checked");
@@ -104,6 +105,15 @@ public class CheckboxInput
   
   public void setName(String name)
   { this.name=name;
+  }
+  
+  /**
+   * The value that will be sent to the server when the checkbox is checked
+   * 
+   * @param checkedValue
+   */
+  public void setCheckedValue(String checkedValue)
+  { this.checkedValue=checkedValue;
   }
   
   /**
@@ -167,7 +177,7 @@ public class CheckboxInput
     {
       String post=context.getForm().getFirst(state.getVariableName());
 
-      Boolean value=post!=null && post.equals("on");
+      Boolean value=post!=null && post.equals(checkedValue);
       Boolean previousValue=Boolean.TRUE.equals(state.getPreviousValue());
       
       state.setValue(value);
