@@ -17,6 +17,36 @@
     
       <scm:Change>
      
+        <revision>-dev45
+        </revision>
+      
+        <notes>
+          <scm:Note>Add hooks onCreate and onBuffer to perform custom actions
+            on these events
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/TupleEditor.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev45
+        </revision>
+      
+        <notes>
+          <scm:Note>Register the Select input control with the containing
+            FormField to permit automatic association with a Label
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Select.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev44
         </revision>
       
