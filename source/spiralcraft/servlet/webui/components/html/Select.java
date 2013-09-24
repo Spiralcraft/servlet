@@ -19,6 +19,7 @@ import java.io.IOException;
 
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.AbstractSelectControl;
 
@@ -76,10 +77,19 @@ public class Select<Ttarget,Tvalue>
   private ErrorTag errorTag
     =new ErrorTag();
   
-  
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   { 
     addHandler(errorTag);
     addHandler(tag);
+    FormField<?> formField=this.findComponent(FormField.class);
+    if (formField!=null)
+    { 
+      addHandler(formField.newInputHandler());
+      tag.setGenerateId(true);
+    }    
+    super.addHandlers();
   }
   
   public Tag getTag()
