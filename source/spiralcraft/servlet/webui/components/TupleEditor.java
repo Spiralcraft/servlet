@@ -68,6 +68,8 @@ public abstract class TupleEditor
   private Setter<?>[] preSaveSetters;
   private Binding<?> onSave;
   private Binding<?> preSave;
+  private Binding<?> onCreate;
+  private Binding<?> onBuffer;
 
   private Channel<BufferAggregate<Buffer,?>> aggregateChannel;
   
@@ -255,26 +257,46 @@ public abstract class TupleEditor
   {
     if (!buffer.isDirty())
     {
-      if (newSetters!=null && buffer.getOriginal()==null)
-      { 
-        if (debug)
-        { logFine("applying new values");
+      if (buffer.getOriginal()==null)
+      {
+    
+        if (newSetters!=null)
+        {          
+          if (debug)
+          { logFine("applying newBindings");
+          }
+          for (Setter<?> setter : newSetters)
+          { setter.set();
+          }
         }
-         
-        for (Setter<?> setter : newSetters)
-        { setter.set();
+        
+        if (onCreate!=null)
+        { 
+          if (debug)
+          { logFine("applying onCreate");
+          }
+          onCreate.get();
         }
       }
         
       if (initialSetters!=null)
       {
         if (debug)
-        { logFine("applying initial values");
+        { logFine("applying initialBindings");
         }
 
         for (Setter<?> setter : initialSetters)
         { setter.set();
         }
+      }
+      
+      if (onBuffer!=null)
+      { 
+        
+        if (debug)
+        { logFine("applying onBuffer");
+        }
+        onBuffer.get();
       }
     }
     
@@ -400,12 +422,42 @@ public abstract class TupleEditor
   }  
   
 
+  /**
+   * An expression to evaluate in the Tuple scope when a save is requested
+   * 
+   * @param preSave
+   */
   public void setPreSave(Binding<?> preSave)
   { this.preSave=preSave;
   }
   
+  /**
+   * An expression to evaluate in the Tuple scope before the Tuple validated
+   *   and written back to the store.
+   * 
+   * @param preSave
+   */
   public void setOnSave(Binding<?> onSave)
   { this.onSave=onSave;
+  }
+
+  /**
+   * An expression to evaluate in the Tuple scope when a new Tuple is created
+   * 
+   * @param preSave
+   */
+  public void setOnCreate(Binding<?> onCreate)
+  { this.onCreate=onCreate;
+  }
+
+  /**
+   * An expression to evaluate in the Tuple scope when a Tuple (new or existing)
+   *   is buffered for editing
+   * 
+   * @param preSave
+   */
+  public void setOnBuffer(Binding<?> onBuffer)
+  { this.onBuffer=onBuffer;
   }
   
   /**
@@ -614,6 +666,13 @@ public abstract class TupleEditor
     if (preSave!=null)
     { preSave.bind(focus);
     }
+    if (onCreate!=null)
+    { onCreate.bind(focus);
+    }
+    if (onBuffer!=null)
+    { onBuffer.bind(focus);
+    }
+    
     bindKeys(focus);
     return (Focus<Buffer>) focus;
     
