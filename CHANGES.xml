@@ -17,6 +17,45 @@
     
       <scm:Change>
      
+        <revision>-dev46
+        </revision>
+      
+        <notes>
+          <scm:Note>Add hook "onAdd" to perform custom actions before a Tuple is
+            added to a parent aggregate buffer.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/TupleEditor.java
+        </path>
+      </scm:Change>
+        
+      <scm:Change>
+     
+        <revision>-dev46
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issues with duplicate control names generated for
+            html in cases where iterative and non-iterative controls share
+            a common parent.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ControlGroup.java
+          </URI>
+          <URI>ControlState.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev45
         </revision>
       
