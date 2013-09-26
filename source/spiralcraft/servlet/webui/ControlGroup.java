@@ -336,22 +336,25 @@ public abstract class ControlGroup<Ttarget>
           );
       }
       bindHandlers(focus);
-      if (variableName == null && getParent()!=null)
-      {
-        ControlGroup parentGroup = getParent().findComponent(ControlGroup.class);
-        if (parentGroup != null)
-        { 
-          
-          variableName = parentGroup.nextVariableName();
-          if (debug)
-          { 
-            log.debug
-              ("Generating variable name '"+variableName+"' using parent "
-                  +parentGroup.toString()
-              );
-          }
-        }
-      }
+
+//      XXX: Variable name generation must follow state
+//
+//      if (variableName == null && getParent()!=null)
+//      {
+//        ControlGroup parentGroup = getParent().findComponent(ControlGroup.class);
+//        if (parentGroup != null)
+//        { 
+//          
+//          variableName = parentGroup.nextVariableName();
+//          if (debug)
+//          { 
+//            log.debug
+//              ("Generating variable name '"+variableName+"' using parent "
+//                  +parentGroup.toString()
+//              );
+//          }
+//        }
+//      }
       computeDistances();
       focus=bindExports(focus);
   

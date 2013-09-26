@@ -91,14 +91,14 @@ public class ControlState<Tbuf>
     super.link(parentState,path);
     // controlGroupState=getParent().findElementState(ControlGroupState.class);
     
-    int dist=control.getControlGroupStateDistance();
-    if (dist>-1)
+    int parentGroupDist=control.getControlGroupStateDistance();
+    if (parentGroupDist>-1)
     { 
 //      log.fine("Distance from "+getClass().getName()+"="+dist);
 //      for (int i=0;i<dist;i++)
 //      { log.fine(getParent().getAncestor(i).getClass().getName());
 //      }
-      controlGroupState=(ControlGroupState<?>) getParent().getAncestor(dist);
+      controlGroupState=(ControlGroupState<?>) getParent().getAncestor(parentGroupDist);
     }
     
 //    log.fine("ControlState: ControlGroupState="+controlGroupState);
@@ -113,11 +113,12 @@ public class ControlState<Tbuf>
     { 
       // Determine contextual part of variable name
       variableName=controlGroupState.getVariableName();
+//       log.fine(getControl().toString()+" got variable prefix ["+variableName+"] + ["+localName+"] from "+controlGroupState.getControl());
       
       // Factor in any 'detail' iteration between the control and the control
       //   group
       int iterDist=control.getIterationStateDistance();
-      if (iterDist>-1 && iterDist<dist)
+      if (iterDist>-1 && iterDist<parentGroupDist)
       { 
         MementoState iterState
           =(MementoState) getParent().getAncestor(iterDist-1);
@@ -125,14 +126,18 @@ public class ControlState<Tbuf>
         { 
           variableName
             =variableName.concat(".")
-            .concat(Integer.toString(iterState.getIndex()));
+            .concat(Integer.toString(iterState.getIndex()))
+            .concat("-")
+            .concat(localName);
         }
         else
-        { variableName=Integer.toString(iterState.getIndex());
+        { 
+          variableName=Integer.toString(iterState.getIndex())
+            .concat("-")
+            .concat(localName);
         }
       }
-      
-      if (variableName!=null)
+      else if (variableName!=null)
       { variableName=variableName.concat(".").concat(localName);
       }
       else
@@ -140,7 +145,9 @@ public class ControlState<Tbuf>
       }
     }
     else
-    { variableName=localName;
+    { 
+      
+      variableName=localName;
     }
   }
 
