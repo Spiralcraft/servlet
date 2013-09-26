@@ -70,6 +70,7 @@ public abstract class TupleEditor
   private Binding<?> preSave;
   private Binding<?> onCreate;
   private Binding<?> onBuffer;
+  private Binding<?> onAdd;
 
   private Channel<BufferAggregate<Buffer,?>> aggregateChannel;
   
@@ -330,6 +331,7 @@ public abstract class TupleEditor
       if (debug)
       { logFine("Editor with phantom=true skipping save.");
       }
+      return;
     }
     
     BufferTuple buffer=getState().getValue();
@@ -461,12 +463,23 @@ public abstract class TupleEditor
   }
   
   /**
+   * An expression to evaluate in the Tuple scope right before a Tuple (new or existing)
+   *   is added to a parent AggregateBuffer
+   *   
+   * @param onAdd
+   */
+  public void setOnAdd(Binding<?> onAdd)
+  { this.onAdd=onAdd;
+  }
+  
+  /**
    * <p>Adds a buffer to a parent AggregateBuffer
    * </p>
    * 
    */
   protected void addToParent()
   {
+
     if (aggregateChannel!=null)
     {
       BufferAggregate<Buffer,?> aggregate=aggregateChannel.get();
@@ -474,6 +487,10 @@ public abstract class TupleEditor
 
       if (aggregate!=null && buffer!=null)
       { 
+        if (onAdd!=null && buffer!=null)
+        { onAdd.get();
+        }
+        
         if (debug)
         { logFine("Adding buffer to parent "+aggregate+": buffer="+buffer);
         }
@@ -671,6 +688,9 @@ public abstract class TupleEditor
     }
     if (onBuffer!=null)
     { onBuffer.bind(focus);
+    }
+    if (onAdd!=null)
+    { onAdd.bind(focus);
     }
     
     bindKeys(focus);
