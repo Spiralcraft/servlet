@@ -15,12 +15,15 @@
 package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.common.ContextualException;
 
 // import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.Acceptor;
+import spiralcraft.textgen.OutputContext;
 
 
 
@@ -91,6 +94,28 @@ public class Form<T>
       }
       super.renderAttributes(context,out);
     }
+    
+    @Override
+    protected void renderContent
+      (Dispatcher context,Message message,MessageHandlerChain next)
+      throws IOException
+    {
+      if (useGet)
+      {
+        Appendable out=OutputContext.get();
+        String actionName=pathToActionName(context.getState().getPath());
+        String lrs=context.getFrame().getId();
+        out.append("<input type='hidden' name='action' value='")
+          .append(actionName)
+          .append("'/>");
+        out.append("<input type='hidden' name='lrs' value='")
+          .append(lrs)
+          .append("'/>");
+      }
+      
+      super.renderContent(context,message,next);
+    }
+    
   }
   
   private final ErrorTag errorTag=new ErrorTag();
