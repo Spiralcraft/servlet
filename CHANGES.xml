@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev47
+        </revision>
+      
+        <notes>
+          <scm:Note>When Form is in GET mode, add hidden inputs to send
+            sync parameters with rest of the form due to them being overwritten
+            as per HTML behavior.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Form.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev46
         </revision>
       
