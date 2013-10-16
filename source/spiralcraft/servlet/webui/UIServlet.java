@@ -167,6 +167,10 @@ public class UIServlet
                 =new SimpleFocus<UIServlet>
                   (new SimpleChannel<UIServlet>(this,true));
             }
+            
+            // XXX: We shouldn't blindly create a UIService for every path
+            //   that comes in. We need to validate the path at some point to
+            //   avoid using resources for bogus paths.
             uiServant=new UIService(contextAdapter,contextPath);
             focus=uiServant.bind(focus);
             placeMap.put(contextPath,uiServant);
