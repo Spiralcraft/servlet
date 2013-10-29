@@ -17,6 +17,76 @@
     
       <scm:Change>
      
+        <revision>-dev48
+        </revision>
+      
+        <notes>
+          <scm:Note>Promoted autoPost property from rpc.Controller to Acceptor
+            and added
+            an actionedWhen binding property to automatically read form
+            data without a particular action being addressed in the URL. This
+            feature supports interactive javascript components which use POST
+            requests to send information from third party sites.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>Acceptor.java
+          </URI>
+          <URI>rpc/Controller.java
+          </URI>
+          <URI>html/Form.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev48
+        </revision>
+      
+        <notes>
+          <scm:Note>Non-rendering input for RPC based form submission
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/rpc/FormInput.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev48
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide access to the body tag in Page
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Page.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev48
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide access to the body tag in Page
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Page.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev47
         </revision>
       
