@@ -299,6 +299,10 @@ public class Page
   { return tag;
   }
   
+  public Body getBodyTag()
+  { return body;
+  }
+  
   public void setCssBase(URI cssBase)
   { this.cssBase=cssBase;
   }
