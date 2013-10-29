@@ -158,6 +158,10 @@ public class Form<T>
   @Override
   protected boolean wasActioned(ServiceContext context)
   { 
+    if (actionedWhen!=null && !Boolean.TRUE.equals(actionedWhen.get()))
+    { return false;
+    }
+        
     if (useGet)
     { 
       context.setForm(context.getQuery());
@@ -168,6 +172,7 @@ public class Form<T>
     }
   }
 
+  
   
   public void setMimeEncoded(boolean mimeEncoded)
   { this.mimeEncoded=mimeEncoded;

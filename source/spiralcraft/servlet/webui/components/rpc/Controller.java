@@ -18,71 +18,26 @@ package spiralcraft.servlet.webui.components.rpc;
 //import spiralcraft.log.ClassLog;
 
 
-import spiralcraft.servlet.webui.RequestMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.Acceptor;
-
-import spiralcraft.app.Dispatcher;
-import spiralcraft.app.MessageHandlerChain;
-import spiralcraft.app.Message;
-
-import spiralcraft.app.kit.AbstractMessageHandler;
 
 public class Controller<T>
   extends Acceptor<T>
 {
   //private static final ClassLog log=ClassLog.getInstance(Controller.class);
-  
-  private boolean autoPost;
-  
-  {
-    // Add a handler to invoke the automatic post action after all the
-    //   subcomponents have processed the RequestMessage
-    addHandler
-      (new AbstractMessageHandler()
-      {
-        @Override
-        public void doHandler(Dispatcher context, Message message,
-            MessageHandlerChain next)
-        { 
-          next.handleMessage(context,message);
-          if (autoPost && message.getType()==RequestMessage.TYPE)
-          { createAction(context,false).invoke((ServiceContext) context);
-          }
-        }
-      });
-  }  
+   
 
-    
+
+  
+  @Override
   /**
-   * <p>Automatically run the "post" action before the "prepare" stage,
-   *   regardless of whether or not the associated action appears in the 
-   *   request line.
-   * </p>
-   * 
-   * <p>Useful to trigger data updates and refreshes on each 
-   *   page view.
-   * </p>
-   * 
-   * @param autoPost
+   * Called within the invocation of an actual action
    */
-  public void setAutoPost(boolean autoPost)
-  { this.autoPost=autoPost;
-  }
-  
-  @Override
   protected boolean wasActioned(ServiceContext context)
-  { return autoPost || true;
+  { return actionedWhen==null || Boolean.TRUE.equals(actionedWhen.get());
   }
   
-  @Override
-  protected void handleRequest(ServiceContext context)
-  {
-    super.handleRequest(context);
-    if (autoPost)
-    { 
-    }
-  }
+  
   
 }
     

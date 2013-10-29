@@ -20,6 +20,9 @@ import java.net.URISyntaxException;
 import javax.servlet.ServletException;
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.app.kit.AbstractMessageHandler;
 import spiralcraft.textgen.PrepareMessage;
 
 import spiralcraft.lang.Binding;
@@ -27,6 +30,8 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.log.Level;
+import spiralcraft.net.http.VariableMap;
+import spiralcraft.servlet.webui.RequestMessage;
 import spiralcraft.servlet.webui.SaveMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
@@ -71,6 +76,10 @@ public abstract class Acceptor<T>
   private Channel<ServiceContext> serviceContextChannel;
   private boolean autoSave;
   private boolean reloadAfterAction;
+  
+  protected boolean autoPost;
+  protected Binding<Boolean> actionedWhen;
+  
   
   public void setOnPost(Expression<Command<?,?,?>> onPost)
   { this.onPost=onPost;
@@ -117,9 +126,38 @@ public abstract class Acceptor<T>
   { this.reloadAfterAction=reloadAfterAction;
   }
   
+  
+  /**
+   * An Expression which determines whether or not this controller
+   *   has been actioned.
+   * 
+   * @param actionedWhen
+   */
+  public void setActionedWhen(Binding<Boolean> actionedWhen)
+  {
+    this.removeExportContextual(this.actionedWhen);
+    this.actionedWhen=actionedWhen;
+    this.addExportContextual(this.actionedWhen);
+  }
     
+  /**
+   * <p>Automatically run the "post" action before the "prepare" stage,
+   *   regardless of whether or not the associated action appears in the 
+   *   request line.
+   * </p>
+   * 
+   * <p>Useful to trigger data updates and refreshes on each 
+   *   page view.
+   * </p>
+   * 
+   * @param autoPost
+   */
+  public void setAutoPost(boolean autoPost)
+  { this.autoPost=autoPost;
+  }
+  
   @Override
-  public void handleInitialize(ServiceContext context)
+  protected void handleInitialize(ServiceContext context)
   { 
     if (resetActionName!=null)
     { context.registerAction(createResetAction(context,false));
@@ -340,6 +378,10 @@ public abstract class Acceptor<T>
     };
   }
   
+  public VariableMap getForm()
+  { return serviceContextChannel.get().getForm();
+  }
+  
   public void save()
   { getState().saveRequested=true;
   }
@@ -364,6 +406,35 @@ public abstract class Acceptor<T>
   
     };
   } 
+  
+  @Override
+  protected void addHandlers()
+    throws ContextualException
+  {
+    // Add a handler to invoke the automatic post action after all the
+    //   subcomponents have processed the RequestMessage
+    addHandler
+      (new AbstractMessageHandler()
+      {
+        @Override
+        public void doHandler(Dispatcher context, Message message,
+            MessageHandlerChain next)
+        { 
+          next.handleMessage(context,message);
+          if (autoPost 
+                && message.getType()==RequestMessage.TYPE
+                && (actionedWhen==null 
+                    || Boolean.TRUE.equals(actionedWhen.get())
+                   )
+                )
+          { createAction(context,false).invoke((ServiceContext) context);
+          }
+        }
+      });
+    super.addHandlers();
+  }
+  
+  
   
   
   @Override
