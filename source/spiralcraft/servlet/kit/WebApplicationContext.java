@@ -74,6 +74,7 @@ public class WebApplicationContext
   protected boolean debug=false;
   
   protected URI instanceRootURI;
+  protected URI extURI=URI.create("ext/");
   protected URI dataURI=URI.create("data/");
   protected URI configURI=URI.create("config/");
   protected URI filesURI=URI.create("files/");
@@ -108,6 +109,20 @@ public class WebApplicationContext
   { this.instanceRootURI=instanceRootURI;
   }
 
+  /**
+   * <p>The root URI where external resources are store or linked. External
+   *   resources are not managed as part of the instance.
+   * </p>
+   * 
+   * <p>This is resolvable via the "context://data/" URI
+   * </p>
+   *
+   * @param extURI
+   */
+  public void setExtURI(URI extURI)
+  { this.extURI=extURI;
+  }
+  
   /**
    * <p>The root URI where modifiable persistent data is kept. This is
    *   normally replicated at a higher level than the filesystem
@@ -249,6 +264,7 @@ public class WebApplicationContext
     // Bind the "context://www","context://data" resources to this thread.
     contextResourceMap.put("war",contextURI);
     contextResourceMap.put(rootAuthority);
+    contextResourceMap.put("ext",contextURI.resolve(extURI));
     contextResourceMap.put("data",contextURI.resolve(dataURI));
     contextResourceMap.put("config",contextURI.resolve(configURI));
     contextResourceMap.put("files",contextURI.resolve(filesURI));
@@ -264,6 +280,7 @@ public class WebApplicationContext
       log.debug("filesURI="+filesURI);
       log.debug("codeURI="+codeURI);
       log.debug("themeURI="+themeURI);
+      log.debug("extURI="+extURI);
       for (String mapping:new String[]{"war","data","config","files","code","theme"})
       { log.debug("Mapped "+mapping+" to "+contextResourceMap.get(mapping));
       }

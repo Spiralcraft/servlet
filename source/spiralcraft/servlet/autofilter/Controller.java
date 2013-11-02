@@ -261,6 +261,9 @@ public class Controller
     filesURI=resolveResourceVolume
       (context,instanceRootURI,filesURI,"spiralcraft.instance.filesURI");
     log.info("context://files = "+filesURI);
+    extURI=resolveResourceVolume
+      (context,instanceRootURI,extURI,"spiralcraft.instance.extURI");
+    log.info("context://ext = "+extURI);
     codeURI=resolveResourceVolume
       (context,webInfRoot,codeURI,"spiralcraft.instance.codeURI");
     log.info("context://code = "+codeURI);

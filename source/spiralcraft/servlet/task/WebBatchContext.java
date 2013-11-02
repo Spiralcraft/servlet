@@ -200,6 +200,9 @@ public class WebBatchContext
     filesURI=resolveResourceVolume
       (dict,instanceRootURI,filesURI,"spiralcraft.instance.filesURI");
     log.info("context://files = "+filesURI);
+    extURI=resolveResourceVolume
+      (dict,instanceRootURI,extURI,"spiralcraft.instance.extURI");
+    log.info("context://ext = "+extURI);
     codeURI=resolveResourceVolume
       (dict,webInfRoot,codeURI,"spiralcraft.instance.codeURI");
     log.info("context://code = "+codeURI);
