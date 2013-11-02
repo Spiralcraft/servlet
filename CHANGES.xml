@@ -21,6 +21,31 @@
         </revision>
       
         <notes>
+          <scm:Note>Add a new standard context authority "context://ext"
+            to allow the app to interact with external resources that
+            are not managed as part of the app instance.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/Controller.java
+          </URI>
+          <URI>kit/WebApplicationContext.java
+          </URI>
+          <URI>task/WebBatchContext.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev48
+        </revision>
+      
+        <notes>
           <scm:Note>Promoted autoPost property from rpc.Controller to Acceptor
             and added
             an actionedWhen binding property to automatically read form
