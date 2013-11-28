@@ -55,6 +55,7 @@ class FilterSet
   
   
   private Resource resource;
+  private Resource containerResource;
   private long lastModified;
   private Throwable exception;
 
@@ -68,6 +69,7 @@ class FilterSet
     throws IOException
   { 
     this.config=config;
+    this.containerResource=containerResource;
     Path path=node.getPath();
     
     try
@@ -150,6 +152,17 @@ class FilterSet
   public Throwable getException()
   { return exception;
   }
+  
+  /**
+   * The resource or container associated with this filter set as determined
+   *   by the relative path
+   * 
+   * @return
+   */
+  public Resource getContainerResource()
+  { return containerResource;
+  }
+  
   
   /**
    * Check to see if a Resource has been modified

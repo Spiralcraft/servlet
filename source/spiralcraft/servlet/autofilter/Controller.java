@@ -49,7 +49,9 @@ import spiralcraft.util.URIUtil;
 import spiralcraft.util.tree.PathTree;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
+import spiralcraft.vfs.ResourceFilter;
 import spiralcraft.vfs.UnresolvableURIException;
+import spiralcraft.vfs.context.Graft;
 import spiralcraft.vfs.file.FileResource;
 import spiralcraft.vfs.ovl.OverlayResource;
 
@@ -92,6 +94,26 @@ public class Controller
   
   private Throwable throwable;
   
+  private ResourceFilter exclusionFilter
+    =new ResourceFilter()
+  {
+
+    @Override
+    public boolean accept(Resource resource)
+    {
+      if (resource.getURI().getPath()==null)
+      { return true;
+      }
+      Path path=Path.create(resource.getURI().getPath());
+      if (path.containsElement("CVS")
+           || path.containsElement(".svn")
+           || path.containsElement("WEB-INF")
+         )
+      { return false;
+      }
+      return true;
+    }
+  };
 
   
   private AppContextFilter appContextFilter
@@ -490,15 +512,17 @@ public class Controller
       { 
         updateRecursive
           (child
-          ,resource.asContainer().getChild(child.getName())
+          ,child.get()!=null && child.get().getContainerResource()!=null
+            ?child.get().getContainerResource()
+            :resource.asContainer().getChild(child.getName())
           ,dirty
           );
       }
 
-      
+      log.fine("Checking for new children in "+resource);
       
       // Handle any new children
-      for (Resource childResource: resource.asContainer().listChildren())
+      for (Resource childResource: resource.asContainer().listChildren(exclusionFilter))
       { 
         if (childResource.asContainer()!=null
             && node.getChild(childResource.getLocalName())==null
@@ -510,6 +534,29 @@ public class Controller
           updateRecursive(childNode,childResource,dirty);
         }
       }
+      
+      // Handle any grafts onto web tree
+      Graft[] grafts=codeAuthority.getGrafts(node.getPath().toString().substring(1));
+      if (grafts!=null) 
+      {
+        for (Graft graft: grafts)
+        { 
+          Resource childResource=graft.resolve(URI.create(""));
+          String localName=new Path(graft.getVirtualURI().getPath()).lastElement();
+          if (childResource.asContainer()!=null
+              && node.getChild(localName)==null
+              )
+          { 
+            PathTree<FilterSet> childNode
+              =new PathTree<FilterSet>(localName);
+            node.addChild(childNode);
+            updateRecursive(childNode,childResource,dirty);
+          }
+        } 
+        
+      }
+      
+      
     }
   }
   
