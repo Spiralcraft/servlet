@@ -2,8 +2,8 @@
 
 	
   <property name="module" value="servlet"/>
-  <property name="buildVersion" value="0.4.17-dev48"/>
-  <property name="build.status" value="milestone"/>
+  <property name="buildVersion" value="0.4.17-dev49"/>
+  <property name="build.status" value="integration"/>
 	
   <path id="classpath">
     <pathelement location="lib/spiralcraft-core.jar"/>

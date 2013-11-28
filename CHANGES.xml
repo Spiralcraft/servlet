@@ -17,6 +17,36 @@
     
       <scm:Change>
      
+        <revision>-dev49
+        </revision>
+      
+        <notes>
+          <scm:Note>Exclude various subtrees from being addressable directly
+            by URL (WEB-INF,.svn,CVS) when looking for PathContexts
+          </scm:Note>
+          <scm:Note>Find PathContexts in virtual subtrees to support the
+            instantiation of completely embedded apps.
+          </scm:Note>
+          <scm:Note>Provide hooks for mounting a sysadmin app and sysadmin
+            plugins to be mounted in the /sysadmin dir.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/Controller.java
+          </URI>
+          <URI>autofilter/FilterSet.java
+          </URI>
+          <URI>kit/WebApplicationContext.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev48
         </revision>
       
