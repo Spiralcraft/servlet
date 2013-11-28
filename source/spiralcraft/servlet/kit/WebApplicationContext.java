@@ -354,23 +354,35 @@ public class WebApplicationContext
           else if (bundle.getBundleName().equals("war-lib"))
           { jarLibBundles.add(bundle.getAuthorityName());
           }
-          else if (bundle.getBundleName().equals("war-webui"))
+          else if (bundle.getBundleName().equals("war-webui")
+                  || bundle.getBundleName().equals("war-sysadmin")
+                  || bundle.getBundleName().equals("war-sysadmin-plugin")
+                  )
           { 
-            String packageName=bundle.getPackage().getName();
+            String packagePath
+              =bundle.getPackage().getName();
+            if (bundle.getBundleName().equals("war-sysadmin"))
+            { packagePath="sysadmin";
+            }
+            else if (bundle.getBundleName().equals("war-sysadmin-plugin"))
+            { packagePath="sysadmin/"+packagePath;
+            }
+            
+           
             
             Resource overlay
               =Resolver.getInstance().resolve
                 (URIUtil.ensureTrailingSlash
                   (URIUtil.addPathSegment
-                    (codeAuthority.getRootURI(),packageName)
+                    (codeAuthority.getRootURI(),packagePath)
                   )
                 );
             if (!overlay.exists())
             {
               codeAuthority.mapPath
-                (packageName
+                (packagePath
                 ,new Redirect
-                  (URI.create(packageName)
+                  (URI.create(packagePath)
                   ,bundle.getBundleURI()
                   )
                 );
@@ -379,7 +391,7 @@ public class WebApplicationContext
                 log.fine("Mounted "
                     +bundle.getBundleURI()
                     +" to context://code/"
-                    +packageName
+                    +packagePath
                     );
               }
               
@@ -391,7 +403,7 @@ public class WebApplicationContext
                 log.fine("Did not mount "
                     +bundle.getBundleURI()
                     +" to context://code/"
-                    +packageName
+                    +packagePath
                     +" because mount point already exists"
                     );
               }
@@ -399,6 +411,7 @@ public class WebApplicationContext
               //   leads to the bundle
             }
           }
+
         }
         
         bundleClassLoader
