@@ -519,7 +519,9 @@ public class Controller
           );
       }
 
-      log.fine("Checking for new children in "+resource);
+      if (debug)
+      { log.fine("Checking for new children in "+resource);
+      }
       
       // Handle any new children
       for (Resource childResource: resource.asContainer().listChildren(exclusionFilter))
