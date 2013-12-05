@@ -105,9 +105,9 @@ public class Controller
       { return true;
       }
       Path path=Path.create(resource.getURI().getPath());
-      if (path.containsElement("CVS")
-           || path.containsElement(".svn")
-           || path.containsElement("WEB-INF")
+      if (path.lastElement().equals("CVS")
+          || path.lastElement().equals(".svn")
+          || path.lastElement().equals("WEB-INF")
          )
       { return false;
       }
