@@ -17,6 +17,35 @@
     
       <scm:Change>
      
+        <revision>-dev50
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issue where overly aggressive path filter interfered
+            with directory redirects.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev50
+        </revision>
+      
+        <notes>
+          <scm:Note>Remove extraneous logging
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev49
         </revision>
       
