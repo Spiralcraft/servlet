@@ -17,6 +17,21 @@
     
       <scm:Change>
      
+        <revision>-dev51
+        </revision>
+      
+        <notes>
+          <scm:Note>Bundle mounts are now overlayed with the contents of 
+            war directories to support the selective customization of resources.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/kit/WebApplicationContext.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev50
         </revision>
       
