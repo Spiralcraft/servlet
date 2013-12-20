@@ -101,7 +101,7 @@ public abstract class AbstractActionControl<Tcontext,Tresult>
       Eval<Tcontext,Tresult> eval=new Eval<Tcontext,Tresult>(onAction);
       eval.bind(focus);
       return LangUtil.constantChannel(eval)
-        .resolve(focus,"command",new Expression[0]);
+        .resolve(focus,"command",new Expression<?>[0]);
       
     }
     return null;

@@ -107,7 +107,7 @@ public class BasicHttpAdapter
         = decodedCredentials.substring
           (decodedCredentials.lastIndexOf(":")+1);
       
-      return new Credential[]
+      return new Credential<?>[]
         {new UsernameCredential(user)
         ,new PasswordCleartextCredential(password)
         };
