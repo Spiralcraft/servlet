@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
+
 import spiralcraft.bundle.Bundle;
 import spiralcraft.bundle.BundleClassLoader;
 import spiralcraft.bundle.Library;
@@ -37,6 +38,7 @@ import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.context.Authority;
 import spiralcraft.vfs.context.ContextResourceMap;
+import spiralcraft.vfs.context.OverlayRedirect;
 import spiralcraft.vfs.context.Redirect;
 
 /**
@@ -340,8 +342,11 @@ public class WebApplicationContext
           {
             rootAuthority.mapPath
               (mountPoint.toString()
-              ,new Redirect
-                (URI.create(mountPoint.toString()),bundle.getBundleURI())
+              ,new OverlayRedirect
+                (URI.create(mountPoint.toString())
+                ,publishRoot.getURI().resolve(mountPoint.toString())
+                ,bundle.getBundleURI()
+                )
               );
             if (debug)
             { log.fine("Mounted "+bundle.getBundleURI()+" to "+mountPoint);
