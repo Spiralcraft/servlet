@@ -170,7 +170,7 @@ public class Link
       Eval<Void,Void> eval=new Eval<Void,Void>(onAction);
       eval.bind(focus);
       commandChannel=LangUtil.constantChannel(eval)
-        .resolve(focus,"command",new Expression[0]);
+        .resolve(focus,"command",new Expression<?>[0]);
       
     }
     else if (commandExpression!=null)
