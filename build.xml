@@ -2,7 +2,7 @@
 
 	
   <property name="module" value="servlet"/>
-  <property name="buildVersion" value="0.4.17-dev51"/>
+  <property name="buildVersion" value="0.4.17-dev52"/>
   <property name="build.status" value="milestone"/>
 	
   <path id="classpath">

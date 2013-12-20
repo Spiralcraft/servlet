@@ -17,6 +17,21 @@
     
       <scm:Change>
      
+        <revision>-dev52
+        </revision>
+      
+        <notes>
+          <scm:Note>Finalize the mount point for the system subcontext as 
+            "system" instead of "sysadmin"
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/kit/WebApplicationContext.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev51
         </revision>
       
