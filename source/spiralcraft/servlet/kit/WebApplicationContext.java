@@ -360,17 +360,18 @@ public class WebApplicationContext
           { jarLibBundles.add(bundle.getAuthorityName());
           }
           else if (bundle.getBundleName().equals("war-webui")
-                  || bundle.getBundleName().equals("war-sysadmin")
-                  || bundle.getBundleName().equals("war-sysadmin-plugin")
+                  || bundle.getBundleName().equals("war-system")
+                  || bundle.getBundleName().equals("war-system-plugin")
                   )
           { 
+            // TODO: Make this generic and/or configurable 
             String packagePath
               =bundle.getPackage().getName();
-            if (bundle.getBundleName().equals("war-sysadmin"))
-            { packagePath="sysadmin";
+            if (bundle.getBundleName().equals("war-system"))
+            { packagePath="system";
             }
-            else if (bundle.getBundleName().equals("war-sysadmin-plugin"))
-            { packagePath="sysadmin/"+packagePath;
+            else if (bundle.getBundleName().equals("war-system-plugin"))
+            { packagePath="system/"+packagePath;
             }
             
            
