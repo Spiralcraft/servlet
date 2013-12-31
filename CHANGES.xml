@@ -21,6 +21,21 @@
         </revision>
       
         <notes>
+          <scm:Note>UIService publishes a constant reference to itself in
+            the focus chain
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/UIService.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev52
+        </revision>
+      
+        <notes>
           <scm:Note>Finalize the mount point for the system subcontext as 
             "system" instead of "sysadmin"
           </scm:Note>
