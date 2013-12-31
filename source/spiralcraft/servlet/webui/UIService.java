@@ -25,8 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Contextual;
+import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.util.LangUtil;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
@@ -46,7 +48,6 @@ import spiralcraft.vfs.Resource;
 
 
 import spiralcraft.app.StateFrame;
-
 import spiralcraft.common.ContextualException;
 
 /**
@@ -83,6 +84,9 @@ public class UIService
   @SuppressWarnings("rawtypes")
   private Focus<NavContext> navContextFocus;
   private Focus<PathContext> pathContextFocus;
+  private Channel<UIService> selfChannel
+    =new SimpleChannel<UIService>(this,true);
+  
   private final UISequencer sequencer=new UISequencer();
   
   public UIService(ContextAdapter context,String contextRelativePath)
@@ -95,6 +99,7 @@ public class UIService
   public Focus<?> bind(Focus<?> focusChain)
     throws BindException
   {
+    focusChain=focusChain.chain(selfChannel);
     httpFocus=new HttpFocus<Void>(focusChain);
     focusChain=httpFocus;
     uiCache=new UICache(focusChain);
