@@ -17,6 +17,20 @@
     
       <scm:Change>
      
+        <revision>-dev54
+        </revision>
+      
+        <notes>
+          <scm:Note>PublicLocator.toString() method provides meaningful output
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/PublicLocator.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev52
         </revision>
       
