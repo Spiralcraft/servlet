@@ -141,4 +141,13 @@ public class PublicLocator
         +(relativePath!=null?relativePath:"");
     
   }
+  
+  @Override
+  public String toString()
+  { 
+    return (serverName!=null?serverName:"*")
+           +":("+(standardPort!=null&&standardPort>0?standardPort:80)
+           +","+(securePort!=null&&securePort>0?securePort:443)
+           +") /"+(basePath!=null && !basePath.isEmpty()?basePath:"");
+  }
 }
