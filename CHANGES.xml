@@ -17,6 +17,29 @@
     
       <scm:Change>
      
+        <revision>-dev55
+        </revision>
+      
+        <notes>
+          <scm:Note>Give PathContext the opportunity to resolve the request
+            handling resource before looking up a .webui resource in the
+            PathContext's code tree.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/PathContext.java
+          </URI>
+          <URI>webui/UIService.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev54
         </revision>
       
