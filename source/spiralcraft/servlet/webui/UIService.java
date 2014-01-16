@@ -243,20 +243,29 @@ public class UIService
       PathContext pathContext=pathContextFocus.getSubject().get();
       if (pathContext!=null)
       {
-        String pathContextRelativePath
-          =pathContext.relativize(relativeResourcePath);
-        resource=pathContext.resolveCode(pathContextRelativePath);
-        if (logLevel.isDebug())
-        { 
-          log.fine
-            ("PathContext in "+pathContext.getAbsolutePath()
-            +" with code at "+pathContext.getEffectiveCodeBaseURI()
-            +" .resolveCode("+pathContextRelativePath+") returned "
-            +resource
-            );
-        }
+        
+        resource=pathContext.getRequestHandlerResource();
         if (resource==null || !resource.exists())
         { resource=null;
+        }
+        
+        if (resource==null)
+        {
+          String pathContextRelativePath
+            =pathContext.relativize(relativeResourcePath);
+          resource=pathContext.resolveCode(pathContextRelativePath);
+          if (logLevel.isDebug())
+          { 
+            log.fine
+              ("PathContext in "+pathContext.getAbsolutePath()
+              +" with code at "+pathContext.getEffectiveCodeBaseURI()
+              +" .resolveCode("+pathContextRelativePath+") returned "
+              +resource
+              );
+          }
+          if (resource==null || !resource.exists())
+          { resource=null;
+          }
         }
       }
     }

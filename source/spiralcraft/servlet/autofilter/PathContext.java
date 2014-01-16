@@ -29,6 +29,7 @@ import spiralcraft.lang.util.LangUtil;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.string.StringUtil;
 import spiralcraft.vfs.Resolver;
+import spiralcraft.vfs.Resource;
 import spiralcraft.app.PathContextMapping;
 import spiralcraft.common.ContextualException;
 
@@ -195,6 +196,40 @@ public class PathContext
   { 
     requestChannel=LangUtil.findChannel(HttpServletRequest.class,chain);
     return super.bindImports(chain);
+  }
+  
+  /**
+   * 
+   * @return The resource that will handle the current request, if one has
+   *   been determined.
+   */
+  public Resource getRequestHandlerResource()
+  { 
+    // TODO: Implement this mapping
+    return null;
+  }
+  
+  public String getStaticRequestPath()
+  { return getPathInfo();
+  }
+  
+  public String getDynamicRequestPath()
+  { return null;
+  }
+  
+  @Override
+  protected void pushLocal()
+  {
+    super.pushLocal();
+    // TODO: Analyze the request path and split into static/dynamic path components
+    //   then make available for the handling resource
+  }
+  
+  @Override
+  protected void popLocal()
+  {
+    // TODO: Pop the request status from thread local
+    super.popLocal();
   }
 
 }
