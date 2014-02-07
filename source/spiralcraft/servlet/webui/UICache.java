@@ -16,7 +16,6 @@ package spiralcraft.servlet.webui;
 
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.vfs.Resource;
-
 import spiralcraft.servlet.webui.textgen.UIResourceUnit;
 import spiralcraft.servlet.webui.textgen.RootUnit;
 
@@ -26,9 +25,10 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
 
+import spiralcraft.log.ClassLog;
+
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -44,6 +44,7 @@ import javax.servlet.ServletException;
 public class UICache
 {
   
+  private static final ClassLog log=ClassLog.getInstance(UICache.class);
   private HashMap<String,UIResourceUnit> textgenCache
     =new HashMap<String,UIResourceUnit>();
   
@@ -151,9 +152,10 @@ public class UICache
     throws ServletException,IOException
   {
     UIResourceUnit resourceUnit=textgenCache.get(instancePath);
-    
     if (resourceUnit!=null)
-    { return resourceUnit;
+    { 
+      log.fine(toString()+": Found "+instancePath+" in cache");
+      return resourceUnit;
     }
     
     if (!resource.exists())
@@ -167,6 +169,7 @@ public class UICache
     resourceUnit=new UIResourceUnit(resource);
     resourceUnit.setCheckFrequencyMs(resourceCheckFrequencyMs);
     textgenCache.put(instancePath,resourceUnit);
+    log.fine(toString()+": Added "+instancePath+" to cache");
     return resourceUnit;
   }
   

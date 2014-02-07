@@ -36,6 +36,7 @@ import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.autofilter.PathContext;
 import spiralcraft.servlet.kit.ContextAdapter;
 import spiralcraft.servlet.kit.HttpFocus;
+import spiralcraft.servlet.kit.UIResourceMapping;
 import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.servlet.webui.kit.UISequencer;
 import spiralcraft.ui.NavContext;
@@ -72,8 +73,8 @@ public class UIService
   
   private UICache uiCache;
   private String contextRelativePath;
-  private final HashMap<String,Resource> uiResourceMap
-    =new HashMap<String,Resource>();
+  private final HashMap<String,UIResourceMapping> uiResourceMap
+    =new HashMap<>();
   private final HashSet<String> bypassSet
     =new HashSet<String>();
   
@@ -139,7 +140,7 @@ public class UIService
     { return null;
     }
     
-    Resource resource=uiResourceMap.get(relativePath);
+    UIResourceMapping resource=uiResourceMap.get(relativePath);
     if (resource==null)
     {
       synchronized (uiResourceMap)
@@ -168,7 +169,7 @@ public class UIService
     { return null;
     }
     
-    return getRootComponent(resource,relativePath);
+    return getRootComponent(resource.resource,resource.mappedPath);
   }
   
   /**
@@ -182,11 +183,11 @@ public class UIService
    * @throws IOException
    * @throws ServletException
    */
-  protected Resource findUIResource(String relativePath)
+  protected UIResourceMapping findUIResource(String relativePath)
     throws IOException, ServletException
   {
     
-    Resource resource=null;
+    UIResourceMapping resource=null;
     String relativeResourcePath;
     
     
@@ -219,10 +220,11 @@ public class UIService
     if (resource==null) 
     { 
       // Search for the .webui file in the standard www document tree
-      resource=context.getResource(relativeResourcePath);      
-      if (!resource.exists())
-      { resource=null;
-      }
+      resource
+        =UIResourceMapping.forResource
+          (relativePath
+          ,context.getResource(relativeResourcePath)
+          );
     }
     
 //    if (resource==null)
@@ -234,7 +236,12 @@ public class UIService
     
     
     if (resource==null)
-    { resource=Package.findResource("context://code"+relativeResourcePath);
+    { 
+      resource=
+        UIResourceMapping.forResource
+          (relativePath
+          ,Package.findResource("context://code"+relativeResourcePath)
+          );
     }
 
     if (resource==null && pathContextFocus!=null)
@@ -244,16 +251,17 @@ public class UIService
       if (pathContext!=null)
       {
         
-        resource=pathContext.getRequestHandlerResource();
-        if (resource==null || !resource.exists())
-        { resource=null;
-        }
+        resource=pathContext.uiResourceForRequest();
         
         if (resource==null)
         {
           String pathContextRelativePath
             =pathContext.relativize(relativeResourcePath);
-          resource=pathContext.resolveCode(pathContextRelativePath);
+          resource=
+            UIResourceMapping.forResource
+              (relativePath
+              ,pathContext.resolveCode(pathContextRelativePath)
+              );
           if (logLevel.isDebug())
           { 
             log.fine
@@ -262,9 +270,6 @@ public class UIService
               +" .resolveCode("+pathContextRelativePath+") returned "
               +resource
               );
-          }
-          if (resource==null || !resource.exists())
-          { resource=null;
           }
         }
       }
@@ -283,29 +288,37 @@ public class UIService
         if (viewResourceURI!=null)
         {
           if (viewResourceURI.isAbsolute())
-          { resource=Resolver.getInstance().resolve(viewResourceURI);
+          { 
+            resource=
+              UIResourceMapping.forResource
+                (relativePath
+                ,Resolver.getInstance().resolve(viewResourceURI)
+                );
           }
           else
-          { resource=context.getResource(viewResourceURI.getPath());
+          { 
+            UIResourceMapping.forResource
+              (relativePath
+              ,context.getResource(viewResourceURI.getPath())
+              );
+            
           }
 
-          if (!resource.exists())
-          { resource=null;
-          }
-          else if (resource.asContainer()!=null)
+          if (resource!=null && resource.resource.asContainer()!=null)
           {
             relativeResourcePath
               =navContext.getUnresolvedPath().format("/");
-            Container container=resource.asContainer();
-            resource
-              =Resolver.getInstance().resolve
-                (URIUtil.ensureTrailingSlash(container.getURI())
-                  .resolve(relativeResourcePath+".webui")
+            Container container=resource.resource.asContainer();
+            
+            resource=
+              UIResourceMapping.forResource
+                (relativePath
+                ,Resolver.getInstance().resolve
+                  (URIUtil.ensureTrailingSlash(container.getURI())
+                    .resolve(relativeResourcePath+".webui")
+                  )
                 );
-            log.fine("Checking "+resource);
-          }
-          if (!resource.exists())
-          { resource=null;
+            
           }
           
         }
@@ -492,3 +505,6 @@ public class UIService
     
   }
 }
+
+
+

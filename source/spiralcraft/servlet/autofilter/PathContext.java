@@ -26,10 +26,11 @@ import javax.servlet.http.HttpServletRequest;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.LangUtil;
+import spiralcraft.servlet.kit.UIResourceMapping;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.string.StringUtil;
+import spiralcraft.util.thread.ThreadLocalStack;
 import spiralcraft.vfs.Resolver;
-import spiralcraft.vfs.Resource;
 import spiralcraft.app.PathContextMapping;
 import spiralcraft.common.ContextualException;
 
@@ -43,13 +44,20 @@ import spiralcraft.common.ContextualException;
 public class PathContext
   extends spiralcraft.app.PathContext
 {
+  private static final ThreadLocalStack<PathContext> instance
+    =new ThreadLocalStack<PathContext>();
 
+  public static final PathContext instance()
+  { return instance.get();
+  }
+  
   private AutoFilter[] preFilters;
   private AutoFilter[] filters;
   private Channel<HttpServletRequest> requestChannel;
   // private PathContext parent;
   private final HashMap<String,PathContextFilter> pathMap
     =new HashMap<String,PathContextFilter>();
+  private boolean handleAllRequests;
 
   /**
    * The filter chain to be used for all requests. The filters are chained
@@ -82,6 +90,17 @@ public class PathContext
       );
   }
 
+  /**
+   * Specifies that all requests passing through this PathContext will be
+   *   handled directly by resources associated with this PathContext. The
+   *   resource can access any remaining path information via the "pathInfo"
+   *   property.
+   * 
+   * @param handleAllRequests
+   */
+  public void setHandleAllRequests(boolean handleAllRequests)
+  { this.handleAllRequests=handleAllRequests;
+  }
   
   /**
    * <p>Return the contents of the current requestURI after the part that
@@ -194,7 +213,7 @@ public class PathContext
   protected Focus<?> bindImports(Focus<?> chain)
     throws ContextualException
   { 
-    requestChannel=LangUtil.findChannel(HttpServletRequest.class,chain);
+    requestChannel=LangUtil.assertChannel(HttpServletRequest.class,chain);
     return super.bindImports(chain);
   }
   
@@ -203,9 +222,22 @@ public class PathContext
    * @return The resource that will handle the current request, if one has
    *   been determined.
    */
-  public Resource getRequestHandlerResource()
+  public UIResourceMapping uiResourceForRequest()
+    throws IOException
   { 
-    // TODO: Implement this mapping
+    String nextPathInfo=getNextPathInfo();
+    UIResourceMapping resource
+      =UIResourceMapping.forResource
+        (getAbsolutePath()+nextPathInfo
+        ,this.resolveCode(getAbsolutePathString()+"/"+nextPathInfo+".webui")
+        );
+    if (resource!=null)
+    { return resource;
+    }
+    
+    if (handleAllRequests)
+    { return UIResourceMapping.forResource(getAbsolutePathString(),this.resolveCode("default.webui"));
+    }
     return null;
   }
   
@@ -221,6 +253,7 @@ public class PathContext
   protected void pushLocal()
   {
     super.pushLocal();
+    instance.push(this);
     // TODO: Analyze the request path and split into static/dynamic path components
     //   then make available for the handling resource
   }
@@ -228,6 +261,7 @@ public class PathContext
   @Override
   protected void popLocal()
   {
+    instance.pop();
     // TODO: Pop the request status from thread local
     super.popLocal();
   }

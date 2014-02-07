@@ -14,11 +14,11 @@
 //
 package spiralcraft.servlet.webui;
 
+import spiralcraft.servlet.autofilter.PathContext;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.kit.HttpServlet;
 import spiralcraft.servlet.kit.StandardServletConfig;
 import spiralcraft.servlet.vfs.FileServlet;
-
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.SimpleFocus;
@@ -30,9 +30,9 @@ import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.vfs.NotStreamableException;
 
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
@@ -143,8 +143,17 @@ public class UIServlet
   private UIService ensureContext(HttpServletRequest request)
     throws ServletException
   {
-    String contextPath=getContextRelativePath(request);
-    contextPath=contextPath.substring(0,contextPath.lastIndexOf("/")+1);
+    PathContext pathContext=PathContext.instance();
+    String contextPath;
+    if (pathContext==null)
+    { 
+      contextPath=getContextRelativePath(request);
+      contextPath=contextPath.substring(0,contextPath.lastIndexOf("/")+1);
+    }
+    else
+    { contextPath=pathContext.getAbsolutePathString();
+    }
+    
     
     UIService uiServant=placeMap.get(contextPath);
     if (uiServant==null)
