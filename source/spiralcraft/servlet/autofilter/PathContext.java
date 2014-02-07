@@ -23,9 +23,11 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.LangUtil;
+import spiralcraft.log.Level;
 import spiralcraft.servlet.kit.UIResourceMapping;
 import spiralcraft.util.ArrayUtil;
 import spiralcraft.util.string.StringUtil;
@@ -55,8 +57,11 @@ public class PathContext
   private AutoFilter[] filters;
   private Channel<HttpServletRequest> requestChannel;
   // private PathContext parent;
-  private final HashMap<String,PathContextFilter> pathMap
+  private final HashMap<String,PathContextFilter> filterMap
     =new HashMap<String,PathContextFilter>();
+  private Binding<UIResourceMapping> resourceMappingX;
+  private String indexResource=null;
+  private String defaultResource="default.webui";
   private boolean handleAllRequests;
 
   /**
@@ -91,10 +96,14 @@ public class PathContext
   }
 
   /**
-   * Specifies that all requests passing through this PathContext will be
-   *   handled directly by resources associated with this PathContext. The
-   *   resource can access any remaining path information via the "pathInfo"
+   * <p>Specifies that all requests passing through this PathContext will be
+   *   handled directly by resources associated with this PathContext, instead
+   *   of being delegated to a child PathContext.
+   * </p>
+   * <p>
+   *  The resource can access any remaining path information via the "pathInfo"
    *   property.
+   * </p>
    * 
    * @param handleAllRequests
    */
@@ -119,6 +128,28 @@ public class PathContext
       );
   }
   
+  /**
+   * Specify a resource to handle a request that has no path info (a request
+   *   directly to this path context) when handleAllRequests=true.
+   * 
+   * @param indexResource
+   * @return
+   */
+  public void setIndexResource(String indexResource)
+  { this.indexResource=indexResource;
+  }
+  
+  /**
+   * Specify the resource that will handle all requests not otherwise mapped
+   *   to a handler, when handleAllRequests=true
+   *       
+   * @param indexResource
+   * @return
+   */
+  public void setDefaultResource(String defaultResource)
+  { this.defaultResource=defaultResource;
+  }
+
   public String getNextPathInfo()
   {
     String pathInfo=getPathInfo();
@@ -162,8 +193,8 @@ public class PathContext
     throws IOException,ServletException
   {
     String path=getNextPathInfo();
-    AutoFilter filter=pathMap.get(path);
-    if (filter==null && !pathMap.containsKey(path))
+    AutoFilter filter=filterMap.get(path);
+    if (filter==null && !filterMap.containsKey(path))
     { 
       synchronized (this)
       { filter=mapFilter(path,parentConfig);
@@ -176,7 +207,7 @@ public class PathContext
     throws IOException,ServletException
   {
     PathContextFilter filter=null;
-    if (!pathMap.containsKey(path))
+    if (!filterMap.containsKey(path))
     {
       if (pathMappings!=null)
       {
@@ -199,11 +230,11 @@ public class PathContext
           filter.setCodeSearchRoot(getEffectiveCodeBaseURI().resolve(contextURI));
           filter.init(config);
         }
-        pathMap.put(path,filter);
+        filterMap.put(path,filter);
       }
     }
     else
-    { filter=pathMap.get(path);
+    { filter=filterMap.get(path);
     }
     return filter;
   }
@@ -217,6 +248,15 @@ public class PathContext
     return super.bindImports(chain);
   }
   
+  @Override
+  protected Focus<?> bindExports(Focus<?> chain) 
+    throws ContextualException
+  { 
+    if (resourceMappingX!=null)
+    { resourceMappingX.bind(chain);
+    }
+    return chain;
+  }
   /**
    * 
    * @return The resource that will handle the current request, if one has
@@ -225,20 +265,44 @@ public class PathContext
   public UIResourceMapping uiResourceForRequest()
     throws IOException
   { 
-    String nextPathInfo=getNextPathInfo();
-    UIResourceMapping resource
-      =UIResourceMapping.forResource
-        (getAbsolutePath()+nextPathInfo
-        ,this.resolveCode(getAbsolutePathString()+"/"+nextPathInfo+".webui")
-        );
-    if (resource!=null)
-    { return resource;
+    try
+    {
+      String nextPathInfo=getNextPathInfo();
+      UIResourceMapping resource
+        =UIResourceMapping.forResource
+          (getAbsolutePathString()+nextPathInfo
+          ,this.resolveCode(nextPathInfo+".webui")
+          );
+      if (resource!=null)
+      { return resource;
+      }
+      
+      if (handleAllRequests)
+      { 
+        if (indexResource!=null)
+        {
+          if (nextPathInfo==null || nextPathInfo.isEmpty())
+          { return UIResourceMapping.forResource
+              (getAbsolutePathString(),this.resolveCode(indexResource));
+          }
+          else
+          { return UIResourceMapping.forResource
+              (getAbsolutePathString()+"*",this.resolveCode(defaultResource));
+          }
+        }
+        else
+        { return UIResourceMapping.forResource
+            (getAbsolutePathString(),this.resolveCode(defaultResource));
+        }
+
+      }
+      return null;
     }
-    
-    if (handleAllRequests)
-    { return UIResourceMapping.forResource(getAbsolutePathString(),this.resolveCode("default.webui"));
+    catch (IOException x)
+    { 
+      log.log(Level.DEBUG,x.toString(),x);
+      throw x;
     }
-    return null;
   }
   
   public String getStaticRequestPath()
