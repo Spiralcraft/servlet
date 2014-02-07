@@ -25,7 +25,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
 
-import spiralcraft.log.ClassLog;
+//import spiralcraft.log.ClassLog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +44,7 @@ import javax.servlet.ServletException;
 public class UICache
 {
   
-  private static final ClassLog log=ClassLog.getInstance(UICache.class);
+  //private static final ClassLog log=ClassLog.getInstance(UICache.class);
   private HashMap<String,UIResourceUnit> textgenCache
     =new HashMap<String,UIResourceUnit>();
   
@@ -154,7 +154,7 @@ public class UICache
     UIResourceUnit resourceUnit=textgenCache.get(instancePath);
     if (resourceUnit!=null)
     { 
-      log.fine(toString()+": Found "+instancePath+" in cache");
+      //log.fine(toString()+": Found "+instancePath+" in cache");
       return resourceUnit;
     }
     
@@ -169,7 +169,7 @@ public class UICache
     resourceUnit=new UIResourceUnit(resource);
     resourceUnit.setCheckFrequencyMs(resourceCheckFrequencyMs);
     textgenCache.put(instancePath,resourceUnit);
-    log.fine(toString()+": Added "+instancePath+" to cache");
+    //log.fine(toString()+": Added "+instancePath+" to cache");
     return resourceUnit;
   }
   
