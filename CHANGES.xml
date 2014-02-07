@@ -17,6 +17,35 @@
     
       <scm:Change>
      
+        <revision>-dev56
+        </revision>
+      
+        <notes>
+          <scm:Note>Refactor how PathContext is used in the resolution of
+            request handling resources to prevent duplicate/repeated
+            compilations of the same resource.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/PathContext.java
+          </URI>
+          <URI>kit/UIResourceMapping.java
+          </URI>
+          <URI>webui/UICache.java
+          </URI>
+          <URI>webui/UIService.java
+          </URI>
+          <URI>webui/UIServlet.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev55
         </revision>
       
