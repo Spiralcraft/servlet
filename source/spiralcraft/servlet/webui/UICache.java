@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui;
 
 import spiralcraft.text.markup.MarkupException;
+import spiralcraft.util.thread.BlockTimer;
 import spiralcraft.vfs.Resource;
 import spiralcraft.servlet.webui.textgen.UIResourceUnit;
 import spiralcraft.servlet.webui.textgen.RootUnit;
@@ -24,8 +25,7 @@ import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
 
-
-//import spiralcraft.log.ClassLog;
+import spiralcraft.log.ClassLog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,8 +43,8 @@ import javax.servlet.ServletException;
  */
 public class UICache
 {
+  private static final ClassLog log=ClassLog.getInstance(UICache.class);
   
-  //private static final ClassLog log=ClassLog.getInstance(UICache.class);
   private HashMap<String,UIResourceUnit> textgenCache
     =new HashMap<String,UIResourceUnit>();
   
@@ -196,7 +196,16 @@ public class UICache
     }
     ref=new ComponentReference();
     ref.unit=unit;
-    ref.component=unit.bindRoot(focus);
+    BlockTimer timer=new BlockTimer();
+    timer.push();
+    try
+    {
+      ref.component=unit.bindRoot(focus);
+      log.info("Bound "+unit.getSourceURI()+" in "+timer.elapsedTimeFormatted());
+    }
+    finally
+    { timer.pop();
+    }
     ref.component.setInstancePath(instancePath);
     componentMap.put(instancePath,ref);
     return ref.component;
