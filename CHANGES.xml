@@ -17,6 +17,20 @@
     
       <scm:Change>
      
+        <revision>-dev57
+        </revision>
+      
+        <notes>
+          <scm:Note>Log bind time for UI resources
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/UICache.java
+        </path>
+      </scm:Change>
+      
+      <scm:Change>
+     
         <revision>-dev56
         </revision>
       
