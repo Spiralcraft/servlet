@@ -17,6 +17,21 @@
     
       <scm:Change>
      
+        <revision>-dev58
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issue related to post-back and link-back URLs not
+            reflecting data at end of URL path
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/UIService.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev57
         </revision>
       
