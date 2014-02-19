@@ -403,13 +403,14 @@ public class UIService
             if (localSession==null)
             {
               localSession=new PortSession();
-              localSession.setLocalURI
-              (request.getRequestURI()
-              );
               session.setResourceSession(component,localSession);
             }
           }
         }
+        
+        // Set the URI per-reuqest because the data components in the URI may
+        //   change
+        localSession.setLocalURI(request.getRequestURI());
 
         // Set up the ServiceContext with the last frame used.
         serviceContext
