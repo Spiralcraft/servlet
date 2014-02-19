@@ -4,3 +4,4 @@ build.number
 bin
 *.local
 test-out
+build-local.properties
