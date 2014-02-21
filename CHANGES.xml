@@ -17,6 +17,29 @@
     
       <scm:Change>
      
+        <revision>-dev59
+        </revision>
+      
+        <notes>
+          <scm:Note>Add "onInput" property to FileInput, and fix issue where
+            onInput in text controls didn't run when a StringConverter was
+            set.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resource>
+          <URI>AbstractTextControl.java
+          </URI>
+          <URI>html/FileInput.java
+          </URI>
+        </resource>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev58
         </revision>
       
