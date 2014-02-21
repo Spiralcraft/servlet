@@ -16,23 +16,22 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 import java.net.URI;
+
 import spiralcraft.app.Dispatcher;
 import spiralcraft.vfs.Container;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
-
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.kit.Callable;
 import spiralcraft.log.ClassLog;
-
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
-
 import spiralcraft.text.MessageFormat;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.html.URLEncoder;
@@ -62,6 +61,8 @@ public class FileInput
   private boolean overwrite;
   private long maxSize;
   private boolean sanitizeInput;
+  private Binding<?> onInput;
+  private Callable<URI,?> onInputFn;
 
   private MessageFormat fileTooLargeError;
   { 
@@ -74,6 +75,16 @@ public class FileInput
     catch (ParseException x)
     { throw new RuntimeException(x);
     }
+  }
+  
+  /**
+   * An expression to be evaluated against the input value when input is 
+   *   received.
+   * 
+   * @param onInput
+   */
+  public void setOnInput(Binding<?> onInput)
+  { this.onInput=onInput;
   }
   
   public class Tag
@@ -247,6 +258,7 @@ public class FileInput
   }
 
 
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   public Focus<?> bindSelf(Focus<?> focus)
     throws ContextualException
@@ -275,6 +287,10 @@ public class FileInput
     { form.setMimeEncoded(true);
     }
 
+    if (target!=null && onInput!=null)
+    { onInputFn=new Callable(getSelfFocus(),target.getReflector(),onInput);
+    }
+    
     if (target==null)
     { log.fine("Not bound to anything (formvar name="+name+")");
     }
@@ -467,6 +483,9 @@ public class FileInput
           { state.valueUpdated();
           }
                     
+          if (onInputFn!=null)
+          { onInputFn.evaluate(fileURI);
+          }
         }
         catch (IOException x)
         { handleException(context,x);

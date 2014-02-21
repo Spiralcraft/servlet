@@ -122,10 +122,10 @@ public abstract class AbstractTextControl<Ttarget>
       { converter=target.getReflector().getStringConverter();
       }
       
-      if (onInput!=null)
-      { onInputFn=new Callable(getSelfFocus(),target.getReflector(),onInput);
-      }
 
+    }
+    if (target!=null && onInput!=null)
+    { onInputFn=new Callable(getSelfFocus(),target.getReflector(),onInput);
     }
     if (target==null)
     { log.fine(getLogPrefix()+"Not bound to anything (formvar name="+name+")");
