@@ -354,6 +354,12 @@ public class PathContextFilter
     
     if (context!=null)
     {
+      if (!context.checkGuard())
+      { 
+        response.sendError(403,"Access to this location is not permitted");
+        return;
+      }
+      
       String requestPath=contextAdapter.getRelativePath(request);
       String redirectPath=context.getCanonicalRedirectPath(requestPath);
       if (redirectPath!=null)
