@@ -507,7 +507,7 @@ public class Controller
       
         // Handle the existing children
       for (PathTree<FilterSet> child
-          : node
+          : node.getChildren()
           )
       { 
         updateRecursive
