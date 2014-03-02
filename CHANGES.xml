@@ -17,6 +17,38 @@
     
       <scm:Change>
      
+        <revision>-dev60
+        </revision>
+      
+        <notes>
+          <scm:Note>Check the guard before routing the request to the 
+            PathContext.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/autofilter/PathContextFilter.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev60
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix ConcurrentModificationException from Controller
+            when removing a directory associated with a live context.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/autofilter/Controller.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev59
         </revision>
       
