@@ -279,22 +279,24 @@ public class PathContext
       
       if (handleAllRequests)
       { 
+        UIResourceMapping ret=null;
         if (indexResource!=null)
         {
           if (nextPathInfo==null || nextPathInfo.isEmpty())
-          { return UIResourceMapping.forResource
+          { ret=UIResourceMapping.forResource
               (getAbsolutePathString(),this.resolveCode(indexResource));
           }
           else
-          { return UIResourceMapping.forResource
+          { ret=UIResourceMapping.forResource
               (getAbsolutePathString()+"*",this.resolveCode(defaultResource));
           }
         }
         else
-        { return UIResourceMapping.forResource
+        { 
+          ret=UIResourceMapping.forResource
             (getAbsolutePathString(),this.resolveCode(defaultResource));
         }
-
+        return ret;
       }
       return null;
     }
