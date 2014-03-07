@@ -17,6 +17,52 @@
     
       <scm:Change>
      
+        <revision>-dev61
+        </revision>
+      
+        <notes>
+          <scm:Note>Allow embedded expression in URL for Stylesheet link
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>LinkTag.java
+          </URI>
+          <URI>Stylesheet.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev61
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix html5 validation issues
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>AbstractTag.java
+          </URI>
+          <URI>ScriptTag.java
+          </URI>
+          <URI>Page.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev60
         </revision>
       
