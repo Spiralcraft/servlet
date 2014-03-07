@@ -15,6 +15,7 @@
 package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.text.MessageFormat;
 
 public class LinkTag
   extends AbstractTag
@@ -33,8 +34,8 @@ public class LinkTag
   { this.appendAttribute("rev",value);
   }
 
-  public void setHREF(String value)
-  { this.appendAttribute("href",value);
+  public void setHREF(MessageFormat value)
+  { this.addStandardBinding("href",value);
   }
   
   public void setMedia(String value)

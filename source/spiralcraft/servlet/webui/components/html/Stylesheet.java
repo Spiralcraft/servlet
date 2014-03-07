@@ -15,6 +15,7 @@ package spiralcraft.servlet.webui.components.html;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.servlet.webui.Component;
+import spiralcraft.text.MessageFormat;
 
 /**
  * A stylesheet link element
@@ -47,7 +48,7 @@ public class Stylesheet
   }
   
   
-  public void setHref(String href)
+  public void setHref(MessageFormat href)
   { linkTag.setHREF(href);
   }
   
