@@ -63,11 +63,16 @@ public class Page
       {
         Appendable out=OutputContext.get();
         if (contentType!=null && contentType.equals("application/xhtml+xml"))
-        { out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
+        { 
+          out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
+          out.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"");
+          out.append(" ");
+          out.append("\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\r\n");
+
         }
-        out.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"");
-        out.append(" ");
-        out.append("\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\r\n");
+        else
+        { out.append("<!DOCTYPE html>");
+        }
         next.handleMessage(dispatcher,message);
       }
       catch (IOException x)
@@ -156,8 +161,11 @@ public class Page
 
   public class Tag extends AbstractTag
   {
-    { addNewLine=true;
+    { 
+      addNewLine=true;
+      standardClasses=null;
     }
+    
     @Override
     protected String getTagName(Dispatcher dispatcher)
     { return "html";
@@ -174,7 +182,9 @@ public class Page
     extends AbstractTag
   {
 
-    { addNewLine=true;
+    { 
+      addNewLine=true;
+      standardClasses=null;
     }
     
     @Override
@@ -215,6 +225,7 @@ public class Page
     { 
       tagPosition=-1;
       addNewLine=true;
+      standardClasses=null;
     }
 
     @Override
@@ -338,7 +349,7 @@ public class Page
       link.setTagPosition(-1);
       link.setRel("stylesheet");
       link.setType("text/css");
-      link.setHREF(css.toString());
+      link.setHREF(MessageFormat.create(css.toString()));
       linkHandler.addHandler(link);
     }
   }

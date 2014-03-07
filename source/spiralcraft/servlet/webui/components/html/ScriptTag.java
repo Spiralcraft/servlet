@@ -34,7 +34,9 @@ public class ScriptTag
   private URI[] requiredScripts;
   private String type;
   
-  { addNewLine=true;
+  { 
+    addNewLine=true;
+    standardClasses=null;
   }
   
   public ScriptTag()

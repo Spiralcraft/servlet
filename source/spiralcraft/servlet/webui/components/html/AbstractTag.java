@@ -545,8 +545,9 @@ public abstract class AbstractTag
           }
         }
       }
+      
+      out.append("\"");
     }
-    out.append("\"");
     
   }
 
