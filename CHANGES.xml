@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev62
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix RedirectFilter logic error when using prefix match
+            which caused erroneous 301 status code in access log.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/RedirectFilter.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev61
         </revision>
       
