@@ -135,6 +135,7 @@ public class RedirectFilter
         { log.debug("Skipping, no scheme match");
         }
         chain.doFilter(request,response);
+        return;
       }
       
       if (matchAuthority!=null 
@@ -144,6 +145,7 @@ public class RedirectFilter
         { log.debug("Skipping, no authority match");
         }
         chain.doFilter(request,response);
+        return;
       }
 
       String absMatchPath
@@ -164,6 +166,7 @@ public class RedirectFilter
         { log.debug("Skipping, no match to path "+absMatchPath);
         }
         chain.doFilter(request,response);
+        return;
       }
       
       String appendPath=requestURI.getPath();
