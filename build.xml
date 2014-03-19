@@ -1,9 +1,10 @@
 <project name="spiralcraft-servlet" default="build" basedir=".">
 
 	
+  <property name="organization" value="spiralcraft"/>
   <property name="module" value="servlet"/>
-  <property name="buildVersion" value="0.4.17-dev62"/>
-  <property name="build.status" value="milestone"/>
+  <property name="buildVersion" value="0.4.17-dev63"/>
+  <property name="build.status" value="integration"/>
 	
   <path id="classpath">
     <pathelement location="lib/spiralcraft-core.jar"/>
@@ -19,7 +20,8 @@
   <property name="manifest.class.path" 
     value="spiralcraft-core.jar spiralcraft-net.jar spiralcraft-textgen.jar"
   />	
-
-  <import file="../../build/build-spiralcraft-common.xml"/>
+	<property name="depends.dir" location="../../repo"/>
+  <property file="../../build.local/build.properties"/>
+  <import file="../../build/build-common.xml"/>
 	
 </project>
