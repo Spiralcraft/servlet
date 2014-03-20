@@ -17,6 +17,21 @@
     
       <scm:Change>
      
+        <revision>-dev63
+        </revision>
+      
+        <notes>
+          <scm:Note>Add inputTransform property to text controls to adjust
+            input value before it is written to the target
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/AbstractTextControl.java
+        </path>
+
+      </scm:Change>
+      <scm:Change>
+     
         <revision>-dev62
         </revision>
       
