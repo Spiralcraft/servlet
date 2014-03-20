@@ -45,6 +45,8 @@ public abstract class AbstractTextControl<Ttarget>
   private boolean required;
   private Binding<?> onInput;
   private Callable<Ttarget,?> onInputFn;
+  private Binding<Ttarget> inputTransform;
+  private Callable<Ttarget,Ttarget> inputTransformFn;
 //  private boolean ignoreEmptyInput;
   
   public void setName(String name)
@@ -77,6 +79,16 @@ public abstract class AbstractTextControl<Ttarget>
 //  { this.ignoreEmptyInput=ignoreEmptyInput;
 //  }
   
+  /**
+   * A one-way transform applied to the input before it is written to the
+   *   target. For example ".toUpperCase()"
+   * 
+   * @param inputTransform
+   */
+  public void setInputTransform(Binding<Ttarget> inputTransform)
+  { this.inputTransform=inputTransform;
+  }
+ 
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" }) // Not using generic versions
   public Focus<?> bindSelf(Focus<?> focus)
@@ -123,6 +135,9 @@ public abstract class AbstractTextControl<Ttarget>
       }
       
 
+    }
+    if (target!=null && inputTransform!=null)
+    { inputTransformFn=new Callable(getSelfFocus(),target.getReflector(),inputTransform);
     }
     if (target!=null && onInput!=null)
     { onInputFn=new Callable(getSelfFocus(),target.getReflector(),onInput);
@@ -232,6 +247,25 @@ public abstract class AbstractTextControl<Ttarget>
           { tval=(Ttarget) val;
           }
             
+          if (inputTransformFn!=null)
+          { 
+        	Ttarget xtval=inputTransformFn.evaluate(tval);
+        	if (xtval!=tval)
+        	{ 
+        	  if (xtval==null)
+        	  { state.setValue(null);
+        	  }
+        	  else if (converter!=null)
+        	  { state.setValue(converter.toString(xtval));
+        	  }
+        	  else
+        	  { state.setValue((String) xtval);
+        	  }
+        	  tval=xtval;
+        	}
+        	
+          }
+          
           String previousVal=state.getPreviousValue();
           Ttarget tpreviousVal=null;
           if (converter!=null && previousVal!=null)
