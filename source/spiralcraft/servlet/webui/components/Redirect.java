@@ -135,7 +135,6 @@ public class Redirect
   {
   }
   
-  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   public Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException

@@ -80,7 +80,6 @@ public abstract class Component
   { return new ComponentState(this);
   }
   
-  @SuppressWarnings("unchecked")
   protected <X> ComponentState getState(Dispatcher context)
   { return (ComponentState) context.getState();
   }

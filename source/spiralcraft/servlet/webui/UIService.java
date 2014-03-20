@@ -61,10 +61,8 @@ public class UIService
   implements Contextual
 {
 
-  @SuppressWarnings("unused")
   private static final ClassLog log
     =ClassLog.getInstance(UIService.class);
-  @SuppressWarnings("unused")
   private static final Level logLevel
     =ClassLog.getInitialDebugLevel(UIService.class,null);
   

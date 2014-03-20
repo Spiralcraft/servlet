@@ -69,7 +69,6 @@ public class AbstractHtmlContainer
   }
   
   @Override
-  @SuppressWarnings({"unchecked","rawtypes"})
   // Not using generic versions
   protected final Focus<?> bindStandard(Focus<?> focus) 
     throws ContextualException

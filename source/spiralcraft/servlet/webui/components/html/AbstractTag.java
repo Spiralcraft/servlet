@@ -232,7 +232,7 @@ public abstract class AbstractTag
     }
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({ "unchecked"})
   protected void addStandardBinding(String name,MessageFormat format)
   { 
     if (name.equals("class"))
