@@ -17,6 +17,55 @@
     
       <scm:Change>
      
+        <revision>-dev64
+        </revision>
+      
+        <notes>
+          <scm:Note>Fixed bug in HttpFocus where the HttpSession would only
+            be available if it was created before the filter executed.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/kit/HttpFocus.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev64
+        </revision>
+      
+        <notes>
+          <scm:Note>Added an "afterAuthenticate" hook to SecurityFilter to
+            help audit logins.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/SecurityFilter.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev64
+        </revision>
+      
+        <notes>
+          <scm:Note>Added a SessionState filter to manage an application 
+            specific object stored in a session and capture session related
+            events.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/SessionStateFilter.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev63
         </revision>
       
@@ -30,6 +79,7 @@
         </path>
 
       </scm:Change>
+      
       <scm:Change>
      
         <revision>-dev62
