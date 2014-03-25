@@ -14,19 +14,21 @@
 //
 package spiralcraft.servlet.kit;
 
+import spiralcraft.lang.BindException;
+import spiralcraft.lang.ParseException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
-
 import spiralcraft.lang.spi.NullChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.lang.reflect.BeanReflector;
 
 import javax.servlet.ServletContext;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 
 /**
  * <P>Exposes HTTP/Servlet container intrinsics to the spiralcraft.lang 
@@ -61,9 +63,9 @@ public class HttpFocus<T>
 {
 
   private ThreadLocalChannel<ServletContext> servletContextBinding;
-  private ThreadLocalChannel<HttpSession> sessionBinding;
   private ThreadLocalChannel<HttpServletRequest> requestBinding;
   private ThreadLocalChannel<HttpServletResponse> responseBinding;
+  private Binding<HttpSession> sessionBinding;
 
   
   @SuppressWarnings("unchecked")
@@ -87,11 +89,6 @@ public class HttpFocus<T>
     addFacet(servletContextFocus);
     
     
-    sessionBinding=new ThreadLocalChannel<HttpSession>
-      (BeanReflector.<HttpSession>getInstance(HttpSession.class));
-    SimpleFocus<HttpSession> sessionFocus
-      =new SimpleFocus<HttpSession>(sessionBinding);
-    addFacet(sessionFocus);
     
     requestBinding=new ThreadLocalChannel<HttpServletRequest>
       (BeanReflector.<HttpServletRequest>getInstance(HttpServletRequest.class));
@@ -101,6 +98,22 @@ public class HttpFocus<T>
       (requestFocus
       );
 
+    // Always get the session from the request
+    try
+    { 
+      sessionBinding=new Binding<HttpSession>(".session");
+      sessionBinding.bind(requestFocus);    
+    }
+    catch (BindException x)
+    { throw new RuntimeException("Error binding HttpSession",x);
+    }
+    catch (ParseException x)
+    { throw new RuntimeException("Error binding HttpSession",x);
+    }
+    SimpleFocus<HttpSession> sessionFocus
+      =new SimpleFocus<HttpSession>(sessionBinding);
+    addFacet(sessionFocus);
+      
     responseBinding=new ThreadLocalChannel<HttpServletResponse>
       (BeanReflector.<HttpServletResponse>getInstance(HttpServletResponse.class));
     SimpleFocus<HttpServletResponse> responseFocus
@@ -129,7 +142,6 @@ public class HttpFocus<T>
     )
   {
     servletContextBinding.push(context);
-    sessionBinding.push(request.getSession(false));
     requestBinding.push(request);
     responseBinding.push(response);
   }
@@ -141,7 +153,6 @@ public class HttpFocus<T>
   public void pop()
   {
     servletContextBinding.pop();
-    sessionBinding.pop();
     requestBinding.pop();
     responseBinding.pop();
   }
