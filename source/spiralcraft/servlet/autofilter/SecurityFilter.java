@@ -668,9 +668,7 @@ public class SecurityFilter
         && !contextLocal.get().authenticatedOnEntry 
         && authSessionChannel.get().isAuthenticated()
         )
-    { 
-      log.fine("onAuthenticate");
-      afterAuthenticate.get();
+    { afterAuthenticate.get();
     }
     
     contextLocal.remove();
