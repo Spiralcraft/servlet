@@ -21,26 +21,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Authenticator;
 import spiralcraft.security.auth.LoginEntry;
 import spiralcraft.security.auth.TestAuthenticator;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
-
 import spiralcraft.codec.text.Base64Codec;
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.reflect.BeanFocus;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.lang.util.LangUtil;
-
 import spiralcraft.net.http.VariableMap;
 
 
@@ -84,8 +82,21 @@ public class SecurityFilter
   private boolean qualifyCookieName=true;
   private boolean invalidateSessionOnLogout=true;
   private Channel<HttpServletRequest> httpRequestChannel;
+  private Binding<Void> afterAuthenticate;
   
   { this.setUsesRequest(true);
+  }
+  
+  
+  /**
+   * An expression that will be evaluated after a request finishes processing
+   *   where the session transitioned to an authenticated state sometime
+   *   during the request.
+   * 
+   * @param afterAuthenticate
+   */
+  public void setAfterAuthenticate(Binding<Void> afterAuthenticate)
+  { this.afterAuthenticate=afterAuthenticate;
   }
   
   public void setTicketAuthModuleName(String ticketAuthModuleName)
@@ -499,6 +510,9 @@ public class SecurityFilter
       }
     }
     
+    if (afterAuthenticate!=null)
+    { afterAuthenticate.bind(authSessionFocus);
+    }
     return authSessionFocus;
   }
   
@@ -565,11 +579,19 @@ public class SecurityFilter
 
       
     }
+
+    SecurityFilterContext context
+      =new SecurityFilterContext(request,response,qualifiedCookieName);
+    if (afterAuthenticate!=null)
+    { context.authenticatedOnEntry=authSession.isAuthenticated();
+    }
+    
+    contextLocal.set(context);
+    
     
     authSession.refresh();
     authSessionChannel.push(authSession);
     
-    contextLocal.set(new SecurityFilterContext(request,response,qualifiedCookieName));
     
     
     boolean preAuthenticatedWithCookie=false;
@@ -642,6 +664,15 @@ public class SecurityFilter
     if (contextLocal.get().logoutQueued)
     { doLogout();
     }
+    if (afterAuthenticate!=null
+        && !contextLocal.get().authenticatedOnEntry 
+        && authSessionChannel.get().isAuthenticated()
+        )
+    { 
+      log.fine("onAuthenticate");
+      afterAuthenticate.get();
+    }
+    
     contextLocal.remove();
     authSessionChannel.pop();
     
@@ -716,6 +747,7 @@ class SecurityFilterContext
   boolean logoutQueued;
   private Cookie loginCookie;
   private volatile boolean checkedCookies;
+  boolean authenticatedOnEntry;
   
   public SecurityFilterContext
     (HttpServletRequest request,HttpServletResponse response,String cookieName)
