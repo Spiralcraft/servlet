@@ -17,6 +17,29 @@
     
       <scm:Change>
      
+        <revision>-dev65
+        </revision>
+      
+        <notes>
+          <scm:Note>Script element now uses places script content 
+            properly when using a target.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/
+        </path>
+        
+        <resources>
+          <URI>Script.java
+          </URI>
+          <URI>ScriptTag.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev64
         </revision>
       
