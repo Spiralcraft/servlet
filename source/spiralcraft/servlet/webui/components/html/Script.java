@@ -13,9 +13,16 @@
 //"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 package spiralcraft.servlet.webui.components.html;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import spiralcraft.app.Scaffold;
 import spiralcraft.common.ContextualException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.text.MessageFormat;
+import spiralcraft.textgen.compiler.ContentUnit;
+import spiralcraft.textgen.compiler.TglUnit;
 
 public class Script
   extends Component
@@ -32,6 +39,7 @@ public class Script
   private boolean targetOptional;
   private ScriptTag scriptTag
     =new ScriptTag();
+  private boolean targetInstalled;
   
   public void setCode(MessageFormat code)
   { scriptTag.setCode(code);
@@ -51,6 +59,34 @@ public class Script
   
   public void setType(String type)
   { scriptTag.setType(type);
+  }
+  
+  @Override
+  protected List<Scaffold<?>> expandChildren(Focus<?> focus,List<TglUnit> children)
+    throws ContextualException
+  { 
+    if (targetInstalled)
+    { 
+      // Make sure script code renders in target and not locally
+
+      // TODO: Make this mechanism more generic by allowing ElementUnits to
+      //   specify a "default" property" to accept content.
+      if (children.size()==1 && children.get(0) instanceof ContentUnit)
+      { 
+        ContentUnit content=(ContentUnit) children.get(0);
+        String text=content.getContent().toString().trim();
+        if (!text.isEmpty())
+        { 
+          if (scriptTag.getCode()!=null)
+          { throw new ContextualException("Code for Script element is already defined");
+          }
+          MessageFormat mf=new MessageFormat(text);
+          scriptTag.setCode(mf);
+        }
+      }
+      return new ArrayList<Scaffold<?>>();
+    }
+    return super.expandChildren(focus,children);
   }
   
   @Override
@@ -78,6 +114,8 @@ public class Script
             page.addTagToBody(scriptTag);
             break;
         }
+        
+        this.targetInstalled=true;
       }
       else if (!targetOptional)
       { throw new ContextualException("No Page exists in context");

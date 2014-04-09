@@ -61,6 +61,10 @@ public class ScriptTag
   { this.code=code;
   }
   
+  public MessageFormat getCode()
+  { return code;
+  }
+  
   public void setRequiredScripts(URI[] requiredScripts)
   { this.requiredScripts=requiredScripts;
   }
