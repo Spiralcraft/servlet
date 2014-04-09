@@ -71,7 +71,7 @@ public class Script
 
       // TODO: Make this mechanism more generic by allowing ElementUnits to
       //   specify a "default" property" to accept content.
-      if (children.size()==1 && children.get(0) instanceof ContentUnit)
+      if (children!=null && children.size()==1 && children.get(0) instanceof ContentUnit)
       { 
         ContentUnit content=(ContentUnit) children.get(0);
         String text=content.getContent().toString().trim();
