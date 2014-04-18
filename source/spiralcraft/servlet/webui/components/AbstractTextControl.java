@@ -249,21 +249,20 @@ public abstract class AbstractTextControl<Ttarget>
             
           if (inputTransformFn!=null)
           { 
-        	Ttarget xtval=inputTransformFn.evaluate(tval);
-        	if (xtval!=tval)
-        	{ 
-        	  if (xtval==null)
-        	  { state.setValue(null);
-        	  }
-        	  else if (converter!=null)
-        	  { state.setValue(converter.toString(xtval));
-        	  }
-        	  else
-        	  { state.setValue((String) xtval);
-        	  }
-        	  tval=xtval;
-        	}
-        	
+            Ttarget xtval=inputTransformFn.evaluate(tval);
+            if (xtval!=tval)
+            { 
+              if (xtval==null)
+              { state.setValue(null);
+              }
+              else if (converter!=null)
+              { state.setValue(converter.toString(xtval));
+              }
+              else
+              { state.setValue((String) xtval);
+              }
+              tval=xtval;
+            }
           }
           
           String previousVal=state.getPreviousValue();
