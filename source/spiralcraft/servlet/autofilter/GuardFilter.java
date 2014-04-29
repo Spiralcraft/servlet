@@ -193,7 +193,7 @@ public class GuardFilter
     throws IOException,ServletException
   {
     
-    Boolean passedTest=guardX!=null?guardX.get():null;
+    Boolean passedTest=guardX!=null?(Boolean.TRUE.equals(guardX.get())):null;
     boolean failedAuthentication=false;
     
     if (Boolean.FALSE.equals(passedTest) && authenticate)
