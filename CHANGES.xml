@@ -17,6 +17,48 @@
     
       <scm:Change>
      
+        <revision>-dev67
+        </revision>
+      
+        <notes>
+          <scm:Note>When scanning the WAR tree for active paths, traverse
+            into directories supplied by vfs Packages.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/
+        </path>
+        
+        <resources>
+          <URI>Controller.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev67
+        </revision>
+      
+        <notes>
+          <scm:Note>When the guard filter optional condition returns null,
+            access will be denied.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/
+        </path>
+        
+        <resources>
+          <URI>GuardFilter.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev65
         </revision>
       
