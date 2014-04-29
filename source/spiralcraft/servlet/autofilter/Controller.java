@@ -54,6 +54,7 @@ import spiralcraft.vfs.UnresolvableURIException;
 import spiralcraft.vfs.context.Graft;
 import spiralcraft.vfs.file.FileResource;
 import spiralcraft.vfs.ovl.OverlayResource;
+import spiralcraft.vfs.Package;
 
 
 
@@ -454,6 +455,24 @@ public class Controller
     }
   }
   
+  private Resource virtualize(Resource resource) 
+    throws IOException
+  {
+	if (resource instanceof OverlayResource)
+	{ return resource;
+	}
+    Resource baseResource=Package.findBaseResource(resource);
+    if (baseResource!=null)
+    {
+      resource=new OverlayResource
+        (resource.getURI()
+        ,resource
+        ,baseResource
+        );
+    }
+    return resource;
+  }
+  
   private void updateRecursive
     (PathTree<FilterSet> node
     ,Resource resource
@@ -461,7 +480,9 @@ public class Controller
     )
     throws IOException
   {
-    // System.err.println("Controller.updateRecursive(): checking "+resource.getURI());
+    if (debug)
+    { log.fine("Controller.updateRecursive(): checking "+resource.getURI());
+    }
     if (!resource.exists())
     { deleteRecursive(node);
     }
@@ -526,6 +547,7 @@ public class Controller
       // Handle any new children
       for (Resource childResource: resource.asContainer().listChildren(exclusionFilter))
       { 
+    	childResource=virtualize(childResource);
         if (childResource.asContainer()!=null
             && node.getChild(childResource.getLocalName())==null
             )
@@ -533,6 +555,9 @@ public class Controller
           PathTree<FilterSet> childNode
             =new PathTree<FilterSet>(childResource.getLocalName());
           node.addChild(childNode);
+          if (debug)
+          { log.fine("Added "+childResource);
+          }
           updateRecursive(childNode,childResource,dirty);
         }
       }
@@ -543,7 +568,7 @@ public class Controller
       {
         for (Graft graft: grafts)
         { 
-          Resource childResource=graft.resolve(URI.create(""));
+          Resource childResource=virtualize(graft.resolve(URI.create("")));
           String localName=new Path(graft.getVirtualURI().getPath()).lastElement();
           if (childResource.asContainer()!=null
               && node.getChild(localName)==null
@@ -552,6 +577,9 @@ public class Controller
             PathTree<FilterSet> childNode
               =new PathTree<FilterSet>(localName);
             node.addChild(childNode);
+            if (debug)
+            { log.fine("Added "+childResource);
+            }
             updateRecursive(childNode,childResource,dirty);
           }
         } 
