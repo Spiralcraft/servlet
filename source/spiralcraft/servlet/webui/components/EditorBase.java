@@ -32,11 +32,9 @@ import spiralcraft.data.Tuple;
 import spiralcraft.data.Type;
 import spiralcraft.data.core.RelativeField;
 import spiralcraft.data.lang.DataReflector;
-
 import spiralcraft.data.session.DataSession;
 import spiralcraft.data.session.Buffer;
 import spiralcraft.data.types.meta.MetadataType;
-
 import spiralcraft.lang.Assignment;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
@@ -46,15 +44,14 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.NullChannel;
 import spiralcraft.lang.util.ChannelBuffer;
 import spiralcraft.lang.util.LangUtil;
-
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.servlet.webui.QueuedCommand;
+import spiralcraft.servlet.webui.RevertMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.SaveMessage;
 import spiralcraft.util.ArrayUtil;
-
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.Message;
@@ -164,6 +161,11 @@ public abstract class EditorBase<Tbuffer extends Buffer>
               }
               state.setPostSaveCommand(null);
             }
+          }
+          else if (message.getType()==RevertMessage.TYPE)
+          {
+            doRevert();
+            next.handleMessage(context,message);
           }
           else
           { 
@@ -571,7 +573,19 @@ public abstract class EditorBase<Tbuffer extends Buffer>
         }
       );
   }
+  
+  /**
+   * Queues a revert command
+   */
+  public void revert()
+  { revertCommand().execute();
+  }
 
+  
+  private void doRevert()
+  { getState().getValue().revert();
+  }
+  
   public Command<Tbuffer,Void,Void> 
     revertCommand(final Command<?,?,?> chainedCommand)
   { 

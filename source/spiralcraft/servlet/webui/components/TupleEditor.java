@@ -178,6 +178,18 @@ public abstract class TupleEditor
       );
   }
   
+  /**
+   * <p>Called by a control to queue the addAndClear action once the data
+   *   is read.
+   * </p>
+   * 
+   * @return A new Command
+   */
+  public void addAndClear()
+  { addAndClearCommand().execute();
+  }
+  
+  
   public Command<BufferTuple,Void,Void> deleteCommand()
   { return deleteCommand(null);
   }

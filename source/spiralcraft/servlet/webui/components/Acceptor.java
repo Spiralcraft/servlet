@@ -24,7 +24,6 @@ import spiralcraft.app.Message;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.kit.AbstractMessageHandler;
 import spiralcraft.textgen.PrepareMessage;
-
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
@@ -32,17 +31,15 @@ import spiralcraft.lang.Focus;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.webui.RequestMessage;
+import spiralcraft.servlet.webui.RevertMessage;
 import spiralcraft.servlet.webui.SaveMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.CommandMessage;
 import spiralcraft.servlet.webui.GatherMessage;
-
 import spiralcraft.util.ArrayUtil;
-
 import spiralcraft.textgen.EventContext;
-
 import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.common.ContextualException;
@@ -261,6 +258,7 @@ public abstract class Acceptor<T>
 
         AcceptorState<T> formState=getState(context);
         formState.saveRequested=false;
+        formState.revertRequested=false;
         
         if (wasActioned(context))
         {
@@ -313,6 +311,10 @@ public abstract class Acceptor<T>
 
           }
           
+          if (formState.revertRequested)
+          { revert(context);
+          }
+          
           if (reloadAfterAction && context.getRedirectURI()==null)
           { 
             try
@@ -331,6 +333,10 @@ public abstract class Acceptor<T>
     };
   }
     
+  protected void revert(Dispatcher context)
+  { relayMessage(context,RevertMessage.INSTANCE);
+  }
+  
   protected void save(Dispatcher context)
   {            
     relayMessage(context,SAVE_MESSAGE);
@@ -385,7 +391,11 @@ public abstract class Acceptor<T>
   public void save()
   { getState().saveRequested=true;
   }
-  
+
+  public void revert()
+  { getState().revertRequested=true;
+  }
+
   public Command<Void,Void,Void> redirectCommand(final String redirectURI)
   {
     return new CommandAdapter<Void,Void,Void>()

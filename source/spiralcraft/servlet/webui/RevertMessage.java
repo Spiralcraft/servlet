@@ -1,5 +1,5 @@
 //
-//Copyright (c) 2009 Michael Toth
+//Copyright (c) 1998,2007 Michael Toth
 //Spiralcraft Inc., All Rights Reserved
 //
 //This package is part of the Spiralcraft project and is licensed under
@@ -12,26 +12,26 @@
 //Unless otherwise agreed to in writing, this software is distributed on an
 //"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
-package spiralcraft.servlet.webui.components;
-
-import spiralcraft.servlet.webui.ControlGroupState;
+package spiralcraft.servlet.webui;
 
 /**
- * Holds state for a CommandControl
+ * A message that directs a tree of Editors or other buffer management
+ *   components to revert any unsaved buffered edits to the application model.
  * 
  * @author mike
- *
  */
-public class AcceptorState<T>
-  extends ControlGroupState<T>
+public class RevertMessage
+  extends UIMessage
 {
+  public static final Type TYPE=new Type();
+  public static final RevertMessage INSTANCE = new RevertMessage();
+
   
-  boolean saveRequested;
-  boolean revertRequested;
-  
-  public AcceptorState(Acceptor<T> comp)
-  { super(comp);
+  public RevertMessage()
+  { 
+    super(TYPE);
+    transactional=true;
+    multicast=true;
   }
-  
-  
+
 }
