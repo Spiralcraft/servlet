@@ -17,6 +17,35 @@
     
       <scm:Change>
      
+        <revision>-dev68
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide a mechanism to revert the tree of buffers within
+            a form via a new RevertMessage and handlers in Editor components
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>RevertMessage.java
+          </URI>
+          <URI>components/Acceptor.java
+          </URI>
+          <URI>components/AcceptorState.java
+          </URI>
+          <URI>components/EditorBase.java
+          </URI>
+          <URI>components/TupleEditor.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev67
         </revision>
       
