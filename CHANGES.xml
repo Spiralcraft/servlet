@@ -17,6 +17,30 @@
     
       <scm:Change>
      
+        <revision>-dev69
+        </revision>
+      
+        <notes>
+          <scm:Note>Enhance GuardFilter to accept multiple GuardConditions
+            to provide flexibility to take different actions based on different
+            conditions
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>GuardFilter.java
+          </URI>
+          <URI>GuardCondition.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev68
         </revision>
       
