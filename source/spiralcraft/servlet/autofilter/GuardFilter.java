@@ -24,7 +24,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
@@ -59,6 +59,7 @@ public class GuardFilter
   private URI loginURI;
   private boolean authenticate;
   private Path[] bypassPaths;
+  private GuardCondition[] conditions;
   
   private int responseCode=501;
   
@@ -107,8 +108,12 @@ public class GuardFilter
   { this.loginURI=loginURI;
   }
   
+  public void setConditions(GuardCondition[] conditions)
+  { this.conditions=conditions; 
+  }
+
   public void bind(Focus<?> focus)
-    throws BindException
+    throws ContextualException
   {
     authSessionX=LangUtil.findChannel(AuthSession.class,focus);
     if (messageX!=null)
@@ -141,6 +146,12 @@ public class GuardFilter
          +" properties: guardX,permissionX,authenticate"
         );
     }
+    if (conditions!=null)
+    {
+      for (GuardCondition condition: conditions)
+      { condition.bind(focus);
+      }
+    }
     bound=true;
   }  
   
@@ -170,7 +181,7 @@ public class GuardFilter
       try
       { bind(FocusFilter.getFocusChain(httpRequest));
       }
-      catch (BindException x)
+      catch (ContextualException x)
       { throw new ServletException("Error binding GuardFilter",x);
       }
     }
@@ -312,6 +323,18 @@ public class GuardFilter
       
       if (debug)
       { log.debug("GuardFilter passed request");
+      }
+      
+      if (conditions!=null)
+      { 
+        HttpServletResponse httpResponse=(HttpServletResponse) response;
+        Path relativePath = getRelativePath(httpRequest);
+        for (GuardCondition condition: conditions)
+        { 
+          if (!condition.checkCondition(httpRequest,httpResponse,relativePath))
+          { return;
+          }
+        }
       }
       chain.doFilter(httpRequest,response);
     }
