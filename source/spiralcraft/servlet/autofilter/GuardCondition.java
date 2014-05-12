@@ -92,7 +92,7 @@ public class GuardCondition
   { this.permissionsX=permissionsX;
   }
 
-  
+  @Override
   public Focus<?> bind(Focus<?> focus)
     throws ContextualException
   {
