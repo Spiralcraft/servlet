@@ -3,7 +3,7 @@
 	
   <property name="organization" value="spiralcraft"/>
   <property name="module" value="servlet"/>
-  <property name="buildVersion" value="0.4.17-dev69"/>
+  <property name="buildVersion" value="0.4.17-dev70"/>
   <property name="build.status" value="milestone"/>
 	
   <path id="classpath">

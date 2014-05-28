@@ -17,6 +17,32 @@
     
       <scm:Change>
      
+        <revision>-dev70
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix Form to recognize the clientPostActionName property of
+            the base Acceptor class. When this property is set to a non-null
+            value, the Form HTML action attribute will be set accordingly, and
+            the Form will accept data regardless of the state of the 
+            conversation.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>Acceptor.java
+          </URI>
+          <URI>html/Form.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev69
         </revision>
       
