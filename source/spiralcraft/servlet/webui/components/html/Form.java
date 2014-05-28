@@ -81,13 +81,20 @@ public class Form<T>
     protected void renderAttributes(Dispatcher context,Appendable out)
       throws IOException
     { 
-      
-      String actionURI
+      if (staticActionLink==null)
+      {
+        String actionURI
         =((ServiceContext) context)
           .registerAction(createAction(context,true));
       
+        renderAttribute(out,"action",actionURI);
+      }
+      else
+      {
+        renderAttribute
+          (out,"action",staticActionLink);
+      }
       renderPresentAttribute(out,"name",name);
-      renderAttribute(out,"action",actionURI);
       renderAttribute(out,"method",useGet?"get":"post");
       if (mimeEncoded)
       { renderAttribute(out,"enctype","multipart/form-data");
@@ -103,7 +110,10 @@ public class Form<T>
       if (useGet)
       {
         Appendable out=OutputContext.get();
-        String actionName=pathToActionName(context.getState().getPath());
+        String actionName
+          =staticActionLink==null
+            ?pathToActionName(context.getState().getPath())
+            :staticActionLink;
         String lrs=context.getFrame().getId();
         out.append("<input type='hidden' name='action' value='")
           .append(actionName)

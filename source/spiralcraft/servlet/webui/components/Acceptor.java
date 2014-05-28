@@ -77,6 +77,9 @@ public abstract class Acceptor<T>
   protected boolean autoPost;
   protected Binding<Boolean> actionedWhen;
   
+  protected String staticActionLink;
+  protected String staticResetLink;
+  
   
   public void setOnPost(Expression<Command<?,?,?>> onPost)
   { this.onPost=onPost;
@@ -157,10 +160,10 @@ public abstract class Acceptor<T>
   protected void handleInitialize(ServiceContext context)
   { 
     if (resetActionName!=null)
-    { context.registerAction(createResetAction(context,false));
+    { staticResetLink=context.registerAction(createResetAction(context,false));
     }
     if (clientPostActionName!=null)
-    { context.registerAction(createAction(context,false));
+    { staticActionLink=context.registerAction(createAction(context,false));
     }
   }
   
