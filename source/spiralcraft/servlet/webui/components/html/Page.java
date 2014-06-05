@@ -94,10 +94,10 @@ public class Page
     {
       try
       {
-        if (type==PrepareMessage.TYPE)
+        if (message.getType()==PrepareMessage.TYPE)
         { ((PageState) getState()).headerEpilogue.setLength(0);
         }
-        else if (type==RenderMessage.TYPE)
+        else if (message.getType()==RenderMessage.TYPE)
         { OutputContext.get().append(((PageState) getState()).headerEpilogue);
         }
         next.handleMessage(dispatcher,message);
@@ -119,10 +119,10 @@ public class Page
     {
       try
       {
-        if (type==PrepareMessage.TYPE)
+        if (message.getType()==PrepareMessage.TYPE)
         { ((PageState) getState()).bodyPrologue.setLength(0);
         }
-        else if (type==RenderMessage.TYPE)
+        else if (message.getType()==RenderMessage.TYPE)
         { OutputContext.get().append(((PageState) getState()).bodyPrologue);
         }
         next.handleMessage(dispatcher,message);
@@ -144,11 +144,11 @@ public class Page
     {
       try
       {
-        if (type==PrepareMessage.TYPE)
+        if (message.getType()==PrepareMessage.TYPE)
         { ((PageState) getState()).footer.setLength(0);
         }
         next.handleMessage(dispatcher,message);
-        if (type==RenderMessage.TYPE)
+        if (message.getType()==RenderMessage.TYPE)
         { OutputContext.get().append(((PageState) getState()).footer);
         }
       }
@@ -290,8 +290,11 @@ public class Page
   private URI cssBase;
   private URI jsBase;
   
+  @Override
+  protected void addHandlers() 
+    throws ContextualException
   { 
-    
+    super.addHandlers();
     addHandler(doctype);
     addHandler(tag);
     addHandler(headChain);
@@ -404,7 +407,21 @@ public class Page
   { return new PageState(this);
   }
   
+  public PageState getState()
+  { return (PageState) super.getState();
+  }
   
+  public Appendable getHead()
+  { return getState().headerEpilogue;
+  }
+
+  public Appendable getStartOfBody()
+  { return getState().bodyPrologue;
+  }
+
+  public Appendable getEndOfBody()
+  { return getState().footer;
+  }
 }
 
 class PageState
