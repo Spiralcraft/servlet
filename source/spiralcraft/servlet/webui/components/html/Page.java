@@ -95,10 +95,10 @@ public class Page
       try
       {
         if (message.getType()==PrepareMessage.TYPE)
-        { ((PageState) getState()).headerEpilogue.setLength(0);
+        { getState().headerEpilogue.setLength(0);
         }
         else if (message.getType()==RenderMessage.TYPE)
-        { OutputContext.get().append(((PageState) getState()).headerEpilogue);
+        { OutputContext.get().append(getState().headerEpilogue);
         }
         next.handleMessage(dispatcher,message);
       }
@@ -120,10 +120,10 @@ public class Page
       try
       {
         if (message.getType()==PrepareMessage.TYPE)
-        { ((PageState) getState()).bodyPrologue.setLength(0);
+        { getState().bodyPrologue.setLength(0);
         }
         else if (message.getType()==RenderMessage.TYPE)
-        { OutputContext.get().append(((PageState) getState()).bodyPrologue);
+        { OutputContext.get().append(getState().bodyPrologue);
         }
         next.handleMessage(dispatcher,message);
       }
@@ -145,11 +145,11 @@ public class Page
       try
       {
         if (message.getType()==PrepareMessage.TYPE)
-        { ((PageState) getState()).footer.setLength(0);
+        { getState().footer.setLength(0);
         }
         next.handleMessage(dispatcher,message);
         if (message.getType()==RenderMessage.TYPE)
-        { OutputContext.get().append(((PageState) getState()).footer);
+        { OutputContext.get().append(getState().footer);
         }
       }
       catch (IOException x)
