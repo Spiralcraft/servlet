@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev71
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide rendering targets in Page to allow contents to
+            write to the page head or the top or bottom of the page body.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Page.java
+        </path>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev70
         </revision>
       
