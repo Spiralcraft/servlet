@@ -17,6 +17,29 @@
     
       <scm:Change>
      
+        <revision>-dev72
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide mechanism to preserve ordering in multiselect
+            lists by storing relative position in another data field.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>SelectionEditor.java
+          </URI>
+          <URI>AbstractSelectControl.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev71
         </revision>
       
