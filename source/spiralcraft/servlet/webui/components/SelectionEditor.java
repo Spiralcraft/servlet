@@ -18,7 +18,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import spiralcraft.common.Coercion;
 import spiralcraft.common.ContextualException;
+import spiralcraft.data.Aggregate;
 import spiralcraft.data.DataComposite;
 import spiralcraft.data.DataException;
 import spiralcraft.data.session.BufferAggregate;
@@ -29,8 +31,12 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.AbstractChannel;
+import spiralcraft.lang.util.LangUtil;
+import spiralcraft.lang.functions.Sort;
+import spiralcraft.lang.kit.CoercionChannel;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.util.ArrayUtil;
+import spiralcraft.util.lang.NumericCoercion;
 
 /**
  * <p>Manages the contents of an Aggregate that represents a
@@ -49,6 +55,9 @@ public class SelectionEditor
   
   private Expression<TselectItem> key;
   private Channel<TselectItem> keyChannel;
+  private Expression<Integer> position;
+  private Channel<Integer> positionChannel;
+  private Channel<Aggregate<BufferTuple>> sortChannel;
   
   /**
    * Specify the selection expression from the perspective of
@@ -58,6 +67,18 @@ public class SelectionEditor
    */
   public void setSelectionKey(Expression<TselectItem> key)
   { this.key=key;
+  }
+  
+  /**
+   * <p>Specify the expression that references to location to store the
+   *   relative position of each item in the list. The expression should
+   *   begin with a "." if it is the name of a field in the target Type.
+   * </p>
+   *   
+   * @param position
+   */
+  public void setPositionX(Expression<Integer> position)
+  { this.position=position;
   }
   
   /**
@@ -82,12 +103,25 @@ public class SelectionEditor
     ArrayList<TselectItem> items
       =new ArrayList<TselectItem>(aggregate.size());
     
-    for (BufferTuple buffer: aggregate)
-    { 
-      if (!buffer.isDelete())
-      { items.add(evalKey(buffer));
+    if (sortChannel==null)
+    {
+      for (BufferTuple buffer: aggregate)
+      { 
+        if (!buffer.isDelete())
+        { items.add(evalKey(buffer));
+        }
       }
     }
+    else
+    {
+      for (BufferTuple buffer: sortChannel.get())
+      {
+        if (!buffer.isDelete())
+        { items.add(evalKey(buffer));
+        }
+      }
+    }
+    
     TselectItem[] array
       =(TselectItem[]) Array.newInstance
         (keyChannel.getReflector().getContentType()
@@ -158,8 +192,10 @@ public class SelectionEditor
     }
     
     // Check-off or create selected items
-    for (TselectItem item: keys)
+    for (int i=0;i<keys.length;i++)
     {
+      TselectItem item=keys[i];
+      
       BufferTuple buffer=keyMap.get(item);
       if (buffer==null)
       { 
@@ -175,6 +211,9 @@ public class SelectionEditor
         keyMap.remove(item);
       }
       
+      if (positionChannel!=null)
+      { setPosition(buffer,i);
+      }
     }
     
     // Delete un-selected items
@@ -184,6 +223,13 @@ public class SelectionEditor
     
   }
 
+  /**
+   * Associate all existing buffers with the unique input key value that
+   *   marks it as selected.
+   *   
+   * @param map
+   * @param buffer
+   */
   private void mapBuffer
     (HashMap<TselectItem,BufferTuple> map
     ,BufferTuple buffer
@@ -199,6 +245,33 @@ public class SelectionEditor
     
   }
   
+  /**
+   * Set the position of the selection 
+   * 
+   * @param buffer
+   * @param item
+   */
+  private void setPosition
+    (BufferTuple buffer
+    ,int position
+    )
+  { 
+    childChannel.push(buffer);
+    try
+    { positionChannel.set(position);
+    }
+    finally
+    { childChannel.pop();
+    }
+    
+  }
+
+  /**
+   * Give a new buffer the appropriate selection key.
+   * 
+   * @param buffer
+   * @param item
+   */
   private void setKey
     (BufferTuple buffer
     ,TselectItem item
@@ -231,6 +304,34 @@ public class SelectionEditor
     Class keyClass=keyChannel.getContentType();
     Class arrayClass=Array.newInstance(keyClass, 0).getClass();
     
+    if (position!=null)
+    { 
+      
+      Channel positionSourceChannel=childFocus.bind(position);
+      if (!Integer.class.isAssignableFrom(positionSourceChannel.getContentType()))
+      { 
+        if (String.class.isAssignableFrom(positionSourceChannel.getContentType()))
+        { 
+          positionChannel
+            =LangUtil.ensureType(positionSourceChannel,Integer.class,focus);
+        }
+        else if (Number.class.isAssignableFrom(positionSourceChannel.getContentType()))
+        { 
+          positionChannel
+            =new CoercionChannel<Number,Integer>
+              (BeanReflector.<Integer>getInstance(Integer.class)
+              ,positionSourceChannel
+              ,(Coercion<Number,Integer>) NumericCoercion.instance(Integer.class)
+              ,(Coercion) NumericCoercion.instance(positionSourceChannel.getContentType())
+              );
+        }
+      }
+      else
+      { positionChannel=positionSourceChannel;
+      }
+
+      sortChannel=new Sort(position,false).bindChannel(bufferChannel,focus,null);
+    }
     return focus.chain(new SelectionChannel(arrayClass));
   }
   

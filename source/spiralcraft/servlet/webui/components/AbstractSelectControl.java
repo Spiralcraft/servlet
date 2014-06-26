@@ -16,10 +16,7 @@ package spiralcraft.servlet.webui.components;
 
 import java.util.List;
 
-
 import spiralcraft.util.string.StringConverter;
-
-
 import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.AccessException;
@@ -28,7 +25,6 @@ import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.net.http.VariableMapBinding;
-
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
 
@@ -224,7 +220,12 @@ public class AbstractSelectControl<Ttarget,Tvalue>
   public SelectState<Ttarget,Tvalue> createState()
   { return new SelectState<Ttarget,Tvalue>(this);
   }  
-  
+ 
+  @SuppressWarnings("unchecked")
+  public boolean isSelected(Tvalue itemKey)
+  { return ((SelectState<Ttarget,Tvalue>) getState()).isSelected(itemKey);
+  }
+    
   @SuppressWarnings("unchecked")
   @Override
   protected SelectState<Ttarget,Tvalue> getState(Dispatcher context)
