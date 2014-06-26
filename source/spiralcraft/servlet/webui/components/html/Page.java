@@ -407,6 +407,7 @@ public class Page
   { return new PageState(this);
   }
   
+  @Override
   public PageState getState()
   { return (PageState) super.getState();
   }
