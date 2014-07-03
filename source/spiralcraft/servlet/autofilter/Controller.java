@@ -458,9 +458,9 @@ public class Controller
   private Resource virtualize(Resource resource) 
     throws IOException
   {
-	if (resource instanceof OverlayResource)
-	{ return resource;
-	}
+    if (resource instanceof OverlayResource)
+    { return resource;
+    }
     Resource baseResource=Package.findBaseResource(resource);
     if (baseResource!=null)
     {
@@ -547,7 +547,7 @@ public class Controller
       // Handle any new children
       for (Resource childResource: resource.asContainer().listChildren(exclusionFilter))
       { 
-    	childResource=virtualize(childResource);
+        childResource=virtualize(childResource);
         if (childResource.asContainer()!=null
             && node.getChild(childResource.getLocalName())==null
             )
