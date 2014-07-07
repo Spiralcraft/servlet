@@ -17,6 +17,35 @@
     
       <scm:Change>
      
+        <revision>-dev73
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide a generic authentication module for use by
+            application-specific authentication methods.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/auth
+        </path>
+        
+        <resources>
+          <URI>Filter.java
+          </URI>
+          <URI>Session.java
+          </URI>
+          <URI>Auth.schema.xml
+          </URI>
+          <URI>AuthModule.assy.xml
+          </URI>
+          <URI>AuthToken.type.xml
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev72
         </revision>
       
