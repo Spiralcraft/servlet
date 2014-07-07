@@ -1,0 +1,61 @@
+<secspi:DataAuthModule
+  xmlns:secspi="class:/spiralcraft/security/spi/"
+  xmlns:secauth="class:/spiralcraft/security/auth/"
+  xmlns:query="class:/spiralcraft/data/query/"
+  xmlns:sa="class:/spiralcraft/servlet/auth/"
+  xmlns:dtask="class:/spiralcraft/data/task/"
+  xmlns:dsession="class:/spiralcraft/data/session/"
+  >
+  <name>spiralcraft.servlet.auth
+  </name>        
+  
+  <refreshTriggerX>[sa:Session].authStateDigest
+  </refreshTriggerX>
+  
+  <accountQuery x="
+    [*query:Projection
+      {
+        [*query:Selection
+          { [@sa:AuthToken].type
+          , `.token==[sa:Session].token
+            &amp;&amp; .systemId==[sa:Session].systemId
+            `
+          }
+        ]
+        ,`.login`
+      }
+    ]"
+  />
+    
+  <onAssociate>
+    [sa:Session].credentialsPresent
+    ?
+      [*dtask:Fetch
+        { [*query:Selection
+            { [@sa:AuthToken].type
+            , `.token==[sa:Session].token
+                &amp;&amp; .systemId==[sa:Session].systemId
+              `
+            }
+          ]
+        }
+      ].()
+      .@top
+      .[*dtask:Edit{ autoCreate:=true }].()
+      {.token=[sa:Session].token
+      ,.systemId=[sa:Session].systemId
+      ,.extId=[sa:Session].extId
+      ,.extData=[sa:Session].extData
+      ,.principalId=[secauth:AuthSession].accountId
+      ,.
+      }
+      .@tuple.save()
+    :null
+    
+  </onAssociate>
+  
+  <beforeLogout>
+    [sa:Filter].logout()
+  </beforeLogout>
+                      
+</secspi:DataAuthModule>

@@ -1,0 +1,15 @@
+<meta:Schema
+  xmlns:meta="class:/spiralcraft/data/types/meta/"
+  xmlns:sa="class:/spiralcraft/servlet/auth/"
+  >
+  <name>spiralcraft-servlet-auth
+  </name>
+  <entities>
+    
+    <meta:Entity>
+      <type><sa:AuthToken.type/>
+      </type>
+    </meta:Entity>
+          
+  </entities>
+</meta:Schema>

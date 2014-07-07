@@ -1,0 +1,105 @@
+<meta:Type
+  xmlns:meta="class:/spiralcraft/data/types/meta/"
+  xmlns:sec="class:/spiralcraft/security/"
+  >
+
+  <!-- Maps a generic external authentication token to a principal
+  -->
+  <fields>
+    <meta:SequenceField>
+      <name>id
+      </name>
+      
+      <type><LSID.type/>
+      </type>
+    </meta:SequenceField>
+  
+    <meta:Field>
+      <name>systemId
+      </name>
+      <description>The id of the token system or provider
+      </description>
+      <type><LSID.type/>
+      </type>
+    </meta:Field>
+
+
+    <meta:Field>
+      <name>extId
+      </name>
+      <description>The external identifier, if any, assigned by the external
+         system to the entity represented by this token 
+      </description>
+      <type><String.type/>
+      </type>
+    </meta:Field>
+
+    <meta:Field>
+      <name>extData
+      </name>
+      <description>Extra information provided by the external system for this
+        token. 
+      </description>
+      <type><String.type/>
+      </type>
+    </meta:Field>
+
+    <meta:Field>
+      <name>token
+      </name>
+      <description>The authentication token
+      </description>
+      <type><String.type/>
+      </type>
+    </meta:Field>
+
+    <meta:Field>
+      <name>principalId
+      </name>
+      
+      <type><String.type/>
+      </type>
+    </meta:Field>
+    
+    <meta:RelativeField>
+      <name>login
+      </name>
+      <type><sec:Login.type/>
+      </type>
+      <fieldList>principalId
+      </fieldList>
+      <referencedFieldList>principalId
+      </referencedFieldList>
+    </meta:RelativeField>
+    
+  </fields>
+  
+  <keys>
+    <meta:Key>
+    
+      <fieldList>id
+      </fieldList>
+      
+      <primary>true
+      </primary>
+      
+    </meta:Key>
+  
+    <meta:Key>
+    
+      <fieldList>token,systemId
+      </fieldList>
+      
+      <unique>true
+      </unique>
+      
+    </meta:Key>
+
+    <meta:Key>
+    
+      <fieldList>principalId,systemId
+      </fieldList>
+
+    </meta:Key>
+  </keys>
+</meta:Type>
