@@ -373,9 +373,7 @@ public class FileServlet
     else
     { 
       if (resource.asContainer()!=null)
-      { 
-        response.sendRedirect
-          (response.encodeRedirectURL(request.getRequestURI()+"/"));
+      { redirectToContainer(request,response);
       }
       else if (request.getMethod().equals("GET"))
       { sendFile(request,response,resource);

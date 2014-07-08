@@ -282,6 +282,27 @@ public class HttpServlet
   { return contextAdapter.getRelativePath(request);
   }
 
+  /**
+   * Redirect a request to the same URL with a trailing slash, which is the
+   *  canonical form for referencing a container.
+   * 
+   * @param request
+   * @param response
+   */
+  protected void redirectToContainer
+    (HttpServletRequest request,HttpServletResponse response)
+    throws IOException
+  {
+    StringBuilder buf=new StringBuilder();
+    buf.append(request.getRequestURI());
+    buf.append("/");
+    if (request.getQueryString()!=null)
+    { 
+      buf.append("?");
+      buf.append(request.getQueryString());
+    }
+    response.sendRedirect(response.encodeRedirectURL(buf.toString()));    
+  }
   
   /**
    * <p>Return a spiralcraft.vfs.Resource that provides access to a

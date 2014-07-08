@@ -231,9 +231,7 @@ public class UIServlet
     catch (NotStreamableException x)
     {
       if (!request.getRequestURI().endsWith("/"))
-      { 
-        response.sendRedirect
-          (response.encodeRedirectURL(request.getRequestURI()+"/"));
+      { redirectToContainer(request,response);
       }
     }
   }
@@ -261,9 +259,7 @@ public class UIServlet
     catch (NotStreamableException x)
     {
       if (!request.getRequestURI().endsWith("/"))
-      { 
-        response.sendRedirect
-          (response.encodeRedirectURL(request.getRequestURI()+"/"));
+      { redirectToContainer(request,response);
       }
     }
       
@@ -295,9 +291,7 @@ public class UIServlet
     catch (NotStreamableException x)
     {
       if (!request.getRequestURI().endsWith("/"))
-      { 
-        response.sendRedirect
-          (response.encodeRedirectURL(request.getRequestURI()+"/"));
+      { redirectToContainer(request,response);
       }
     }
   }

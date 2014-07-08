@@ -364,6 +364,9 @@ public class PathContextFilter
       String redirectPath=context.getCanonicalRedirectPath(requestPath);
       if (redirectPath!=null)
       { 
+        if (request.getQueryString()!=null)
+        { redirectPath=redirectPath+"?"+request.getQueryString();
+        }
         response.sendRedirect(request.getContextPath()+redirectPath);
         return;
       }
