@@ -21,6 +21,34 @@
         </revision>
       
         <notes>
+          <scm:Note>Fix issue where request query string was lost when
+            automatically redirecting requests to their canonical container
+            URL (that has a trailing slash).
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/PathContextFilter.java
+          </URI>
+          <URI>kit/HttpServlet.java
+          </URI>
+          <URI>vfs/FileServlet.java
+          </URI>
+          <URI>webui/UIServlet.java
+          </URI>
+        </resources>
+
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev73
+        </revision>
+      
+        <notes>
           <scm:Note>Provide a generic authentication module for use by
             application-specific authentication methods.
           </scm:Note>
