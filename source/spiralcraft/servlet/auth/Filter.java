@@ -121,7 +121,10 @@ public class Filter
   }
   
   public void clearSession()
-  { channel.get().clear();
+  { 
+    if (channel.get()!=null)
+    { channel.get().clear();
+    }
   }
   
   /**
@@ -147,7 +150,7 @@ public class Filter
     throws BindException,ServletException
   {
     Session session
-      =this.<Session>getPrivateSessionState(request,false);
+      =this.<Session>getPrivateSessionState(request,true);
 
     
     channel.push(session);
