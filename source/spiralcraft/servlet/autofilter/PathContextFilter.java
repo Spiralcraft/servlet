@@ -59,7 +59,7 @@ public class PathContextFilter
     Stack<PathContext> stack
       =(Stack<PathContext>) 
         request.getAttribute("spiralcraft.servlet.PathContext");
-    return stack!=null?stack.peek():null;
+    return stack!=null?(!stack.isEmpty()?stack.peek():null):null;
   }
 
   
