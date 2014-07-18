@@ -94,6 +94,7 @@ public class Controller
   private long lastUpdate;
   
   private Throwable throwable;
+  private boolean showExceptions=false;
   
   private ResourceFilter exclusionFilter
     =new ResourceFilter()
@@ -152,6 +153,12 @@ public class Controller
     
     ServletContext context=config.getServletContext();
     
+    showExceptions
+      ="true"
+        .equals
+          (context.getInitParameter
+            ("spiralcraft.servlet.showExceptions")
+          );
     String realPath=context.getRealPath("/");
     if (realPath!=null)
     { 
@@ -388,13 +395,25 @@ public class Controller
         
       }
       else
-      { sendError(servletResponse,throwable);
+      { 
+        if (showExceptions)
+        { sendError(servletResponse,throwable);
+        }
+        else
+        { ((HttpServletResponse) servletResponse).sendError(500);
+        }
       }
       
     }
     catch (ServletException x)
     { 
-      sendError(servletResponse,x);
+      if (showExceptions)
+      { 
+        sendError(servletResponse,x);
+      }
+      else
+      { throw x;
+      }
 
       if (x.getRootCause()!=null)
       { log.log(Level.WARNING,x.toString(),x);
@@ -402,7 +421,12 @@ public class Controller
     }
     catch (RuntimeException x)
     { 
-      sendError(servletResponse,x);
+      if (showExceptions)
+      { sendError(servletResponse,x);
+      }
+      else
+      { throw x;
+      }
       log.log(Level.WARNING,"Exception handling request",x);
     }
     finally
