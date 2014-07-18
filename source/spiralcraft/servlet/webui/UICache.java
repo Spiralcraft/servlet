@@ -16,16 +16,17 @@ package spiralcraft.servlet.webui;
 
 import spiralcraft.text.markup.MarkupException;
 import spiralcraft.util.thread.BlockTimer;
+import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
+import spiralcraft.servlet.kit.ContextAdapter;
 import spiralcraft.servlet.webui.textgen.UIResourceUnit;
 import spiralcraft.servlet.webui.textgen.RootUnit;
-
-
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
-
+import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,11 +56,29 @@ public class UICache
 
   private int resourceCheckFrequencyMs=5000;
 
+  private boolean showExceptions=false;
+  private String exceptionResource
+    ="class:/spiralcraft/servlet/webui/resources/loadTimeErrorReport.tgl";
+  
   /**
    * Create a new UI Cache with components bound to the specified Focus
    */
-  public UICache(Focus<?> parentFocus)
-  { this.focus=parentFocus;
+  public UICache(Focus<?> parentFocus,ContextAdapter context)
+  {
+    this.focus=parentFocus;
+    this.showExceptions
+      ="true".equals
+        (context.getContext().getInitParameter
+          ("spiralcraft.servlet.showExceptions")
+        );
+    
+    String contextExceptionResource
+      =context.getContext().getInitParameter
+          ("spiralcraft.servlet.webui.exceptionResource");
+    if (contextExceptionResource!=null)
+    { this.exceptionResource=contextExceptionResource;
+    }
+        
   }  
   
   /**
@@ -98,38 +117,94 @@ public class UICache
           // XXX Return an 'exception handler' component
           if (resourceUnit.getException()!=null)
           { 
-            ExceptionComponent component
-              =new ExceptionComponent(resourceUnit.getException());
-            component.setScaffold(unit);
-            try
-            { component.bind(null);
+            if (showExceptions)
+            {
+              return makeExceptionComponent
+                (resource,instancePath,resourceUnit,resourceUnit.getException());
             }
-            catch (BindException x)
-            { throw new ServletException(x);
+            else
+            { 
+              throw new ServletException
+                ("Error instantiating component for path ["+instancePath
+                  +"] from resource ["+resource.getURI()+"]"
+                ,resourceUnit.getException()
+                );
             }
-            return component;
-            
           }
           return null;
         }
       }
       catch (MarkupException x)
       { 
-        ExceptionComponent component
-          =new ExceptionComponent(x);
-        try
-        { component.bind(null);
+        if (showExceptions)
+        {
+          return makeExceptionComponent(resource,instancePath,null,x);
         }
-        catch (BindException y)
-        { throw new ServletException(y);
+        else
+        {
+          throw new ServletException
+            ("Error compiling path ["+instancePath
+              +"] resource ["+resource.getURI()+"]"
+            ,resourceUnit.getException()
+            );
         }
-        return component;
       }
       
     }
     else
     { return null;
     }
+  }
+  
+  private RootComponent makeExceptionComponent
+    (Resource resource,String instancePath,UIResourceUnit resourceUnit,Exception exception)
+    throws ServletException,ContextualException,IOException
+  {
+    ExceptionInfo exceptionInfo
+      =new ExceptionInfo(resource,instancePath,resourceUnit,exception);
+        
+    if (exceptionResource!=null)
+    {
+      Resource errorResource=Resolver.getInstance().resolve(exceptionResource);
+      if (errorResource!=null && errorResource.exists())
+      {
+        UIResourceUnit errorUnit
+          =new UIResourceUnit
+            (errorResource);
+        RootUnit errorRoot=errorUnit.getUnit();
+        if (errorRoot!=null)
+        {
+          return errorRoot.bindRoot
+              (focus.chain(new SimpleChannel<>(exceptionInfo,true))
+              );
+        }
+        else
+        { 
+          log.log
+            (Level.WARNING
+            ,"Could not compile error handler "+exceptionResource
+            ,errorUnit.getException()
+            );
+        }
+      }
+      else
+      { log.warning("Could not find exception resource "+exceptionResource);
+      }
+    }
+
+    
+    ExceptionComponent component
+      =new ExceptionComponent
+        (exceptionInfo
+        );
+    try
+    { component.bind(null);
+    }
+    catch (BindException x)
+    { throw new ServletException(x);
+    }
+    return component;
+    
   }
   
   /**
@@ -220,3 +295,4 @@ class ComponentReference
   public RootComponent component;
   public RootUnit unit;
 }
+

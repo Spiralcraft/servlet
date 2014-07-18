@@ -1,0 +1,88 @@
+<%With 
+  tgns:webui="class:/spiralcraft/servlet/webui/"
+  tgns:http="class:/javax/servlet/http/"
+  tgns:sl="class:/spiralcraft/lang/"
+  x='{ info:= [webui:ExceptionInfo]
+     , response:=[http:HttpServletResponse]
+     }
+    '
+  %>
+  <html><body>
+  
+  <style>
+    body 
+    { font-family: arial, helvetica, sans-serif;
+    }
+  
+    ul
+    { 
+      list-style: none;
+      padding-left: 10px;
+    }
+    
+    
+    li > label
+    { 
+      margin-right: 10px;
+      min-width: 150px;
+      display: inline-block;
+      text-align: right;
+      font-weight: bold;
+    }
+  </style>
+  <div>
+    <h1>WebUI Component Load-time Error</h1>
+    <h2>Summary</h2>
+    <div class="data">
+      <ul>
+        <li><label>Instance Path</label><%=.info.instancePath/%>
+        </li>
+        <li><label>Root Resource</label><%=.info.resourceUnit.resource.URI/%>
+        </li>
+        <li><label>Exception</label><%=.info.exception/%>
+        </li>
+        <li><label>App Context</label>@<%=info.contexts[0]/%>
+        </li>
+        <li><label>Java Stack</label>@<%=info.exception.stackTrace[0]/%>
+        </li>
+        <li>
+      </ul>
+    </div>
+    <h2>Cause</h2>
+    <div class="data">
+      <ul>
+        <li><label>Exception</label><%=.info.exceptions.@last/%>
+        </li>
+        <li><label>App Context</label>@<%=info.contexts.@last/%>
+        </li>
+        <li><label>Java Stack</label>@<%=info.exceptions.@last.stackTrace[0]/%>
+        </li>
+        <li>
+      </ul>
+    </div>
+    <h2>Context Trace</h2>
+    <div class="data">
+      <ul>
+      <%Iterate x=".info.contexts"%>
+        <li><%=./%></li>
+      <%/Iterate%>
+      </ul>
+    </div>
+    <h2>Exception Trace</h2>
+    <div class="data">
+      <ul>
+      <%Iterate x=".info.exceptions"%>
+        <li><%=./%></li>
+      <%/Iterate%>
+      </ul>
+    </div>
+    
+    <h2>Stack Trace</h2>
+    <div class="data">
+      <pre>
+      <%=.info.stackTrace/%>
+      </pre>
+    </div>
+    
+  </body></html>
+<%/With%>

@@ -281,6 +281,10 @@ public class ServiceContext
   { this.servletContext=contextAdapter;
   }
   
+  public ContextAdapter getServletContext()
+  { return servletContext;
+  }
+  
   
   /**
    * The URL that can be used to issue asynchronous requests back to this

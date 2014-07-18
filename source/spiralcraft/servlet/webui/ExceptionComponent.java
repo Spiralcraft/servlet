@@ -16,41 +16,60 @@ package spiralcraft.servlet.webui;
 
 import java.io.Flushable;
 import java.io.IOException;
-import java.io.PrintStream;
+
 
 import spiralcraft.app.Dispatcher;
+import spiralcraft.common.ContextualException;
 import spiralcraft.textgen.OutputContext;
 import spiralcraft.textgen.kit.RenderHandler;
 
 public class ExceptionComponent
     extends RootComponent
 {
-  private Throwable exception;
-  
-  { addHandler
+  private ExceptionInfo info;
+
+  public ExceptionComponent(ExceptionInfo info)
+  { this.info=info;
+  }
+
+  @Override
+  protected void addHandlers() 
+    throws ContextualException
+  { 
+    addHandler
       (new RenderHandler()
         { 
           @Override
           protected void render(Dispatcher context)
             throws IOException
           { 
+            ServiceContext serviceContext=(ServiceContext) context;
+            serviceContext.getResponse().setStatus(500);   
+            
             Appendable out=OutputContext.get();
             out.append("<html><body><pre>");
             ((Flushable) out).flush();
-            exception.printStackTrace
-              (new PrintStream(((ServiceContext) context).getResponse().getOutputStream())
-              );
+            Throwable parent=info.exception;
+            while (parent!=null)
+            {
+              out.append(parent.toString()).append("\r\n");
+              for (StackTraceElement element: info.exception.getStackTrace())
+              { out.append("    ").append(element.toString()).append("\r\n");
+              }
+              parent=parent.getCause();
+              if (parent!=null)
+              { out.append("Caused by: ");
+              }
+            }
+
             out.append("</pre></body></html>");
+            
           }
         
         } 
       );
+    super.addHandlers();
   }
-  
-  public ExceptionComponent(Throwable exception)
-  { this.exception=exception;
-  }
-  
   
   
 }

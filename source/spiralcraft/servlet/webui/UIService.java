@@ -101,7 +101,7 @@ public class UIService
     focusChain=focusChain.chain(selfChannel);
     httpFocus=new HttpFocus<Void>(focusChain);
     focusChain=httpFocus;
-    uiCache=new UICache(focusChain);
+    uiCache=new UICache(focusChain,context);
     navContextFocus
       =LangUtil.findFocus(NavContext.class,focusChain);
     pathContextFocus
