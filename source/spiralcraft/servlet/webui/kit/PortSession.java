@@ -175,7 +175,7 @@ public class PortSession
     for (Action action:actions)
     {
       if (action.isResponsive())
-      { actionMap.remove(action.getName(),action);
+      { actionMap.removeValue(action.getName(),action);
       }
     }
 
