@@ -17,6 +17,41 @@
     
       <scm:Change>
      
+        <revision>-dev74
+        </revision>
+      
+        <notes>
+          <scm:Note>
+            Improve exception handling and provide control over whether
+              exceptions are sent to the client
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/Controller.java
+          </URI>
+          <URI>autofilter/PathContextFilter.java
+          </URI>
+          <URI>webui/ExceptionComponent.java
+          </URI>
+          <URI>webui/ExceptionInfo.java
+          </URI>
+          <URI>webui/ServiceContext.java
+          </URI>
+          <URI>webui/UICache.java
+          </URI>
+          <URI>webui/UIService.java
+          </URI>
+          <URI>webui/resources/loadTimeErrorReport.tgl
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev73
         </revision>
       
