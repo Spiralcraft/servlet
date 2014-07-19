@@ -16,6 +16,7 @@ package spiralcraft.servlet.autofilter;
 
 import java.net.URI;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -524,9 +525,13 @@ public class SecurityFilter
     (HttpServletRequest request
     ,HttpServletResponse response
     ) 
-    throws BindException
+    throws BindException,ServletException
   {
       
+    if (contextLocal.get()!=null)
+    { throw new ServletException("Can't re-enter SecurityFilter");
+    }
+    
     HttpSession session=request.getSession();
     
     AuthSession authSession
