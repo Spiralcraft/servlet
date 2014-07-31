@@ -134,7 +134,7 @@ public class UICache
           return null;
         }
       }
-      catch (MarkupException x)
+      catch (ContextualException x)
       { 
         if (showExceptions)
         {
