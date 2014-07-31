@@ -17,6 +17,46 @@
     
       <scm:Change>
      
+        <revision>-dev75
+        </revision>
+      
+        <notes>
+          <scm:Note>
+            Fix HTML errors and escaping issues.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>webui/resources/loadTimeErrorReport.tgl
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev75
+        </revision>
+      
+        <notes>
+          <scm:Note>
+            Error handling logic now correctly processes BindExceptions 
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>webui/UICache.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev74
         </revision>
       
