@@ -17,6 +17,23 @@
     
       <scm:Change>
      
+        <revision>-dev76
+        </revision>
+      
+        <notes>
+          <scm:Note>
+            Enhance the PathContext to provide expression-driven control over
+              mappings from pathInfo to bound instances of UI resources.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/PathContext.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev75
         </revision>
       
