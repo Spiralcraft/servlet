@@ -96,6 +96,17 @@ public class PathContext
   }
 
   /**
+   * An expression which maps the current request to a UIResourceMapping (a
+   *   named instance of a component created from a specified definition
+   *   resource).
+   * 
+   * @param resourceMappingX
+   */
+  public void setResourceMappingX(Binding<UIResourceMapping> resourceMappingX)
+  { this.resourceMappingX=resourceMappingX;
+  }
+  
+  /**
    * <p>Specifies that all requests passing through this PathContext will be
    *   handled directly by resources associated with this PathContext, instead
    *   of being delegated to a child PathContext.
@@ -257,6 +268,17 @@ public class PathContext
     }
     return chain;
   }
+  
+  public UIResourceMapping 
+    createResourceMapping(String pathInfo,String resourceURI)
+    throws IOException
+  { 
+    return UIResourceMapping.forResource
+      (getAbsolutePathString()+pathInfo
+      ,this.resolveCode(resourceURI)
+      );
+  }
+  
   /**
    * 
    * @return The resource that will handle the current request, if one has
@@ -275,6 +297,14 @@ public class PathContext
           );
       if (resource!=null)
       { return resource;
+      }
+      
+      if (resourceMappingX!=null)
+      { 
+        resource=resourceMappingX.get();
+        if (resource!=null)
+        { return resource;
+        }
       }
       
       if (handleAllRequests)
