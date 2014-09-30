@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev77
+        </revision>
+      
+        <notes>
+          <scm:Note>
+            Moved the Flow component to spiralcraft-core for completion
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Flow.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev76
         </revision>
       
