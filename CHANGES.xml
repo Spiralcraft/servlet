@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev78
+        </revision>
+      
+        <notes>
+          <scm:Note>
+            Attach correct cause to page compilation exception.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/UICache.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev77
         </revision>
       
