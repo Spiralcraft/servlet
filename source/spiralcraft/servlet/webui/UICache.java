@@ -145,7 +145,7 @@ public class UICache
           throw new ServletException
             ("Error compiling path ["+instancePath
               +"] resource ["+resource.getURI()+"]"
-            ,resourceUnit.getException()
+            ,x
             );
         }
       }
