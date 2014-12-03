@@ -20,7 +20,6 @@ import javax.servlet.ServletOutputStream;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.util.Locale;
 
 /**
@@ -55,6 +54,7 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @SuppressWarnings("deprecation")
   @Override
   @Deprecated
   public String encodeRedirectUrl(String url)
@@ -64,6 +64,7 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @SuppressWarnings("deprecation")
   @Override
   @Deprecated
   public String encodeUrl(String url)
@@ -118,6 +119,7 @@ public class HttpServletResponseWrapper
   /**
    * @deprecated
    */
+  @SuppressWarnings("deprecation")
   @Override
   @Deprecated
   public void setStatus(int code,String message)
