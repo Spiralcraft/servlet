@@ -33,8 +33,8 @@ public class Stylesheet
     ,FOOT
   }
   
-  private Target target;
-  private boolean targetOptional;
+  private Target target=Target.HEAD;
+  private boolean targetOptional=true;
   private LinkTag linkTag
     =new LinkTag();
   { 
