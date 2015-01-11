@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev79
+        </revision>
+      
+        <notes>
+          <scm:Note>
+            Render stylesheets to head by default if a Page object is in scope
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Stylesheet.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev78
         </revision>
       
