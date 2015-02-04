@@ -65,7 +65,7 @@ public abstract class Acceptor<T>
   private Expression<?> onPost;
   private Channel<Command<?,?,?>> onPostChannel;
   private Binding<Void> onPostX;
-  private Binding<Void> onSaveX;
+  private Binding<Void> afterSave;
     
   private String clientPostActionName;
   private String resetActionName;
@@ -89,11 +89,18 @@ public abstract class Acceptor<T>
   { this.autoSave=autoSave;
   }
 
-  public void setOnSave(Binding<Void> onSaveX)
+  public void setOnSave(Binding<Void> afterSave)
   { 
-    this.removeExportContextual(this.onSaveX);
-    this.onSaveX=onSaveX;
-    this.addExportContextual(this.onSaveX);
+    this.removeExportContextual(this.afterSave);
+    this.afterSave=afterSave;
+    this.addExportContextual(this.afterSave);
+  }
+  
+  public void setAfterSave(Binding<Void> afterSave)
+  { 
+    this.removeExportContextual(this.afterSave);
+    this.afterSave=afterSave;
+    this.addExportContextual(this.afterSave);
   }
   
   public void setOnPostX(Binding<Void> onPostX)
@@ -343,8 +350,8 @@ public abstract class Acceptor<T>
   protected void save(Dispatcher context)
   {            
     relayMessage(context,SAVE_MESSAGE);
-    if (onSaveX!=null && !getState().isErrorState())
-    { onSaveX.get();
+    if (afterSave!=null && !getState().isErrorState())
+    { afterSave.get();
     }
   }
   

@@ -66,7 +66,7 @@ public abstract class TupleEditor
   private Setter<?>[] newSetters;
   private Setter<?>[] publishedSetters;
   private Setter<?>[] preSaveSetters;
-  private Binding<?> onSave;
+  private Binding<?> afterSave;
   private Binding<?> preSave;
   private Binding<?> onCreate;
   private Binding<?> onBuffer;
@@ -403,11 +403,11 @@ public abstract class TupleEditor
             }
           }
           
-          if (onSave!=null)
+          if (afterSave!=null)
           { 
-            Object result=onSave.get();
+            Object result=afterSave.get();
             if (debug)
-            { log.fine("onSave returned "+result);
+            { log.fine("afterSave returned "+result);
             }
           }
         }
@@ -446,19 +446,25 @@ public abstract class TupleEditor
   }
   
   /**
-   * An expression to evaluate in the Tuple scope before the Tuple validated
-   *   and written back to the store.
+   * An expression to evaluate in the Tuple scope after the Tuple is saved.
+   *   Use "afterSave" instead.
    * 
-   * @param preSave
    */
-  public void setOnSave(Binding<?> onSave)
-  { this.onSave=onSave;
+  public void setOnSave(Binding<?> afterSave)
+  { this.afterSave=afterSave;
   }
 
   /**
+   * An expression to evaluate in the Tuple scope after the Tuple is saved
+   * 
+   */
+  public void setAfterSave(Binding<?> afterSave)
+  { this.afterSave=afterSave;
+  }
+  
+  /**
    * An expression to evaluate in the Tuple scope when a new Tuple is created
    * 
-   * @param preSave
    */
   public void setOnCreate(Binding<?> onCreate)
   { this.onCreate=onCreate;
@@ -689,8 +695,8 @@ public abstract class TupleEditor
     preSaveSetters=bindAssignments(focus,preSaveAssignments);
     bindRequestAssignments(focus,requestBindings);
     bindRequestAssignments(focus,redirectBindings);
-    if (onSave!=null)
-    { onSave.bind(focus);
+    if (afterSave!=null)
+    { afterSave.bind(focus);
     }
     if (preSave!=null)
     { preSave.bind(focus);
