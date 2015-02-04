@@ -263,6 +263,7 @@ public class PathContext
   protected Focus<?> bindExports(Focus<?> chain) 
     throws ContextualException
   { 
+    chain=super.bindExports(chain);
     if (resourceMappingX!=null)
     { resourceMappingX.bind(chain);
     }
