@@ -17,6 +17,44 @@
     
       <scm:Change>
      
+        <revision>-dev80
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix internal bug preventing superclass exports from
+            working properly.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/PathContext.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev80
+        </revision>
+      
+        <notes>
+          <scm:Note>Migrate "onSave" for Acceptor (and Form) and TupleEditor
+            to "afterSave" to clarify when the binding is triggered.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>Acceptor.java
+          </URI>
+          <URI>TupleEditor.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev79
         </revision>
       
