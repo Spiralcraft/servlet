@@ -328,8 +328,8 @@ public abstract class AbstractTag
   { appendAttribute("onunload",val);
   }
 
-  public void setOnclick(String val)
-  { appendAttribute("onclick",val);
+  public void setOnclick(MessageFormat val)
+  { addStandardBinding("onclick",val);
   }
   
   public void setOnclickX(Expression<?> expr)
