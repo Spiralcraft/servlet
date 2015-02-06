@@ -95,6 +95,16 @@ public class AbstractHtmlContainer
   { return jsClient;
   }
   
+  /**
+   * Return the value of the ID attribute on the HTML element that corresponds
+   *   to the the current state of this component.
+   * 
+   * @return
+   */
+  @Override
+  public String getCSID()
+  { return getState().getId();
+  }
   
   public URI registerPort(String componentId)
   { 

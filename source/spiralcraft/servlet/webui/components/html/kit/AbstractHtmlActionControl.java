@@ -86,6 +86,11 @@ public abstract class AbstractHtmlActionControl<Tcontext,Tresult>
   }
   
   @Override
+  public String getCSID()
+  { return getState().getId();
+  }
+  
+  @Override
   protected void addHandlers() 
     throws ContextualException
   {
