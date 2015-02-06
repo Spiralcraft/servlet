@@ -17,6 +17,48 @@
     
       <scm:Change>
      
+        <revision>-dev81
+        </revision>
+      
+        <notes>
+          <scm:Note>A "CSID" property has been added to components designed
+            to peer with client-side JS counterparts. This provides simple access
+            to the dynamically generated client-side id of the rendered HTML 
+            element so the client-side JS object can be addressed directly.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/kit
+        </path>
+        
+        <resources>
+          <URI>AbstractHtmlActionControl.java
+          </URI>
+          <URI>AbstractHtmlContainer.java
+          </URI>
+          <URI>ServerPeer.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev81
+        </revision>
+      
+        <notes>
+          <scm:Note>Tags use a MessageFormat for "onclick" to allow for
+            substitution of dynamic server-side data. Other properties will
+            be similarly converted in the future.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/AbstractTag.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev80
         </revision>
       
