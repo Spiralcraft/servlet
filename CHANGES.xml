@@ -17,6 +17,26 @@
     
       <scm:Change>
      
+        <revision>-dev82
+        </revision>
+      
+        <notes>
+          <scm:Note>New "afterRevert" property for Acceptor (and Form) to
+            trigger functionality after data is reverted.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>Acceptor.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev81
         </revision>
       
