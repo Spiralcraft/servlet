@@ -66,6 +66,7 @@ public abstract class Acceptor<T>
   private Channel<Command<?,?,?>> onPostChannel;
   private Binding<Void> onPostX;
   private Binding<Void> afterSave;
+  private Binding<Void> afterRevert;
     
   private String clientPostActionName;
   private String resetActionName;
@@ -96,11 +97,30 @@ public abstract class Acceptor<T>
     this.addExportContextual(this.afterSave);
   }
   
+  /**
+   * An expression to evaluate after the data in all the contained editors
+   *   is saved successfully. The result of the expression is ignored.
+   * 
+   * @param afterSave
+   */
   public void setAfterSave(Binding<Void> afterSave)
   { 
     this.removeExportContextual(this.afterSave);
     this.afterSave=afterSave;
     this.addExportContextual(this.afterSave);
+  }
+  
+  /**
+   * An expression to evaluate after the data in all the contained editors
+   *   is reverted. The result of the expression is ignored.
+   *   
+   * @param afterRevert
+   */
+  public void setAfterRevert(Binding<Void> afterRevert)
+  {
+    this.removeExportContextual(this.afterRevert);
+    this.afterRevert=afterRevert;
+    this.addExportContextual(this.afterRevert);
   }
   
   public void setOnPostX(Binding<Void> onPostX)
@@ -344,7 +364,11 @@ public abstract class Acceptor<T>
   }
     
   protected void revert(Dispatcher context)
-  { relayMessage(context,RevertMessage.INSTANCE);
+  { 
+    relayMessage(context,RevertMessage.INSTANCE);
+    if (afterRevert!=null)
+    { afterRevert.get();
+    }
   }
   
   protected void save(Dispatcher context)
