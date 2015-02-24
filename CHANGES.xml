@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev83
+        </revision>
+      
+        <notes>
+          <scm:Note>Handle RuleExceptions generated from within the backend
+            data process.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/EditorBase.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev82
         </revision>
       
