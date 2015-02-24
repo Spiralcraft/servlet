@@ -44,6 +44,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.NullChannel;
 import spiralcraft.lang.util.ChannelBuffer;
 import spiralcraft.lang.util.LangUtil;
+import spiralcraft.rules.RuleException;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
@@ -129,7 +130,13 @@ public abstract class EditorBase<Tbuffer extends Buffer>
               doSave();
             }
             catch (DataException x)
-            { handleException(context,x);
+            { 
+              if (x.getCause() instanceof RuleException)
+              { state.setException(x.getCause());
+              }
+              else
+              { handleException(context,x);
+              }
             }
 
             if (!state.isErrorState())
