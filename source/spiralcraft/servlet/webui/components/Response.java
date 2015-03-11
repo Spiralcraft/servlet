@@ -16,22 +16,25 @@ package spiralcraft.servlet.webui.components;
 
 
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import spiralcraft.lang.Assignment;
-import spiralcraft.lang.Expression;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.Setter;
-
+import spiralcraft.lang.util.LangUtil;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.ServiceContext;
-
+import spiralcraft.textgen.RenderMessage;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.Message;
 import spiralcraft.app.kit.AbstractMessageHandler;
-
 import spiralcraft.common.ContextualException;
 
 /**
@@ -52,6 +55,12 @@ public class Response
   private List<Setter<?>> setters
     =new ArrayList<Setter<?>>();
 
+  private Binding<String> contentTypeX;
+  private Binding<byte[]> binaryContentX;
+
+  @Override
+  protected void addHandlers()
+    throws ContextualException
   {
     this.addHandler
       (new AbstractMessageHandler()
@@ -64,11 +73,47 @@ public class Response
         for (Setter<?> setter:setters)
         { setter.set();
         }
+        
+        HttpServletResponse response
+          =((ServiceContext) context).getResponse();
+        if (contentTypeX!=null)
+        { response.setContentType(contentTypeX.get());
+        }        
+        
+        if (message.getType()==RenderMessage.TYPE)
+        {  
+
+          if (binaryContentX!=null)
+          { 
+            byte[] bytes=binaryContentX.get();
+            if (bytes!=null)
+            {
+              response.setContentLength(bytes.length);
+              try
+              { response.getOutputStream().write(bytes);
+              }
+              catch (SocketException x)
+              { 
+                log.info
+                  ("Connection reset during binary transfer from "+getDeclarationInfo());
+              }
+              catch (IOException x)
+              { 
+                throw new RuntimeException
+                  ("Error writing response ("+getDeclarationInfo()+")",x);
+              }
+            }
+            else
+            { response.setContentLength(0);
+            }
+          }
+        }
         next.handleMessage(context,message);
       }
 
     }
     );
+    super.addHandlers();
   }
   
   /**
@@ -77,32 +122,41 @@ public class Response
    * 
    * @param contentTypeX
    */
-  public void setContentTypeX(Expression<String> contentTypeX)
-  { 
-    assignments.add
-      (new Assignment<String>
-        (Expression.<String>create("contentType")
-        ,contentTypeX
-        )
-      );
+  public void setContentTypeX(Binding<String> contentTypeX)
+  { this.contentTypeX=contentTypeX;
   }
   
+  /**
+   * <p>Specify an optional binding that will send binary
+   *   content to the client
+   * </p>
+   * 
+   * @param binaryContentX
+   */
+  public void setBinaryContentX(Binding<byte[]> binaryContentX)
+  { this.binaryContentX=binaryContentX;
+  }
+  
+    
   @Override
   protected Focus<?> bindStandard(Focus<?> focus)
     throws ContextualException
   { 
 
-    focus=
+    Focus<ServiceContext> scFocus=
       (focus.chain
-        (focus.bind
-           (Expression.<ServiceContext>create
-             ("[:class:/spiralcraft/servlet/webui/ServiceContext]")
-           )
+        (LangUtil.assertChannel(ServiceContext.class,focus)
         )
       );
     
     for (Assignment<?> assignment: assignments)
-    { setters.add(assignment.bind(focus));
+    { setters.add(assignment.bind(scFocus));
+    }
+    if (contentTypeX!=null)
+    { contentTypeX.bind(focus);
+    }
+    if (binaryContentX!=null)
+    { binaryContentX.bind(focus);
     }
     return super.bindStandard(focus);
   }  
