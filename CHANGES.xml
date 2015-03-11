@@ -17,6 +17,23 @@
     
       <scm:Change>
      
+        <revision>-dev84
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide a simple way to use a .webui page to to serve 
+            smallish amounts of dynamically generated binary 
+            content using the Response component.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Response.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev83
         </revision>
       
