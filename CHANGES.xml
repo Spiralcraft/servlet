@@ -17,6 +17,31 @@
     
       <scm:Change>
      
+        <revision>-dev85
+        </revision>
+      
+        <notes>
+          <scm:Note>To facilitate entry of date ranges, DateInput optionally
+            rounds to the beginning or end of 
+            the period specified by the precision of the format- e.g. the
+            beginning or end of the day when no time component is in the date.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>AbstractTextControl.java
+          </URI>
+          <URI>DateInput.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev84
         </revision>
       
