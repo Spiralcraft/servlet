@@ -16,21 +16,47 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.util.Date;
 
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlTextInput;
+import spiralcraft.time.TimeField;
 import spiralcraft.util.string.DateToString;
+import spiralcraft.util.string.StringConverter;
 
 public class DateInput
   extends AbstractHtmlTextInput<Date>
 {
   
+  private String format;
+  private TimeField precision=TimeField.MILLISECOND;
+  private boolean roundUp=false;
+  
+  @Override
+  protected StringConverter<Date> createConverter(Focus<?> focus)
+  {
+    if (format==null)
+    { return null;
+    }
+    return new DateToString(format,precision,roundUp);
+  }
+  
+  
+  public void setPrecision(TimeField precision)
+  { this.precision=precision;
+  }
+  
+  public void setRoundUp(boolean roundUp)
+  { this.roundUp=roundUp;
+  }
+
   @Override
   protected TextTag createTag()
   { return new TextTag();
   }
     
   public void setFormat(String format)
-  { this.setConverter(new DateToString(format));
+  { this.format=format;
   }
+  
   
 }
 

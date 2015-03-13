@@ -89,11 +89,19 @@ public abstract class AbstractTextControl<Ttarget>
   { this.inputTransform=inputTransform;
   }
  
+  protected StringConverter<Ttarget> createConverter(Focus<?> focus)
+  { return null;
+  }
+  
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" }) // Not using generic versions
   public Focus<?> bindSelf(Focus<?> focus)
     throws ContextualException
   { 
+    if (converter==null)
+    { converter=createConverter(focus);
+    }
+    
     if (converter==null && target!=null)
     { 
       Class targetClass=target.getContentType();
