@@ -44,11 +44,18 @@ public class PageState<Ttarget,Titem>
   }
   
   public void setCurrentPage(int page)
-  { currentPage=page;
+  { 
+    if (page<0)
+    { page=0;
+    }
+    else if (page>=getPageCount())
+    { page=getPageCount()-1;
+    }
+    currentPage=page;
   }
   
   public int getPageCount()
-  { return (int) Math.ceil((float) itemCount/ (float) pageSize);
+  { return (itemCount/pageSize)+(itemCount%pageSize>0?1:0);
   }
   
   public int getItemCount()

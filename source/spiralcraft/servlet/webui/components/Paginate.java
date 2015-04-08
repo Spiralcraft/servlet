@@ -280,8 +280,51 @@ public class Paginate<Ttarget,Titem>
     
     return compoundFocus;
   }
+
+  /**
+   * The number of pages
+   * 
+   * @return
+   */
+  public int getPageCount()
+  { return getState().getPageCount();
+  }
   
-  
+  /**
+   * An array of page numbers
+   * 
+   * @return
+   */
+  public Integer[] getPageList()
+  { return getState().getPageList();
+  }
+
+  /**
+   * The number of items across all pages
+   * 
+   * @return
+   */
+  public int getItemCount()
+  { return getState().getItemCount();
+  }
+
+  /**
+   * The current page number
+   * 
+   * @return
+   */
+  public int getCurrentPage()
+  { return getState().getCurrentPage();
+  }
+
+  /**
+   * The data on the current page
+   * 
+   * @return
+   */
+  public Titem[] getPageData()
+  { return getState().getPageData();
+  }
 
   @Override
   public PageState<Ttarget,Titem> createState()
