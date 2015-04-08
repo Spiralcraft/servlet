@@ -21,6 +21,30 @@
         </revision>
       
         <notes>
+          <scm:Note>Moved the service API from PageState to the Paginate 
+            component to simplify usage. Added error correction and simplified
+            page count computation.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>Paginate.java
+          </URI>
+          <URI>PageState.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev85
+        </revision>
+      
+        <notes>
           <scm:Note>To facilitate entry of date ranges, DateInput optionally
             rounds to the beginning or end of 
             the period specified by the precision of the format- e.g. the
