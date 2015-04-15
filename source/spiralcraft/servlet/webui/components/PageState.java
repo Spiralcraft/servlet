@@ -45,11 +45,11 @@ public class PageState<Ttarget,Titem>
   
   public void setCurrentPage(int page)
   { 
+    if (page>=getPageCount())
+    { page=getPageCount()-1;
+    }
     if (page<0)
     { page=0;
-    }
-    else if (page>=getPageCount())
-    { page=getPageCount()-1;
     }
     currentPage=page;
   }
