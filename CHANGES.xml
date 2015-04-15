@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev87
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix initial paginator state negative page when data is
+            empty.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/PageState.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev86
         </revision>
       
