@@ -17,6 +17,22 @@
     
       <scm:Change>
      
+        <revision>-dev88
+        </revision>
+      
+        <notes>
+          <scm:Note>The Script component now generates content within the
+            declaring scope and renders it to the specified target.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/Script.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev87
         </revision>
       
