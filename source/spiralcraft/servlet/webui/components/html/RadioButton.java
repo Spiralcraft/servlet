@@ -16,12 +16,9 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
-
 import spiralcraft.app.Dispatcher;
-
-
-import spiralcraft.servlet.webui.components.AbstractSelectItemControl;
-import spiralcraft.servlet.webui.components.SelectItemState;
+import spiralcraft.servlet.webui.components.kit.AbstractSelectItemControl;
+import spiralcraft.servlet.webui.components.kit.SelectItemState;
 
 /**
  * <p>Manages an OPTION as part of a SELECT list.

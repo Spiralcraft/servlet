@@ -16,13 +16,11 @@ package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
 
-
 import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
-
 import spiralcraft.lang.Binding;
-import spiralcraft.servlet.webui.components.AbstractSelectItemControl;
-import spiralcraft.servlet.webui.components.SelectItemState;
+import spiralcraft.servlet.webui.components.kit.AbstractSelectItemControl;
+import spiralcraft.servlet.webui.components.kit.SelectItemState;
 
 /**
  * <p>Manages a Checkbox used for multiselect

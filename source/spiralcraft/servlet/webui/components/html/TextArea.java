@@ -23,7 +23,7 @@ import spiralcraft.app.MessageHandlerChain;
 
 import spiralcraft.app.Message;
 import spiralcraft.servlet.webui.ControlState;
-import spiralcraft.servlet.webui.components.AbstractTextControl;
+import spiralcraft.servlet.webui.components.kit.AbstractTextControl;
 import spiralcraft.text.MessageFormat;
 import spiralcraft.textgen.OutputContext;
 

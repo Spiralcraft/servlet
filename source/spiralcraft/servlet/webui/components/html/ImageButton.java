@@ -17,11 +17,9 @@ package spiralcraft.servlet.webui.components.html;
 import java.io.IOException;
 
 import spiralcraft.app.Dispatcher;
-
 import spiralcraft.servlet.webui.ServiceContext;
-import spiralcraft.servlet.webui.components.ActionControlState;
 import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlActionControl;
-
+import spiralcraft.servlet.webui.components.kit.ActionControlState;
 import spiralcraft.net.http.VariableMap;
 
 /**

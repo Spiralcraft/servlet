@@ -18,12 +18,14 @@ import java.io.IOException;
 
 
 
+
+
 import spiralcraft.app.Dispatcher;
 
 //import spiralcraft.log.ClassLog;
 
 import spiralcraft.servlet.webui.ControlState;
-import spiralcraft.servlet.webui.components.AbstractTextControl;
+import spiralcraft.servlet.webui.components.kit.AbstractTextControl;
 
 public class HiddenInput<Ttarget>
   extends AbstractTextControl<Ttarget>

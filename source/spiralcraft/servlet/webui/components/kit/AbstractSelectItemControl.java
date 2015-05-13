@@ -12,12 +12,10 @@
 //Unless otherwise agreed to in writing, this software is distributed on an
 //"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 //
-package spiralcraft.servlet.webui.components;
+package spiralcraft.servlet.webui.components.kit;
 
 
 import spiralcraft.util.string.StringConverter;
-
-
 import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
@@ -25,7 +23,6 @@ import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
-
 import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ServiceContext;
 

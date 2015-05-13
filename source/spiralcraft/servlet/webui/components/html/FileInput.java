@@ -39,7 +39,7 @@ import spiralcraft.util.Path;
 import spiralcraft.util.string.StringUtil;
 
 /**
- * Records the relative URI 
+ * Accepts a file upload and records the relative URI of the uploaded file
  * 
  * @author mike
  *

@@ -15,7 +15,7 @@
 package spiralcraft.servlet.webui.components.rpc;
 
 
-import spiralcraft.servlet.webui.components.AbstractTextControl;
+import spiralcraft.servlet.webui.components.kit.AbstractTextControl;
 
 public class FormInput<Ttarget>
   extends AbstractTextControl<Ttarget>

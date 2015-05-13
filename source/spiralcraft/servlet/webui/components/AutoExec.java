@@ -18,8 +18,9 @@ import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
-
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.servlet.webui.components.kit.AbstractActionControl;
+import spiralcraft.servlet.webui.components.kit.ActionControlState;
 
 /**
  * <p>Automatically runs a command whenever the state frame changes.
