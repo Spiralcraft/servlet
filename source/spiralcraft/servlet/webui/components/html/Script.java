@@ -13,16 +13,17 @@
 //"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
 package spiralcraft.servlet.webui.components.html;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import spiralcraft.app.Scaffold;
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.app.kit.AbstractMessageHandler;
 import spiralcraft.common.ContextualException;
-import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.text.MessageFormat;
-import spiralcraft.textgen.compiler.ContentUnit;
-import spiralcraft.textgen.compiler.TglUnit;
+import spiralcraft.textgen.OutputContext;
+import spiralcraft.textgen.PrepareMessage;
+import spiralcraft.textgen.RenderMessage;
 
 public class Script
   extends Component
@@ -31,15 +32,36 @@ public class Script
   public static enum Target
   {
     HEAD
+    {
+      @Override
+      public Appendable get(Page page)
+      { return page.getHead();
+      }
+    }
     ,BODY
+    {
+      @Override
+      public Appendable get(Page page)
+      { return page.getStartOfBody();
+      }
+    }
     ,FOOT
+    {
+      @Override
+      public Appendable get(Page page)
+      { return page.getEndOfBody();
+      }
+    }
+    ;
+    
+    public abstract Appendable get(Page page);
   }
   
   private Target target;
   private boolean targetOptional;
   private ScriptTag scriptTag
     =new ScriptTag();
-  private boolean targetInstalled;
+  private Page page;
   
   public void setCode(MessageFormat code)
   { scriptTag.setCode(code);
@@ -61,33 +83,56 @@ public class Script
   { scriptTag.setType(type);
   }
   
-  @Override
-  protected List<Scaffold<?>> expandChildren(Focus<?> focus,List<TglUnit> children)
-    throws ContextualException
-  { 
-    if (targetInstalled)
-    { 
-      // Make sure script code renders in target and not locally
+  
+  class PrepareHandler
+      extends AbstractMessageHandler
+  {
+    { this.type=PrepareMessage.TYPE;
+    }
 
-      // TODO: Make this mechanism more generic by allowing ElementUnits to
-      //   specify a "default" property" to accept content.
-      if (children!=null && children.size()==1 && children.get(0) instanceof ContentUnit)
-      { 
-        ContentUnit content=(ContentUnit) children.get(0);
-        String text=content.getContent().toString().trim();
-        if (!text.isEmpty())
-        { 
-          if (scriptTag.getCode()!=null)
-          { throw new ContextualException("Code for Script element is already defined");
+    @Override
+    protected void doHandler(Dispatcher dispatcher, Message message,
+            MessageHandlerChain next) 
+    { 
+      next.handleMessage(dispatcher, message);
+      
+      if (target!=null)
+      {
+        Appendable out=target.get(page);
+        if (out!=null)
+        {
+          OutputContext.push(target.get(page));
+          try
+          { next.handleMessage(dispatcher,RenderMessage.INSTANCE);
           }
-          MessageFormat mf=new MessageFormat(text);
-          scriptTag.setCode(mf);
+          finally
+          { OutputContext.pop();
+          }
+        }
+        else
+        { log.warning(getDeclarationInfo()+": Output target is null");
         }
       }
-      return new ArrayList<Scaffold<?>>();
+      else
+      { log.warning(getDeclarationInfo()+": No output target defined");
+      }
+      
     }
-    return super.expandChildren(focus,children);
   }
+  
+  class RenderHandler
+    extends AbstractMessageHandler
+  { 
+    { this.type=RenderMessage.TYPE;
+    }
+    
+    @Override
+    protected void doHandler(Dispatcher dispatcher, Message message,
+            MessageHandlerChain next) 
+    { // Don't render in-context
+    }
+  }
+  
   
   @Override
   protected void addHandlers() 
@@ -96,32 +141,22 @@ public class Script
     
     if (target!=null)
     {
-      Page page=this.findComponent(Page.class);
+      page=this.findComponent(Page.class);
       if (page!=null)
-      { 
-        switch (target)
-        {
-          case HEAD:
-            scriptTag.setTagPosition(-1);
-            page.addTagToHead(scriptTag);
-            break;
-          case BODY:
-            scriptTag.setTagPosition(-1);
-            page.addTagToBody(scriptTag);
-            break;
-          case FOOT:
-            scriptTag.setTagPosition(1);
-            page.addTagToBody(scriptTag);
-            break;
-        }
-        
-        this.targetInstalled=true;
+      {
+        addHandler(new RenderHandler());
+        addHandler(new PrepareHandler());
+        addHandler(scriptTag);
       }
-      else if (!targetOptional)
-      { throw new ContextualException("No Page exists in context");
+      else if (targetOptional)
+      { addHandler(scriptTag);
       }
       else
-      { addHandler(scriptTag);
+      { 
+        throw new ContextualException
+          ("Script tag could not find a containing Page to target"
+          ,getDeclarationInfo()
+          );
       }
     }
     else
