@@ -21,6 +21,31 @@
         </revision>
       
         <notes>
+          <scm:Note>Provide RPC based file upload receiver as an AJAX back-end
+            for file uploading functionality.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/
+        </path>
+        
+        <resources>
+          <URI>html/FileInput.java
+          </URI>
+          <URI>kit/AbstractFileControl.java
+          </URI>
+          <URI>rpc/FileInput.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev88
+        </revision>
+      
+        <notes>
           <scm:Note>The Script component now generates content within the
             declaring scope and renders it to the specified target.
           </scm:Note>
