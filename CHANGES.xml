@@ -21,6 +21,41 @@
         </revision>
       
         <notes>
+          <scm:Note>Enhancements to facilitate posting data directly to Forms
+            inside Ports using AJAX and custom javascript
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>ComponentState.java
+          </URI>
+          <URI>ServiceContext.java
+          </URI>
+          <URI>components/Port.java
+          </URI>
+          <URI>components/html/AbstractTag.java
+          </URI>
+          <URI>components/html/JSPort.java
+          </URI>
+          <URI>components/html/kit/AbstractHtmlContainer.java
+          </URI>
+          <URI>kit/PortSession.java
+          </URI>
+          <URI>kit/UISequencer.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev88
+        </revision>
+      
+        <notes>
           <scm:Note>Provide RPC based file upload receiver as an AJAX back-end
             for file uploading functionality.
           </scm:Note>
