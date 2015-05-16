@@ -34,6 +34,7 @@ import spiralcraft.servlet.webui.RequestMessage;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.RenderMessage;
+import spiralcraft.util.Sequence;
 
 /**
  * <p>Sequences the set of events that enable a component to receive, process
@@ -447,16 +448,19 @@ public class UISequencer
       =context.getPortSession().getActions(actionName);
     if (actions!=null && !actions.isEmpty())
     {
+      Sequence<Integer> portPath=context.getPortSession().getPort();
       for (Action action:actions)
       {
+        Sequence<Integer> path
+          =action.getTargetPath();
+        if (portPath!=null)
+        { path=path.subsequence(portPath.size());
+        }
+        
         context.dispatch
           (new ActionMessage(action)
           ,component
-          ,action.getTargetPath().subsequence
-            (context.getPortSession().getPort()!=null
-              ?context.getPortSession().getPort().size()
-              :0
-            )
+          ,path
           );
       }
     }
