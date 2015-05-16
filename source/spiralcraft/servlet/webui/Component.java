@@ -114,6 +114,9 @@ public abstract class Component
           ==context.getState().getPath()
       )
       { 
+        if (debug)
+        { log.fine("Action target reached");
+        }
         handleAction
         ((ServiceContext) context
             ,((ActionMessage) message).getAction()

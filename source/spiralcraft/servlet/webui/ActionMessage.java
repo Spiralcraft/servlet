@@ -43,7 +43,7 @@ public class ActionMessage
   
   @Override
   public String toString()
-  { return super.toString()+": "+action;
+  { return super.toString()+": "+action+" ("+action.getTargetPath()+")";
   }
   
   
