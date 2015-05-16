@@ -70,6 +70,7 @@ public class PortSession
   
   private State state;
   private Sequence<Integer> port;
+  private String portId;
   
   public PortSession()
   { parentSession=null;
@@ -92,6 +93,14 @@ public class PortSession
   { this.port=port;
   }
   
+  public Sequence<Integer> getPort()
+  { return this.port;
+  }
+  
+  public void setPortId(String portId)
+  { this.portId=portId;
+  }
+  
   /**
    * 
    * @param action The Action to register
@@ -111,7 +120,7 @@ public class PortSession
     return localURI
       +"?action="+action.getName()
       +"&lrs="+currentFrame.getId()
-      +(port!=null?"&port="+port.format("."):"")
+      +(port!=null?"&port="+portId:"")
       +(encodedParameters!=null?"&"+encodedParameters:"")
       ;
     

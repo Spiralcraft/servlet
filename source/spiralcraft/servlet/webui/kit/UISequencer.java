@@ -452,7 +452,11 @@ public class UISequencer
         context.dispatch
           (new ActionMessage(action)
           ,component
-          ,action.getTargetPath()
+          ,action.getTargetPath().subsequence
+            (context.getPortSession().getPort()!=null
+              ?context.getPortSession().getPort().size()
+              :0
+            )
           );
       }
     }

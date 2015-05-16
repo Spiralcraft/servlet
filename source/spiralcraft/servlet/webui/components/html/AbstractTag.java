@@ -320,12 +320,12 @@ public abstract class AbstractTag
   { appendAttribute("accesskey",val);
   }
 
-  public void setOnload(String val)
-  { appendAttribute("onload",val);
+  public void setOnload(MessageFormat val)
+  { addStandardBinding("onload",val);
   }
   
-  public void setOnunload(String val)
-  { appendAttribute("onunload",val);
+  public void setOnunload(MessageFormat val)
+  { addStandardBinding("onunload",val);
   }
 
   public void setOnclick(MessageFormat val)
@@ -336,64 +336,64 @@ public abstract class AbstractTag
   { addStandardBinding("onclick",expr);
   }
 
-  public void setOndblclick(String val)
-  { appendAttribute("ondblclick",val);
+  public void setOndblclick(MessageFormat val)
+  { addStandardBinding("ondblclick",val);
   }
 
-  public void setOnmousedown(String val)
-  { appendAttribute("onmousedown",val);
+  public void setOnmousedown(MessageFormat val)
+  { addStandardBinding("onmousedown",val);
   }
 
-  public void setOnmouseup(String val)
-  { appendAttribute("onmouseup",val);
+  public void setOnmouseup(MessageFormat val)
+  { addStandardBinding("onmouseup",val);
   }
 
-  public void setOnmouseover(String val)
-  { appendAttribute("onmouseover",val);
+  public void setOnmouseover(MessageFormat val)
+  { addStandardBinding("onmouseover",val);
   }
   
-  public void setOnmousemove(String val)
-  { appendAttribute("onmousemove",val);
+  public void setOnmousemove(MessageFormat val)
+  { addStandardBinding("onmousemove",val);
   }
 
-  public void setOnmouseout(String val)
-  { appendAttribute("onmouseout",val);
+  public void setOnmouseout(MessageFormat val)
+  { addStandardBinding("onmouseout",val);
   }
 
-  public void setOnfocus(String val)
-  { appendAttribute("onfocus",val);
+  public void setOnfocus(MessageFormat val)
+  { addStandardBinding("onfocus",val);
   }
   
-  public void setOnblur(String val)
-  { appendAttribute("onblur",val);
+  public void setOnblur(MessageFormat val)
+  { addStandardBinding("onblur",val);
   }
   
-  public void setOnkeypress(String val)
-  { appendAttribute("onkeypress",val);
+  public void setOnkeypress(MessageFormat val)
+  { addStandardBinding("onkeypress",val);
   }
 
-  public void setOnkeydown(String val)
-  { appendAttribute("onkeydown",val);
+  public void setOnkeydown(MessageFormat val)
+  { addStandardBinding("onkeydown",val);
   }
 
-  public void setOnkeyup(String val)
-  { appendAttribute("onkeyup",val);
+  public void setOnkeyup(MessageFormat val)
+  { addStandardBinding("onkeyup",val);
   }
 
-  public void setOnsubmit(String val)
-  { appendAttribute("onsubmit",val);
+  public void setOnsubmit(MessageFormat val)
+  { addStandardBinding("onsubmit",val);
   }
   
-  public void setOnreset(String val)
-  { appendAttribute("onreset",val);
+  public void setOnreset(MessageFormat val)
+  { addStandardBinding("onreset",val);
   }
   
-  public void setOnselect(String val)
-  { appendAttribute("onselect",val);
+  public void setOnselect(MessageFormat val)
+  { addStandardBinding("onselect",val);
   }
 
-  public void setOnchange(String val)
-  { appendAttribute("onchange",val);
+  public void setOnchange(MessageFormat val)
+  { addStandardBinding("onchange",val);
   }
   
   public void setAutocomplete(String val)

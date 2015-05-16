@@ -44,10 +44,11 @@ public class AbstractHtmlContainer
   
   
   private StateReferenceHandler<ComponentState> stateRef
-    =new StateReferenceHandler<ComponentState>(ComponentState.class);
+    =new StateReferenceHandler<ComponentState>(this,ComponentState.class);
   
   { 
     addSelfFacet=true;
+    alwaysRunHandlers=true;
   }
   
   public void setPeerJSTag(PeerJSTag scriptTag)
@@ -93,6 +94,15 @@ public class AbstractHtmlContainer
   
   public JSClient getJSClient()
   { return jsClient;
+  }
+  
+  /**
+   * The javascript expression that will return a reference to the client-side
+   *   peer for this object.
+   * @return
+   */
+  public String getJSRef()
+  { return "$SC('"+getCSID()+"')";
   }
   
   /**

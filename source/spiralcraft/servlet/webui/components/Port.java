@@ -31,6 +31,8 @@ public class Port
   extends Component
 {
 
+  { alwaysRunHandlers=true;
+  }
   
   class PortHandler
     extends AbstractMessageHandler
@@ -50,7 +52,7 @@ public class Port
       ComponentState state=(ComponentState) serviceContext.getState();
     
       PortSession localSession
-        =state.getPortSession();
+        =state.getPortSession(serviceContext);
 
       portCall.push(true);
       try
@@ -62,6 +64,35 @@ public class Port
     }
   }
 
+  class PortContextHandler
+    extends AbstractMessageHandler
+  {
+    @Override
+    protected void doHandler(
+      Dispatcher dispatcher,
+      Message message,
+      MessageHandlerChain next)
+    { 
+      ServiceContext serviceContext
+        =(ServiceContext) dispatcher;
+    
+      ComponentState state=(ComponentState) serviceContext.getState();
+    
+      PortSession localSession
+        =state.getPortSession(serviceContext);
+
+      PortSession priorSession=serviceContext.getPortSession();
+      serviceContext.setPortSession(localSession);
+      try
+      { next.handleMessage(dispatcher,message);
+      }
+      finally
+      { serviceContext.setPortSession(priorSession);
+      }
+    }
+    
+  }
+  
   /**
    * Blocks all messages when we're not being called as a port
    * 
@@ -90,6 +121,16 @@ public class Port
   
   private boolean isolatePort;
   
+  /**
+   * Whether the message currently being processed was initiated by a call
+   *   to this port.
+   * 
+   * @return
+   */
+  public boolean isPortCall()
+  { return portCall.size()>0 && portCall.get();
+  }
+  
   @Override
   protected void addHandlers()
     throws ContextualException
@@ -99,6 +140,7 @@ public class Port
     addExternalHandlers();
     addHandler(new PortHandler());
     addHandler(new BlockerHandler());
+    addHandler(new PortContextHandler());
   }
 
   protected void addExternalHandlers()

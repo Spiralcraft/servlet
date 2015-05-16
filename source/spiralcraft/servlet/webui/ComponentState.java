@@ -32,13 +32,25 @@ public class ComponentState
   { super(component.getChildCount());
   }
   
-  public synchronized PortSession getPortSession()
+  public synchronized PortSession getPortSession(ServiceContext context)
   {
     if (portSession==null)
     { 
-      portSession=new PortSession();
+      PortSession parentSession=context.getPortSession();
+      PortSession portSession;
+      if (parentSession!=null)
+      {
+        portSession=new PortSession(parentSession);
+        portSession.setLocalURI(parentSession.getLocalURI());
+      }
+      else
+      {
+        portSession=new PortSession();
+      }
       portSession.setState(this);
       portSession.setPort(getPath());
+      portSession.setPortId(getId());
+      this.portSession=portSession;
     }
     return portSession;
   }

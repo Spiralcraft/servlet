@@ -24,6 +24,8 @@ public class JSPort
     extends ScriptTag
   {
   
+    { tagPosition=-1;
+    }
     @Override
     public Focus<?> bind(Focus<?> focus)
       throws ContextualException

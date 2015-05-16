@@ -314,6 +314,20 @@ public class ServiceContext
   { return response.encodeURL(portSession.getAbsoluteBackLink(request));
   }
   
+  /**
+   * Return a state path relative to the current port
+   * 
+   * @return
+   */
+  public Sequence<Integer> getPortRelativePath()
+  { 
+    if (portSession.getPort()!=null)
+    { return getState().getPath().subsequence(portSession.getPort().size());
+    }
+    else
+    { return getState().getPath();
+    }
+  }
   
   public String secureLink(String relativePath)
   { 
