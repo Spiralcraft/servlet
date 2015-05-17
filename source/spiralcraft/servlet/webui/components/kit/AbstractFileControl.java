@@ -30,7 +30,6 @@ import spiralcraft.servlet.webui.Control;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.servlet.webui.components.html.Form;
-import spiralcraft.servlet.webui.components.html.TextInput;
 import spiralcraft.text.MessageFormat;
 import spiralcraft.text.ParseException;
 import spiralcraft.text.html.URLEncoder;
@@ -208,7 +207,9 @@ public abstract class AbstractFileControl
   }
   
   /**
-   * Whether to overwrite the destination file if it exists
+   * Whether to overwrite the destination file if it exists. Otherwise,
+   *   a new file will be created with a unique extension added to the
+   *   name part of the filename
    * 
    * @param overwrite
    */
