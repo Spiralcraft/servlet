@@ -94,12 +94,12 @@ public class UISequencer
     (ServiceContext serviceContext
     ,Component component
     ,PortSession localSession
+    ,boolean external
     )
   {  
     VariableMap query=serviceContext.getQuery();
     
     String requestedState=query!=null?query.getFirst("lrs"):null;
-    
     
     PortSession.RequestSyncStatus syncStatus
       =localSession.getRequestSyncStatus(requestedState);
@@ -128,7 +128,14 @@ public class UISequencer
           switch (syncStatus)
           {
             case INITIATED:
+              // Initiated means no LRS sent in the request
+              log.warning("OOB request must have an LRS");
+              response.getWriter().write("0");
+              break;
             case OUTOFSYNC:
+              // OutOfSync should have already been intercepted
+              // Initiated means no LRS sent in the request
+              log.warning("OOB request is not in sync");
               response.getWriter().write("0");
               break;
             default:
@@ -150,7 +157,7 @@ public class UISequencer
         response.getWriter().flush();
         response.flushBuffer();
       }
-      else
+      else if (external)
       {
         // Process interactive request
         
@@ -184,6 +191,33 @@ public class UISequencer
         catch (IOException x)
         { log.warning("Caught IOException finishing response: "+x.getMessage());
         }
+      }
+      else
+      {
+        if (syncStatus==PortSession.RequestSyncStatus.INITIATED)
+        { 
+          // TODO: An initiating request should return a response code
+          //          that forces a page reload on the client
+          log.warning("Async request is initiating conversation");
+          response.sendError(409);
+        }        
+        else
+        {
+          
+          // Ignore out-of-sync status when addressing internal port-
+          //   the frame in the port is likely to be ahead of the frame
+          //   in the page which is tied to the LRS.
+          sequence(serviceContext,component,localSession);
+        }
+        
+        response.getWriter().flush();
+        try
+        { response.flushBuffer();   
+        }
+        catch (IOException x)
+        { log.warning("Caught IOException finishing response: "+x.getMessage());
+        }
+        
       }
     }
     catch (IOException x)
@@ -250,6 +284,18 @@ public class UISequencer
     
     if (!done)
     { 
+
+      // XXX consider deferring the frame change to the next request if nothing
+      //  changed- ie. don't go into sequence mode
+      // XXX it is likely that the frame should be advanced at a low level
+      //  wherever data is invalidated to recomp dependant children and not
+      //  the whole page
+      // XXX for ajax, we also need scoped recompute- a synchronous request
+      //  will cancel ajax mode, take a final action, then prepare and render
+    
+      // This makes everything recompute before rendering
+      serviceContext.setCurrentFrame(localSession.nextFrame());
+      
       // SYNC RESPONSE
       generateResponse(serviceContext,localSession,component);
     }    
@@ -263,10 +309,6 @@ public class UISequencer
       
  
   }
-  
-
-  
-
   
   /**
    * <p>Generate a fresh page for the client 
@@ -286,16 +328,6 @@ public class UISequencer
   {
     
     
-    // XXX consider deferring the frame change to the next request if nothing
-    //  changed- ie. don't go into sequence mode
-    // XXX it is likely that the frame should be advanced at a low level
-    //  wherever data is invalidated to recomp dependant children and not
-    //  the whole page
-    // XXX for ajax, we also need scoped recompute- a synchronous request
-    //  will cancel ajax mode, take a final action, then prepare and render
-    
-    // This makes everything recompute before rendering
-    serviceContext.setCurrentFrame(localSession.nextFrame());
     boolean done=false;
     
     if (!done)
@@ -468,7 +500,8 @@ public class UISequencer
     { log.warning("Unknown action "+actionName);
     }
     
-  }    
+  }
+  
   /**
    * <p>Send all relevant response headers and call
    *   component.render(serviceContext)

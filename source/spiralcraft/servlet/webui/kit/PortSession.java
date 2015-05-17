@@ -18,6 +18,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -175,6 +176,11 @@ public class PortSession
   { return localURI;
   }
   
+  
+  public Set<String> getActionNames()
+  { return actionMap.keySet();
+  }
+  
   public synchronized void clearActions()
   { 
     LinkedList<Action> actions=new LinkedList<Action>();
@@ -269,6 +275,24 @@ public class PortSession
     
   }
   
+  /**
+   * @return A link back to the current resource that contains published
+   *  parameters and excludes the conversation state.
+   */
+  public String getStatelessBackLink(HttpServletRequest request)
+  {
+    String encodedParameters=parameterMap.generateEncodedForm();
+    URI requestURI=URI.create(request.getRequestURL().toString());
+    
+    URI backLink
+      =URIUtil.replaceRawQuery
+        (requestURI
+        ,(port!=null?"&port="+port.format("."):"")
+          +(encodedParameters!=null?"&"+encodedParameters:"")
+        );
+    return backLink.toString();
+    
+  }
    
   public VariableMap getActionParameters()
   { return parameterMap;

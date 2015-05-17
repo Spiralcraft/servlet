@@ -56,7 +56,7 @@ public class Port
 
       portCall.push(true);
       try
-      { sequencer.service(serviceContext,Port.this,localSession);
+      { sequencer.service(serviceContext,Port.this,localSession,false);
       }
       finally
       { portCall.pop();

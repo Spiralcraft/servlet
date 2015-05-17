@@ -46,8 +46,6 @@ import spiralcraft.vfs.Container;
 import spiralcraft.vfs.Package;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
-
-
 import spiralcraft.app.StateFrame;
 import spiralcraft.common.ContextualException;
 
@@ -426,12 +424,23 @@ public class UIService
           =query!=null
           ?query.getFirst("port")
           :null;
-
-        if (port!=null && !port.isEmpty())
-        { callPort(serviceContext,component,localSession,port);
+    
+        String requestedState=query!=null?query.getFirst("lrs"):null;
+        
+        PortSession.RequestSyncStatus syncStatus
+          =localSession.getRequestSyncStatus(requestedState);
+        
+        if (syncStatus==PortSession.RequestSyncStatus.OUTOFSYNC)
+        { handleOutOfSyncRequest(serviceContext,localSession,port);
         }
         else
-        { sequencer.service(serviceContext,component,localSession);
+        {
+          if (port!=null && !port.isEmpty())
+          { callPort(serviceContext,component,localSession,port);
+          }
+          else
+          { sequencer.service(serviceContext,component,localSession,true);
+          }
         }
       }
       else
@@ -450,7 +459,7 @@ public class UIService
         localSession.setLocalURI
         (request.getRequestURI()
         );
-        sequencer.service(serviceContext,component,localSession);
+        sequencer.service(serviceContext,component,localSession,true);
 
       }
 
@@ -465,6 +474,33 @@ public class UIService
         serviceContext=null;
       }
     }
+  }
+
+  private void handleOutOfSyncRequest(ServiceContext serviceContext,PortSession localSession,String port)
+    throws IOException
+  {
+    HttpServletResponse response=serviceContext.getResponse();
+    if ( (port!=null && !port.isEmpty()) 
+          || serviceContext.getQuery().getFirst("oob")!=null
+        )
+    { 
+      log.warning("AJAX request is out of sync");
+      response.setStatus(409);
+    }
+    else
+    { 
+      log.warning("Request is out of sync");
+      response.sendRedirect
+        (localSession.getStatelessBackLink(serviceContext.getRequest()));
+    }
+    response.getWriter().flush();
+    try
+    { response.flushBuffer();   
+    }
+    catch (IOException x)
+    { log.warning("Caught IOException finishing response: "+x.getMessage());
+    }
+    
   }
   
   private void callPort
