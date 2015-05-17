@@ -24,12 +24,17 @@
           <scm:Note>Enhancements to facilitate posting data directly to Forms
             inside Ports using AJAX and custom javascript
           </scm:Note>
+          <scm:Note>Updates to UI sequencing logic inside ports and detection
+            and reporting of out of sync conditions
+          </scm:Note>
         </notes>
         
         <path>source/spiralcraft/servlet/webui
         </path>
         
         <resources>
+          <URI>UIService.java
+          </URI>
           <URI>ComponentState.java
           </URI>
           <URI>ServiceContext.java
