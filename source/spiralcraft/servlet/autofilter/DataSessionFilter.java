@@ -22,8 +22,8 @@ import spiralcraft.data.DataComposite;
 import spiralcraft.data.Type;
 import spiralcraft.data.session.DataSession;
 import spiralcraft.data.session.DataSessionFocus;
-
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
@@ -47,10 +47,20 @@ public class DataSessionFilter
   private ThreadLocalChannel<DataSession> dataSessionChannel;
   private String attributeName;
   private Type<DataComposite> dataType;
+  private Binding<?> onCreate;
   
   
   public void setDataType(Type<DataComposite> dataType)
   { this.dataType=dataType;
+  }
+  
+  /**
+   * An expression to evaluate immediately after the session is created
+   * 
+   * @param onCreate
+   */
+  public void setOnCreate(Binding<?> onCreate)
+  { this.onCreate=onCreate;
   }
   
   /**
@@ -77,12 +87,18 @@ public class DataSessionFilter
   
   @Override
   protected void popSubject(HttpServletRequest request)
-  {
-    dataSessionChannel.pop();
-    
+  { dataSessionChannel.pop();
   }
   
-  
+  @Override
+  protected Focus<?> bindExports(Focus<?> context) 
+    throws BindException
+  { 
+    if (onCreate!=null)
+    { onCreate.bind(context);
+    }
+    return super.bindExports(context);
+  }
 
   @Override
   protected void pushSubject
@@ -132,7 +148,11 @@ public class DataSessionFilter
     }
     dataSessionChannel.push(dataSession);  
     if (newDataSession)
-    { ((DataSessionFocus) getFocus()).initializeDataSession();
+    {
+      ((DataSessionFocus) getFocus()).initializeDataSession();
+      if (onCreate!=null)
+      { onCreate.get();
+      }
     }
   }
 
