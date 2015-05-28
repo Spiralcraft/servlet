@@ -35,8 +35,8 @@ import spiralcraft.lang.util.LangUtil;
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Permission;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
-import spiralcraft.text.html.URLDataEncoder;
 import spiralcraft.util.Path;
+import spiralcraft.util.URIUtil;
 
 /**
  * Protects access to a resource, allowing access when a specified
@@ -154,15 +154,6 @@ public class GuardFilter
     }
     bound=true;
   }  
-  
-  private URI createRedirectURI(URI redirectURI,HttpServletRequest request)
-  {
-    String referer=request.getRequestURL().toString();
-    URI redirect
-      =URI.create
-        (redirectURI.getPath()+"?referer="+URLDataEncoder.encode(referer));
-    return redirect;
-  }
 
   
   @Override
@@ -284,24 +275,25 @@ public class GuardFilter
       {
         String referer=httpRequest.getRequestURL().toString();
         URI redirectURI
-          =URI.create
-            (loginURI.getPath()+"?referer="+URLDataEncoder.encode(referer));
+          =URIUtil.addQueryParameter(loginURI,"referer",referer);
         if (debug)
         { log.fine("Setting up redirect to "+redirectURI);
         }
         httpResponse.sendRedirect
-          (createRedirectURI(redirectURI,httpRequest).toString());
+          (redirectURI.toString());
       }
       else
       {
+        String referer=httpRequest.getRequestURL().toString();
         URI redirectURI=redirectUriX!=null?redirectUriX.get():null;
         if (redirectURI!=null)
         { 
+          redirectURI=URIUtil.addQueryParameter(redirectURI,"referer",referer);
           if (debug)
           { log.fine("Setting up redirect to "+redirectURI);
           }
           httpResponse.sendRedirect
-            (createRedirectURI(redirectURI,httpRequest).toString());
+            (redirectURI.toString());
         }
         else if (messageX!=null)
         { 
