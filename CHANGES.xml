@@ -21,6 +21,37 @@
         </revision>
       
         <notes>
+          <scm:Note>onCreate hook for DataSessionFilter fires when session is
+            created.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/DataSessionFilter.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev88
+        </revision>
+      
+        <notes>
+          <scm:Note>GuardFilter now handles absolute login and redirect
+            URLs properly.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/GuardFilter.java
+        </path>
+      </scm:Change>
+      
+      
+      <scm:Change>
+     
+        <revision>-dev88
+        </revision>
+      
+        <notes>
           <scm:Note>Enhancements to facilitate posting data directly to Forms
             inside Ports using AJAX and custom javascript
           </scm:Note>
