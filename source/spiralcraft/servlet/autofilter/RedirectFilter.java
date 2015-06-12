@@ -59,6 +59,7 @@ public class RedirectFilter
   private String matchScheme;
   private String matchAuthority;
   private String matchPath;
+  private boolean changeParts;
 
   public void setRedirectURL(String url)
   { 
@@ -91,7 +92,16 @@ public class RedirectFilter
     this.matchScheme=prefix!=null?prefix.getScheme():null;
     this.matchAuthority=prefix!=null?prefix.getAuthority():null;
     this.matchPath=prefix!=null?prefix.getPath():null;
+    if (prefix!=null)
+    { changeParts=true;
+    }
     
+  }
+  
+  public void setChangeHost(String host)
+  {
+    this.targetAuthority=host;
+    changeParts=true;
   }
   
   /**
@@ -124,7 +134,7 @@ public class RedirectFilter
       =URI.create(((HttpServletRequest) request).getRequestURL().toString());
     String url=redirectURL;
     
-    if (prefix!=null)
+    if (changeParts)
     {
 
            
@@ -175,9 +185,18 @@ public class RedirectFilter
       }
       
       
-      String newScheme=targetScheme!=null?targetScheme:matchScheme;
+      String newScheme
+        =targetScheme!=null
+          ?targetScheme
+          :matchScheme!=null
+          ?matchScheme
+          :requestURI.getScheme()
+          ;
 
-      String newAuthority=targetAuthority!=null?targetAuthority:matchAuthority;
+      String newAuthority
+        =targetAuthority!=null
+          ?targetAuthority
+          :matchAuthority;
       
       if (newScheme!=null && newAuthority==null)
       { newAuthority=requestURI.getAuthority();
