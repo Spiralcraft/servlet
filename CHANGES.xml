@@ -17,6 +17,67 @@
     
       <scm:Change>
      
+        <revision>-dev89
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix issue where non-responsive (static) actions stopped
+            working because a frame sequence parameter was added to a 
+            component-session scoped action.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/kit/PortSession.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev89
+        </revision>
+      
+        <notes>
+          <scm:Note>Improve exception reporting for uncaught RuntimeExceptions
+            in filter chain by adding declaration context info.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/spi/FocusFilter.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev89
+        </revision>
+      
+        <notes>
+          <scm:Note>RedirectFilter supports redirecting to a new hostname
+            only
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/RedirectFilter.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev88
+        </revision>
+      
+        <notes>
+          <scm:Note>onCreate hook for DataSessionFilter fires when session is
+            created.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/DataSessionFilter.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev88
         </revision>
       
