@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.ContextualRuntimeException;
 import spiralcraft.common.namespace.ContextualName;
 import spiralcraft.common.namespace.UnresolvedPrefixException;
 import spiralcraft.lang.Binding;
@@ -40,7 +41,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -295,47 +295,55 @@ public abstract class FocusFilter<T>
     ) 
     throws IOException, ServletException
   { 
-    FilterChain localChain
-      =new LinkedFilterChain(localFilter,chain);
-    
-    FilterChain preChain;
-    
-    if (!preInitialized)
-    { 
-      synchronized (this)
-      {
-        if (!preInitialized)
-        { 
-          Focus<?> requestFocus=(Focus<?>) request.getAttribute(attributeName);
-          try
-          { preInitialize(requestFocus);
+    try
+    {
+      FilterChain localChain
+        =new LinkedFilterChain(localFilter,chain);
+      
+      FilterChain preChain;
+      
+      if (!preInitialized)
+      { 
+        synchronized (this)
+        {
+          if (!preInitialized)
+          { 
+            Focus<?> requestFocus=(Focus<?>) request.getAttribute(attributeName);
+            try
+            { preInitialize(requestFocus);
+            }
+            catch (ContextualException x)
+            { throw new ServletException(x);
+            }
+            preInitialized=true;
           }
-          catch (ContextualException x)
-          { throw new ServletException(x);
-          }
-          preInitialized=true;
         }
       }
-    }
-    
-    
-    if (preFilters!=null && preFilters.length>0)
-    { 
-      if (preFilter==null)
+      
+      
+      if (preFilters!=null && preFilters.length>0)
       { 
-        preFilter=new CompoundFilter(preFilters);
-        preFilter.setPath(getPath());
-        preFilter.setPattern(getPattern());
-        preFilter.setGlobal(isGlobal());
-        preFilter.setContainer(getContainer());
-        preFilter.init(config);
+        if (preFilter==null)
+        { 
+          preFilter=new CompoundFilter(preFilters);
+          preFilter.setPath(getPath());
+          preFilter.setPattern(getPattern());
+          preFilter.setGlobal(isGlobal());
+          preFilter.setContainer(getContainer());
+          preFilter.init(config);
+        }
+        preChain=new LinkedFilterChain(preFilter,localChain);
       }
-      preChain=new LinkedFilterChain(preFilter,localChain);
+      else
+      { preChain=localChain;
+      }
+      preChain.doFilter(request,response);
     }
-    else
-    { preChain=localChain;
+    catch (RuntimeException x)
+    { 
+      throw new ContextualRuntimeException
+        ("Uncaught exception running filter "+getClass().getName(),getDeclarationInfo(),x);
     }
-    preChain.doFilter(request,response);
   }
   
 
