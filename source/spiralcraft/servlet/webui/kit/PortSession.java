@@ -120,7 +120,7 @@ public class PortSession
     String encodedParameters=parameterMap.generateEncodedForm();
     return localURI
       +"?action="+action.getName()
-      +"&lrs="+currentFrame.getId()
+      +(action.isResponsive()?("&lrs="+currentFrame.getId()):"")
       +(port!=null?"&port="+portId:"")
       +(encodedParameters!=null?"&"+encodedParameters:"")
       ;
