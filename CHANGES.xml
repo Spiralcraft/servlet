@@ -17,6 +17,32 @@
     
       <scm:Change>
      
+        <revision>-dev90
+        </revision>
+      
+        <notes>
+          <scm:Note>Prime the root PathContext on Controller initialization to
+            load essential functionality before receiving external requests
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet
+        </path>
+        
+        <resources>
+          <URI>autofilter/Controller.java
+          </URI>
+          <URI>kit/AbstractHttpServletRequest.java
+          </URI>
+          <URI>kit/InternalHttpServletRequest.java
+          </URI>
+          <URI>kit/InternalHttpServletResponse.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev89
         </revision>
       
