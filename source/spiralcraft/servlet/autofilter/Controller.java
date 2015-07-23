@@ -39,6 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
+import spiralcraft.servlet.kit.InternalHttpServletRequest;
+import spiralcraft.servlet.kit.InternalHttpServletResponse;
 import spiralcraft.servlet.kit.StandardFilterConfig;
 import spiralcraft.servlet.kit.WebApplicationContext;
 import spiralcraft.servlet.util.LinkedFilterChain;
@@ -153,6 +155,9 @@ public class Controller
     
     ServletContext context=config.getServletContext();
     
+    // Grab the container focus, if available
+    focus=(Focus<?>) context.getAttribute("spiralcraft.lang.Focus");
+    
     showExceptions
       ="true"
         .equals
@@ -244,9 +249,29 @@ public class Controller
     { pop();
     }
     
+    
+    // Prime various paths
+    prime("/");
   }
   
   
+  private void prime(String path)
+    throws ServletException
+  {
+    InternalHttpServletRequest request
+      =new InternalHttpServletRequest();
+    request.setRequestURI("/");
+    
+    HttpServletResponse response
+      =new InternalHttpServletResponse();
+        
+    try
+    { doFilter(request,response,null);
+    }
+    catch (IOException x)
+    { throw new ServletException("IOException while priming "+path,x);
+    }
+  }
   
   /**
    * <p>Resolve locations for various contextual resource volumes
