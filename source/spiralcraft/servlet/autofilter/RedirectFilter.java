@@ -54,7 +54,6 @@ public class RedirectFilter
   private String targetPath;
   private String targetQuery;
   private boolean absolute;
-  private URI prefix;
   private boolean permanent=false;
   private String matchScheme;
   private String matchAuthority;
@@ -88,7 +87,6 @@ public class RedirectFilter
    */
   public void setPrefix(URI prefix)
   { 
-    this.prefix=prefix;
     this.matchScheme=prefix!=null?prefix.getScheme():null;
     this.matchAuthority=prefix!=null?prefix.getAuthority():null;
     this.matchPath=prefix!=null?prefix.getPath():null;
