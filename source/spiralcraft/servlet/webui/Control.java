@@ -18,12 +18,11 @@ import spiralcraft.rules.Inspector;
 import spiralcraft.rules.Rule;
 import spiralcraft.rules.RuleSet;
 import spiralcraft.rules.Violation;
-
-
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.State;
-
+import spiralcraft.app.kit.AbstractMessageHandler;
 import spiralcraft.textgen.elements.Iterate;
 import spiralcraft.util.ArrayUtil;
 
@@ -531,6 +530,8 @@ public abstract class Control<Ttarget>
     }
   }
   
+
+  
   /**
    * Override to provide a default target if none is specified. Defaults to
    *   the subject or context published by the parent component.
@@ -874,6 +875,26 @@ public abstract class Control<Ttarget>
     getState(context).setException(x);
     logHandledException(context,x);
   }
+  
+  @Override
+  protected void addHandlers()
+    throws ContextualException
+  {
+    addHandler
+      (new AbstractMessageHandler()
+      {
+        @Override
+        public void doHandler(Dispatcher context, Message message,
+            MessageHandlerChain next)
+        { 
+          if (message.getType()==RevertMessage.TYPE  )
+          { getState().revert();
+          }
+          next.handleMessage(context,message);
+        }
+      });    
+    super.addHandlers();
+  }  
   
 }
 

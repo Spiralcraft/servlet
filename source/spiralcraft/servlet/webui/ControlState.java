@@ -192,6 +192,12 @@ public class ControlState<Tbuf>
   { return previousValue;
   }
   
+  public void revert()
+  { 
+    resetError();
+    this.value=previousValue;
+  }
+  
   /**
    * <p>Update the value, without updating the record of the previous value
    * </p>

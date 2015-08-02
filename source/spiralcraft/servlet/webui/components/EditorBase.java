@@ -575,7 +575,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
           @Override
           public void run()
-          { getState().getValue().revert();
+          { doRevert();
           }
         }
       );
@@ -590,7 +590,13 @@ public abstract class EditorBase<Tbuffer extends Buffer>
 
   
   private void doRevert()
-  { getState().getValue().revert();
+  { 
+    EditorState<Tbuffer> state=getState();
+    Tbuffer buffer=state.getValue();
+    if (buffer!=null)
+    { buffer.revert();
+    }
+    state.resetError();
   }
   
   public Command<Tbuffer,Void,Void> 
@@ -606,7 +612,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           @Override
           public void run()
           { 
-            getState().getValue().revert();
+            doRevert();
             chainedCommand.execute();
           }
         }

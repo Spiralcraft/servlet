@@ -342,7 +342,9 @@ public abstract class Acceptor<T>
           }
           
           if (formState.revertRequested)
-          { revert(context);
+          { 
+            revert(context);
+            formState.revertRequested=false;
           }
           
           if (reloadAfterAction && context.getRedirectURI()==null)
@@ -464,6 +466,17 @@ public abstract class Acceptor<T>
         public void doHandler(Dispatcher context, Message message,
             MessageHandlerChain next)
         { 
+          if (message.getType()==PrepareMessage.TYPE 
+                   && getState().revertRequested
+                   )
+          { 
+            if (debug)
+            { log.fine("Reverting on prepare");
+            }
+            Acceptor.this.revert(context);
+            getState().revertRequested=false;
+            scatter((ServiceContext) context);
+          }
           next.handleMessage(context,message);
           if (autoPost 
                 && message.getType()==RequestMessage.TYPE
