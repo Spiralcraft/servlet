@@ -194,6 +194,11 @@ public abstract class TupleEditor
   { return deleteCommand(null);
   }
   
+
+  public void delete()
+  { deleteCommand().execute();
+  }
+  
   public Command<BufferTuple,Void,Void> deleteCommand
     (final Command<?,?,?> chainedCommand)
   { 
