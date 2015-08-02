@@ -38,7 +38,7 @@ public class ErrorTag
   { tagPosition=-1;
   }
   
-  private String tagName=null;
+  private String tagName="div";
   
 
   @Override
