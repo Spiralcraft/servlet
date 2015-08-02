@@ -14,12 +14,12 @@
 //
 package spiralcraft.servlet.webui.components.html;
 
-import java.util.List;
+import java.util.LinkedList;
 
+import spiralcraft.app.Component;
 import spiralcraft.app.Dispatcher;
 import spiralcraft.app.Message;
 import spiralcraft.app.MessageHandlerChain;
-import spiralcraft.app.Scaffold;
 import spiralcraft.app.kit.AbstractMessageHandler;
 import spiralcraft.common.ContextualException;
 //import spiralcraft.data.Tuple;
@@ -29,7 +29,6 @@ import spiralcraft.servlet.webui.ComponentState;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ControlGroupState;
 import spiralcraft.textgen.PrepareMessage;
-import spiralcraft.textgen.compiler.TglUnit;
 //import spiralcraft.ui.MetadataType;
 
 /**
@@ -93,7 +92,7 @@ public class FormField<T>
     }
   }
   
-  
+  private String label;
   private Tag tag=new Tag();
   private ErrorTag errorTag=new ErrorTag();
   private boolean renderTag=true;
@@ -112,6 +111,14 @@ public class FormField<T>
   { this.renderTag=renderTag;
   }
     
+  /**
+   * Adds a Label element as a child that contains the specified text.
+   * @param label
+   */
+  public void setLabel(String label)
+  { this.label=label;
+  }
+  
   @Override
   protected void addHandlers()
     throws ContextualException
@@ -156,26 +163,21 @@ public class FormField<T>
   }
   
   @Override
-  protected List<Scaffold<?>> expandChildren(Focus<?> focus,List<TglUnit> children)
+  protected LinkedList<Component> addFirstBoundChildren
+    (Focus<?> focus,LinkedList<Component> children)
     throws ContextualException
-  { 
-    
-    
-//    // Optionally Generate children from the focus type
-//    
-//    Channel<?> subject=focus.getSubject();
-//    
-//    Tuple fieldMetadata=null;
-//    
-//    Channel<Tuple> fieldMetadataChannel
-//      =subject.<Tuple>resolveMeta(focus,MetadataType.FIELD.uri);
-//    if (fieldMetadataChannel!=null)
-//    { 
-//      if (fieldMetadataChannel!=null)
-//      { fieldMetadata=fieldMetadataChannel.get();
-//      }
-//    }
-    
-    return super.expandChildren(focus,children);
+  {
+    if (label!=null)
+    {
+      if (children==null)
+      { children=new LinkedList<Component>();
+      }
+      Label labelElement=new Label();
+      labelElement.setText(label);
+      labelElement.bind(focus);
+      children.add(labelElement);
+    }
+    return children;
   }
+  
 }

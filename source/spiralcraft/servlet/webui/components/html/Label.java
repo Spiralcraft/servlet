@@ -15,10 +15,13 @@
 package spiralcraft.servlet.webui.components.html;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import spiralcraft.app.Dispatcher;
 import spiralcraft.common.ContextualException;
+import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.Component;
+import spiralcraft.textgen.elements.Text;
 
 public class Label
   extends Component
@@ -27,6 +30,7 @@ public class Label
 
   private Tag tag=new Tag();
   private FormField<?> formField;
+  private Text text;
 
   @Override
   protected void addHandlers()
@@ -69,6 +73,26 @@ public class Label
     }
     
     
+  }
+  
+  @Override
+  protected LinkedList<spiralcraft.app.Component> addFirstBoundChildren
+    (Focus<?> focus,LinkedList<spiralcraft.app.Component> children)
+      throws ContextualException
+  {
+    if (text!=null)
+    { 
+      if (children==null)
+      { children=new LinkedList<spiralcraft.app.Component>();
+      }
+      text.bind(focus);
+      children.add(text);
+    }
+    return children;
+  }
+
+  public void setText(String text)
+  { this.text=new Text(text);
   }
   
 }
