@@ -21,6 +21,83 @@
         </revision>
       
         <notes>
+          <scm:Note>Add a .delete() method to TupleEditor so delete actions can
+            be efficiently tied to a button.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/TupleEditor.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev90
+        </revision>
+      
+        <notes>
+          <scm:Note>Provide support for reverting a Form programmatically and
+            resetting the state of the entire component subtree.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>Control.java
+          </URI>
+          <URI>ControlState.java
+          </URI>
+          <URI>components/Acceptor.java
+          </URI>
+          <URI>components/EditorBase.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev90
+        </revision>
+      
+        <notes>
+          <scm:Note>FormField will now generate its own label when the "label"
+            property is configured.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>FormField.java
+          </URI>
+          <URI>Label.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev90
+        </revision>
+      
+        <notes>
+          <scm:Note>The ErrorTag now defaults to rendering a div
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/ErrorTag.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev90
+        </revision>
+      
+        <notes>
           <scm:Note>Prime the root PathContext on Controller initialization to
             load essential functionality before receiving external requests
           </scm:Note>
