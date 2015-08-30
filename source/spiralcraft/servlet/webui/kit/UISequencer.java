@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.app.InitializeMessage;
-import spiralcraft.app.State;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
@@ -32,6 +31,8 @@ import spiralcraft.servlet.webui.CommandMessage;
 import spiralcraft.servlet.webui.Component;
 import spiralcraft.servlet.webui.RequestMessage;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.servlet.webui.ServiceRootComponent;
+import spiralcraft.servlet.webui.ServiceRootComponentState;
 import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.RenderMessage;
 import spiralcraft.util.Sequence;
@@ -92,7 +93,7 @@ public class UISequencer
   
   public void service
     (ServiceContext serviceContext
-    ,Component component
+    ,ServiceRootComponent component
     ,PortSession localSession
     ,boolean external
     )
@@ -231,12 +232,12 @@ public class UISequencer
   
   private void sequence
     (ServiceContext serviceContext
-    ,Component component
+    ,ServiceRootComponent component
     ,PortSession localSession
     )
   {
     
-    State oldState=localSession.getState();
+    ServiceRootComponentState oldState=localSession.getState();
     if (oldState==null)
     { 
       if (logLevel.isDebug())
@@ -294,13 +295,23 @@ public class UISequencer
       //  will cancel ajax mode, take a final action, then prepare and render
     
       // This makes everything recompute before rendering
-      serviceContext.setCurrentFrame(localSession.nextFrame());
+      if (!serviceContext.getInitial() 
+          || ((ServiceRootComponentState) serviceContext.getState()).isDirty()
+          )
+      { serviceContext.setCurrentFrame(localSession.nextFrame());
+      }
+      else
+      { 
+        // Don't advance the frame if we already did so in the initial request
+        //   and nothing has changed.
+      }
       
       // SYNC RESPONSE
       generateResponse(serviceContext,localSession,component);
     }    
     
-    State newState=serviceContext.getState();
+    ServiceRootComponentState newState
+      =(ServiceRootComponentState) serviceContext.getState();
     if (newState!=oldState)
     { 
       // Cache the state for the next iteration

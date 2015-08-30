@@ -22,12 +22,12 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import spiralcraft.app.State;
 import spiralcraft.app.StateFrame;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.webui.Action;
+import spiralcraft.servlet.webui.ServiceRootComponentState;
 import spiralcraft.util.ListMap;
 import spiralcraft.util.Sequence;
 import spiralcraft.util.URIUtil;
@@ -69,7 +69,7 @@ public class PortSession
     
   private String localURI;
   
-  private State state;
+  private ServiceRootComponentState state;
   private Sequence<Integer> port;
   private String portId;
   
@@ -82,11 +82,11 @@ public class PortSession
   }
 
   
-  public State getState()
+  public ServiceRootComponentState getState()
   { return state;
   }
   
-  public void setState(State state)
+  public void setState(ServiceRootComponentState state)
   { this.state=state;
   }
   

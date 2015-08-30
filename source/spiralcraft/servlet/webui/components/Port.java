@@ -19,16 +19,16 @@ import spiralcraft.app.Message;
 import spiralcraft.app.MessageHandlerChain;
 import spiralcraft.app.kit.AbstractMessageHandler;
 import spiralcraft.common.ContextualException;
-import spiralcraft.servlet.webui.Component;
-import spiralcraft.servlet.webui.ComponentState;
 import spiralcraft.servlet.webui.PortMessage;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.servlet.webui.ServiceRootComponent;
+import spiralcraft.servlet.webui.ServiceRootComponentState;
 import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.servlet.webui.kit.UISequencer;
 import spiralcraft.util.thread.ThreadLocalStack;
 
 public class Port
-  extends Component
+  extends ServiceRootComponent
 {
 
   { alwaysRunHandlers=true;
@@ -49,7 +49,8 @@ public class Port
       ServiceContext serviceContext
         =(ServiceContext) dispatcher;
     
-      ComponentState state=(ComponentState) serviceContext.getState();
+      ServiceRootComponentState state
+        =(ServiceRootComponentState) serviceContext.getState();
     
       PortSession localSession
         =state.getPortSession(serviceContext);
@@ -76,7 +77,8 @@ public class Port
       ServiceContext serviceContext
         =(ServiceContext) dispatcher;
     
-      ComponentState state=(ComponentState) serviceContext.getState();
+      ServiceRootComponentState state
+        =(ServiceRootComponentState) serviceContext.getState();
     
       PortSession localSession
         =state.getPortSession(serviceContext);

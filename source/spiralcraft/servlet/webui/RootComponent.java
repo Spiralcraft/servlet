@@ -50,7 +50,7 @@ import spiralcraft.app.Message;
  *
  */
 public class RootComponent
-  extends Component
+  extends ServiceRootComponent
 {
   private static final ClassLog log 
     = ClassLog.getInstance(RootComponent.class);

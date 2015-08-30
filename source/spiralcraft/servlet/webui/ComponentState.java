@@ -15,8 +15,6 @@
 package spiralcraft.servlet.webui;
 
 
-import spiralcraft.app.StateFrame;
-import spiralcraft.servlet.webui.kit.PortSession;
 import spiralcraft.textgen.ElementState;
 import spiralcraft.util.Sequence;
 import spiralcraft.util.string.StringPool;
@@ -25,35 +23,13 @@ public class ComponentState
   extends ElementState
 {
 
-  private volatile PortSession portSession;
   private String id;
     
   public ComponentState(Component component)
   { super(component.getChildCount());
   }
   
-  public synchronized PortSession getPortSession(ServiceContext context)
-  {
-    if (portSession==null)
-    { 
-      PortSession parentSession=context.getPortSession();
-      PortSession portSession;
-      if (parentSession!=null)
-      {
-        portSession=new PortSession(parentSession);
-        portSession.setLocalURI(parentSession.getLocalURI());
-      }
-      else
-      {
-        portSession=new PortSession();
-      }
-      portSession.setState(this);
-      portSession.setPort(getPath());
-      portSession.setPortId(getId());
-      this.portSession=portSession;
-    }
-    return portSession;
-  }
+
   
   public String getId()
   {
@@ -75,14 +51,6 @@ public class ComponentState
     return builder.toString();
   }
   
-  
-  @Override
-  public void enterFrame(StateFrame frame)
-  { 
-    super.enterFrame(frame);
-    if (isNewFrame() && portSession!=null)
-    { portSession.setFrame(frame);
-    }
-  }
+
 
 }
