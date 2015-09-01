@@ -21,6 +21,22 @@
         </revision>
       
         <notes>
+          <scm:Note>Fix issues where the paginator would get out of sync
+            with other page data which became apparent after changes to the
+            UI sequencer.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Paginate.java
+        </path>
+      </scm:Change>
+      
+      <scm:Change>
+     
+        <revision>-dev91
+        </revision>
+      
+        <notes>
           <scm:Note>Adjusted the UI sequencer to retain the same frame 
             between the initiation of a conversation and the PREPARE stage
             of a request if the ServiceRootComponent (page root or port root)
