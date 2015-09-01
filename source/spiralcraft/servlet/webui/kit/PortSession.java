@@ -49,7 +49,8 @@ public class PortSession
 
   public static enum RequestSyncStatus
   {
-    RESPONSIVE
+    NOSTATE
+    ,RESPONSIVE
     ,INITIATED
     ,OUTOFSYNC
   };
@@ -220,8 +221,10 @@ public class PortSession
   public RequestSyncStatus getRequestSyncStatus(String requestedFrame)
   {
 
-    
-    if (currentFrame!=null && currentFrame.getId().equals(requestedFrame))
+    if (state==null)
+    { return RequestSyncStatus.NOSTATE;
+    }
+    else if (currentFrame!=null && currentFrame.getId().equals(requestedFrame))
     { return RequestSyncStatus.RESPONSIVE;
     }
     else

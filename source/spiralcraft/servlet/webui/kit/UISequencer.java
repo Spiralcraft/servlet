@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.app.InitializeMessage;
+import spiralcraft.app.StateFrame;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
@@ -85,11 +86,12 @@ import spiralcraft.util.Sequence;
 public class UISequencer
 {
 
+  private static final StateFrame INIT_FRAME=new StateFrame();
   private static final ClassLog log
     =ClassLog.getInstance(UISequencer.class);
   private static final Level logLevel
     =ClassLog.getInitialDebugLevel(UISequencer.class,Level.INFO);
-  
+ 
   
   public void service
     (ServiceContext serviceContext
@@ -134,6 +136,7 @@ public class UISequencer
               response.getWriter().write("0");
               break;
             case OUTOFSYNC:
+            case NOSTATE:
               // OutOfSync should have already been intercepted
               // Initiated means no LRS sent in the request
               log.warning("OOB request is not in sync");
@@ -162,7 +165,30 @@ public class UISequencer
       {
         // Process interactive request
         
-        if (syncStatus==PortSession.RequestSyncStatus.OUTOFSYNC)
+        if (syncStatus==PortSession.RequestSyncStatus.NOSTATE)
+        {
+          
+          if (logLevel.isDebug())
+          { log.debug("Initializing state tree for "+localSession.getLocalURI());
+          }
+      
+          ServiceRootComponentState state=component.createState();
+          serviceContext.setState(state);
+          serviceContext.setCurrentFrame(INIT_FRAME);
+          localSession.setState(state);
+          
+          // Set up state structure and register "initial" events
+          serviceContext.dispatch
+            (InitializeMessage.INSTANCE,component,null);
+          
+          serviceContext.setInitial(true);
+          
+          serviceContext.setCurrentFrame(localSession.nextFrame());
+          if (logLevel.isDebug())
+          { log.debug("Initializing session for "+localSession.getLocalURI());
+          }
+        }
+        else if (syncStatus==PortSession.RequestSyncStatus.OUTOFSYNC)
         { 
           serviceContext.setCurrentFrame(localSession.nextFrame());
           serviceContext.setOutOfSync(true);
@@ -238,23 +264,8 @@ public class UISequencer
   {
     
     ServiceRootComponentState oldState=localSession.getState();
-    if (oldState==null)
-    { 
-      if (logLevel.isDebug())
-      { log.debug("Initializing state tree for "+localSession.getLocalURI());
-      }
-      
-      serviceContext.setState(component.createState());
-      
-      // Set up state structure and register "initial" events
-      serviceContext.dispatch
-        (InitializeMessage.INSTANCE,component,null);
-    }
-    else
-    { 
-      // Restore state
-      serviceContext.setState(oldState);
-    }    
+    // Restore state
+    serviceContext.setState(oldState);
 
     boolean done=false;
 
