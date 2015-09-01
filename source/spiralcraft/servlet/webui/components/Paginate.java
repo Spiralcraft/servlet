@@ -40,6 +40,7 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.ServiceContext;
+import spiralcraft.servlet.webui.ServiceRootComponent;
 
 
 /**
@@ -58,6 +59,7 @@ public class Paginate<Ttarget,Titem>
   private ListDecorator<Ttarget,Titem> listDecorator;
   private Reflector<Titem> componentReflector;
   private String resetActionName;
+  private ServiceRootComponent root;
   
   private int pageSize=10;
   
@@ -110,6 +112,7 @@ public class Paginate<Ttarget,Titem>
       { responsive=false;
       }
       
+      @SuppressWarnings("unchecked")
       @Override
       public void invoke(ServiceContext context)
       { 
@@ -121,11 +124,12 @@ public class Paginate<Ttarget,Titem>
             );
         }
         getState(context).setCurrentPage(0);
-        
+        root.dirty();
       }
     };
   }  
     
+  @SuppressWarnings("unchecked")
   @Override
   protected void scatter(ServiceContext context)
   {
@@ -135,18 +139,9 @@ public class Paginate<Ttarget,Titem>
       PageState<Ttarget,Titem> state=getState(context);
       state.setCurrentPage(0);
     }
-    
+    resetPageState((PageState<Ttarget,Titem>) context.getState());
   }
   
-  @Override
-  protected void handlePrepare(ServiceContext context)
-  { 
-    
-    
-    super.handlePrepare(context);
-    PageState<Ttarget,Titem> state=getState(context);
-    resetPageState(state);
-  }
   
   @SuppressWarnings("unchecked") // PageItem cast
   protected void resetPageState(PageState<Ttarget,Titem> state)
@@ -205,11 +200,7 @@ public class Paginate<Ttarget,Titem>
   protected Channel<?> bindTarget(Focus<?> parentFocus)
     throws ContextualException
   {
-    // We will receive something that can be Iterated over
-    
-    // We want to expose an Array of "elements" on the selected page
-    
-    // Optionally, we need a size() method.
+    root=this.findComponent(ServiceRootComponent.class);
     return super.bindTarget(parentFocus);
   }
 
