@@ -22,7 +22,10 @@ public class ServiceRootComponent
 {
   
   StateReferenceHandler<ServiceRootComponentState> stateRef
-    =new StateReferenceHandler<>(ServiceRootComponentState.class);
+    =new StateReferenceHandler<>(this,ServiceRootComponentState.class);
+  
+  { alwaysRunHandlers=true;
+  }
   
   @Override
   protected void addHandlers()
