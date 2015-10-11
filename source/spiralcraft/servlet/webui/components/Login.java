@@ -45,6 +45,7 @@ import spiralcraft.servlet.webui.ControlGroup;
 import spiralcraft.servlet.webui.QueuedCommand;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.util.ArrayUtil;
+import spiralcraft.util.RandomUtil;
 
 
 /**
@@ -552,10 +553,13 @@ public class Login
   
   protected void newEntry()
   { 
-    getState().setValue(new LoginEntry(sessionChannel));
+    LoginEntry loginEntry=new LoginEntry(sessionChannel);
+    loginEntry.setChallenge(RandomUtil.generateString(32));
+    getState().setValue(loginEntry);
     if (defaultSetters!=null)
     { Setter.applyArrayIfNull(defaultSetters);
     }
+    
   }
    
 
