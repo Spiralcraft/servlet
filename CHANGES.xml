@@ -21,6 +21,21 @@
         </revision>
       
         <notes>
+          <scm:Note>Paginate page number can now be externally driven via
+            the pageControlX property.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Paginate.java
+        </path>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev92
+        </revision>
+      
+        <notes>
           <scm:Note>Initialize LoginEntry challenge field
           </scm:Note>
         </notes>
