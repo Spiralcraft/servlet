@@ -107,6 +107,7 @@ public class Login
   private Binding<?> onLoginX;
   
   private boolean requireLoginPermission;
+  private boolean useChallenge;
   
 //  private boolean silent;
 
@@ -551,10 +552,22 @@ public class Login
   { this.postAssignments=assignments;
   }
   
+  /**
+   * Whether a challenge will be generated to ensure additional transport
+   *   security of password digest credential.
+   * 
+   * @param useChallenge
+   */
+  public void setUseChallenge(boolean useChallenge)
+  { this.useChallenge=useChallenge;
+  }
+  
   protected void newEntry()
   { 
     LoginEntry loginEntry=new LoginEntry(sessionChannel);
-    loginEntry.setChallenge(RandomUtil.generateString(32));
+    if (useChallenge)
+    { loginEntry.setChallenge(RandomUtil.generateString(32));
+    }
     getState().setValue(loginEntry);
     if (defaultSetters!=null)
     { Setter.applyArrayIfNull(defaultSetters);

@@ -25,6 +25,7 @@ public class ServiceRootComponentState
       {
         portSession=new PortSession(parentSession);
         portSession.setLocalURI(parentSession.getLocalURI());
+        portSession.setFrame(context.getFrame());
       }
       else
       {
