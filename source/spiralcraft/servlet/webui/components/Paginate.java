@@ -24,6 +24,7 @@ import spiralcraft.command.Command;
 import spiralcraft.command.CommandAdapter;
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
+import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.Focus;
@@ -62,6 +63,7 @@ public class Paginate<Ttarget,Titem>
   private ServiceRootComponent root;
   
   private int pageSize=10;
+  private Binding<Integer> pageControlX;
   
   @Override
   @SuppressWarnings("unchecked")
@@ -79,6 +81,18 @@ public class Paginate<Ttarget,Titem>
   
   public void setResetActionName(String resetActionName)
   { this.resetActionName=resetActionName;
+  }
+  
+  /**
+   * An external source for the page number
+   * 
+   * @param pageControlX
+   */
+  public void setPageControlX(Binding<Integer> pageControlX)
+  { 
+    this.removeParentContextual(this.pageControlX);
+    this.pageControlX=pageControlX;
+    this.addParentContextual(this.pageControlX);
   }
   
   @Override
@@ -138,6 +152,15 @@ public class Paginate<Ttarget,Titem>
     {
       PageState<Ttarget,Titem> state=getState(context);
       state.setCurrentPage(0);
+    }
+    if (pageControlX!=null)
+    {
+      Integer pageNum=pageControlX.get();
+      if (pageNum!=null)
+      { 
+        PageState<Ttarget,Titem> state=getState(context);
+        state.setCurrentPage(pageNum.intValue());
+      }
     }
     resetPageState((PageState<Ttarget,Titem>) context.getState());
   }
