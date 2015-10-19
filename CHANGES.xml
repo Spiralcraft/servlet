@@ -21,6 +21,44 @@
         </revision>
       
         <notes>
+          <scm:Note>Support rules on Forms
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/Acceptor.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev92
+        </revision>
+      
+        <notes>
+          <scm:Note>Via the "initial" property, allow the UI to determine
+            whether the current request is the initial request in a 
+            conversation. 
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui
+        </path>
+        
+        <resources>
+          <URI>UIContext.java
+          </URI>
+          <URI>components/UI.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev92
+        </revision>
+      
+        <notes>
           <scm:Note>Fix runtime error when rendering a Form inside
             a non-isolated port by initializing the frame when creating
             the embedded port session. 
