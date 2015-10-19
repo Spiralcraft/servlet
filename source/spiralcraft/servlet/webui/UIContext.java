@@ -118,5 +118,11 @@ public interface UIContext
    */
   public PortSession getPortSession();
 
-  
+  /**
+   * @return Whether this request is the initial request in
+   *   a conversational sequence
+   *   
+   * @return
+   */
+  public boolean getInitial();
 }

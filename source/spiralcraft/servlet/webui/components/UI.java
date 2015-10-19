@@ -88,6 +88,12 @@ public class UI
   }
 
   @Override
+  public boolean getInitial()
+  { return sc().getInitial();
+  }
+  
+  
+  @Override
   public HttpServletResponse getResponse()
   { return sc().getResponse();
   }
