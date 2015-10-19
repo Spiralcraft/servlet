@@ -333,9 +333,11 @@ public abstract class Acceptor<T>
           if (onPostX!=null && !formState.isErrorState())
           { onPostX.get();
           }
-
+          
+          
           if ( (autoSave || formState.saveRequested) 
                 && !formState.isErrorState()
+                && inspect(getState().getValue(),getState())
              )
           { save(context);
 
