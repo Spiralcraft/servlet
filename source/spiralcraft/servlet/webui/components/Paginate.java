@@ -126,7 +126,6 @@ public class Paginate<Ttarget,Titem>
       { responsive=false;
       }
       
-      @SuppressWarnings("unchecked")
       @Override
       public void invoke(ServiceContext context)
       { 
