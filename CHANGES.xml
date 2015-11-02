@@ -17,6 +17,56 @@
     
       <scm:Change>
      
+        <revision>-dev93
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix NPE when when web tree is empty.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/Controller.java
+        </path>
+        
+      </scm:Change>
+ 
+      <scm:Change>
+     
+        <revision>-dev93
+        </revision>
+      
+        <notes>
+          <scm:Note>Filter based RPC back-end components for construction of
+            API based non-webui back-ends.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/rpc
+        </path>
+        
+        <resources>
+          <URI>BasicHandler.java
+          </URI>
+          <URI>Call.java
+          </URI>
+          <URI>Filter.java
+          </URI>
+          <URI>Handler.java
+          </URI>
+          <URI>Request.java
+          </URI>
+          <URI>Response.java
+          </URI>
+          <URI>TaskHandler.java
+          </URI>
+          <URI>kit/AbstractHandler.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev92
         </revision>
       
