@@ -1,0 +1,109 @@
+<httpd:MultiAliasHttpServiceContext
+  xmlns:httpd="class:/spiralcraft/pioneer/httpd/"
+  xmlns:autofilter="class:/spiralcraft/servlet/autofilter/"
+  >
+
+  <documentRoot>${spiralcraft.builder.dir}/../war
+  </documentRoot>                  
+  
+  <maxSessionInactiveInterval>120
+  </maxSessionInactiveInterval>
+
+  <accessLog>
+    <httpd:RotatingFileAccessLog>
+      <fileSequence.directory>${spiralcraft.builder.dir}/../log
+      </fileSequence.directory>
+    </httpd:RotatingFileAccessLog>
+  </accessLog>
+      
+  <debug>false
+  </debug>
+  
+  <initParameters>
+    <httpd:InitParameter>
+      <name>spiralcraft.instance.rootURI
+      </name>
+      <value>${spiralcraft.builder.dir}/..
+      </value>
+    </httpd:InitParameter>
+  
+  </initParameters>
+        
+  <filterMappings>
+    <httpd:FilterMapping>
+      <filterName>controller
+      </filterName>
+    
+      <URLPattern>*
+      </URLPattern>
+    </httpd:FilterMapping>
+  </filterMappings>
+  
+  <filters>
+    <httpd:FilterHolder>
+      <filterName>controller
+      </filterName>
+      
+      <filterClass>spiralcraft.servlet.autofilter.Controller
+      </filterClass>
+ 
+      <initParameters>
+        <httpd:InitParameter>
+          <name>debug
+          </name>
+          
+          <value>false
+          </value>
+        </httpd:InitParameter>
+      </initParameters>
+      
+    </httpd:FilterHolder>
+  </filters>
+  
+  <servletMappings>
+
+    <httpd:ServletMapping>
+       
+      <servletName>webui
+      </servletName>
+        
+      <URLPatterns>/
+      </URLPatterns>
+        
+    </httpd:ServletMapping>
+
+    <httpd:ServletMapping>
+       
+      <servletName>webui
+      </servletName>
+        
+      <URLPatterns>*.webui
+      </URLPatterns>
+        
+    </httpd:ServletMapping>
+
+  </servletMappings>
+                    
+  <servletHolders>
+                        
+    <httpd:ServletHolder>
+            
+      <servletName>webui
+      </servletName>
+            
+      <servletClass>spiralcraft.servlet.BeanServlet
+      </servletClass>
+      
+      <initParameters>
+        <httpd:InitParameter>
+          <name>typeURI
+          </name>
+          
+          <value>context://config/UIServlet
+          </value>
+        </httpd:InitParameter>
+      </initParameters>
+            
+    </httpd:ServletHolder>
+  </servletHolders>
+</httpd:MultiAliasHttpServiceContext>

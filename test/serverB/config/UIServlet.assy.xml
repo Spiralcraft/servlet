@@ -1,0 +1,9 @@
+<webui:UIServlet
+  xmlns:webui="class:/spiralcraft/servlet/webui/"
+  xmlns:conf="context://config/"
+  >
+  <staticServlet>
+    <conf:FileServlet/>
+  </staticServlet>
+
+</webui:UIServlet>

@@ -1,0 +1,6 @@
+<af:PathContext
+  xmlns:af="class:/spiralcraft/servlet/autofilter/"
+  >
+  <logLevel>INFO
+  </logLevel>
+</af:PathContext>
