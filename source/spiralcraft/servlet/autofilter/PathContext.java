@@ -351,6 +351,9 @@ public class PathContext
   {
     super.pushLocal();
     instance.push(this);
+    if (logLevel.isFine())
+    { log.fine("Entering pathContext "+getAbsolutePath());
+    }
     // TODO: Analyze the request path and split into static/dynamic path components
     //   then make available for the handling resource
   }
@@ -358,6 +361,9 @@ public class PathContext
   @Override
   protected void popLocal()
   {
+    if (logLevel.isFine())
+    { log.fine("Exiting pathContext "+getAbsolutePath());
+    }
     instance.pop();
     // TODO: Pop the request status from thread local
     super.popLocal();
