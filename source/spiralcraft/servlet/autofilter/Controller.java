@@ -409,7 +409,12 @@ public class Controller
         try
         {
           FilterChain chain=resolveChain(pathString,endpoint);
-          chain.doFilter(servletRequest,servletResponse);
+          if (chain!=null)
+          { chain.doFilter(servletRequest,servletResponse);
+          }
+          else if (debug)
+          { log.fine("No filter chain for "+pathString);
+          }
         }
         finally
         {
@@ -714,8 +719,6 @@ public class Controller
     
     if (filterSet==null)
     { 
-      // System.err.println("Controller.createChain() No filters");
-      
       // No filters anywhere
       return endpoint;
     }
