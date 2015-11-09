@@ -233,6 +233,12 @@ public class SessionStateFilter<T>
   @Override
   protected void popSubject(HttpServletRequest request)
   { 
+    if (request.getSession()==null)
+    { 
+      sessionChannel.pop();
+      return;
+    }
+    
     if (afterRequest!=null)
     { afterRequest.get();
     }
@@ -300,6 +306,12 @@ public class SessionStateFilter<T>
   {
       
     HttpSession session=request.getSession(true);
+    if (session==null)
+    { 
+      sessionChannel.push(null);
+      return;
+    }
+    
     SessionState<T> sessionState
       =(SessionState<T>) session.getAttribute(attributeName);
       
