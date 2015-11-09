@@ -122,7 +122,7 @@
           <outputX>[rpc:Call].response.text=.@log("Out="+.)
           </outputX>
         </rpc:TaskHandler>
-        <rpc:TaskHandler>
+        <rpc:JsonTaskHandler>
           <name>echoJSON
           </name>
           <task>
@@ -132,22 +132,17 @@
                 { field1:[@j:String]
                 , field2:[@j:Integer]
                 , field3:[@j:Boolean]
+                , field4:={ f41:="", f42:=0 }
+                , field5:[@j:String][]
+                , field6:[@j:Integer][]
                 }
               </contextX>
               <x>[p]
               </x>
             </task:Eval>
           </task>
-          <inputX>
-            [rpc:Call].request.contentBytes.@log("Bytes = "+.)
-              { .!=null
-                ?.[*json:FromJson{[p].@type,ignoreUnrecognizedFields:=true}]
-                :[p]
-              }.@log("In= "+.)
-          </inputX>
-          <outputX>[rpc:Call].response.text=.[*json:ToJson].@log("Out="+.)
-          </outputX>
-        </rpc:TaskHandler>
+
+        </rpc:JsonTaskHandler>
       </handlers>
     
     </rpc:Filter>

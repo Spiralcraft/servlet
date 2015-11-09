@@ -54,8 +54,24 @@
              }
             );
         </script>
-        <div data-sc-bind='this.context("test-item").data'>
-        </div>
+        JSON Echo:
+        <ul>
+          <li>
+            Field1: 
+              <label data-sc-bind='this.context("test-item").data.field1'>
+              </label>
+          </li>
+          <li>
+		        Field2: 
+		          <label data-sc-bind='this.context("test-item").data.field2'>
+		          </label>
+		      </li>
+		      <li>
+		        Field3: 
+		          <label data-sc-bind='this.context("test-item").data.field3'>
+		          </label>
+		      </li>
+        </ul>
           
         
       </li>

@@ -18,7 +18,7 @@ SPIRALCRAFT.api = (function(self) {
   });
   
   self.postJSON = (function(method,callback,obj) {
-    self.post(method,callback,SPIRALCRAFT.json.stringify(obj));
+    self.post(method,function(val) { var jval=SPIRALCRAFT.json.parse(val); console.log(jval); callback(jval); },SPIRALCRAFT.json.stringify(obj));
   });
 
   return self;
