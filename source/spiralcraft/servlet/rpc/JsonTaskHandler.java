@@ -106,10 +106,13 @@ public class JsonTaskHandler<Tcontext,Tresult>
       commandLocal.push(command);
       try
       {
-        
-        command.setContext(jsonInput.get());
+        if (input.get()!=null)
+        { command.setContext(jsonInput.get());
+        }
         command.execute();
-        call.get().response.setText(jsonOutput.get());
+        if (command.getResult()!=null)
+        { call.get().response.setText(jsonOutput.get());
+        }
       }
       catch (AccessException x)
       { 
