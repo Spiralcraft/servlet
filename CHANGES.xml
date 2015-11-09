@@ -21,6 +21,38 @@
         </revision>
       
         <notes>
+          <scm:Note>Handler which calls Tasks and marshals the parameters and
+            results from/to JSON objects.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/SessionStateFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev93
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix NPE when when no session is available, such as when
+            the filter is run internally on initialization
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter/SessionStateFilter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev93
+        </revision>
+      
+        <notes>
           <scm:Note>Fix NPE when when web tree is empty.
           </scm:Note>
         </notes>
