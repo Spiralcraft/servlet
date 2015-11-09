@@ -3,8 +3,11 @@ package spiralcraft.servlet.rpc.kit;
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.declare.Declarable;
 import spiralcraft.common.declare.DeclarationInfo;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.util.LangUtil;
 import spiralcraft.servlet.rpc.Handler;
+import spiralcraft.servlet.rpc.Call;
 
 /**
  * A handler which evaluates an expression. The expression must explicitly
@@ -19,12 +22,14 @@ public abstract class AbstractHandler
 
   protected String name;
   protected DeclarationInfo declarationInfo;
+  protected Channel<Call> call;
   
   @Override
   public Focus<?> bind(
     Focus<?> focusChain)
       throws ContextualException
   { 
+    call=LangUtil.assertChannel(Call.class, focusChain);
     return focusChain;
   }
 
