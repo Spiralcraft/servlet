@@ -60,6 +60,7 @@ public class Filter
   private Handler[] handlers;
   private HashMap<String,Handler> handlerMap;
   private MimeHeaderMap headers=new MimeHeaderMap();
+  private boolean reflectOriginHeader;
   
   
   /**
@@ -85,6 +86,16 @@ public class Filter
     for (MimeHeader header: headers)
     { this.headers.add(header);
     }
+  }
+  
+  /**
+   * Reflects the "Origin" request header to the "Access-Control-Allow-Origin"
+   *   response header to allow cookies and credentials to be passed in CORS
+   *   requests.
+   * @param reflectOrigin
+   */
+  public void setReflectOriginHeader(boolean reflectOriginHeader)
+  { this.reflectOriginHeader=reflectOriginHeader;
   }
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -222,6 +233,13 @@ public class Filter
       { 
         for (MimeHeader header:headerList)
         { httpResponse.setHeader(header.getName(),header.getRawValue());
+        }
+      }
+      if (reflectOriginHeader)
+      { 
+        String origin=httpRequest.getHeader("Origin");
+        if (origin!=null)
+        { httpResponse.setHeader("Access-Control-Allow-Origin", origin);
         }
       }
       
