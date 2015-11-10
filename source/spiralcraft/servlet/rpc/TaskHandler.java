@@ -7,6 +7,7 @@ import spiralcraft.lang.Focus;
 import spiralcraft.lang.Reflector;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.ThreadLocalChannel;
+import spiralcraft.log.Level;
 import spiralcraft.servlet.rpc.kit.AbstractHandler;
 import spiralcraft.task.Scenario;
 import spiralcraft.task.Task;
@@ -91,7 +92,15 @@ public class TaskHandler<Tcontext,Tresult>
       { command.setContext(inputX.get());
       }
       command.execute();
-      if (outputX!=null)
+      if (command.getException()!=null)
+      { 
+        log.log(Level.WARNING,declarationInfo+": Command threw exception"
+          ,command.getException()
+          );
+        call.get().response.setStatus(500);
+        call.get().response.setText("Server error processing request");
+      }
+      else if (outputX!=null)
       { outputX.get();
       }
     }

@@ -6,6 +6,7 @@ import spiralcraft.common.declare.DeclarationInfo;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.util.LangUtil;
+import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.rpc.Handler;
 import spiralcraft.servlet.rpc.Call;
 
@@ -20,9 +21,12 @@ public abstract class AbstractHandler
   implements Handler,Declarable
 {
 
+  protected final ClassLog log
+    =ClassLog.getInstance(getClass());
   protected String name;
   protected DeclarationInfo declarationInfo;
   protected Channel<Call> call;
+  
   
   @Override
   public Focus<?> bind(

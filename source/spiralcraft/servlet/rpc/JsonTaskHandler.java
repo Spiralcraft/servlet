@@ -14,7 +14,6 @@ import spiralcraft.lang.Reflector;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
-import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.servlet.rpc.kit.AbstractHandler;
 import spiralcraft.task.Scenario;
@@ -38,7 +37,6 @@ public class JsonTaskHandler<Tcontext,Tresult>
     =new ThreadLocalChannel<byte[]>(BeanReflector.<byte[]>getInstance(byte[].class));
   private Channel<Tcontext> jsonInput;
   private Channel<String> jsonOutput;
-  private ClassLog log=ClassLog.getInstance(getClass());
   
   
   @SuppressWarnings("unchecked")
@@ -110,7 +108,13 @@ public class JsonTaskHandler<Tcontext,Tresult>
         { command.setContext(jsonInput.get());
         }
         command.execute();
-        if (command.getResult()!=null)
+        if (command.getException()!=null)
+        { 
+          log.log(Level.WARNING,declarationInfo+": Command threw exception",command.getException());
+          response.setStatus(500);
+          response.setText("Server error processing request");
+        }
+        else if (command.getResult()!=null)
         { call.get().response.setText(jsonOutput.get());
         }
       }
@@ -124,11 +128,17 @@ public class JsonTaskHandler<Tcontext,Tresult>
             response.setStatus(400);
             response.setText(jx.getCause().getMessage());
           }
+          else
+          {
+            log.log(Level.WARNING,declarationInfo+": Unhandled exception",x);
+            response.setStatus(500);
+            response.setText("Server error processing request");
+          }
           
         }
         else
         { 
-          log.log(Level.WARNING,"Unhandled exception",x);
+          log.log(Level.WARNING,declarationInfo+": Unhandled exception",x);
           response.setStatus(500);
           response.setText("Server error processing request");
         
