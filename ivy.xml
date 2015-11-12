@@ -17,8 +17,6 @@
     <dependency org="spiralcraft" name="distrib-common" rev="[0.4.17-dev1,0.5-dev["/>
     <dependency org="spiralcraft" name="core" rev="[0.4.17-dev93,)"/>
     <dependency org="spiralcraft" name="json" rev="[0.4.17-dev4,0.5-dev["/>
-    <dependency org="spiralcraft"  name="pioneer"  rev="[0.4.17-dev,)" conf="test->*"/>
-    <dependency org="spiralcraft"  name="jsclient"  rev="[0.4.17-dev,)" conf="test->*"/>
         
     <dependency org="java" name="servlet-api" rev="2.4"/>
 
