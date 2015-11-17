@@ -12,7 +12,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.lang.Binding;
@@ -31,7 +30,6 @@ import spiralcraft.servlet.autofilter.PathContext;
 
 import spiralcraft.servlet.kit.HttpFocus;
 import spiralcraft.vfs.StreamUtil;
-import spiralcraft.vfs.util.ByteArrayResource;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -59,8 +57,10 @@ public class Filter
       (BeanReflector.<Call>getInstance(Call.class));
   private Handler[] handlers;
   private HashMap<String,Handler> handlerMap;
+  private Handler defaultHandler;
   private MimeHeaderMap headers=new MimeHeaderMap();
   private boolean reflectOriginHeader;
+  private boolean requireHandler;
   
   
   /**
@@ -70,6 +70,15 @@ public class Filter
    */
   public void setDefaultX(Binding<Void> defaultX)
   { this.defaultX=defaultX;
+  }
+  
+  /**
+   * Default handler if no specific handlers are  mapped to the request
+   * 
+   * @param defaultX
+   */
+  public void setDefaultHandler(Handler defaultHandler)
+  { this.defaultHandler=defaultHandler;
   }
   
   public void setHandlers(Handler[] handlers)
@@ -96,6 +105,17 @@ public class Filter
    */
   public void setReflectOriginHeader(boolean reflectOriginHeader)
   { this.reflectOriginHeader=reflectOriginHeader;
+  }
+
+  /**
+   * When set, a "404 NOT FOUND" response will be issued when a handler is
+   *   not found for the request. Otherwise, the request will be passed through
+   *   the filter chain if a handler is not found.
+   * 
+   * @param requireHandler
+   */
+  public void setRequireHandler(boolean requireHandler)
+  { this.requireHandler=requireHandler;
   }
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -152,6 +172,10 @@ public class Filter
           for (Handler handler:handlers)
           { handler.bind(exportFocus);
           }
+        }
+
+        if (defaultHandler!=null)
+        { defaultHandler.bind(exportFocus);
         }
               
       }
@@ -217,17 +241,7 @@ public class Filter
       log.fine("Servicing "+httpRequest.getRequestURI());
       
       Call call=callContext.get();
-      if (request.getContentLength()>0)
-      {
-        call.request.content
-          =new ByteArrayResource();
-        InputStream in=request.getInputStream();
-        OutputStream out=call.request.content.getOutputStream();
-        long count=StreamUtil.copyRaw(in, out, 8192, request.getContentLength());
-        out.flush();
-        out.close();
-        log.fine("Read content: "+count);
-      }
+
       
       for (List<MimeHeader> headerList: headers.values())
       { 
@@ -246,53 +260,75 @@ public class Filter
       boolean handled=false;
       
       String handlerName=pathContext.get().getNextPathInfo();
-      if (handlerName!=null && handlerMap!=null)
-      {
-        Handler handler=handlerMap.get(handlerName);
-        if (handler!=null)
-        { 
-          handler.handle();
-          handled=true;
-        }
+      if (debug)
+      { log.fine("Looking for handler for name ["+handlerName+"]");
+      }
+      
+      Handler handler=null;
+      if (handlerMap!=null)
+      { handler=handlerMap.get(handlerName);
+      }
+       
+      if (handler==null)
+      { handler=defaultHandler;
+      }
+        
+      if (handler!=null)
+      { 
+        call.init(httpRequest);
+        handler.handle();
+        handled=true;
       }
       
       if (!handled && defaultX!=null)
       { 
+        call.init(httpRequest);
         defaultX.get();
         handled=true;
       }
       
-      if (!handled)
-      {
-        call.response.status=404;
-        call.response.setText
-          ("404 Not Found. Could not resolve path "
-           +pathContext.get().getPathInfo()
-           );
-      }
-      
-      if (call.response.status==null)
-      { call.response.status=200;
-      }
-      ((HttpServletResponse) response).setStatus(call.response.status);
-      
-      if (call.response.contentType!=null)
-      { response.setContentType(call.response.contentType);
-      }
-      
-      if (call.response.result!=null)
+      if (!handled && !requireHandler)
       { 
-        response.setContentLength
-          (Long.valueOf(call.response.result.getSize()).intValue()); 
-
-        InputStream in=call.response.result.getInputStream();
-        try
-        { 
-          StreamUtil.copyRaw(in, response.getOutputStream(), 8192);
-          in.close();
+        if (debug)
+        { log.fine("No handler for name ["+handlerName+"], passing through");
         }
-        finally
-        { in.close();
+        chain.doFilter(request,response);
+      }
+      else
+      {
+        if (!handled)
+        {
+          call.init(httpRequest);
+          call.response.status=404;
+          call.response.setText
+            ("404 Not Found. Could not resolve path "
+             +pathContext.get().getPathInfo()
+             );
+        }
+        
+        if (call.response.status==null)
+        { call.response.status=200;
+        }
+        ((HttpServletResponse) response).setStatus(call.response.status);
+        
+        if (call.response.contentType!=null)
+        { response.setContentType(call.response.contentType);
+        }
+        
+        if (call.response.result!=null)
+        { 
+          response.setContentLength
+            (Long.valueOf(call.response.result.getSize()).intValue()); 
+  
+          InputStream in=call.response.result.getInputStream();
+          try
+          { 
+            StreamUtil.copyRaw(in, response.getOutputStream(), 8192);
+            in.close();
+          }
+          finally
+          { in.close();
+          }
         }
       }
       
