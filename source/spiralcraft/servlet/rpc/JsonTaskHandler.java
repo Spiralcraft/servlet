@@ -15,6 +15,8 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.Level;
+import spiralcraft.rules.RuleException;
+import spiralcraft.rules.Violation;
 import spiralcraft.servlet.rpc.kit.AbstractHandler;
 import spiralcraft.task.Scenario;
 import spiralcraft.task.Task;
@@ -110,9 +112,26 @@ public class JsonTaskHandler<Tcontext,Tresult>
         command.execute();
         if (command.getException()!=null)
         { 
-          log.log(Level.WARNING,declarationInfo+": Command threw exception",command.getException());
-          response.setStatus(500);
-          response.setText("Server error processing request");
+          Throwable exception=command.getException();
+          if (exception instanceof ContextualException)
+          { exception=((ContextualException) exception).getRootCause();
+          }
+          
+          if (exception instanceof RuleException)
+          {
+            String message=exception.getMessage();
+
+            log.log(Level.WARNING
+              ,declarationInfo+": Rule violation "+message);            
+            response.setStatus(422);
+            response.setText(message);
+          }
+          else
+          {
+            log.log(Level.WARNING,declarationInfo+": Command threw exception",command.getException());
+            response.setStatus(500);
+            response.setText("Server error processing request");
+          }
         }
         else if (command.getResult()!=null)
         { call.get().response.setText(jsonOutput.get());
