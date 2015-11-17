@@ -17,6 +17,45 @@
     
       <scm:Change>
      
+        <revision>-dev94
+        </revision>
+      
+        <notes>
+          <scm:Note>Use the existing context://code path structure 
+            to define the API URI structure by allowing the rpc Filter
+            to pass-through requests to subtrees.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/rpc
+        </path>
+        
+        <resources>
+          <URI>Call.java
+          </URI>
+          <URI>Filter.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev94
+        </revision>
+      
+        <notes>
+          <scm:Note>Return Rule violations as "422 UNPROCESSABLE ENTITY"
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/rpc/JsonTaskHandler.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev93
         </revision>
       
