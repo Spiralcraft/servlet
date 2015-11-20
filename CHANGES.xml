@@ -17,6 +17,29 @@
     
       <scm:Change>
      
+        <revision>-dev95
+        </revision>
+      
+        <notes>
+          <scm:Note>Add methods to simply determine whether call method is
+            a GET or a POST
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/rpc
+        </path>
+        
+        <resources>
+          <URI>Call.java
+          </URI>
+          <URI>Request.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev94
         </revision>
       
