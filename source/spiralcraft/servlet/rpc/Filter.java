@@ -238,7 +238,6 @@ public class Filter
       push(httpRequest,httpResponse);
       pushed=true;
       
-      log.fine("Servicing "+httpRequest.getRequestURI());
       
       Call call=callContext.get();
 
@@ -275,6 +274,9 @@ public class Filter
         
       if (handler!=null)
       { 
+        if (debug)
+        { log.fine("Servicing "+httpRequest.getRequestURI());
+        }
         call.init(httpRequest);
         handler.handle();
         handled=true;
@@ -282,6 +284,9 @@ public class Filter
       
       if (!handled && defaultX!=null)
       { 
+        if (debug)
+        { log.fine("Servicing "+httpRequest.getRequestURI()+" with default hook");
+        }
         call.init(httpRequest);
         defaultX.get();
         handled=true;
