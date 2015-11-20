@@ -17,6 +17,7 @@ public class Call
   void init(HttpServletRequest request)
     throws IOException
   {
+    this.request.hsr=request;
     if (request.getContentLength()>0)
     {
       this.request.content

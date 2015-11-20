@@ -27,6 +27,14 @@ public class Request
   public Resource getContent()
   { return content;
   }
+  
+  public boolean isGet()
+  { return hsr.getMethod().equals("GET");
+  }
+
+  public boolean isPost()
+  { return hsr.getMethod().equals("POST");
+  }
 
   public byte[] getContentBytes()
     throws IOException
