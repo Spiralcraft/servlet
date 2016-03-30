@@ -17,6 +17,27 @@
     
       <scm:Change>
      
+        <revision>-dev96
+        </revision>
+      
+        <notes>
+          <scm:Note>Ignore additional invocations after link command has been
+            started. This can arise due to async link invocations in client.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html
+        </path>
+        
+        <resources>
+          <URI>Link.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+    
+      <scm:Change>
+     
         <revision>-dev95
         </revision>
       
