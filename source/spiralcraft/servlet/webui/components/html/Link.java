@@ -213,6 +213,13 @@ public class Link
       { 
         if (command!=null)
         {
+          if (command.isStarted())
+          { 
+            log.log(Level.WARNING
+              ,Link.this.getErrorContext()+": Action already in proccess"
+              );
+            return;
+          }
           command.execute();
           if (command.getException()!=null)
           { 
