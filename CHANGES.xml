@@ -15,6 +15,29 @@
 
     <detail>
     
+
+      <scm:Change>
+     
+        <revision>-dev97
+        </revision>
+      
+        <notes>
+          <scm:Note>Publish specified RequestData bindings in "prepare" phase
+            so they appear in auto-linkback urls created in the
+            page.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>RequestData.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
       <scm:Change>
      
         <revision>-dev96
