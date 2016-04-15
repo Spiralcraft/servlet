@@ -18,6 +18,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import spiralcraft.app.Dispatcher;
+import spiralcraft.app.Message;
+import spiralcraft.app.MessageHandlerChain;
+import spiralcraft.app.kit.AbstractMessageHandler;
+import spiralcraft.common.ContextualException;
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Expression;
@@ -28,6 +33,7 @@ import spiralcraft.lang.parser.StructNode;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.servlet.webui.ServiceContext;
 import spiralcraft.textgen.ExpressionFocusElement;
+import spiralcraft.textgen.PrepareMessage;
 import spiralcraft.textgen.ValueState;
 import spiralcraft.util.ArrayUtil;
 
@@ -151,6 +157,28 @@ public class RequestData<T>
     
   }
   
+  @Override
+  protected void addHandlers()
+    throws ContextualException
+  { 
+    
+    super.addHandlers();
+    addHandler
+      (new AbstractMessageHandler()
+      {
+        { this.type=PrepareMessage.TYPE;
+        }
+        
+        @Override
+        public void doHandler(Dispatcher context, Message message,
+            MessageHandlerChain next)
+        { 
+          publish((ServiceContext) context);
+          next.handleMessage(context,message);
+        }
+      });    
+  }
+  
   /**
    * Automatically map request parameters which correspond to the properties
    *   of the object referenced by the target expression. 
@@ -213,6 +241,26 @@ public class RequestData<T>
    */
   public void setOnRequest(Binding<?> onRequest)
   { this.onRequest=onRequest;
+  }
+  
+  @SuppressWarnings("unchecked")
+  private void publish(ServiceContext context)
+  {
+    if (requestBindings!=null)
+    {
+      try
+      { 
+        prevalue.push(((ValueState<T>) context.getState()).getValue());
+        
+        for (RequestBinding<?> requestBinding:requestBindings)
+        { requestBinding.publish(context);
+        }
+      }
+      finally
+      { prevalue.pop();
+      }
+      
+    }
   }
   
   @Override
