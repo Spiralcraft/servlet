@@ -205,7 +205,11 @@ public class RequestBinding<Tval>
     { 
       List<String> values=binding.translate();
       if (values!=null)
-      { context.setActionParameter(name, values);
+      { 
+        if (debug)
+        { log.fine("Publishing action parameter: "+name+"="+values);
+        }
+        context.setActionParameter(name, values);
       }
     }
   }
