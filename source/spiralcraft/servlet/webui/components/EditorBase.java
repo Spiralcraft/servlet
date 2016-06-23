@@ -1088,7 +1088,7 @@ public abstract class EditorBase<Tbuffer extends Buffer>
           =parentKey.bindChannel(parentChannel,focus,null);
             
         Key<Tuple> localKey
-          =(Key<Tuple>) type.findKey(parentKey.getImportedKey().getFieldNames());
+          =(Key<Tuple>) type.getCoreType().findKey(parentKey.getImportedKey().getFieldNames());
         if (localKey!=null)
         { localKeyChannel=localKey.bindChannel(source,focus,null);
         }
