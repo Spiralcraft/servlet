@@ -18,6 +18,54 @@
 
       <scm:Change>
      
+        <revision>-dev98
+        </revision>
+      
+        <notes>
+          <scm:Note>DateInput uses input type "date" when useNativePicker is
+            configured
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/DateInput.java
+        </path>
+        
+      </scm:Change>
+
+
+      <scm:Change>
+     
+        <revision>-dev98
+        </revision>
+      
+        <notes>
+          <scm:Note>Fix regression which broke automatic key resolution
+            in RelativeField
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/EditorBase.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev98
+        </revision>
+      
+        <notes>
+          <scm:Note>Respond kindly to a HEAD request for a directory
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/vfs/FileServlet.java
+        </path>
+        
+      </scm:Change>
+ 
+      <scm:Change>
+     
         <revision>-dev97
         </revision>
       
