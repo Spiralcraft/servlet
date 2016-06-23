@@ -18,6 +18,7 @@ import java.util.Date;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlTextInput;
+import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlTextInput.TextTag;
 import spiralcraft.time.TimeField;
 import spiralcraft.util.string.DateToString;
 import spiralcraft.util.string.StringConverter;
@@ -29,10 +30,15 @@ public class DateInput
   private String format;
   private TimeField precision=TimeField.MILLISECOND;
   private boolean roundUp=false;
+  private String inputType="text";
+  private boolean useNativePicker;
   
   @Override
   protected StringConverter<Date> createConverter(Focus<?> focus)
   {
+    if (useNativePicker && format==null)
+    { format="yyyy-MM-dd";
+    }
     if (format==null)
     { return null;
     }
@@ -50,13 +56,29 @@ public class DateInput
 
   @Override
   protected TextTag createTag()
-  { return new TextTag();
+  { return new Tag();
   }
     
   public void setFormat(String format)
   { this.format=format;
   }
   
+  public void setUseNativePicker(boolean useNativePicker)
+  { this.useNativePicker=useNativePicker; 
+  }
+  
+  public class Tag 
+    extends TextTag
+  {    
+    { addStandardClass("sc-webui-date-input");
+    }
+  
+    @Override
+    protected String getInputType()
+    { return useNativePicker?"date":inputType;
+    }
+
+  }  
   
 }
 
