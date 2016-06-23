@@ -349,6 +349,9 @@ public class FileServlet
             if (request.getMethod().equals("GET"))
             { sendDirectory(request,response,container);
             }
+            else if (request.getMethod().equals("HEAD"))
+            { sendHead(request,response,container);
+            }
             else
             { 
               // Method not allowed
