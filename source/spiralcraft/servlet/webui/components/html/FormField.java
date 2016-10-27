@@ -174,6 +174,7 @@ public class FormField<T>
       }
       Label labelElement=new Label();
       labelElement.setText(label);
+      labelElement.setParent(this);
       labelElement.bind(focus);
       children.add(labelElement);
     }
