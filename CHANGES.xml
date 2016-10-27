@@ -18,6 +18,39 @@
 
       <scm:Change>
      
+        <revision>-dev99
+        </revision>
+      
+        <notes>
+          <scm:Note>Error tags now render with a standard css class and
+            wrap individual elements in span tags for better control over
+            rendering. 
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/ErrorTag.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
+        <revision>-dev99
+        </revision>
+      
+        <notes>
+          <scm:Note>Labels generated internally by FormField now
+            properly render the "for" attribute. 
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/FormField.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev98
         </revision>
       
