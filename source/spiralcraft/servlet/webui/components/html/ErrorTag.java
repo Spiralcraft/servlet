@@ -35,7 +35,9 @@ import spiralcraft.app.MessageHandlerChain;
 public class ErrorTag
     extends AbstractTag
 {
-  { tagPosition=-1;
+  { 
+    tagPosition=-1;
+    addStandardClass("sc-webui-error");
   }
   
   private String tagName="div";
@@ -88,7 +90,9 @@ public class ErrorTag
     { 
       for (String string: errors)
       { 
+        out.append("<span class=\"sc-webui-error-detail\">");
         out.append(string);
+        out.append("</span>");
         out.append("<br/>");
       }
     }
