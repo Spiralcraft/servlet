@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.DynamicLoadException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
@@ -216,13 +217,29 @@ public class Filter
         synchronized (this)
         { 
           if (!initialized)
-          { init(request,response);
+          { 
+            try
+            { init(request,response);
+            }
+            catch (ContextualException x)
+            { 
+              throw new DynamicLoadException
+                ("Error loading RPC Filter",getDeclarationInfo(),x);
+            }
           }
         }
       }
       
       if (focus==null)
-      { init(request,response);
+      { 
+        try
+        { init(request,response);
+        }
+        catch (ContextualException x)
+        { 
+          throw new DynamicLoadException
+            ("Error loading RPC Filter",getDeclarationInfo(),x);
+        }
       }
       
       if (httpFocus!=null)

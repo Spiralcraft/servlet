@@ -25,10 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.common.ContextualException;
+import spiralcraft.common.DynamicLoadException;
 import spiralcraft.common.LifecycleException;
+import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.data.persist.XmlBean;
 import spiralcraft.lang.Focus;
+import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.util.LangUtil;
+import spiralcraft.log.Level;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.util.LinkedFilterChain;
 import spiralcraft.util.URIUtil;
@@ -159,8 +163,11 @@ public class PathContextFilter
               =Package.findResource(resourceURI);
             if (resource!=null)
             { 
-              context=XmlBean.<PathContext>instantiate
-               (codeSearchRoot.resolve("PathContext")).get();
+              AbstractXmlObject<PathContext,?> o
+                =XmlBean.<PathContext>instantiate
+                    (codeSearchRoot.resolve("PathContext"));
+              context=o.get();
+              
             }
             else
             { 
@@ -206,8 +213,12 @@ public class PathContextFilter
                   +" from "+resource.getURI()
                   );
               }
-              context=XmlBean.<PathContext>instantiate
-               (altCodeSearchRoot.resolve("PathContext")).get();
+
+              AbstractXmlObject<PathContext,?> o
+              =XmlBean.<PathContext>instantiate
+                  (altCodeSearchRoot.resolve("PathContext"));
+              context=o.get();
+              
               codeSearchRoot=altCodeSearchRoot;
             }
           }
@@ -229,9 +240,11 @@ public class PathContextFilter
       }
       else
       {
-        context=XmlBean.<PathContext>instantiate
-            (codeSearchRoot.resolve("PathContext"))
-              .get();
+        AbstractXmlObject<PathContext,?> o
+          =XmlBean.<PathContext>instantiate
+            (codeSearchRoot.resolve("PathContext"));
+        context=o.get();
+        
       }
     }
     catch (UnresolvableURIException x)
@@ -249,7 +262,7 @@ public class PathContextFilter
     }
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Override
   protected Focus<Object> createFocus(
     Focus<?> parentFocus)
@@ -260,6 +273,7 @@ public class PathContextFilter
     }
 
     Focus<Object> chain=(Focus<Object>) parentFocus;
+    chain=chain.chain(new SimpleChannel(this,true));
     PathContext parentContext
        =LangUtil.findInstance(PathContext.class,chain);
     if (context!=null)
@@ -377,11 +391,31 @@ public class PathContextFilter
       }
     }
     
-    if (filterSet!=null)
-    { filterSet.doFilter(request,response,chain);
+    try
+    {
+      if (filterSet!=null)
+      { filterSet.doFilter(request,response,chain);
+      }
+      else
+      { chain.doFilter(request,response);
+      }
     }
-    else
-    { chain.doFilter(request,response);
+    catch (ServletException x)
+    {
+      if (x.getCause() instanceof DynamicLoadException)
+      { 
+        filterSet=null;
+        context=null;
+        reset();
+        log.log
+          (Level.FINE
+          ,"Resetting PathContext "+resourceURI+" due to DynamicLoadExcetion"
+          ,x.getCause()
+          );
+        throw new ServletException("Error loading dynamic application component");
+      }
+      throw x;
+      
     }
   }
     

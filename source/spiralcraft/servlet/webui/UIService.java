@@ -34,6 +34,8 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
 import spiralcraft.servlet.autofilter.PathContext;
+import spiralcraft.servlet.autofilter.PathContextFilter;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.servlet.kit.ContextAdapter;
 import spiralcraft.servlet.kit.HttpFocus;
 import spiralcraft.servlet.kit.UIResourceMapping;
@@ -246,6 +248,10 @@ public class UIService
       PathContext pathContext=pathContextFocus.getSubject().get();
       if (pathContext!=null)
       {
+        // Ignore paths that result in unresolvable URIs
+        if (pathContext.getNextPathInfo().startsWith(":"))
+        { return null;
+        }
         
         resource=pathContext.uiResourceForRequest();
         
@@ -336,6 +342,31 @@ public class UIService
       (uiResource
       ,statePath
       );
+  }
+  
+  public boolean defaultService
+     (ServletContext servletContext
+     ,HttpServletRequest request
+     ,HttpServletResponse resonse
+     )
+  {
+    if (request.getRequestURI().endsWith("/::system:resetPathContext"))
+    { 
+      Focus<?> focus=FocusFilter.getFocusChain(request);
+      if (focus!=null)
+      {
+        PathContextFilter pfc
+          =LangUtil.findInstance(PathContextFilter.class, focus);
+        if (pfc!=null)
+        { 
+          pfc.reset();
+          return true;
+        }
+      }
+      log.warning("No PathContext to reset);");
+      return true;
+    } 
+    return false;
   }
   
   /**

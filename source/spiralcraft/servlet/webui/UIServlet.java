@@ -25,11 +25,8 @@ import spiralcraft.lang.SimpleFocus;
 //import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.spi.SimpleChannel;
-
-
 import spiralcraft.vfs.NotStreamableException;
-
-
+import spiralcraft.vfs.UnresolvableURIException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -225,7 +222,7 @@ public class UIServlet
         if (debugLevel.isFine())
         { log.fine("Delegating "+request.getServletPath());
         }
-        staticServlet.service(request,response);
+        delegateService(uiServant,request,response);
       }
     }
     catch (NotStreamableException x)
@@ -253,7 +250,7 @@ public class UIServlet
         response.flushBuffer();
       }
       else
-      { staticServlet.service(request,response);
+      { delegateService(uiServant,request,response);
       }
     }
     catch (NotStreamableException x)
@@ -285,7 +282,7 @@ public class UIServlet
           );
       }
       else
-      { staticServlet.service(request,response);
+      { delegateService(uiServant,request,response);
       }
     }
     catch (NotStreamableException x)
@@ -296,6 +293,20 @@ public class UIServlet
     }
   }
   
+  protected void delegateService
+    (UIService uiService,HttpServletRequest request,HttpServletResponse response)
+    throws ServletException,IOException
+  {
+
+    if (!uiService.defaultService
+          (getServletConfig().getServletContext()
+          ,request
+          ,response
+          )
+       )
+    { staticServlet.service(request,response);
+    }
+  }
   
   /**
    * <p>Resolve the UI component associated with this request, applying any
@@ -316,6 +327,9 @@ public class UIServlet
     }
     catch (ContextualException x)
     { throw new ServletException("Error instantiating component for "+relativePath,x);
+    }
+    catch (UnresolvableURIException x)
+    { return null;
     }
     
    

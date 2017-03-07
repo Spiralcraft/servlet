@@ -355,6 +355,14 @@ public abstract class FocusFilter<T>
     
   }
   
+  public void reset()
+  {
+    log.fine("Resetting filter "+getDeclarationInfo());
+    preInitialized=false;
+    initialized=false;
+    focus=null;
+  }
+  
   private final void doLocalFilter
     (ServletRequest request
     , ServletResponse response

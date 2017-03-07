@@ -24,12 +24,14 @@ import java.util.List;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 
+import spiralcraft.common.declare.DeclarationInfo;
 import spiralcraft.data.persist.PersistenceException;
 import spiralcraft.data.persist.XmlBean;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.servlet.kit.StandardFilterConfig;
 import spiralcraft.util.Path;
+import spiralcraft.util.refpool.URIPool;
 import spiralcraft.util.tree.PathTree;
 import spiralcraft.vfs.Resource;
 
@@ -71,6 +73,14 @@ class FilterSet
     this.config=config;
     this.containerResource=containerResource;
     Path path=node.getPath();
+    
+    pathContextFilter.setDeclarationInfo
+      (new DeclarationInfo
+        (null
+        ,URIPool.create("class:/spiralcraft/servlet/autofilter/PathContextFilter")
+        ,path.toURI()
+        )
+      );
     
     try
     { 
