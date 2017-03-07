@@ -82,6 +82,12 @@ public abstract class Acceptor<T>
   protected String staticResetLink;
   
   
+  /**
+   * Expression to be evaluated after all child controls have read the incoming
+   *   data and the form is not in an error state.
+   *   
+   * @param onPostX
+   */
   public void setOnPost(Expression<Command<?,?,?>> onPost)
   { this.onPost=onPost;
   }
@@ -123,6 +129,12 @@ public abstract class Acceptor<T>
     this.addExportContextual(this.afterRevert);
   }
   
+  /**
+   * Binding to be evaluated after all child controls have read the incoming 
+   *   data and the form is not in an error state.
+   *   
+   * @param onPostX
+   */
   public void setOnPostX(Binding<Void> onPostX)
   {
     this.removeExportContextual(this.onPostX);
