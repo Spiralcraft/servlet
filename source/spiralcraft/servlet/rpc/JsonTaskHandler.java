@@ -16,7 +16,6 @@ import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.Level;
 import spiralcraft.rules.RuleException;
-import spiralcraft.rules.Violation;
 import spiralcraft.servlet.rpc.kit.AbstractHandler;
 import spiralcraft.task.Scenario;
 import spiralcraft.task.Task;
