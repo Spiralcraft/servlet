@@ -18,6 +18,25 @@
 
       <scm:Change>
      
+        <revision>-dev100
+        </revision>
+      
+        <notes>
+          <scm:Note>Support reload of PathContext code resources without restart.
+          
+          Trigger PathContext reset via URL command and via DynamicLoadException
+            to force reload of code resources. Incidentally provide basic 
+            mechanism to allow PathContextFilter to service some special requests.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components/html/ErrorTag.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev99
         </revision>
       
