@@ -412,7 +412,7 @@ public class PathContextFilter
           ,"Resetting PathContext "+resourceURI+" due to DynamicLoadExcetion"
           ,x.getCause()
           );
-        throw new ServletException("Error loading dynamic application component");
+        throw new ServletException("Error loading dynamic application component",x);
       }
       throw x;
       
