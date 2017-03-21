@@ -282,9 +282,14 @@ public class Filter
       
       Handler handler=null;
       if (handlerMap!=null)
-      { handler=handlerMap.get(handlerName);
+      { 
+        handler=handlerMap.get(handlerName);
+        if (handler==null && handlerName!=null && !handlerName.isEmpty())
+        { handler=handlerMap.get("*");
+        }
       }
        
+      
       if (handler==null)
       { handler=defaultHandler;
       }
