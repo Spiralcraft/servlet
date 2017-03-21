@@ -15,6 +15,21 @@
 
     <detail>
     
+      <scm:Change>
+     
+        <revision>-dev101
+        </revision>
+      
+        <notes>
+          <scm:Note>Allow for wildcard handler named "*" to differentiate
+            between a variable URL path element and no specified element.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/rpc/Filter.java
+        </path>
+        
+      </scm:Change>
 
       <scm:Change>
      
@@ -30,8 +45,23 @@
           </scm:Note>
         </notes>
         
-        <path>source/spiralcraft/servlet/webui/components/html/ErrorTag.java
+        <path>source/spiralcraft/servlet/
         </path>
+        
+        <resources>
+          <URI>autofilter/FilterSet.java
+          </URI>
+          <URI>autofilter/PathContextFilter.java
+          </URI>
+          <URI>autofilter/spi/FocusFilter.java
+          </URI>
+          <URI>rpc/Filter.java
+          </URI>
+          <URI>webui/UIService.java
+          </URI>
+          <URI>webui/UIServlet.java
+          </URI>
+        </resources>
         
       </scm:Change>
 
