@@ -17,6 +17,23 @@
     
       <scm:Change>
      
+        <revision>-dev102
+        </revision>
+      
+        <notes>
+          <scm:Note>Add "forward" property to designate paths that should
+            be forwarded to the next filter in the chain instead of being
+            handled by this filter.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/rpc/Filter.java
+        </path>
+        
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev101
         </revision>
       

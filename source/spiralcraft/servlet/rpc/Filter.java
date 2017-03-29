@@ -3,6 +3,7 @@ package spiralcraft.servlet.rpc;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.FilterChain;
@@ -62,6 +63,7 @@ public class Filter
   private MimeHeaderMap headers=new MimeHeaderMap();
   private boolean reflectOriginHeader;
   private boolean requireHandler;
+  private HashSet<String> forwardList=new HashSet<>();
   
   
   /**
@@ -95,6 +97,13 @@ public class Filter
   {
     for (MimeHeader header: headers)
     { this.headers.add(header);
+    }
+  }
+  
+  public void setForward(String[] forward)
+  {
+    for (String s:forward)
+    { forwardList.add(s);
     }
   }
   
@@ -281,19 +290,25 @@ public class Filter
       }
       
       Handler handler=null;
-      if (handlerMap!=null)
-      { 
-        handler=handlerMap.get(handlerName);
-        if (handler==null && handlerName!=null && !handlerName.isEmpty())
-        { handler=handlerMap.get("*");
+      if (!forwardList.contains(handlerName))
+      {
+        if (handlerMap!=null)
+        { 
+          handler=handlerMap.get(handlerName);
+          if (handler==null 
+              && handlerName!=null 
+              && !handlerName.isEmpty()
+              )
+          { handler=handlerMap.get("*");
+          }
+        }
+         
+        
+        if (handler==null)
+        { handler=defaultHandler;
         }
       }
-       
       
-      if (handler==null)
-      { handler=defaultHandler;
-      }
-        
       if (handler!=null)
       { 
         if (debug)
