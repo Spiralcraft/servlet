@@ -132,14 +132,15 @@ public class TranslationFilter
     String requestURI=((HttpServletRequest) request).getRequestURI().toString();
     String requestURL=((HttpServletRequest) request).getRequestURL().toString();
     System.err.println("TranslatorFilter: "+requestURL);
-    File targetFile
-      =new File
-        (config.getServletContext().getRealPath
-          ( requestURI
-         )
-        );
+    PathContext pathContext=PathContext.instance(); 
+    log.fine("PathContext "+pathContext);
+    log.fine("PathInfo "+pathContext.getPathInfo());
+    log.fine("CodeBase "+pathContext.getEffectiveCodeBaseURI());
+    Resource targetResource=pathContext.resolveCode(pathContext.getPathInfo());
+    log.fine("Target="+targetResource);
+
     
-    if (targetFile.exists())
+    if (targetResource!=null && targetResource.exists())
     { 
       // Return the resource directly
       chain.doFilter(request,response);
@@ -148,7 +149,7 @@ public class TranslationFilter
     { 
       Resource translation=findTranslation
         (URI.create(requestURL)
-        ,targetFile.toURI()
+        ,pathContext.getEffectiveCodeBaseURI().resolve(pathContext.getPathInfo())
         );
       if (translation!=null)
       { 
