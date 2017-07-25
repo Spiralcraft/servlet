@@ -17,6 +17,27 @@
     
       <scm:Change>
      
+        <revision>-dev103
+        </revision>
+      
+        <notes>
+          <scm:Note>Always configure defaultCodeBase for PathContext so filters can
+            have access to associated resources.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        <resources>
+          <URI>PathContextFilter.java
+          </URI>
+          <URI>TranslationFilter.java
+          </URI>
+        </resources>
+      </scm:Change>
+
+      <scm:Change>
+     
         <revision>-dev102
         </revision>
       
