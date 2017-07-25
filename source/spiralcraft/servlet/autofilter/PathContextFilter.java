@@ -167,7 +167,7 @@ public class PathContextFilter
                 =XmlBean.<PathContext>instantiate
                     (codeSearchRoot.resolve("PathContext"));
               context=o.get();
-              
+              context.setDefaultCodeBaseURI(codeSearchRoot);
             }
             else
             { 
@@ -220,6 +220,7 @@ public class PathContextFilter
               context=o.get();
               
               codeSearchRoot=altCodeSearchRoot;
+              context.setDefaultCodeBaseURI(codeSearchRoot);
             }
           }
           
@@ -244,6 +245,7 @@ public class PathContextFilter
           =XmlBean.<PathContext>instantiate
             (codeSearchRoot.resolve("PathContext"));
         context=o.get();
+        context.setDefaultCodeBaseURI(codeSearchRoot);
         
       }
     }
