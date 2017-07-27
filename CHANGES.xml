@@ -24,6 +24,8 @@
           <scm:Note>Always configure defaultCodeBase for PathContext so filters can
             have access to associated resources.
           </scm:Note>
+          <scm:Note>Enable caching logic and standard headers for TranslationFilter
+          </scm:Note>
         </notes>
         
         <path>source/spiralcraft/servlet/autofilter

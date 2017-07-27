@@ -14,10 +14,8 @@
 //
 package spiralcraft.servlet.autofilter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,7 +27,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import spiralcraft.log.Level;
+import spiralcraft.net.http.Headers;
+import spiralcraft.net.http.RangeHeader;
+import spiralcraft.time.Clock;
 import spiralcraft.util.Path;
 
 import spiralcraft.vfs.Resolver;
@@ -72,9 +75,11 @@ public class TranslationFilter
   private String translatedSuffix;
   private String contentType;
   private Translator translator;
+  private int defaultCacheSeconds;
+  private int bufferSize=8192;
   
-  private final HashMap<URI,Resource> translationMap
-    =new HashMap<URI,Resource>();
+  private final HashMap<URI,TranslationBuffer> translationMap
+    =new HashMap<>();
   
   /**
    * <P>The suffix of the resource that will be translated. If
@@ -129,7 +134,9 @@ public class TranslationFilter
     ,FilterChain chain
     ) throws IOException,ServletException
   {
-    String requestURI=((HttpServletRequest) request).getRequestURI().toString();
+    HttpServletRequest httpRequest=(HttpServletRequest) request;
+    HttpServletResponse httpResponse=(HttpServletResponse) response;
+    
     String requestURL=((HttpServletRequest) request).getRequestURL().toString();
     System.err.println("TranslatorFilter: "+requestURL);
     PathContext pathContext=PathContext.instance(); 
@@ -153,25 +160,12 @@ public class TranslationFilter
         );
       if (translation!=null)
       { 
-        if (contentType!=null)
-        { response.setContentType(contentType);
+        if (httpRequest.getMethod().equals("GET"))
+        { sendFile(httpRequest,httpResponse,translation);
         }
-        
-        // Send the translated response
-        
-        InputStream in = translation.getInputStream();
-        try
-        {
-          OutputStream out = response.getOutputStream();
-        
-          StreamUtil.copyRaw(in,out,8192);
-
-          out.flush();
-
-        }
-        finally
-        { in.close();
-        }
+        else if (httpRequest.getMethod().equals("HEAD"))
+        { sendHead(httpRequest,httpResponse,translation);
+        }      
         
       }
       else
@@ -186,7 +180,7 @@ public class TranslationFilter
   private synchronized Resource findTranslation(URI requestURI, URI targetURI)
     throws IOException
   {
-    Resource translation=translationMap.get(targetURI);
+    TranslationBuffer translation=translationMap.get(targetURI);
     if (translation==null)
     { 
       translation=createTranslation(requestURI,targetURI);
@@ -194,10 +188,19 @@ public class TranslationFilter
       { translationMap.put(targetURI,translation);
       }
     }
-    return translation;
+    else
+    {
+      if (translation.sourceModified<translation.source.getLastModified())
+      { 
+        translation.sourceModified=translation.source.getLastModified();
+        translation.translation=translator.translate(translation.source,requestURI);
+        translation.translation.setLastModified(translation.sourceModified);
+      }
+    }
+    return translation!=null?translation.translation:null;
   }
   
-  private Resource createTranslation(URI requestURI,URI targetURI)
+  private TranslationBuffer createTranslation(URI requestURI,URI targetURI)
     throws IOException
   {
     if (translatedSuffix==null
@@ -240,7 +243,14 @@ public class TranslationFilter
     
       Resource sourceResource=Resolver.getInstance().resolve(sourceURI);
       if (sourceResource.exists())
-      { return translator.translate(sourceResource,requestURI);
+      { 
+        TranslationBuffer translation=new TranslationBuffer();
+        translation.source=sourceResource;
+        translation.sourceModified=sourceResource.getLastModified();
+        translation.translation=translator.translate(sourceResource,requestURI);
+        translation.translation.setLastModified(translation.sourceModified);
+        translation.uri=targetURI;
+        return translation;
       }
       else
       { return null;
@@ -255,5 +265,226 @@ public class TranslationFilter
   }
 
 
+  private void setHeaders
+    (HttpServletResponse response
+    ,Resource resource
+    )
+    throws IOException
+  {
+    if (contentType!=null)
+    { response.setContentType(contentType);
+    }
 
+    response.setDateHeader
+      (Headers.LAST_MODIFIED
+      ,floorToSecond(resource.getLastModified())
+      );
+    setCacheHeaders(response);
+  }
+
+  private void setCacheHeaders
+    (HttpServletResponse response
+    )
+  {
+    if (defaultCacheSeconds>-1)
+    {
+      long now=Clock.instance().approxTimeMillis();
+      response.setDateHeader
+        (Headers.EXPIRES
+        ,floorToSecond(now)+(defaultCacheSeconds*1000)
+        );
+      response.setHeader(Headers.CACHE_CONTROL,"max-age="+defaultCacheSeconds);
+    }
+  }
+  
+  private long floorToSecond(long timeInMs)
+  { return (long) Math.floor((double) timeInMs/(double) 1000)*1000;
+  }
+  
+  private void sendHead
+    (HttpServletRequest request
+    ,HttpServletResponse response
+    ,Resource resource
+    )
+    throws IOException
+  {
+    try
+    {
+      long lastModified=floorToSecond(resource.getLastModified());     
+      
+      try
+      { 
+        long ifModifiedSince=request.getDateHeader(Headers.IF_MODIFIED_SINCE);
+        if (ifModifiedSince>0 && lastModified<=ifModifiedSince)
+        {
+          // Send unchanged status because resource not modified.
+          setCacheHeaders(response);
+          response.setStatus(304);
+          response.getOutputStream().flush();
+          return;
+        }
+        else if (ifModifiedSince>0 && log.canLog(Level.DEBUG))
+        { log.log(Level.DEBUG,"If-Modified-Since: "+ifModifiedSince+", lastModified="+lastModified);
+        }
+      }
+      catch (IllegalArgumentException x)
+      {
+        log.log
+          (Level.WARNING
+          ,"Unrecognized date format in header- If-Modified-Since: "
+          +request.getHeader(Headers.IF_MODIFIED_SINCE)
+          );
+      }      
+  
+      setHeaders(response,resource);
+      
+      long size=resource.getSize();
+      if (size>0 && size<Integer.MAX_VALUE)
+      { response.setContentLength((int) size);
+      } 
+      
+      response.getOutputStream().flush();
+    }
+    catch (IOException x)
+    { 
+      if (!x.getMessage().equals("Broken pipe")
+          && !x.getMessage().equals("Connection reset by peer")
+          )
+      {
+        log.log
+          (Level.WARNING
+          ,"IOException retrieving "+resource.getURI()+": "+x.toString()
+          );
+      }
+  
+    }
+  }  
+  
+  /**
+   * Send the specified file to the client
+   */
+  private void sendFile
+    (HttpServletRequest request
+    ,HttpServletResponse response
+    ,Resource resource
+    )
+    throws IOException
+  {
+    InputStream resourceInputStream=null;
+    
+    try
+    {
+      long lastModified=floorToSecond(resource.getLastModified());
+      try
+      { 
+        long ifModifiedSince=request.getDateHeader(Headers.IF_MODIFIED_SINCE);
+        if (ifModifiedSince>0 && lastModified<=ifModifiedSince)
+        {
+          // Send unchanged status because resource not modified.
+          setCacheHeaders(response);
+          response.setStatus(304);
+          response.getOutputStream().flush();
+          return;
+        }
+        else if (ifModifiedSince>0 && log.canLog(Level.DEBUG))
+        {
+          log.log(Level.DEBUG,"If-Modified-Since: "
+                    +ifModifiedSince+", lastModified="+lastModified);
+        }
+      }
+      catch (IllegalArgumentException x)
+      {
+        log.log
+          (Level.WARNING
+          ,"Unrecognized date format in header- If-Modified-Since: "
+          +request.getHeader(Headers.IF_MODIFIED_SINCE)
+          );
+      }      
+
+
+      resourceInputStream
+        =resource.getInputStream();
+
+      setHeaders(response,resource);
+
+      /**
+       * Interpret range
+       * XXX Process multiple range-specs in header
+       */
+      RangeHeader rangeHeader=null;
+      String rangeSpec=request.getHeader(Headers.RANGE);
+      if (rangeSpec!=null)
+      { rangeHeader=new RangeHeader(rangeSpec);
+      }
+        
+      int contentLength=(int) resource.getSize();
+      if (rangeHeader!=null)
+      { 
+        resourceInputStream.skip(rangeHeader.getSkipBytes());
+        
+        // XXX Will be a problem for resources longer than MAXINT
+        
+        contentLength
+          =(int) Math.max(0,resource.getSize()-rangeHeader.getSkipBytes());
+        
+        if (rangeHeader.getMaxBytes()>-1)
+        { contentLength=Math.min(contentLength,rangeHeader.getMaxBytes());
+        }
+        
+        response.setContentLength(contentLength);
+        
+        response.setStatus(206);
+        response.setHeader
+          (Headers.CONTENT_RANGE
+          ,"bytes "
+          +rangeHeader.getSkipBytes()
+          +"-"
+          +Math.min(resource.getSize()-1,rangeHeader.getLastByte())
+          +"/"
+          +resource.getSize()
+          );
+      }
+      else
+      { response.setContentLength(contentLength);
+      }
+      
+      StreamUtil.copyRaw
+        (resourceInputStream
+        ,response.getOutputStream()
+        ,bufferSize
+        ,contentLength
+        );
+      
+      response.getOutputStream().flush();
+      
+    }
+    catch (IOException x)
+    { 
+      if (!x.getMessage().equals("Broken pipe")
+          && !x.getMessage().equals("Connection reset by peer")
+          )
+      {
+        log.log
+          (Level.WARNING
+          ,"IOException retrieving "+resource.getURI()+": "+x.toString()
+          );
+      }
+
+    }
+    finally
+    { 
+      if (resourceInputStream!=null)
+      { resourceInputStream.close();
+      }
+    }
+  }
+  
+}
+
+class TranslationBuffer
+{
+  URI uri;
+  Resource translation;
+  Resource source;
+  long sourceModified;
 }
