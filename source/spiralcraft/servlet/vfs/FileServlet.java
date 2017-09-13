@@ -294,7 +294,7 @@ public class FileServlet
     }
     catch (UnresolvableURIException x)
     { 
-      log.warning("Invalid URI syntax "+contextPath);
+      log.log(Level.WARNING,"Invalid URI syntax "+contextPath,x);
       send400(request,response);
       return;
     }
