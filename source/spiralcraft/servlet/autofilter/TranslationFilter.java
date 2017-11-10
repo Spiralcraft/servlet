@@ -138,14 +138,22 @@ public class TranslationFilter
     HttpServletResponse httpResponse=(HttpServletResponse) response;
     
     String requestURL=((HttpServletRequest) request).getRequestURL().toString();
-    System.err.println("TranslatorFilter: "+requestURL);
+    if (debug)
+    { log.fine("TranslatorFilter: "+requestURL);
+    }
+    
     PathContext pathContext=PathContext.instance(); 
-    log.fine("PathContext "+pathContext);
-    log.fine("PathInfo "+pathContext.getPathInfo());
-    log.fine("CodeBase "+pathContext.getEffectiveCodeBaseURI());
+    if (debug)
+    {
+      log.fine("PathContext "+pathContext);
+      log.fine("PathInfo "+pathContext.getPathInfo());
+      log.fine("CodeBase "+pathContext.getEffectiveCodeBaseURI());
+    }
+    
     Resource targetResource=pathContext.resolveCode(pathContext.getPathInfo());
-    log.fine("Target="+targetResource);
-
+    if (debug)
+    { log.fine("Target="+targetResource);
+    }
     
     if (targetResource!=null && targetResource.exists())
     { 
