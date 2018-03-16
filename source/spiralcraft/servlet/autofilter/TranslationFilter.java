@@ -77,6 +77,7 @@ public class TranslationFilter
   private Translator translator;
   private int defaultCacheSeconds;
   private int bufferSize=8192;
+  private boolean useSourceLastModified=true;
   
   private final HashMap<URI,TranslationBuffer> translationMap
     =new HashMap<>();
@@ -125,6 +126,17 @@ public class TranslationFilter
    */
   public void setContentType(String contentType)
   { this.contentType=contentType;
+  }
+  
+  /**
+   * Whether to use the last-modified time stamp on the source file to prevent
+   *   re-translation. Defaults to true. If false, the source will be retranslated
+   *   every time.
+   *   
+   * @param useSourceLastModified
+   */
+  public void setUseSourceLastModified(boolean useSourceLastModified)
+  { this.useSourceLastModified=useSourceLastModified;
   }
   
   @Override
@@ -198,14 +210,26 @@ public class TranslationFilter
     }
     else
     {
-      if (translation.sourceModified<translation.source.getLastModified())
+      if (!useSourceLastModified || translation.sourceModified<getLastModified(translation.source))
       { 
-        translation.sourceModified=translation.source.getLastModified();
-        translation.translation=translator.translate(translation.source,requestURI);
-        translation.translation.setLastModified(translation.sourceModified);
+        translation.translation
+          =translator.translate(translation.source,requestURI,translation.translation);
+        if (useSourceLastModified)
+        {
+          translation.sourceModified=getLastModified(translation.source);
+          translation.translation.setLastModified(translation.sourceModified);
+        }
+        else
+        { translation.sourceModified=translation.translation.getLastModified();
+        }
       }
     }
     return translation!=null?translation.translation:null;
+  }
+  
+  private long getLastModified(Resource source)
+    throws IOException
+  { return source.getLastModified();
   }
   
   private TranslationBuffer createTranslation(URI requestURI,URI targetURI)
@@ -254,7 +278,7 @@ public class TranslationFilter
       { 
         TranslationBuffer translation=new TranslationBuffer();
         translation.source=sourceResource;
-        translation.sourceModified=sourceResource.getLastModified();
+        translation.sourceModified=getLastModified(sourceResource);
         translation.translation=translator.translate(sourceResource,requestURI);
         translation.translation.setLastModified(translation.sourceModified);
         translation.uri=targetURI;
