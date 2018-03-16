@@ -115,7 +115,13 @@ public class CompoundFilter
       { filterList.add(filter);
       }
     }
-    FilterChain newChain=new LinkedFilterChain(filterList,chain);
-    newChain.doFilter(request,response);    
+    if (filterList.size()>0)
+    {
+      FilterChain newChain=new LinkedFilterChain(filterList,chain);
+      newChain.doFilter(request,response);    
+    }
+    else
+    { chain.doFilter(request, response);
+    }
   }
 }
