@@ -260,7 +260,7 @@ public class InternalHttpServletResponse
     { _log.fine(""+code);
     }
 
-    String msg =  _statusMap.get(new Integer(code));
+    String msg =  _statusMap.get(code);
     if (msg==null)
     { sendError(code,"Unknown Error");
     }
@@ -314,7 +314,7 @@ public class InternalHttpServletResponse
     { _log.fine(""+code);
     }
     _status=code;
-    _reason=_statusMap.get(new Integer(code));
+    _reason=_statusMap.get(code);
   }
 
   @Override
