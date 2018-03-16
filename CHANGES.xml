@@ -16,6 +16,30 @@
     <detail>
     
       <scm:Change>
+        <revision>-dev106
+        </revision>
+        <notes>
+          <scm:Note>Fix crash issue when only filter in a PathContext has a 
+            specific pattern.
+          </scm:Note>
+          <scm:Note>TranslationFilter allows the Translator to compute effective
+            lastModified for virtual source resource.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/autofilter
+        </path>
+        
+        <resources>
+          <URI>CompoundFilter.java
+          </URI>
+          <URI>TranslationFilter.java
+          </URI>
+        </resources>
+      
+      </scm:Change>
+
+      <scm:Change>
      
         <revision>-dev103
         </revision>
