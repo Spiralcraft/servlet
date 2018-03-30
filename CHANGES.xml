@@ -16,6 +16,19 @@
     <detail>
     
       <scm:Change>
+        <revision>-dev107
+        </revision>
+        <notes>
+          <scm:Note>Update usage of MimeHeaderMap to conform to case-insensitive
+            methods.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/kit/InternalHttpServletResponse.java
+        </path>
+        
+      </scm:Change>
+      <scm:Change>
         <revision>-dev106
         </revision>
         <notes>
