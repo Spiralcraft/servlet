@@ -199,9 +199,9 @@ public class InternalHttpServletResponse
   public boolean containsHeader(String name)
   {     
     if (debugAPI)
-    { _log.fine(name+" "+headerMap.get(name));
+    { _log.fine(name+" "+headerMap.getHeaders(name));
     }
-    return headerMap.get(name)!=null;
+    return headerMap.getHeaders(name)!=null;
   }
 
   @Override
@@ -342,14 +342,14 @@ public class InternalHttpServletResponse
   @Override
   public void setIntHeader(String name, int value)
   {
-    headerMap.remove(name);
+    headerMap.removeHeaders(name);
     addIntHeader(name,value);
   }
 
   @Override
   public void setDateHeader(String name, long date)
   {
-    headerMap.remove(name);
+    headerMap.removeHeaders(name);
     addDateHeader(name,date);
   }
   
@@ -375,13 +375,13 @@ public class InternalHttpServletResponse
   @Override
   public void setHeader(String name, String value)
   {
-    headerMap.remove(name);
+    headerMap.removeHeaders(name);
     addHeader(name,value);
   }
 
   public String getHeader(String name)
   { 
-    MimeHeader var=headerMap.getFirst(name);
+    MimeHeader var=headerMap.getHeader(name);
     if (debugAPI)
     { _log.fine(name+" = "+(var!=null?var.getRawValue():"null"));
     }
