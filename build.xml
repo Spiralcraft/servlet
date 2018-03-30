@@ -4,7 +4,10 @@
   <property name="organization" value="spiralcraft"/>
   <property name="module" value="servlet"/>
 	<property file="version.properties"/>
-	
+
+  <property name="spiralcraft.javac.target" value="1.8"/>
+  <property name="spiralcraft.javac.source" value="1.8"/>
+  
   <path id="classpath">
     <pathelement location="lib/spiralcraft-core.jar"/>
     <pathelement location="lib/spiralcraft-net.jar"/>
