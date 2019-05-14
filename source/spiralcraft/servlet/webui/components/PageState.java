@@ -28,7 +28,7 @@ public class PageState<Ttarget,Titem>
   public PageState(Paginate<Ttarget,Titem> control)
   { 
     super(control);
-    pageSize=control.getPageSize();
+    pageSize=control.getResolvedPageSize();
   }
   
   public int getPageSize()

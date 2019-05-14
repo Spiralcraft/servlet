@@ -64,6 +64,7 @@ public class Paginate<Ttarget,Titem>
   
   private int pageSize=10;
   private Binding<Integer> pageControlX;
+  private Binding<Integer> pageSizeX;
   
   @Override
   @SuppressWarnings("unchecked")
@@ -93,6 +94,18 @@ public class Paginate<Ttarget,Titem>
     this.removeParentContextual(this.pageControlX);
     this.pageControlX=pageControlX;
     this.addParentContextual(this.pageControlX);
+  }
+  
+  /**
+   * An external source for the page size
+   * 
+   * @param pageControlX
+   */
+  public void setPageSizeX(Binding<Integer> pageSizeX)
+  {
+    this.removeParentContextual(this.pageSizeX);
+    this.pageSizeX=pageSizeX;
+    this.addParentContextual(this.pageSizeX);
   }
   
   @Override
@@ -168,7 +181,7 @@ public class Paginate<Ttarget,Titem>
   @SuppressWarnings("unchecked") // PageItem cast
   protected void resetPageState(PageState<Ttarget,Titem> state)
   {
-      
+    state.setPageSize(getResolvedPageSize());  
     int start=state.getCurrentPage()*state.getPageSize();
 
     int count=0;
@@ -379,5 +392,10 @@ public class Paginate<Ttarget,Titem>
     };
   }
   
+  public int getResolvedPageSize()
+  { 
+    Integer pageSize=pageSizeX!=null?pageSizeX.get():null;
+    return pageSize!=null?pageSize:getPageSize();
+  }
 }
 
