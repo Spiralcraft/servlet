@@ -15,6 +15,26 @@
 
     <detail>
     
+     <scm:Change>
+        <revision>-dev108
+        </revision>
+        <notes>
+          <scm:Note>Page size for pagination component is variable per-render.
+          </scm:Note>
+        </notes>
+        
+        <path>source/spiralcraft/servlet/webui/components
+        </path>
+        
+        <resources>
+          <URI>Paginate.java
+          </URI>
+          <URI>PageState.java
+          </URI>
+        </resources>
+        
+      </scm:Change>
+
       <scm:Change>
         <revision>-dev107
         </revision>
@@ -28,6 +48,7 @@
         </path>
         
       </scm:Change>
+
       <scm:Change>
         <revision>-dev106
         </revision>
