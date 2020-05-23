@@ -22,6 +22,7 @@ import spiralcraft.common.ContextualRuntimeException;
 import spiralcraft.common.namespace.ContextualName;
 import spiralcraft.common.namespace.UnresolvedPrefixException;
 import spiralcraft.lang.Binding;
+import spiralcraft.lang.Channel;
 import spiralcraft.lang.Expression;
 import spiralcraft.lang.Focus;
 import spiralcraft.lang.BindException;
@@ -29,6 +30,8 @@ import spiralcraft.lang.Contextual;
 import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.util.ExpressionRenderer;
+import spiralcraft.lang.util.LangUtil;
+import spiralcraft.profiler.ProfilerAgent;
 import spiralcraft.servlet.autofilter.AutoFilter;
 import spiralcraft.servlet.autofilter.CompoundFilter;
 import spiralcraft.servlet.kit.HttpFocus;
@@ -120,7 +123,8 @@ public abstract class FocusFilter<T>
   private final LocalFilter localFilter=new LocalFilter();
   protected AutoFilter[] preFilters;
   protected CompoundFilter preFilter;
-  
+  protected Channel<ProfilerAgent> profilerChannel;
+
   
   // Default to global, to implement Focus hierarchy
   { setGlobal(true);
@@ -392,58 +396,74 @@ public abstract class FocusFilter<T>
         }
       }
       
-
-      
-      // Make our Focus the next filter's parent Focus
-      request.setAttribute(attributeName,exportFocus);
-      
-      if (httpFocus!=null)
-      { 
-        httpFocus.push
-          (config.getServletContext()
-          ,(HttpServletRequest) request
-          ,(HttpServletResponse) response
-          );
-        httpPushed=true;
+      ProfilerAgent profilerAgent
+        =profilerChannel!=null
+          ?profilerChannel.get()
+          :null;
+      if (profilerAgent!=null)
+      { profilerAgent.enter(getClass().getName(),getDeclarationInfo());
       }
       
-      
-      if (whenX==null || Boolean.TRUE.equals(whenX.get()))
+      try
       {
-        // Perform the filter function
+      
+        // Make our Focus the next filter's parent Focus
+        request.setAttribute(attributeName,exportFocus);
         
-        // Make sure the subject of our Focus is appropriate for this
-        //   Thread's service operation for this request
-        pushSubject((HttpServletRequest) request,(HttpServletResponse) response);
-      
-        pushed=true;
-      
-        if (renderer!=null
-            && (renderWhenX==null || Boolean.TRUE.equals(renderWhenX.get())
-               )
-           )
+        if (httpFocus!=null)
         { 
-          if (responseCodeX!=null)
-          { ((HttpServletResponse) response).setStatus(responseCodeX.get());
-          }
-          if (contentTypeX!=null)
-          { response.setContentType(contentTypeX.get());
-          }
-          renderer.render(response.getWriter());
-        }
-        else
-        { 
-          doChain
-            (chain
+          httpFocus.push
+            (config.getServletContext()
             ,(HttpServletRequest) request
             ,(HttpServletResponse) response
             );
+          httpPushed=true;
+        }
+        
+        
+        if (whenX==null || Boolean.TRUE.equals(whenX.get()))
+        {
+          // Perform the filter function
+          
+          // Make sure the subject of our Focus is appropriate for this
+          //   Thread's service operation for this request
+          pushSubject((HttpServletRequest) request,(HttpServletResponse) response);
+        
+          pushed=true;
+        
+          if (renderer!=null
+              && (renderWhenX==null || Boolean.TRUE.equals(renderWhenX.get())
+                 )
+             )
+          { 
+            if (responseCodeX!=null)
+            { ((HttpServletResponse) response).setStatus(responseCodeX.get());
+            }
+            if (contentTypeX!=null)
+            { response.setContentType(contentTypeX.get());
+            }
+            renderer.render(response.getWriter());
+          }
+          else
+          { 
+            doChain
+              (chain
+              ,(HttpServletRequest) request
+              ,(HttpServletResponse) response
+              );
+          }
+        }
+        else
+        { 
+          // Bypass the filter function
+          chain.doFilter(request,response);
         }
       }
-      else
-      { 
-        // Bypass the filter function
-        chain.doFilter(request,response);
+      finally
+      {
+        if (profilerAgent!=null)
+        { profilerAgent.exit(getClass().getName(),getDeclarationInfo(),null);
+        }
       }
     }
     catch (ContextualException x)
@@ -498,7 +518,6 @@ public abstract class FocusFilter<T>
     throws ContextualException
   {
   
-    
     // Create our own Focus, using the 'parent' Focus.
     if (focus==null)
     {         
@@ -506,6 +525,7 @@ public abstract class FocusFilter<T>
       { requestFocus=new SimpleFocus<Void>(null);
       }
       
+      profilerChannel=LangUtil.findChannel(ProfilerAgent.class, requestFocus);
       if (usesRequest 
           && requestFocus.findFocus
             (URI.create("class:/javax/servlet/http/HttpServletRequest")

@@ -33,6 +33,7 @@ import spiralcraft.lang.util.LangUtil;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
+import spiralcraft.profiler.ProfilerAgent;
 import spiralcraft.servlet.autofilter.PathContext;
 import spiralcraft.servlet.autofilter.PathContextFilter;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
@@ -83,6 +84,7 @@ public class UIService
   @SuppressWarnings("rawtypes")
   private Focus<NavContext> navContextFocus;
   private Focus<PathContext> pathContextFocus;
+  private Channel<ProfilerAgent> profilerAgentChannel;
   private Channel<UIService> selfChannel
     =new SimpleChannel<UIService>(this,true);
   
@@ -106,6 +108,8 @@ public class UIService
       =LangUtil.findFocus(NavContext.class,focusChain);
     pathContextFocus
       =LangUtil.findFocus(PathContext.class,focusChain);
+    profilerAgentChannel
+      =LangUtil.<ProfilerAgent>findChannel(ProfilerAgent.class,focusChain);
     return httpFocus;
   }
   
@@ -439,6 +443,12 @@ public class UIService
         //   change
         localSession.setLocalURI(request.getRequestURI());
 
+
+        ProfilerAgent profilerAgent=
+          profilerAgentChannel!=null
+            ?profilerAgentChannel.get()
+            :null;
+
         // Set up the ServiceContext with the last frame used.
         serviceContext
           =new ServiceContext
@@ -447,7 +457,7 @@ public class UIService
         serviceContext.setRequest(request);
         serviceContext.setResponse(response);
         serviceContext.setServletContext(context);
-        
+        serviceContext.setProfilerAgent(profilerAgent);
         
         VariableMap query=serviceContext.getQuery();
         
@@ -467,7 +477,19 @@ public class UIService
         else
         {
           if (port!=null && !port.isEmpty())
-          { callPort(serviceContext,component,localSession,port);
+          { 
+            if (profilerAgent!=null)
+            { profilerAgent.enter("UIService.callPort()",null);
+            }
+            try
+            {callPort(serviceContext,component,localSession,port);
+            }
+            finally
+            { 
+              if (profilerAgent!=null)
+              { profilerAgent.exit("UIService.callPort()", null,null);
+              }
+            }
           }
           else
           { sequencer.service(serviceContext,component,localSession,true);
@@ -563,7 +585,21 @@ public class UIService
     serviceContext.setState(localSession.getState());
     Sequence<Integer> path=localSession.getPort(port);
     if (path!=null)
-    { serviceContext.dispatch(PortMessage.INSTANCE,component,path);
+    { 
+      if (serviceContext.getProfilerAgent()!=null)
+      { serviceContext.getProfilerAgent().enter("UIService.dispatch:PORT", null); 
+      }
+      try
+      { serviceContext.dispatch(PortMessage.INSTANCE,component,path);
+      }
+      finally
+      { 
+        if (serviceContext.getProfilerAgent()!=null)
+        { serviceContext.getProfilerAgent().exit("UIService.dispatch:PORT",null,null); 
+        }
+      }
+      
+      
     }
     else
     { serviceContext.getResponse().setStatus(404);

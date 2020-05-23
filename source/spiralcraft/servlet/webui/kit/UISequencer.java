@@ -22,10 +22,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.app.InitializeMessage;
+import spiralcraft.app.Message;
 import spiralcraft.app.StateFrame;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.net.http.VariableMap;
+import spiralcraft.profiler.ProfilerAgent;
 import spiralcraft.servlet.webui.Action;
 import spiralcraft.servlet.webui.ActionMessage;
 import spiralcraft.servlet.webui.CommandMessage;
@@ -177,10 +179,8 @@ public class UISequencer
           serviceContext.setCurrentFrame(INIT_FRAME);
           localSession.setState(state);
           
-          // Set up state structure and register "initial" events
-          serviceContext.dispatch
-            (InitializeMessage.INSTANCE,component,null);
-          
+          dispatchProfiled("INITIALIZE",serviceContext,InitializeMessage.INSTANCE,component,null);
+
           serviceContext.setInitial(true);
           
           serviceContext.setCurrentFrame(localSession.nextFrame());
@@ -277,7 +277,8 @@ public class UISequencer
       log.fine("Dispatching REQUEST message for frame "
         +serviceContext.getFrame());
     }
-    serviceContext.dispatch(RequestMessage.INSTANCE,component,null);
+    dispatchProfiled
+      ("REQUEST",serviceContext,RequestMessage.INSTANCE,component,null);
     done=processRedirect(serviceContext);
     
     if (!done)
@@ -363,7 +364,9 @@ public class UISequencer
         log.fine("Dispatching PREPARE message for frame "
           +serviceContext.getFrame());
       }
-      serviceContext.dispatch(PrepareMessage.INSTANCE,component,null);
+      // Set up state structure and register "initial" events
+      dispatchProfiled
+        ("PREPARE",serviceContext,PrepareMessage.INSTANCE,component,null);
       done=processRedirect(serviceContext);
     }
     
@@ -385,7 +388,7 @@ public class UISequencer
         log.fine("Dispatching COMMAND message for frame "
             +serviceContext.getFrame());
       }
-      serviceContext.dispatch(CommandMessage.INSTANCE,component,null);
+      dispatchProfiled("COMMAND",serviceContext,CommandMessage.INSTANCE,component,null);
       done=processRedirect(serviceContext);
     }
 
@@ -511,8 +514,11 @@ public class UISequencer
         { path=path.subsequence(portPath.size());
         }
         
-        context.dispatch
-          (new ActionMessage(action)
+        
+        dispatchProfiled
+          ("ACTION"
+          ,context
+          ,new ActionMessage(action)
           ,component
           ,path
           );
@@ -560,10 +566,36 @@ public class UISequencer
     { serviceContext.getResponse().setStatus(200);
     }
     serviceContext.getResponse().addHeader("Cache-Control","no-cache");
-    serviceContext.dispatch(RenderMessage.INSTANCE,component,null);
+    dispatchProfiled("RENDER",serviceContext,RenderMessage.INSTANCE,component,null);
     
     
   }    
   
-  
+  private void dispatchProfiled
+      (String contextID,ServiceContext context,Message message,Component component,Sequence<Integer> path)
+  {
+    ProfilerAgent profilerAgent=context.getProfilerAgent();
+    if (profilerAgent!=null)
+    { 
+      profilerAgent.enter
+        ("UISequencer.dispatch:"+contextID, null);
+//      log.fine("IN:"+contextID);
+    }
+    try
+    { context.dispatch(message,component,path);
+    }
+    finally
+    { 
+      profilerAgent=context.getProfilerAgent();
+      if (profilerAgent!=null)
+      {
+//        log.fine("OUT:"+contextID);
+        profilerAgent.exit
+          ("UISequencer.dispatch:"+contextID
+          , null
+          ,null
+          );
+      }
+    }
+  }
 }

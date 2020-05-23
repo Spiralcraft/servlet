@@ -42,6 +42,7 @@ import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 
 import spiralcraft.net.http.VariableMap;
+import spiralcraft.profiler.ProfilerAgent;
 import spiralcraft.net.http.MultipartVariableMap;
 
 import spiralcraft.vfs.StreamUtil;
@@ -153,6 +154,10 @@ public class ServiceContext
     else
     { return portSession.getLocalURI();
     }
+  }
+  
+  public ProfilerAgent getProfilerAgent()
+  { return profilerAgent;
   }
   
   /**
