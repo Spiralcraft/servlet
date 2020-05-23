@@ -5,7 +5,7 @@
 	<classpathentry kind="lib" path="lib/spiralcraft-core.jar" sourcepath="/spiralcraft-modules-core/source"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/spiralcraft-json.jar"/>
-	<classpathentry kind="lib" path="lib/spiralcraft-textgen.jar" />
+	<classpathentry kind="lib" path="lib/spiralcraft-textgen.jar" sourcepath="/spiralcraft-modules-textgen/source"/>
 	<classpathentry kind="lib" path="lib/spiralcraft-net.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

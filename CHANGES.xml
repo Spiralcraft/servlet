@@ -15,25 +15,50 @@
 
     <detail>
     
-     <scm:Change>
-        <revision>-dev108
-        </revision>
-        <notes>
-          <scm:Note>Page size for pagination component is variable per-render.
-          </scm:Note>
-        </notes>
+    <scm:Change>
+      <revision>-dev109
+      </revision>
+      <notes>
+        <scm:Note>Integrate profiler into web apps
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/
+      </path>
+      
+      <resources>
+        <URI>autofilter/ProfilerFilter.java
+        </URI>
+        <URI>autofilter/spi/FocusFilter.java
+        </URI>
+        <URI>webui/ServiceContext.java
+        </URI>
+        <URI>webui/kit/UISequencer.java
+        </URI>
+        <URI>webui/UIService.java
+        </URI>
+      </resources>
         
-        <path>source/spiralcraft/servlet/webui/components
-        </path>
-        
-        <resources>
-          <URI>Paginate.java
-          </URI>
-          <URI>PageState.java
-          </URI>
-        </resources>
-        
-      </scm:Change>
+    </scm:Change>
+    <scm:Change>
+      <revision>-dev108
+      </revision>
+      <notes>
+        <scm:Note>Page size for pagination component is variable per-render.
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/webui/components
+      </path>
+      
+      <resources>
+        <URI>Paginate.java
+        </URI>
+        <URI>PageState.java
+        </URI>
+      </resources>
+      
+    </scm:Change>
 
       <scm:Change>
         <revision>-dev107
