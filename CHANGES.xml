@@ -16,6 +16,28 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev110
+      </revision>
+      <notes>
+        <scm:Note>Update gzip compression filter
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/gzip
+      </path>
+      
+      <resources>
+        <URI>GZipFilter.java
+        </URI>
+        <URI>GZipServletOutputStream.java
+        </URI>
+        <URI>HttpServletResponseCompressionWrapper.java
+        </URI>
+      </resources>
+        
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev109
       </revision>
       <notes>
