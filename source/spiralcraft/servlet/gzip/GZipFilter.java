@@ -108,7 +108,9 @@ public class GZipFilter
       {
         // XXX Figure out how to be more selective about MSIE 6 conditions,
         //   but there are a multitude of associated gzip bugs
-        log.fine("Skipping gzip for MSIE "+ieVersion);
+        if (debug)
+        { log.fine("Skipping gzip for MSIE "+ieVersion);
+        }
         return false;
       }
       else

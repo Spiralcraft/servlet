@@ -69,12 +69,18 @@ public class HttpServletResponseCompressionWrapper
     contentTypeSet=true;
     if (filter.shouldCompress(request,this))
     { 
-      log.fine("Starting compression for "+request.getRequestURL()+" "+getContentType());
+      if (logLevel.isDebug())
+      { log.debug("Starting compression for "+request.getRequestURL()+" "+getContentType());
+      }
       startCompression();
     }
     else
     { 
-      log.fine("Bypassing compression for "+request.getRequestURL()+" "+getContentType());
+      if (logLevel.isDebug())
+      { log.fine("Bypassing compression for "
+                  +request.getRequestURL()+" "+getContentType()
+                 );
+      }
       bypass=true;
     }
   }
@@ -109,7 +115,9 @@ public class HttpServletResponseCompressionWrapper
       { out.startCompressing();
       }
     }
-    log.fine("Created "+out);
+    if (logLevel.isFine())
+    { log.fine("Created "+out);
+    }
     return out;
   }
 
@@ -148,7 +156,9 @@ public class HttpServletResponseCompressionWrapper
   { 
     if (!compress)
     { 
-      log.fine("Allowing setContentLength "+length);
+      if (logLevel.isFine())
+      { log.fine("Allowing setContentLength "+length);
+      }
       delegate.setContentLength(length);
       contentLengthSet=true;
     }

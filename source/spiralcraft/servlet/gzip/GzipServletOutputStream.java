@@ -46,7 +46,8 @@ public class GzipServletOutputStream
   private GZIPOutputStream _gzout;
   private boolean dirty=false;
   private boolean compressing;
-
+  private boolean debug;
+  
   public GzipServletOutputStream(ServletOutputStream downStream)
     throws IOException
   { this._downStream=downStream;
@@ -61,7 +62,9 @@ public class GzipServletOutputStream
   {
     _gzout=new GZIPOutputStream(_downStream,true);
     _out=new BufferedOutputStream(_gzout);
-    log.fine("Initialized streams");
+    if (debug)
+    { log.fine("Initialized streams");
+    }
   }
 
   @Override
@@ -123,12 +126,17 @@ public class GzipServletOutputStream
     {
       if (_out!=null && dirty)
       { 
-        log.fine("Flushing");
+        if (debug)
+        { log.fine("Flushing");
+        }
         _out.flush();
         dirty=false;
       }
       else
-      { log.fine("Not dirty");
+      { 
+        if (debug)
+        { log.fine("Not dirty");
+        }
       }
     }
     else
@@ -145,7 +153,10 @@ public class GzipServletOutputStream
       { flush();
       }
       else 
-      { log.fine("Not dirty");
+      { 
+        if (debug)
+        { log.fine("Not dirty");
+        }
       }
     }
   }
