@@ -14,9 +14,12 @@
 //
 package spiralcraft.servlet.gzip;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletOutputStream;
 
+import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 import spiralcraft.servlet.kit.HttpServletResponseWrapper;
 
 import java.io.IOException;
@@ -32,32 +35,65 @@ import java.io.PrintWriter;
 public class HttpServletResponseCompressionWrapper
   extends HttpServletResponseWrapper
 {
-
+  private static final ClassLog log
+    =ClassLog.getInstance(HttpServletResponseWrapper.class);
   protected GzipServletOutputStream out=null;
   protected PrintWriter writer=null;
   protected boolean compress=false;
   private boolean contentLengthSet=false;
+  private final GZipFilter filter;
+  private final HttpServletRequest request;
+  private Level logLevel=Level.INFO;
+  boolean bypass;
+  boolean contentTypeSet;
 
-  public HttpServletResponseCompressionWrapper(HttpServletResponse delegate)
-  { super(delegate);
+  public HttpServletResponseCompressionWrapper
+    (HttpServletRequest request
+    ,HttpServletResponse delegate
+    ,GZipFilter filter
+    )
+  { 
+    super(delegate);
+    this.request=request;
+    this.filter=filter;
   }
 
-  public void startCompression()
-    throws IOException
+  void setLogLevel(Level logLevel)
+  { this.logLevel=logLevel;
+  }
+  
+  @Override
+  public void setContentType(String contentType)
+  { 
+    super.setContentType(contentType);
+    contentTypeSet=true;
+    if (filter.shouldCompress(request,this))
+    { 
+      log.fine("Starting compression for "+request.getRequestURL()+" "+getContentType());
+      startCompression();
+    }
+    else
+    { 
+      log.fine("Bypassing compression for "+request.getRequestURL()+" "+getContentType());
+      bypass=true;
+    }
+  }
+  
+  private void startCompression()
   { 
     if (!compress)
     { 
       if (contentLengthSet)
-      { throw new IOException("Content length set before compression enabled");
+      { log.warning("Content length set before compression enabled");
       }
       compress=true;
       delegate.setHeader("Content-Encoding","gzip");
       if (out!=null)
-      { out.startCompression();
+      { out.startCompressing();
       }
     }
     else
-    { System.out.println("compression already started");
+    { log.warning("compression already started");
     }
   }
 
@@ -65,13 +101,15 @@ public class HttpServletResponseCompressionWrapper
   public ServletOutputStream getOutputStream()
     throws IOException
   { 
+    
     if (out==null)
     { 
-      out=new GzipServletOutputStream(delegate);
+      out=new GzipServletOutputStream(delegate.getOutputStream());
       if (compress)
-      { out.startCompression();
+      { out.startCompressing();
       }
     }
+    log.fine("Created "+out);
     return out;
   }
 
@@ -92,7 +130,7 @@ public class HttpServletResponseCompressionWrapper
     if (writer!=null)
     { writer.flush();
     }
-    else
+    else if (out!=null)
     { out.flush();
     }
   }
@@ -110,6 +148,7 @@ public class HttpServletResponseCompressionWrapper
   { 
     if (!compress)
     { 
+      log.fine("Allowing setContentLength "+length);
       delegate.setContentLength(length);
       contentLengthSet=true;
     }

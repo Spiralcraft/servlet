@@ -15,6 +15,7 @@
 package spiralcraft.servlet.gzip;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,6 +31,23 @@ public class GZipFilter
     extends AutoFilter
 {
 
+  private HashSet<String> contentTypes=new HashSet<>();
+  {
+    contentTypes.add("application/javascript");
+    contentTypes.add("application/json");
+    contentTypes.add("application/x-javascript");
+    contentTypes.add("application/xml");
+    contentTypes.add("application/xml+rss");
+    contentTypes.add("application/xhtml+xml");
+    contentTypes.add("application/x-font-ttf");
+    contentTypes.add("application/x-font-opentype");
+    contentTypes.add("application/vnd.ms-fontobject");
+    contentTypes.add("image/svg+xml");
+    contentTypes.add("image/x-icon");
+    contentTypes.add("application/rss+xml");
+    contentTypes.add("application/atom_xml");
+  }
+
   
   @Override
   public void doFilter
@@ -39,16 +57,37 @@ public class GZipFilter
     )
     throws IOException,ServletException
   {
-
-    HttpServletRequest httpRequest=(HttpServletRequest) request;
+    // Do the compression
+    HttpServletResponseCompressionWrapper compressResponse
+      =new HttpServletResponseCompressionWrapper
+        ((HttpServletRequest) request,(HttpServletResponse) response,this);
+    try
+    {
+      chain.doFilter(request,compressResponse);
+    }
+    finally
+    { compressResponse.finish();
+    }
     
-
+    
+  }
+  
+  boolean shouldCompress
+    (HttpServletRequest  httpRequest
+    ,HttpServletResponseCompressionWrapper response
+    )
+  { 
     String acceptEncoding=httpRequest.getHeader("Accept-Encoding");
     String userAgent=httpRequest.getHeader("User-Agent");
-    
+    String contentType=response.getContentType();
     
     if (acceptEncoding!=null 
         && acceptEncoding.indexOf("gzip")>=0
+        && contentType!=null
+        && (contentType.startsWith("text/")
+            || contentTypes.contains(majorContentType(contentType))
+           )
+            
        )
     { 
       if (debug)
@@ -70,25 +109,21 @@ public class GZipFilter
         // XXX Figure out how to be more selective about MSIE 6 conditions,
         //   but there are a multitude of associated gzip bugs
         log.fine("Skipping gzip for MSIE "+ieVersion);
-        
-        chain.doFilter(request,response);
+        return false;
       }
       else
-      {
-        // Do the compression
-        HttpServletResponseCompressionWrapper compressResponse
-          =new HttpServletResponseCompressionWrapper
-            ((HttpServletResponse) response);
-        compressResponse.startCompression();
-        chain.doFilter(request,compressResponse);
-        compressResponse.finish();
+      { return true;
       }
     }
-    else
-    { chain.doFilter(request,response);
-    }
-    
+    return false;
+  }
+  
+  private String majorContentType(String contentType)
+  {
+    int semicolon=contentType.indexOf(';');
+    return semicolon<0
+        ?contentType
+        :contentType.substring(0,semicolon);
     
   }
-
 }
