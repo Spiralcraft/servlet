@@ -18,7 +18,6 @@ import java.util.Date;
 
 import spiralcraft.lang.Focus;
 import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlTextInput;
-import spiralcraft.servlet.webui.components.html.kit.AbstractHtmlTextInput.TextTag;
 import spiralcraft.time.TimeField;
 import spiralcraft.util.string.DateToString;
 import spiralcraft.util.string.StringConverter;
