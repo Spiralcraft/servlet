@@ -16,6 +16,19 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev111
+      </revision>
+      <notes>
+        <scm:Note>Fix TextArea not encoding value
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/webui/components/html/TextArea.java
+      </path>
+        
+    </scm:Change>
+    
+    <scm:Change>
       <revision>-dev110
       </revision>
       <notes>
