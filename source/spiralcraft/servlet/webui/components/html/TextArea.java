@@ -25,6 +25,7 @@ import spiralcraft.app.Message;
 import spiralcraft.servlet.webui.ControlState;
 import spiralcraft.servlet.webui.components.kit.AbstractTextControl;
 import spiralcraft.text.MessageFormat;
+import spiralcraft.text.html.TextAreaEncoder;
 import spiralcraft.textgen.OutputContext;
 
 public class TextArea<Ttarget>
@@ -86,7 +87,7 @@ public class TextArea<Ttarget>
     { 
       String value=TextArea.this.<String>getState(context).getValue();
       if (value!=null)
-      { OutputContext.get().append(value);
+      { OutputContext.get().append(TextAreaEncoder.encode(value));
       }
       super.renderContent(context,message,next);
       
