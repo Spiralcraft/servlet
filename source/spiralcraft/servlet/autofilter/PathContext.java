@@ -17,6 +17,7 @@ package spiralcraft.servlet.autofilter;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import javax.servlet.FilterConfig;
@@ -63,6 +64,7 @@ public class PathContext
   private String indexResource=null;
   private String defaultResource="default.webui";
   private boolean handleAllRequests;
+  private boolean mapWebUIResources=true;
 
   /**
    * The filter chain to be used for all requests. The filters are chained
@@ -120,6 +122,18 @@ public class PathContext
    */
   public void setHandleAllRequests(boolean handleAllRequests)
   { this.handleAllRequests=handleAllRequests;
+  }
+
+  /**
+   * Whether to automatically use the .webui files in this PathContext's directory
+   *   that has the same name as the next path segment in the request.
+   *   
+   * This is the default behavior (true).
+   *    
+   * @param mapWebuiResources
+   */
+  public void setMapWebuiResources(boolean mapWebuiResources)
+  { this.mapWebUIResources=mapWebuiResources;
   }
   
   /**
@@ -279,6 +293,18 @@ public class PathContext
       ,this.resolveCode(resourceURI)
       );
   }
+    
+  private boolean validRelativeURI(String pathSegment)
+  {
+    try
+    { return !new URI(pathSegment).isAbsolute();
+    }
+    catch (URISyntaxException x)
+    { 
+      log.info("Bad pathinfo: "+pathSegment+" in "+getAbsolutePathString());
+      return false;
+    }
+  }
   
   /**
    * 
@@ -291,15 +317,21 @@ public class PathContext
     try
     {
       String nextPathInfo=getNextPathInfo();
-      UIResourceMapping resource
-        =UIResourceMapping.forResource
-          (getAbsolutePathString()+nextPathInfo
-          ,this.resolveCode(nextPathInfo+".webui")
-          );
-      if (resource!=null)
-      { return resource;
-      }
       
+
+      UIResourceMapping resource;
+      if (mapWebUIResources && validRelativeURI(nextPathInfo))
+      {
+        resource
+          =UIResourceMapping.forResource
+            (getAbsolutePathString()+nextPathInfo
+            ,this.resolveCode(nextPathInfo+".webui")
+            );
+        if (resource!=null)
+        { return resource;
+        }
+      }
+    
       if (resourceMappingX!=null)
       { 
         resource=resourceMappingX.get();
