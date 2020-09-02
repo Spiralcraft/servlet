@@ -109,6 +109,25 @@ public class PathContextFilter
   { // debug=true;
   }
 
+  @Override
+  public void destroy()
+  { 
+    if (filterSet!=null)
+    { filterSet.destroy();
+    }
+    if (context!=null)
+    {
+      log.info("Stopping PathContext at "+getPath());
+      try
+      { context.stop();
+      }
+      catch (LifecycleException x)
+      { log.log(Level.WARNING,"Error stopping Pathcontext at "+getPath(),x);
+      }
+    }
+    super.destroy();
+  }
+  
   void setCodeSearchRoot(URI codeSearchRoot)
   { this.codeSearchRoot=URIUtil.ensureTrailingSlash(codeSearchRoot);
   }

@@ -93,8 +93,9 @@ public class CompoundFilter
   @Override
   public void destroy()
   {
-    for (Filter filter:filters)
-    { filter.destroy();
+    
+    for (int i=filters.length-1;i>=0;i--)
+    { filters[i].destroy();
     }
   }
 

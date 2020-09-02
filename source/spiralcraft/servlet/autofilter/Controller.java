@@ -474,13 +474,14 @@ public class Controller
   @Override
   public void destroy()
   { 
+    log.info("Shutting down WebApplicationContext");
+    deleteRecursive(pathTree);
     try
     { stop();
     }
     catch (LifecycleException x)
     { log.log(Level.WARNING,"Error stopping WebApplicationContext",x);
     }
-    deleteRecursive(pathTree);
   }
   
   private synchronized void updateConfig()
@@ -653,7 +654,6 @@ public class Controller
     FilterSet filterSet=node.get();
     if (filterSet!=null)
     { 
-      filterSet.clear();
       node.set(null);
     }
     if (node.getParent()!=null)
@@ -670,6 +670,13 @@ public class Controller
     for (PathTree<FilterSet> child: deleteList)
     { deleteRecursive(child);
     }
+    
+    if (filterSet!=null)
+    { 
+      filterSet.clear();
+      filterSet=null;
+    }
+    
   }
   
   /**

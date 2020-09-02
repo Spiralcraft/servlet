@@ -351,6 +351,13 @@ public abstract class FocusFilter<T>
   }
   
 
+  public void destroy()
+  {
+    if (preFilter!=null)
+    { preFilter.destroy();
+    }
+    super.destroy();
+  }
   protected void preInitialize
     (Focus<?> requestFocus)
     throws ContextualException
