@@ -16,6 +16,43 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev112
+      </revision>
+      <notes>
+        <scm:Note>Make webapp shutdown sequence more controlled and predictable
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/autofilter
+      </path>
+      
+      <resources>
+        <URI>CompoundFilter.java
+        </URI>
+        <URI>Controller.java
+        </URI>
+        <URI>PathContextFilter.java
+        </URI>
+        <URI>spi/FocusFilter.java
+        </URI>
+      </resources>
+        
+    </scm:Change>
+
+    <scm:Change>
+      <revision>-dev112
+      </revision>
+      <notes>
+        <scm:Note>Use of local .webui files to resolve requests is now configurable
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/autofilter/PathContext.java
+      </path>
+        
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev111
       </revision>
       <notes>
