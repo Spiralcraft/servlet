@@ -97,6 +97,7 @@ public class Controller
   
   private Throwable throwable;
   private boolean showExceptions=false;
+  private boolean tracePathResolution=false;
   
   private ResourceFilter exclusionFilter
     =new ResourceFilter()
@@ -203,7 +204,7 @@ public class Controller
     {
       initContextResourceMap();
       initContextDictionary(context);
-    
+
       initLibrary();
     }
     catch (ContextualException x)
@@ -228,11 +229,32 @@ public class Controller
       { 
         defaultCodeContext
           =Resolver.getInstance().resolve("context://code/");
+        Package rootPackage
+          =Package.fromContainer(defaultCodeContext,false);
+        if (rootPackage!=null)
+        { 
+          defaultCodeContext
+            =new OverlayResource
+              (defaultCodeContext.getURI()
+              ,defaultCodeContext
+              ,Resolver.getInstance().resolve(rootPackage.getBase())
+              );
+        }
       }
       catch (UnresolvableURIException x)
       { 
         throw new ServletException
           ("Error resolving context://code/",x);
+      }
+      catch (IOException x)
+      {
+        throw new ServletException
+          ("Error resolving context://code/",x);
+      }
+      catch (ContextualException x)
+      { 
+        throw new ServletException
+          ("Error resolving context://code/ package",x);
       }
     
       publishOverlay
@@ -242,8 +264,17 @@ public class Controller
           ,defaultCodeContext
           );
 
-      updateConfig();
+      if (contextDictionary.find
+          ("spiralcraft.servlet.autofilter.tracePathResolution","false")
+          .equals("true")
+         )
+      { 
+        this.tracePathResolution=true;
+        log.fine("Tracing path resolution for context in "+publishRoot);
+        log.fine("publishOverlay="+publishOverlay);
+      }
       
+      updateConfig();
     }
     finally
     { pop();
@@ -535,11 +566,15 @@ public class Controller
     )
     throws IOException
   {
-    if (debug)
-    { log.fine("Controller.updateRecursive(): checking "+resource.getURI());
+    if (debug || tracePathResolution)
+    { log.fine("Controller.updateRecursive(): processing "+resource.getURI()+" for "+node.getPath());
     }
     if (!resource.exists())
-    { deleteRecursive(node);
+    { 
+      if (tracePathResolution)
+      { log.fine("Deleting "+node.getPath());
+      }
+      deleteRecursive(node);
     }
     else
     {
@@ -548,6 +583,9 @@ public class Controller
       { 
         if (filterSet.checkDirtyResource())
         { 
+          if (tracePathResolution)
+          { log.fine("Dirty "+node.getPath());
+          }
           dirty=true;
           filterSet.clear();
           node.set(null);
@@ -603,6 +641,9 @@ public class Controller
       for (Resource childResource: resource.asContainer().listChildren(exclusionFilter))
       { 
         childResource=virtualize(childResource);
+        if (tracePathResolution)
+        { log.fine(node.getPath()+"->"+childResource.getLocalName()+" --> "+childResource.toString());
+        }
         if (childResource.asContainer()!=null
             && node.getChild(childResource.getLocalName())==null
             )
@@ -707,12 +748,11 @@ public class Controller
   private FilterChain createChain
     (String pathString,FilterChain endpoint)
   {
-    // System.err.println("Controller.createChain() pathString="+pathString);
-    
     Path path=new Path(pathString,'/');
     PathTree<FilterSet> pathTree=this.pathTree.findDeepestChild(path);
-    
-    // System.err.println("Controller.createChain() deepestChild= "+pathTree.getName());
+    if (tracePathResolution)
+    { log.fine("Deepest path for "+pathString+" is "+pathTree.getPath());
+    }
     
     FilterSet filterSet=pathTree.get();
     while (filterSet==null)
