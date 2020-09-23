@@ -19,6 +19,20 @@
       <revision>-dev112
       </revision>
       <notes>
+        <scm:Note>Use any package defined at root code path to overlay a full app
+          model.
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/autofilter/Controller.java
+      </path>
+              
+    </scm:Change>
+
+    <scm:Change>
+      <revision>-dev112
+      </revision>
+      <notes>
         <scm:Note>Make webapp shutdown sequence more controlled and predictable
         </scm:Note>
       </notes>
