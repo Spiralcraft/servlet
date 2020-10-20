@@ -246,11 +246,6 @@ public class Controller
         throw new ServletException
           ("Error resolving context://code/",x);
       }
-      catch (IOException x)
-      {
-        throw new ServletException
-          ("Error resolving context://code/",x);
-      }
       catch (ContextualException x)
       { 
         throw new ServletException
@@ -541,15 +536,83 @@ public class Controller
     }
   }
   
+  /**
+   * Called the first time a resource is resolved from a VFS container
+   *
+   * Ensures that the traversal of the tree properly tracks package grafts for
+   *   each path segment
+   * 
+   * @param resource
+   * @return
+   * @throws IOException
+   */
+  // TODO: This whole operation should be opaque and moved to spiralcraft.vfs.
+  //       There is a well defined model for how the filesystem overlays work
+  //          with respect to package grafts.
+  //       One way this can be handled more formally is to have a PackageResource
+  //          that handles the grafts internally.
   private Resource virtualize(Resource resource) 
-    throws IOException
+    throws IOException,ContextualException
   {
-    if (resource instanceof OverlayResource)
-    { return resource;
+    if (resource.asContainer()!=null)
+    {
+      Resource top = 
+        (resource instanceof OverlayResource)
+        ?((OverlayResource) resource).getOverlay()
+        :resource;
+      Package pkg=Package.fromThisContainer(top);
+      if (pkg!=null)
+      {
+        // The local copy contains a package graft. Replace any existing package
+        //   graft with the specified graft.
+        if (debug || tracePathResolution)
+        { log.fine("Controller.virtualize(): "+resource+" rebasing to "+pkg.getBase());
+        }
+        resource=new OverlayResource
+          (resource.getURI()
+          ,top
+          ,Resolver.getInstance().resolve(pkg.getBase())
+          );
+        return resource;
+      }
+      
+      if (resource instanceof OverlayResource)
+      { 
+        pkg=Package.fromThisContainer(((OverlayResource) resource).getBase());
+        if (pkg!=null)
+        {
+          // The base package stack contains a package graft. Make sure it's picked
+          //   up.
+          if (debug || tracePathResolution)
+          { log.fine("Controller.virtualize(): "+resource+" adding base underlay "+pkg.getBase());
+          }
+          resource=new OverlayResource
+            (resource.getURI()
+            ,resource
+            ,Resolver.getInstance().resolve(pkg.getBase())
+            );
+        }
+        return resource;
+      
+      }
     }
+    
+    if (resource instanceof OverlayResource)
+    { 
+      // We're already virtualized
+      return resource;
+    }
+    
+    // See if this resource maps to a base tree defined by a package in a
+    //   parent container.
     Resource baseResource=Package.findBaseResource(resource);
     if (baseResource!=null)
     {
+      // Make sure we're virtualized properly
+      if (debug || tracePathResolution)
+      { log.fine("Controller.virtualize(): "+resource.getURI()+" mapping to existing base tree "+baseResource.getURI());
+      }
+
       resource=new OverlayResource
         (resource.getURI()
         ,resource
@@ -564,7 +627,7 @@ public class Controller
     ,Resource resource
     ,boolean dirty
     )
-    throws IOException
+    throws IOException,ContextualException
   {
     if (debug || tracePathResolution)
     { log.fine("Controller.updateRecursive(): processing "+resource.getURI()+" for "+node.getPath());
