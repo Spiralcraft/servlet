@@ -1,11 +1,13 @@
 package spiralcraft.servlet.rpc.kit;
 
+
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.declare.Declarable;
 import spiralcraft.common.declare.DeclarationInfo;
-import spiralcraft.lang.Channel;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.util.LangUtil;
+import spiralcraft.lang.reflect.BeanReflector;
+import spiralcraft.lang.spi.SimpleChannel;
+import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.rpc.Handler;
 import spiralcraft.servlet.rpc.Call;
@@ -25,15 +27,17 @@ public abstract class AbstractHandler
     =ClassLog.getInstance(getClass());
   protected String name;
   protected DeclarationInfo declarationInfo;
-  protected Channel<Call> call;
-  
+  protected final ThreadLocalChannel<Call> call
+    =new ThreadLocalChannel<Call>
+      (BeanReflector.<Call>getInstance(Call.class));
   
   @Override
   public Focus<?> bind(
     Focus<?> focusChain)
       throws ContextualException
   { 
-    call=LangUtil.assertChannel(Call.class, focusChain);
+    focusChain=focusChain.chain(new SimpleChannel<Handler>(this,true));
+    focusChain.addFacet(focusChain.chain(call));
     return focusChain;
   }
 
@@ -57,4 +61,17 @@ public abstract class AbstractHandler
   public DeclarationInfo getDeclarationInfo()
   { return declarationInfo;
   }
+  
+  public final void handle(Call callObject)
+  {
+    call.push(callObject);
+    try
+    { this.handle();
+    }
+    finally
+    { call.pop();
+    }
+  }
+  
+  protected abstract void handle();
 }

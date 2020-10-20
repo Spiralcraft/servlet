@@ -24,5 +24,5 @@ public interface Handler
   /**
    * Handle the call
    */
-  public abstract void handle();
+  public abstract void handle(Call call);
 }

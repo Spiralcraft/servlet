@@ -89,17 +89,15 @@ public class JsonTaskHandler<Tcontext,Tresult>
   @Override
   public void handle()
   {
-    Response response=call.get().response;
     if (task!=null)
     { 
       TaskCommand<Tcontext,Tresult> command=task.command();
       try
-      { input.push(call.get().request.getContentBytes());
+      { input.push(call.get().getRequest().getContentBytes());
       }
       catch (IOException x)
       { 
-        response.setStatus(500);
-        response.setText("Error reading request content");
+        call.get().respond(500,"Error reading request content");
         return;
       }
       commandLocal.push(command);
@@ -122,18 +120,16 @@ public class JsonTaskHandler<Tcontext,Tresult>
 
             log.log(Level.WARNING
               ,declarationInfo+": Rule violation "+message);            
-            response.setStatus(422);
-            response.setText(message);
+            call.get().respond(422,message);
           }
           else
           {
             log.log(Level.WARNING,declarationInfo+": Command threw exception",command.getException());
-            response.setStatus(500);
-            response.setText("Server error processing request");
+            call.get().respond(500,"Server error processing request");
           }
         }
         else if (command.getResult()!=null)
-        { call.get().response.setText(jsonOutput.get());
+        { call.get().respond(200,jsonOutput.get());
         }
       }
       catch (AccessException x)
@@ -142,23 +138,19 @@ public class JsonTaskHandler<Tcontext,Tresult>
         {
           JsonException jx=(JsonException) x.unwrapCause();
           if (jx.getCause() instanceof ParseException)
-          { 
-            response.setStatus(400);
-            response.setText(jx.getCause().getMessage());
+          { call.get().respond(400,jx.getCause().getMessage());
           }
           else
           {
             log.log(Level.WARNING,declarationInfo+": Unhandled exception",x);
-            response.setStatus(500);
-            response.setText("Server error processing request");
+            call.get().respond(500,"Server error processing request");
           }
           
         }
         else
         { 
           log.log(Level.WARNING,declarationInfo+": Unhandled exception",x);
-          response.setStatus(500);
-          response.setText("Server error processing request");
+          call.get().respond(500,"Server error processing request");
         
         }
       

@@ -12,9 +12,12 @@ import spiralcraft.vfs.StreamUtil;
 
 public class Request
 {
-  
-  Resource content;
-  HttpServletRequest hsr;
+  public Resource content;
+  public final HttpServletRequest hsr;
+
+  public Request(HttpServletRequest hsr)
+  { this.hsr=hsr;
+  }
   
   public String getURI()
   { return hsr.getRequestURI();

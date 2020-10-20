@@ -97,8 +97,7 @@ public class TaskHandler<Tcontext,Tresult>
         log.log(Level.WARNING,declarationInfo+": Command threw exception"
           ,command.getException()
           );
-        call.get().response.setStatus(500);
-        call.get().response.setText("Server error processing request");
+        call.get().respond(500,"Server error processing request");
       }
       else if (outputX!=null)
       { outputX.get();

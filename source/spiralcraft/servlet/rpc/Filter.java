@@ -199,11 +199,11 @@ public class Filter
   }
   
   private void push(HttpServletRequest request, HttpServletResponse response)
-  { callContext.push(new Call());
+  { 
   }
 
   private void pop(HttpServletRequest request)
-  { callContext.pop();
+  { 
   }
 
   @Override
@@ -261,12 +261,12 @@ public class Filter
         httpPushed=true;
       }
       
+      PathContext pc=pathContext.get();
+      RootCall call=new RootCall(httpRequest,pc.getPathInfo());
+      log.fine("PathContext.getPathInfo(): "+pc.getPathInfo());
+      callContext.push(call);
       push(httpRequest,httpResponse);
       pushed=true;
-      
-      
-      Call call=callContext.get();
-
       
       for (List<MimeHeader> headerList: headers.values())
       { 
@@ -290,17 +290,33 @@ public class Filter
       }
       
       Handler handler=null;
+      Call subcall=call;
       if (!forwardList.contains(handlerName))
       {
         if (handlerMap!=null)
         { 
           handler=handlerMap.get(handlerName);
+          
           if (handler==null 
               && handlerName!=null 
               && !handlerName.isEmpty()
               )
           { handler=handlerMap.get("*");
           }
+
+          if (handler!=null)
+          { 
+            String newPathInfo=call.getPathInfo().substring(handlerName.length());
+            if (newPathInfo.startsWith("/"))
+            { newPathInfo=newPathInfo.substring(1);
+            }
+            subcall=new SubCall
+              (call.getNextPath()
+              , newPathInfo
+              , call
+              );
+          }
+          
         }
          
         
@@ -315,7 +331,7 @@ public class Filter
         { log.fine("Servicing "+httpRequest.getRequestURI());
         }
         call.init(httpRequest);
-        handler.handle();
+        handler.handle(subcall);
         handled=true;
       }
       
@@ -387,6 +403,7 @@ public class Filter
       { 
         // If we changed this Thread's Focus subject, put it back
         pop((HttpServletRequest) request);
+        callContext.pop();
       }
       if (httpFocus!=null && httpPushed)
       { httpFocus.pop();
