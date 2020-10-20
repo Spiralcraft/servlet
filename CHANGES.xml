@@ -19,8 +19,47 @@
       <revision>-dev112
       </revision>
       <notes>
+        <scm:Note>Support tree nesting of RPC handlers for code structure
+           flexibility
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/rpc
+      </path>
+      
+      <resources>
+        <URI>kit/AbstractHandler.java
+        </URI>
+        <URI>Call.java
+        </URI>
+        <URI>Filter.java
+        </URI>
+        <URI>Handler.java
+        </URI>
+        <URI>JSONTaskHandler.java
+        </URI>
+        <URI>Request.java
+        </URI>
+        <URI>TaskHandler.java
+        </URI>
+        <URI>DispatchHandler.java
+        </URI>
+        <URI>RootCall.java
+        </URI>
+        <URI>SubCall.java
+        </URI>
+      </resources>
+              
+    </scm:Change>
+
+    <scm:Change>
+      <revision>-dev112
+      </revision>
+      <notes>
         <scm:Note>Use any package defined at root code path to overlay a full app
           model.
+        </scm:Note>
+        <scm:Note>Handle more cases of package nesting within overlay structure
         </scm:Note>
       </notes>
       
