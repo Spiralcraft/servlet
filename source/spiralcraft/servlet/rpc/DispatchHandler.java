@@ -120,7 +120,9 @@ public class DispatchHandler
       Path path=c.getNextPath();
       String pathInfo=c.getPathInfo();
       String handlerName=path.size()>1?path.getElement(1):null;
-      log.fine("Path: "+path+" pathInfo: "+pathInfo+" handlerName:"+handlerName);
+      if (debug)
+      { log.fine(getDeclarationInfo()+":  Path: "+path+" pathInfo: "+pathInfo+" handlerName:"+handlerName);
+      }
       
       Handler handler=null;
       Call subCall=c;
@@ -133,10 +135,15 @@ public class DispatchHandler
             )
         { 
           handler=handlerMap.get("*");
-          log.fine("Handler * mapped");
+          if (debug)
+          { log.fine(getDeclarationInfo()+":  Handler * mapped");
+          }
         }
         else
-        { log.fine("Handler mapped from "+handlerName);
+        { 
+          if (debug)
+          { log.fine(getDeclarationInfo()+":  Handler mapped from "+handlerName);
+          }
         }
         
         if (handler!=null)
@@ -159,19 +166,26 @@ public class DispatchHandler
         
       }
        
-      log.fine("Default Handler "+defaultHandler);
+      if (debug)
+      { log.fine(getDeclarationInfo()+":  Default Handler "+defaultHandler);
+      }
+      
       if (handler==null && (!requireMapping || handlerName==null))
       { handler=defaultHandler;
       }
     
       if (handler!=null)
       { 
-        log.fine("Handler is "+handler);
+        if (debug)
+        { log.fine(getDeclarationInfo()+":  Handler is "+handler);
+        }
         handler.handle(subCall);
       }
       else
       { 
-        log.fine("No handler");
+        if (debug)
+        { log.fine(getDeclarationInfo()+": No handler");
+        }
         c.respond(404,"Handler not found for request");
       }
     }

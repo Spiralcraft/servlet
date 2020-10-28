@@ -263,7 +263,9 @@ public class Filter
       
       PathContext pc=pathContext.get();
       RootCall call=new RootCall(httpRequest,pc.getPathInfo());
-      log.fine("PathContext.getPathInfo(): "+pc.getPathInfo());
+      if (debug)
+      { log.fine("PathContext.getPathInfo(): "+pc.getPathInfo());
+      }
       callContext.push(call);
       push(httpRequest,httpResponse);
       pushed=true;
