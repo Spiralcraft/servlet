@@ -85,6 +85,7 @@ public class Controller
 {
   
   private int updateIntervalMs=10000;
+  private boolean enableDynamicUpdates=false;
   
   private final HashMap<String,CacheEntry> uriCache
     =new HashMap<String,CacheEntry>();
@@ -144,6 +145,11 @@ public class Controller
         =URI.create("config."+configId+"/");
     }
     
+    if ("true"==config.getServletContext()
+               .getInitParameter("spiralcraft.servlet.enableDynamicUpdates")
+       )
+    { this.enableDynamicUpdates=true;
+    }
     
     // Run autoconfig here
     
@@ -516,22 +522,24 @@ public class Controller
     { return;
     }
     
-
-    long time=Clock.instance().approxTimeMillis();
-    if (time==0 || (updateIntervalMs>0 && time-lastUpdate>updateIntervalMs))
-    { 
-      throwable=null;
-      // System.err.println("Controller.updateConfig(): scanning");
-      try
-      { updateRecursive(pathTree,publishOverlay,false);
-      }
-      catch (Throwable x)
+    if (enableDynamicUpdates || lastUpdate==0)
+    {
+      long time=Clock.instance().approxTimeMillis();
+      if (time==0 || (updateIntervalMs>0 && time-lastUpdate>updateIntervalMs))
       { 
-        throwable=x;
-        log.log(Level.WARNING,"Uncaught exception loading AutoFilters",x);
-      }
-      finally
-      { lastUpdate=Clock.instance().approxTimeMillis();
+        throwable=null;
+        // System.err.println("Controller.updateConfig(): scanning");
+        try
+        { updateRecursive(pathTree,publishOverlay,false);
+        }
+        catch (Throwable x)
+        { 
+          throwable=x;
+          log.log(Level.WARNING,"Uncaught exception loading AutoFilters",x);
+        }
+        finally
+        { lastUpdate=Clock.instance().approxTimeMillis();
+        }
       }
     }
   }
@@ -707,8 +715,8 @@ public class Controller
         if (tracePathResolution)
         { log.fine(node.getPath()+"->"+childResource.getLocalName()+" --> "+childResource.toString());
         }
-        if (childResource.asContainer()!=null
-            && node.getChild(childResource.getLocalName())==null
+        if (node.getChild(childResource.getLocalName())==null
+            && childResource.asContainer()!=null
             )
         { 
           PathTree<FilterSet> childNode
