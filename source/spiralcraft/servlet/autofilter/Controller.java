@@ -99,6 +99,7 @@ public class Controller
   private Throwable throwable;
   private boolean showExceptions=false;
   private boolean tracePathResolution=false;
+  private boolean firstScanComplete;
   
   private ResourceFilter exclusionFilter
     =new ResourceFilter()
@@ -145,8 +146,9 @@ public class Controller
         =URI.create("config."+configId+"/");
     }
     
-    if ("true"==config.getServletContext()
+    if ("true".equals(config.getServletContext()
                .getInitParameter("spiralcraft.servlet.enableDynamicUpdates")
+               )
        )
     { this.enableDynamicUpdates=true;
     }
@@ -530,7 +532,10 @@ public class Controller
         throwable=null;
         // System.err.println("Controller.updateConfig(): scanning");
         try
-        { updateRecursive(pathTree,publishOverlay,false);
+        { 
+          updateRecursive(pathTree,publishOverlay,false);
+          firstScanComplete=true;
+          // log.fine("Tree scan took "+(Clock.instance().approxTimeMillis()-time)+"ms ");
         }
         catch (Throwable x)
         { 
@@ -640,6 +645,13 @@ public class Controller
     if (debug || tracePathResolution)
     { log.fine("Controller.updateRecursive(): processing "+resource.getURI()+" for "+node.getPath());
     }
+    if (firstScanComplete && !isDynamicResource(resource))
+    { 
+      if (tracePathResolution)
+      { log.fine("Not scanning into non-dynamic resource "+resource);
+      }
+      return;
+    }
     if (!resource.exists())
     { 
       if (tracePathResolution)
@@ -708,53 +720,63 @@ public class Controller
       { log.fine("Checking for new children in "+resource);
       }
       
-      // Handle any new children
-      for (Resource childResource: resource.asContainer().listChildren(exclusionFilter))
-      { 
-        childResource=virtualize(childResource);
-        if (tracePathResolution)
-        { log.fine(node.getPath()+"->"+childResource.getLocalName()+" --> "+childResource.toString());
-        }
-        if (node.getChild(childResource.getLocalName())==null
-            && childResource.asContainer()!=null
-            )
-        { 
-          PathTree<FilterSet> childNode
-            =new PathTree<FilterSet>(childResource.getLocalName());
-          node.addChild(childNode);
-          if (debug)
-          { log.fine("Added "+childResource);
-          }
-          updateRecursive(childNode,childResource,dirty);
-        }
-      }
-      
-      // Handle any grafts onto web tree
-      Graft[] grafts=codeAuthority.getGrafts(node.getPath().toString().substring(1));
-      if (grafts!=null) 
+      if (!firstScanComplete)
       {
-        for (Graft graft: grafts)
+        // Handle any new children
+        for (Resource childResource: resource.asContainer().listChildren(exclusionFilter))
         { 
-          Resource childResource=virtualize(graft.resolve(URI.create("")));
-          String localName=new Path(graft.getVirtualURI().getPath()).lastElement();
-          if (childResource.asContainer()!=null
-              && node.getChild(localName)==null
+          childResource=virtualize(childResource);
+          if (tracePathResolution)
+          { log.fine(node.getPath()+"->"+childResource.getLocalName()+" --> "+childResource.toString());
+          }
+          if (node.getChild(childResource.getLocalName())==null
+              && childResource.asContainer()!=null
               )
           { 
             PathTree<FilterSet> childNode
-              =new PathTree<FilterSet>(localName);
+              =new PathTree<FilterSet>(childResource.getLocalName());
             node.addChild(childNode);
             if (debug)
             { log.fine("Added "+childResource);
             }
             updateRecursive(childNode,childResource,dirty);
           }
-        } 
+        }
         
+        // Handle any grafts onto web tree
+        Graft[] grafts=codeAuthority.getGrafts(node.getPath().toString().substring(1));
+        if (grafts!=null) 
+        {
+          for (Graft graft: grafts)
+          { 
+            Resource childResource=virtualize(graft.resolve(URI.create("")));
+            String localName=new Path(graft.getVirtualURI().getPath()).lastElement();
+            if (childResource.asContainer()!=null
+                && node.getChild(localName)==null
+                )
+            { 
+              PathTree<FilterSet> childNode
+                =new PathTree<FilterSet>(localName);
+              node.addChild(childNode);
+              if (debug)
+              { log.fine("Added "+childResource);
+              }
+              updateRecursive(childNode,childResource,dirty);
+            }
+          } 
+          
+        }
       }
       
-      
     }
+  }
+  
+  private boolean isDynamicResource(Resource resource)
+  {
+    while (resource instanceof OverlayResource)
+    { resource=((OverlayResource) resource).getOverlay();
+    }
+    return (resource instanceof FileResource);
   }
   
   /**
