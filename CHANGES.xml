@@ -16,6 +16,18 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev114
+      </revision>
+      <notes>
+        <scm:Note>Reduce overhead of live filesystem update tracking
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/autofilter/Controller.java
+      </path>
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev113
       </revision>
       <notes>
