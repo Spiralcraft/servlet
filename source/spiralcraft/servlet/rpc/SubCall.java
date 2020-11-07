@@ -39,4 +39,8 @@ public class SubCall
   public Request getRequest()
   { return parent.getRequest();
   }
+  
+  public Response getResponse()
+  { return parent.getResponse();
+  }
 }

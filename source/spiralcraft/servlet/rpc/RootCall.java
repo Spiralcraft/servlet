@@ -46,6 +46,10 @@ public class RootCall
   { return request;
   }
   
+  public Response getResponse()
+  { return response;
+  }
+  
   void init(HttpServletRequest request)
     throws IOException
   {

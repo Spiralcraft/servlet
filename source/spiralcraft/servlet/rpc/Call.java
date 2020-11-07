@@ -21,4 +21,6 @@ public interface Call
   public void respond(int statusCode,String message);
   
   public Request getRequest();
+  
+  public Response getResponse();
 }
