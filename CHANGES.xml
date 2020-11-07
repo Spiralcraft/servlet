@@ -16,6 +16,27 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev115
+      </revision>
+      <notes>
+        <scm:Note>Fix regression caused by not exposing Call.response
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/rpc/
+      </path>
+      <resources>
+        <URI>Call.java
+        </URI>
+        <URI>RootCall.java
+        </URI>
+        <URI>SubCall.java
+        </URI>
+      </resources>
+      
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev114
       </revision>
       <notes>
