@@ -16,6 +16,29 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev116
+      </revision>
+      <notes>
+        <scm:Note>Reflect element state in css class list
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/webui/components/html
+      </path>
+      <resources>
+        <URI>kit/AbstractHtmlTextInput.java
+        </URI>
+        <URI>kit/AbstractControlTag.java
+        </URI>
+        <URI>AbstractTag.java
+        </URI>
+        <URI>TextArea.java
+        </URI>
+      </resources>
+      
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev115
       </revision>
       <notes>
