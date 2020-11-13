@@ -39,9 +39,13 @@ public abstract class AbstractHtmlTextInput<Ttarget>
   private TextTag tag=createTag();
   
   public class TextTag 
-    extends AbstractTag
+    extends AbstractControlTag
   {
     { addStandardClass("sc-webui-abstract-text-input");
+    }
+    
+    protected TextTag()
+    { super(AbstractHtmlTextInput.this);
     }
     
     @Override
@@ -79,7 +83,7 @@ public abstract class AbstractHtmlTextInput<Ttarget>
       state.setPresented(true);
       super.renderAttributes(context,out);
     }
-    
+
     @Override
     protected boolean hasContent()
     { return false;

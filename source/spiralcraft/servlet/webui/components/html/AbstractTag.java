@@ -56,7 +56,7 @@ public abstract class AbstractTag
   extends AbstractMessageHandler
 {
   
-  private static final AttributeEncoder attributeEncoder
+  protected static final AttributeEncoder attributeEncoder
     =new AttributeEncoder();
   
   private String attributes;
@@ -546,11 +546,18 @@ public abstract class AbstractTag
         }
       }
       
+      renderStatefulClasses(context,out);
+      
       out.append("\"");
     }
     
   }
 
+  protected void renderStatefulClasses(Dispatcher context,Appendable out)
+    throws IOException
+  { 
+  }
+  
   @SuppressWarnings("unchecked")
   protected void renderBoundAttributes
     (Appendable out,DictionaryBinding<?>[] bindings)

@@ -23,6 +23,7 @@ import spiralcraft.app.MessageHandlerChain;
 
 import spiralcraft.app.Message;
 import spiralcraft.servlet.webui.ControlState;
+import spiralcraft.servlet.webui.components.html.kit.AbstractControlTag;
 import spiralcraft.servlet.webui.components.kit.AbstractTextControl;
 import spiralcraft.text.MessageFormat;
 import spiralcraft.text.html.TextAreaEncoder;
@@ -52,9 +53,13 @@ public class TextArea<Ttarget>
   }
   
   public class Tag
-    extends AbstractTag
+    extends AbstractControlTag
   {
     { addStandardClass("sc-webui-text-area");
+    }
+    
+    protected Tag()
+    { super(TextArea.this);
     }
     
     @Override
