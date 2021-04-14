@@ -10,11 +10,12 @@ import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLog;
 import spiralcraft.servlet.rpc.Handler;
+import spiralcraft.servlet.rpc.Response;
 import spiralcraft.servlet.rpc.Call;
+import spiralcraft.servlet.rpc.Guard;
 
 /**
- * A handler which evaluates an expression. The expression must explicitly
- *   manipulate the rpc:Response to send something back to the client
+ * Provides a base implementation for other handlers
  * 
  * @author mike
  *
@@ -31,6 +32,8 @@ public abstract class AbstractHandler
     =new ThreadLocalChannel<Call>
       (BeanReflector.<Call>getInstance(Call.class));
   
+  protected Guard[] guard;
+  
   @Override
   public Focus<?> bind(
     Focus<?> focusChain)
@@ -38,6 +41,13 @@ public abstract class AbstractHandler
   { 
     focusChain=focusChain.chain(new SimpleChannel<Handler>(this,true));
     focusChain.addFacet(focusChain.chain(call));
+    if (guard!=null)
+    { 
+      for (Guard g:guard)
+      { g.bind(focusChain);
+      }
+    }
+    
     return focusChain;
   }
 
@@ -51,6 +61,10 @@ public abstract class AbstractHandler
   { return name;
   }
 
+  public void setGuard(Guard[] guard)
+  { this.guard=guard;
+  }
+  
   @Override
   public void setDeclarationInfo(
     DeclarationInfo declarationInfo)
@@ -66,11 +80,32 @@ public abstract class AbstractHandler
   {
     call.push(callObject);
     try
-    { this.handle();
+    { 
+      if (checkGuard(callObject))
+      { this.handle();
+      }
     }
     finally
     { call.pop();
     }
+  }
+  
+  protected final boolean checkGuard(Call call)
+  { 
+    if (guard!=null)
+    { 
+      for (Guard g: guard)
+      { 
+        Response r=g.check();
+        if (r!=null)
+        { 
+          call.respond(r);
+          return false;
+        }
+      }
+    }
+    return true;
+    
   }
   
   protected abstract void handle();

@@ -20,6 +20,8 @@ public interface Call
   
   public void respond(int statusCode,String message);
   
+  public void respond(Response r);
+  
   public Request getRequest();
   
   public Response getResponse();

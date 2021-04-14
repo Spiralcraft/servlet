@@ -71,4 +71,11 @@ public class RootCall
     response.setStatus(statusCode);
   }
   
+  public void respond(Response r)
+  { 
+    response.status=r.status;
+    response.contentType=r.contentType;
+    response.result=r.result;
+  }
+  
 }

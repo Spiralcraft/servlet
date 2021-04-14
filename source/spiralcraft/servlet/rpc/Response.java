@@ -9,6 +9,16 @@ public class Response
   String contentType=null;
   Resource result;
   
+  public Response()
+  {
+  }
+  
+  public Response(int status,String text)
+  { 
+    setStatus(status);
+    setText(text);
+  }
+  
   public void setStatus(Integer status)
   { this.status=status;
   }
