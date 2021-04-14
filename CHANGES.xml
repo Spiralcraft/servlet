@@ -16,6 +16,33 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev117
+      </revision>
+      <notes>
+        <scm:Note>Add guard assertions and responses for rpc requests
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/rpc
+      </path>
+      <resources>
+        <URI>kit/AbstractHandler.java
+        </URI>
+        <URI>Call.java
+        </URI>
+        <URI>Response.java
+        </URI>
+        <URI>RootCall.java
+        </URI>
+        <URI>SubCall.java
+        </URI>
+        <URI>Guard.java
+        </URI>
+      </resources>
+      
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev116
       </revision>
       <notes>
