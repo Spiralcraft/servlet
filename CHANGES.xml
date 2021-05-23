@@ -16,6 +16,19 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev118
+      </revision>
+      <notes>
+        <scm:Note>Add syntax to allow context InitParameter to specify a URI for
+          a property file to load with deployment specific parameters. 
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/autofilter/Controller.java
+      </path>
+    </scm:Change>
+    
+    <scm:Change>
       <revision>-dev117
       </revision>
       <notes>
