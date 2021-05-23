@@ -16,11 +16,13 @@ package spiralcraft.servlet.autofilter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Properties;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.LifecycleException;
@@ -48,6 +50,7 @@ import spiralcraft.text.html.URLEncoder;
 import spiralcraft.time.Clock;
 import spiralcraft.util.Path;
 import spiralcraft.util.URIUtil;
+import spiralcraft.util.refpool.URIPool;
 import spiralcraft.util.tree.PathTree;
 import spiralcraft.vfs.Resolver;
 import spiralcraft.vfs.Resource;
@@ -394,14 +397,39 @@ public class Controller
   
   @SuppressWarnings("unchecked")
   private void initContextDictionary(ServletContext context)
+    throws ContextualException
   {
     Enumeration<String> params=context.getInitParameterNames();
     while (params.hasMoreElements())
     { 
       String name=params.nextElement();
-      contextDictionary.set(name, context.getInitParameter(name));
-      if (debug)
-      { log.fine(name+" = "+contextDictionary.find(name));
+      if (name.startsWith("@"))
+      { 
+        URI propsURI=URIPool.create(name.substring(1));
+        try
+        {
+          log.info("Reading "+propsURI);
+          Resource propsResource=Resolver.getInstance().resolve(propsURI);
+          Properties props=new Properties();
+          try (InputStream in=propsResource.getInputStream())
+          { props.load(in);
+          }
+          props.forEach( (pn,pv) -> 
+            {  contextDictionary.set(pn.toString(), pv.toString()); } 
+            );
+        }
+        catch (IOException x)
+        { 
+          throw new ContextualException
+            ("Error loading properties file "+propsURI,x);
+        }
+      }
+      else
+      {
+        contextDictionary.set(name, context.getInitParameter(name));
+        if (debug)
+        { log.fine(name+" = "+contextDictionary.find(name));
+        }
       }
     }
   }
