@@ -1,6 +1,8 @@
 package spiralcraft.servlet.rpc.kit;
 
 
+import java.io.IOException;
+
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.declare.Declarable;
 import spiralcraft.common.declare.DeclarationInfo;
@@ -9,6 +11,7 @@ import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.SimpleChannel;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.ClassLog;
+import spiralcraft.log.Level;
 import spiralcraft.servlet.rpc.Handler;
 import spiralcraft.servlet.rpc.Response;
 import spiralcraft.servlet.rpc.Call;
@@ -80,10 +83,23 @@ public abstract class AbstractHandler
   {
     call.push(callObject);
     try
-    { 
-      if (checkGuard(callObject))
-      { this.handle();
+    {
+      push();
+      try
+      { 
+        if (checkGuard(callObject))
+        { this.handle();
+        }
       }
+      finally
+      { 
+        pop();
+      }
+    }
+    catch (Exception x)
+    { 
+      call.get().respond(500,"Error handling request");
+      log.log(Level.WARNING,getDeclarationInfo()+": Error handling request",x);
     }
     finally
     { call.pop();
@@ -106,6 +122,15 @@ public abstract class AbstractHandler
     }
     return true;
     
+  }
+
+  protected void push()
+    throws Exception
+  {
+  }
+  
+  protected void pop()
+  {
   }
   
   protected abstract void handle();
