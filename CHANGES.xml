@@ -16,6 +16,40 @@
     <detail>
     
     <scm:Change>
+      <revision>-dev119
+      </revision>
+      <notes>
+        <scm:Note>Make JSON RPC API definition syntax more concise   
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/rpc
+      </path>
+      
+      <resources>
+        <URI>kit/AbstractHandler.java
+        </URI>
+        <URI>JSONHandler.java
+        </URI>
+      </resources>
+    </scm:Change>
+
+    <scm:Change>
+      <revision>-dev119
+      </revision>
+      <notes>
+        <scm:Note>Restrict webui bundles in packages from publishing to web tree  
+        </scm:Note>
+        <scm:Note>Publishing to web tree requires bundle.[name].publish=true. Does
+          not affect bundle code availability via context://code/[name]
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/autofilter/Controller.java
+      </path>
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev118
       </revision>
       <notes>
