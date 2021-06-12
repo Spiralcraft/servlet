@@ -777,7 +777,20 @@ public class Controller
         {
           for (Graft graft: grafts)
           { 
-            Resource childResource=virtualize(graft.resolve(URI.create("")));
+            Resource graftRoot=graft.resolve(URIUtil.EMPTY_URI);
+            Resource childResource=virtualize(graftRoot);
+            
+            // Make sure we don't auto-publish any default vfs code paths set up for
+            //   internal use unless specified.
+            if (graftRoot.getURI().getScheme().equals("bundle") 
+                && graftRoot.getURI().getAuthority().equals(graft.getVirtualURI()+".war-webui")
+                )
+            {
+              String prop="bundle."+graftRoot.getURI().getAuthority()+".publish";
+              if (!"true".equals(contextDictionary.find(prop)))
+              { continue;
+              }
+            }
             String localName=new Path(graft.getVirtualURI().getPath()).lastElement();
             if (childResource.asContainer()!=null
                 && node.getChild(localName)==null
