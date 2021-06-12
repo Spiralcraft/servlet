@@ -1,8 +1,5 @@
 package spiralcraft.servlet.rpc.kit;
 
-
-import java.io.IOException;
-
 import spiralcraft.common.ContextualException;
 import spiralcraft.common.declare.Declarable;
 import spiralcraft.common.declare.DeclarationInfo;
