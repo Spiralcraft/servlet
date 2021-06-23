@@ -3,6 +3,7 @@ package spiralcraft.servlet.rpc;
 
 import spiralcraft.command.Command;
 import spiralcraft.common.ContextualException;
+import spiralcraft.data.InvalidValueException;
 import spiralcraft.data.task.Transaction;
 import spiralcraft.json.FromJson;
 import spiralcraft.json.JsonException;
@@ -166,6 +167,22 @@ public class JsonHandler<Tcontext,Tresult>
             ,declarationInfo+": Rule violation "+message);            
           call.get().respond(422,message);
         }
+        else if (exception instanceof AccessException)
+        {
+          String message=exception.getMessage();
+
+          log.log(Level.WARNING
+            ,declarationInfo+": AccessException "+message);            
+          call.get().respond(422,message);
+        }
+        else if (exception instanceof InvalidValueException)
+        {
+          String message=exception.getMessage();
+
+          log.log(Level.WARNING
+            ,declarationInfo+": InvalidValueException "+message);            
+          call.get().respond(422,message);
+        }
         else
         {
           log.log(Level.WARNING,declarationInfo+": Command threw exception",command.getException());
@@ -198,6 +215,11 @@ public class JsonHandler<Tcontext,Tresult>
       
       }
     
+    }
+    catch (Exception x)
+    {
+      log.log(Level.WARNING,declarationInfo+": Unhandled exception",x);
+      call.get().respond(500,"Server error processing request");
     }
     finally
     { commandLocal.pop();
