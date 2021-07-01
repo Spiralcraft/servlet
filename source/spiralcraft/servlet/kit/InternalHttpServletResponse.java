@@ -249,7 +249,11 @@ public class InternalHttpServletResponse
     if (debugAPI)
     { _log.fine(code+" "+msg);
     }
-    sendError(code,msg);
+    _status=code;
+    _reason=msg;
+    
+    //Infinite loop
+    //sendError(code,msg);
   }
       
   @Override
