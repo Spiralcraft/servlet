@@ -90,7 +90,12 @@ public class DispatchHandler
     chain=super.bind(chain);
     if (contextX!=null)
     { 
-      contextX.bind(chain);
+      try
+      { contextX.bind(chain);
+      }
+      catch (ContextualException x)
+      { throw new ContextualException("Error binding dispatch context",getDeclarationInfo(),x);
+      }
       contextChannel=new ThreadLocalChannel(contextX.getReflector());
       chain=chain.chain(contextChannel);
     }
