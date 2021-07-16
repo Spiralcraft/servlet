@@ -85,7 +85,13 @@ public abstract class AbstractHandler
       try
       { 
         if (checkGuard(callObject))
-        { this.handle();
+        { 
+          try
+          { this.handle();
+          }
+          catch (Exception x)
+          { throw new RuntimeException("Exception in call "+getDeclarationInfo(),x);
+          }
         }
       }
       finally
