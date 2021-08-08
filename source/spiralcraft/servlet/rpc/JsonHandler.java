@@ -1,6 +1,5 @@
 package spiralcraft.servlet.rpc;
 
-
 import spiralcraft.command.Command;
 import spiralcraft.common.ContextualException;
 import spiralcraft.data.InvalidValueException;
@@ -9,6 +8,7 @@ import spiralcraft.json.FromJson;
 import spiralcraft.json.JsonException;
 import spiralcraft.json.ToJson;
 import spiralcraft.lang.Channel;
+import spiralcraft.lang.Expression;
 import spiralcraft.lang.AccessException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
@@ -17,6 +17,8 @@ import spiralcraft.lang.SimpleFocus;
 import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.lang.spi.ThreadLocalChannel;
 import spiralcraft.log.Level;
+import spiralcraft.net.http.VariableMap;
+import spiralcraft.net.http.VariableMapBinding;
 import spiralcraft.rules.RuleException;
 import spiralcraft.servlet.rpc.kit.AbstractHandler;
 import spiralcraft.task.Eval;
@@ -43,11 +45,17 @@ public class JsonHandler<Tcontext,Tresult>
   private Channel<Tcontext> jsonInput;
   private Channel<String> jsonOutput;
   private Binding<Tcontext> params;
+  private String[] queryParams;
+  private VariableMapBinding<?>[] queryBindings;
   private ThreadLocalChannel<Tcontext> paramsLocal;
   private Binding<Tresult> result;
   private boolean transactional;
   
   
+  public void setQueryParams(String[] queryParams)
+  { this.queryParams=queryParams;
+  }
+
   public void setParams(Binding<Tcontext> params)
   { this.params=params;
   }
@@ -60,7 +68,7 @@ public class JsonHandler<Tcontext,Tresult>
   { this.transactional=transactional;
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked","rawtypes"})
   @Override
   public Focus<?> bind(
     Focus<?> focusChain)
@@ -71,7 +79,20 @@ public class JsonHandler<Tcontext,Tresult>
       params.bind(focusChain);
       paramsLocal=new ThreadLocalChannel<Tcontext>(params.getReflector(),true);
       focusChain=focusChain.chain(paramsLocal);
+
+      if (queryParams!=null)
+      {
+        queryBindings=new VariableMapBinding[queryParams.length];
+        for (int i=0; i<queryParams.length; i++)
+        { 
+          String param=queryParams[i];
+          Binding paramChan=new Binding(Expression.create(param));
+          paramChan.bind(focusChain);
+          queryBindings[i]=new VariableMapBinding(paramChan,param,null);
+        }
+      }
     }
+    
     focusChain=super.bind(focusChain);
     
     Eval<Void,Tresult> eval=new Eval<Void,Tresult>();
@@ -130,6 +151,16 @@ public class JsonHandler<Tcontext,Tresult>
       }
       else
       { paramsLocal.push(params.get());
+      }
+      if (queryBindings!=null)
+      {
+        VariableMap queryParameters=call.get().getRequest().getQueryParameters();
+        if (queryParameters!=null)
+        {
+          for (VariableMapBinding<?> qb : queryBindings)
+          { qb.read(queryParameters);
+          }
+        }
       }
     }
   }

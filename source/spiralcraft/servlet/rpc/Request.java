@@ -6,7 +6,7 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
+import spiralcraft.net.http.VariableMap;
 import spiralcraft.vfs.Resource;
 import spiralcraft.vfs.StreamUtil;
 
@@ -51,6 +51,17 @@ public class Request
     }
     finally
     { in.close();
+    }
+  }
+  
+  public VariableMap getQueryParameters()
+  { 
+    String queryString=hsr.getQueryString();
+    if (queryString!=null && queryString.length()>0)
+    { return VariableMap.fromUrlEncodedString(queryString);
+    }
+    else 
+    { return null;
     }
   }
 
