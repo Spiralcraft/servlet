@@ -102,6 +102,7 @@ public class JsonHandler<Tcontext,Tresult>
     {
       Transaction transaction=new Transaction();
       transaction.chain(eval);
+      transaction.setAddChainResult(true);
       task=(Scenario<Void,Tresult>) transaction;
     }
     else
