@@ -519,7 +519,7 @@ public class Controller
       else
       { throw x;
       }
-      log.log(Level.WARNING,"Exception handling request",x);
+      log.log(Level.WARNING,"Exception handling request "+servletRequest,x);
     }
     finally
     { pop();
