@@ -1,66 +1,89 @@
-//
-//Copyright (c) 2010 Michael Toth
-//Spiralcraft Inc., All Rights Reserved
-//
-//This package is part of the Spiralcraft project and is licensed under
-//a multiple-license framework.
-//
-//You may not use this file except in compliance with the terms found in the
-//SPIRALCRAFT-LICENSE.txt file at the top of this distribution, or available
-//at http://www.spiralcraft.org/licensing/SPIRALCRAFT-LICENSE.txt.
-//
-//Unless otherwise agreed to in writing, this software is distributed on an
-//"AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
-//
 package spiralcraft.servlet.autofilter;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import spiralcraft.lang.BindException;
 import spiralcraft.lang.Binding;
 import spiralcraft.lang.Focus;
-import spiralcraft.lang.Reflector;
-import spiralcraft.servlet.autofilter.spi.RequestFocusFilter;
+import spiralcraft.servlet.autofilter.spi.FocusFilter;
 
-/**
- * Puts the result of an expression into the Focus chain
- * 
- * @author mike
- *
- */
-public class ExpressionFilter<T>
-  extends RequestFocusFilter<T>
+public class ExpressionFilter
+  extends AutoFilter
 {
-  
-  public Binding<T> x;
-
-  
-  /**
-   * Specify the Expression to bind
-   * 
-   * @param x
-   */
-  public void setX(Binding<T> x)
-  { this.x=x;
+  { 
+    setGlobal(true);
+    setPattern("*");
   }
   
-  @Override
-  protected T createValue(
-    HttpServletRequest request,
-    HttpServletResponse response)
-    throws ServletException
-  { return x.get();
-  }
-
-  @Override
-  protected Reflector<T> resolveReflector(
-    Focus<?> parentFocus)
+  private boolean bound;
+  private Binding<?> pre;
+  private Binding<?> post;
+  private Binding<Boolean> guard;
+  
+  private void bind(HttpServletRequest request) 
     throws BindException
   { 
-    x.bind(parentFocus);
-    return x.getReflector();
+    Focus<?> focus=FocusFilter.getFocusChain(request);
+    if (pre!=null)
+    { pre.bind(focus);
+    }
+    if (guard!=null)
+    { guard.bind(focus);
+    }
+    if (post!=null)
+    { post.bind(focus);
+    }
+  }
+
+  public void setPre(Binding<?> x)
+  { this.pre=x;
+  }
+
+  public void setGuard(Binding<Boolean> x)
+  { this.guard=x;
+  }
+  
+  public void setPost(Binding<?> x)
+  { this.post=x;
+  }
+
+  @Override
+  public void doFilter(
+    ServletRequest request,
+    ServletResponse response,
+    FilterChain chain)
+    throws IOException,
+    ServletException
+  {
+    if (!bound)
+    { 
+      try
+      {
+        bind((HttpServletRequest) request);
+        bound=true;
+      }
+      catch (BindException x)
+      { 
+        throw new ServletException
+          ("Error binding expression "+getDeclarationInfo(),x);
+      }
+    }
+    if (pre!=null)
+    { pre.get();
+    }
+    if (guard==null || Boolean.TRUE.equals(guard.get()))
+    { chain.doFilter(request, response);
+    }
+    if (post!=null)
+    { post.get();
+    }
+    
   }
 
 }
