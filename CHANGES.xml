@@ -14,6 +14,25 @@
     </date>
 
     <detail>
+
+    <scm:Change>
+      <revision>-dev119
+      </revision>
+      <notes>
+        <scm:Note>Add a simple filter to evaluate an expression before and/or after
+           every request
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/autofilter
+      </path>
+      <resources>
+        <URI>ExpressionFilter.java
+        </URI>
+        <URI>ExpressionFocusFilter.java
+        </URI>
+      </resources>
+    </scm:Change>
     
     <scm:Change>
       <revision>-dev119
