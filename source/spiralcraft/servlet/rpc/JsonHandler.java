@@ -48,7 +48,7 @@ public class JsonHandler<Tcontext,Tresult>
   private String[] queryParams;
   private VariableMapBinding<?>[] queryBindings;
   private ThreadLocalChannel<Tcontext> paramsLocal;
-  private Binding<Tresult> result;
+  private Binding<Tresult> result=new Binding<Tresult>(Expression.create("null"));
   private boolean transactional;
   
   
