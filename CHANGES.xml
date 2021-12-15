@@ -16,6 +16,18 @@
     <detail>
 
     <scm:Change>
+      <revision>-dev121
+      </revision>
+      <notes>
+        <scm:Note>Make default (unconfigured) result null instead of failing to bind
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/rpc/JsonHandler.java
+      </path>
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev119
       </revision>
       <notes>
