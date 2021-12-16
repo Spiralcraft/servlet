@@ -16,6 +16,7 @@ package spiralcraft.servlet.webui;
 
 import java.util.List;
 
+import spiralcraft.textgen.Element;
 
 import spiralcraft.common.ContextualException;
 import spiralcraft.data.transaction.RollbackException;
@@ -285,6 +286,7 @@ public abstract class ControlGroup<Ttarget>
                 ("Not in context: "
                 +ControlGroup.this.toString()
                 +": "+ControlGroup.this.getErrorContext()
+                +" accessing "+target.getReflector()
                 );
             }
           }
