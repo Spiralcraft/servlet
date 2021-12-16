@@ -16,8 +16,6 @@ package spiralcraft.servlet.webui;
 
 import java.util.List;
 
-import spiralcraft.textgen.Element;
-
 import spiralcraft.common.ContextualException;
 import spiralcraft.data.transaction.RollbackException;
 import spiralcraft.data.transaction.Transaction;
