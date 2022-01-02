@@ -53,16 +53,7 @@ public class RootCall
   void init(HttpServletRequest request)
     throws IOException
   {
-    if (request.getContentLength()>0)
-    {
-      this.request.content
-        =new ByteArrayResource();
-      InputStream in=request.getInputStream();
-      OutputStream out=this.request.content.getOutputStream();
-      StreamUtil.copyRaw(in, out, 8192, request.getContentLength());
-      out.flush();
-      out.close();
-    }
+
   }
   
   public void respond(int statusCode,String message)
