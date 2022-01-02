@@ -16,6 +16,25 @@
     <detail>
 
     <scm:Change>
+      <revision>-dev123
+      </revision>
+      <notes>
+        <scm:Note>Delay request body reading until it is requested
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/rpc
+      </path>
+      
+      <resources>
+        <URI>Request.java
+        </URI>
+        <URI>RootCall.java
+        </URI>
+      </resources>
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev121
       </revision>
       <notes>
