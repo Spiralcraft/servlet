@@ -158,6 +158,9 @@ public class GzipServletOutputStream
         { log.fine("Not dirty");
         }
       }
+      _gzout.finish();
+      
+      
     }
   }
   
