@@ -16,6 +16,19 @@
     <detail>
 
     <scm:Change>
+      <revision>-dev124
+      </revision>
+      <notes>
+        <scm:Note>Properly flush gzip stream to not break strict clients
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/gzip/GzipServletOutputStream.java
+      </path>
+      
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev123
       </revision>
       <notes>
