@@ -15,6 +15,21 @@
 
     <detail>
 
+
+    <scm:Change>
+      <revision>-dev125
+      </revision>
+      <notes>
+        <scm:Note>Fix corner case where compressing is requested but no
+           stream is ever started
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/gzip/GzipServletOutputStream.java
+      </path>
+      
+    </scm:Change>
+
     <scm:Change>
       <revision>-dev124
       </revision>
