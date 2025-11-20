@@ -158,7 +158,9 @@ public class GzipServletOutputStream
         { log.fine("Not dirty");
         }
       }
-      _gzout.finish();
+      if (_gzout!=null)
+      { _gzout.finish();
+      }
       
       
     }
@@ -170,8 +172,11 @@ public class GzipServletOutputStream
   { 
     if (compressing)
     {
-      _out.close();
-      _gzout.close();
+      if (_gzout!=null)
+      {
+        _out.close();
+        _gzout.close();
+      }
     }
   }
 }
