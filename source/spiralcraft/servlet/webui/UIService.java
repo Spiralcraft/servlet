@@ -537,14 +537,14 @@ public class UIService
           || serviceContext.getQuery().getFirst("oob")!=null
         )
     { 
-      log.warning("AJAX request is out of sync");
       response.setStatus(409);
+      log.warning("AJAX request is out of sync");
     }
     else
     { 
-      log.warning("Request is out of sync");
-      response.sendRedirect
-        (localSession.getStatelessBackLink(serviceContext.getRequest()));
+      String statelessBackLink=localSession.getStatelessBackLink(serviceContext.getRequest());
+      response.sendRedirect(statelessBackLink);
+      log.warning("Request is out of sync, redirecting to "+statelessBackLink);
     }
     response.getWriter().flush();
     try
