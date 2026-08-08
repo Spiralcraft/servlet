@@ -1,14 +1,11 @@
 package spiralcraft.servlet.rpc;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
 import spiralcraft.util.Path;
-import spiralcraft.vfs.StreamUtil;
-import spiralcraft.vfs.util.ByteArrayResource;
+
 
 public class RootCall
   implements Call
