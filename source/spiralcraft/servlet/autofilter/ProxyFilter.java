@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.net.URI;
-import java.net.URL;
 import java.net.URLConnection;
 
 import javax.servlet.FilterChain;
@@ -297,7 +296,7 @@ public class ProxyFilter
     if (debug)
     { log.debug("Connecting to "+url);
     }
-    URLConnection connection=new URL(url).openConnection();
+    URLConnection connection=URI.create(url).toURL().openConnection();
     connection.setAllowUserInteraction(false);
     connection.setConnectTimeout(15000);
     connection.setUseCaches(false);

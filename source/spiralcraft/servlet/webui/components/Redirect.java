@@ -17,10 +17,8 @@ package spiralcraft.servlet.webui.components;
 
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import javax.servlet.ServletException;
 
@@ -162,12 +160,9 @@ public class Redirect
     
     URI refererURI;
     try
-    { refererURI=new URL(referer).toURI();
+    { refererURI=new URI(referer);
     }
     catch (URISyntaxException x)
-    { throw new ServletException(x);
-    }
-    catch (MalformedURLException x)
     { throw new ServletException(x);
     }
     
