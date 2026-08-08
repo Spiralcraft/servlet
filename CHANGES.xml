@@ -17,6 +17,31 @@
 
 
     <scm:Change>
+      <revision>-dev127
+      </revision>
+      <notes>
+        <scm:Note>Deal more gracefully with unsafe paths in requests by
+          sending a 400 bad request instead of an internal server error
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/
+      </path>
+      
+      <resources>
+        <URI>kit/ContextAdapter.java
+        </URI>
+        <URI>kit/HttpServlet.java
+        </URI>
+        <URI>vfs/FileServlet.java
+        </URI>
+        <URI>BeanServlet.java
+        </URI>
+      </resources>
+      
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev125
       </revision>
       <notes>
