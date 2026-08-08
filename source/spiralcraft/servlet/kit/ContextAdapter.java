@@ -56,7 +56,7 @@ public class ContextAdapter
    * </p>
    */
   public Resource getResource(String contextRelativePath)
-    throws ServletException
+    throws ServletException,UnresolvableURIException
   { 
     
     String path=context.getRealPath(contextRelativePath);
@@ -68,20 +68,12 @@ public class ContextAdapter
     
     // Fallback case: Handle VFS based doc root
     
-    try
-    {
-      URI rootURI=(URI) context.getAttribute("spiralcraft.context.root.uri");
-      if (rootURI!=null)
-      { 
-        // context.log("Resolving "+contextRelativePath+" in "+rootURI);
-        return Resolver.getInstance().resolve
-          (URIUtil.addPathSegment(rootURI,contextRelativePath.substring(1)));
-      }
-    }
-    catch (UnresolvableURIException x)
-    {
-      throwServletException
-        ("Error getting resource ["+contextRelativePath+"]",x);
+    URI rootURI=(URI) context.getAttribute("spiralcraft.context.root.uri");
+    if (rootURI!=null)
+    { 
+      // context.log("Resolving "+contextRelativePath+" in "+rootURI);
+      return Resolver.getInstance().resolve
+        (URIUtil.addPathSegment(rootURI,contextRelativePath.substring(1)));
     }
     
     // Fallback case: Use getResource()

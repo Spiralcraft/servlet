@@ -30,6 +30,7 @@ import spiralcraft.data.persist.AbstractXmlObject;
 import spiralcraft.lang.BindException;
 import spiralcraft.servlet.kit.HttpServlet;
 import spiralcraft.servlet.kit.StandardServletConfig;
+import spiralcraft.vfs.UnresolvableURIException;
 
 
 /**
@@ -73,7 +74,13 @@ public class BeanServlet
       
       resourceURI=URI.create(value);
       if (!resourceURI.isAbsolute())
-      { resourceURI=getResource(resourceURI.toString()).getURI();
+      { 
+        try
+        { resourceURI=getResource(resourceURI.toString()).getURI();
+        }
+        catch (UnresolvableURIException x)
+        { throw new ServletException("Unresolvable URI ["+value+"]",x);
+        }
       }
       
       try

@@ -33,6 +33,7 @@ import spiralcraft.lang.util.Configurator;
 import spiralcraft.log.ClassLog;
 import spiralcraft.log.Level;
 import spiralcraft.vfs.Resource;
+import spiralcraft.vfs.UnresolvableURIException;
 
 
 
@@ -310,7 +311,7 @@ public class HttpServlet
    * </p>
    */
   public Resource getResource(String contextRelativePath)
-    throws ServletException
+    throws ServletException,UnresolvableURIException
   { return contextAdapter.getResource(contextRelativePath);
   }
   

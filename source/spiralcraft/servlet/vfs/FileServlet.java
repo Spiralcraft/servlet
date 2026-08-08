@@ -153,7 +153,7 @@ public class FileServlet
     if (mappedResource!=null && mappedResource.exists())
     { 
       if (debugLevel.canLog(Level.DEBUG))
-      { log.debug("FileServlet mapped "+relativePath+" to "+mappedResource.getURI());
+      { log.debug("FileServlet mapped "+relativePath+" to "+mappedResource.getURI()+"("+mappedResource+")");
       }
       return mappedResource;
     }
