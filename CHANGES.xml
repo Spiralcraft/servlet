@@ -17,6 +17,19 @@
 
 
     <scm:Change>
+      <revision>-dev128
+      </revision>
+      <notes>
+        <scm:Note>Use the specified configURI for the config location as
+          opposed to the convention default
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/autofilter/Controller.java
+      </path>
+    </scm:Change>
+
+    <scm:Change>
       <revision>-dev127
       </revision>
       <notes>
