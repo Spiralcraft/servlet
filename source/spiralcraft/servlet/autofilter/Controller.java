@@ -143,7 +143,10 @@ public class Controller
   {
     String configId
       =config.getServletContext().getInitParameter("spiralcraft.config.id");
-    if (configId!=null)
+    String configURI
+      =config.getServletContext().getInitParameter("spiralcraft.config.URI");
+
+    if (configId!=null && configURI==null)
     { 
       this.configURI
         =URI.create("config."+configId+"/");
