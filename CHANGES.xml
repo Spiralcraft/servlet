@@ -15,7 +15,37 @@
 
     <detail>
 
+    <scm:Change>
+      <revision>-dev128
+      </revision>
+      <notes>
+        <scm:Note>Provide a facility to use a common wrapper around the result
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/rpc/JsonHandler.java
+      </path>
+    </scm:Change>
 
+    <scm:Change>
+      <revision>-dev128
+      </revision>
+      <notes>
+        <scm:Note>Updates to security filter and login element for 2FA
+        </scm:Note>
+      </notes>
+      
+      <path>source/spiralcraft/servlet/
+      </path>
+      
+      <resources>
+        <URI>autofilter/SecurityFilter.java
+        </URI>
+        <URI>webui/components/Login.java
+        </URI>
+      </resources>
+    </scm:Change>
+    
     <scm:Change>
       <revision>-dev128
       </revision>
