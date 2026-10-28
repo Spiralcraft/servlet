@@ -375,7 +375,7 @@ public class Login
         if (codeStep)
         { state.addError(codeFailureMessage);
         }
-        else
+        else if (interactive)
         { 
           if (onStageX!=null)
           { onStageX.get();
@@ -769,6 +769,7 @@ public class Login
     if (securityFilter!=null
         && !session.isAuthenticated()
         && !state.isErrorState()
+        && !staged(session)
         )
     { 
       if (debug)
