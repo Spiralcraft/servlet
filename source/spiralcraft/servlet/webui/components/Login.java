@@ -37,7 +37,6 @@ import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.security.auth.AuthSession;
-import spiralcraft.security.auth.AuthState;
 import spiralcraft.security.auth.LoginEntry;
 import spiralcraft.security.auth.OneTimeCodeCredential;
 import spiralcraft.security.auth.Permission;
@@ -739,7 +738,9 @@ public class Login
       }
       state.getValue().update();
     }
-    log.fine("gather() Staged:= "+staged(sessionChannel.get())+" "+sessionChannel.get().getAuthState());
+    if (debug)
+    { log.fine("gather() Staged:= "+staged(sessionChannel.get())+" "+sessionChannel.get().getAuthState());
+    }
     
   }
   
