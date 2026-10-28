@@ -414,7 +414,8 @@ public class Login
           );
       }
 
-      if (securityFilter!=null 
+      if (!codeStep
+          && securityFilter!=null 
           && (securityFilter.getRequireValidCookie()
               || state.getValue().isPersistent() 
              )

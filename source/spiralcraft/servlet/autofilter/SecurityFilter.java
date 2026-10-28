@@ -25,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import spiralcraft.security.auth.AuthSession;
 import spiralcraft.security.auth.Authenticator;
 import spiralcraft.security.auth.LoginEntry;
+import spiralcraft.security.auth.OneTimeCodeCredential;
 import spiralcraft.security.auth.TestAuthenticator;
 import spiralcraft.servlet.autofilter.spi.FocusFilter;
 import spiralcraft.codec.text.Base64Codec;
@@ -303,6 +304,7 @@ public class SecurityFilter
     VariableMap map=VariableMap.fromUrlEncodedString(cookie.getValue());
     String username=map.getFirst("username");
     String ticketBase64=map.getFirst("ticket");
+    String challenge=map.getFirst("challenge");    
     if (username!=null && ticketBase64!=null)
     {
 
@@ -310,8 +312,15 @@ public class SecurityFilter
       entry.reset();
       entry.setUsername(username);
       entry.setSaltedDigest(ticket);
+      if (challenge!=null && !challenge.isEmpty())
+      { entry.setChallenge(challenge);   // after reset(), before update()
+      }      
+      
       if (debug)
-      { log.fine("Read login info from cookie for user "+username);
+      { 
+        log.fine("Read login info from cookie for user "+username
+                +(challenge!=null?" (with challenge)":"")
+                );
       }
       entry.update();
       return true;
@@ -328,7 +337,29 @@ public class SecurityFilter
       return false;
     }
   }  
-
+  
+  
+  /**
+   * A login cookie has to complete the login by itself. If replaying it
+   *   leaves the session staged for a one-time code, discard the partial
+   *   login and the cookie, and skip any further cookie replay in this
+   *   request, so the user logs in interactively.
+   */
+  private void rejectStagedCookieLogin(AuthSession authSession)
+  {
+    if (authSession.isAuthenticated()
+        || !authSession.isStagedFor
+              (OneTimeCodeCredential.class.getSimpleName())
+       )
+    { return;
+    }
+    if (debug)
+    { log.fine("Login cookie only completes a partial login: discarding");
+    }
+    authSession.clearCredentials();
+    clearCookie();
+    contextLocal.get().logoutPending=true;  // readLoginCookie() now returns false
+  }
   private boolean usingCookies()
   { return !disableLoginCookies || requireValidCookie; 
   }
@@ -425,13 +456,20 @@ public class SecurityFilter
     if (username!=null && (password!=null || digest!=null))
     {
       byte[] ticket=digest;
+      String challenge=null;
       if (password!=null)
       { 
         ticket=authSessionChannel.get()
           .saltedDigest(username.toLowerCase()+password);
       }
+      else
+      { challenge=entry.getChallenge();
+      }
       map.add("username", username);
       map.add("ticket", Base64Codec.encodeBytes(ticket));
+      if (challenge!=null && !challenge.isEmpty())
+      { map.add("challenge",  challenge);
+      }
       String data=map.generateEncodedForm();
       
       authSessionChannel.get().setAttribute
@@ -511,6 +549,16 @@ public class SecurityFilter
       }
     }
     
+    if (qualifiedCookieName==null
+        && qualifyCookieName
+        && authenticator.getRealmName()!=null
+       )
+    { qualifiedCookieName=authenticator.getRealmName()+"."+cookieName;
+    }
+    else if (qualifiedCookieName==null)
+    { qualifiedCookieName=cookieName;
+    }
+        
     if (afterAuthenticate!=null)
     { afterAuthenticate.bind(authSessionFocus);
     }
@@ -546,15 +594,7 @@ public class SecurityFilter
       //   an empty one.
       synchronized (session)
       {
-        if (qualifiedCookieName==null
-            && qualifyCookieName
-            && authenticator.getRealmName()!=null
-           )
-        { qualifiedCookieName=authenticator.getRealmName()+"."+cookieName;
-        }
-        else
-        { qualifiedCookieName=cookieName;
-        }
+
         
         authSession
           =(AuthSession) session.getAttribute(attributeName);      
@@ -607,7 +647,7 @@ public class SecurityFilter
       //   control. The requiresLoginPermission should be moved into the
       //   securityFilter so we can lock-out people with tickets.
       LoginEntry loginEntry=new LoginEntry(authSessionChannel);
-      readLoginCookie(loginEntry);
+      boolean cookieRead=readLoginCookie(loginEntry);
       if (debug)
       { log.debug("Preauthenticating new session");
       }
@@ -618,6 +658,9 @@ public class SecurityFilter
         { log.debug("Session authenticated");
         }
         
+      }
+      else if (cookieRead)
+      { rejectStagedCookieLogin(authSession);
       }
       
     }
@@ -640,6 +683,9 @@ public class SecurityFilter
           if (debug)
           { log.debug("Session authenticated");
           }
+        }
+        else
+        { rejectStagedCookieLogin(authSession);
         }
       }
     }
