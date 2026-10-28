@@ -663,6 +663,7 @@ public class SecurityFilter
     
   }
 
+
   @Override
   protected void popSubject(HttpServletRequest request)
   {

@@ -37,7 +37,9 @@ import spiralcraft.lang.reflect.BeanReflector;
 import spiralcraft.log.ClassLog;
 
 import spiralcraft.security.auth.AuthSession;
+import spiralcraft.security.auth.AuthState;
 import spiralcraft.security.auth.LoginEntry;
+import spiralcraft.security.auth.OneTimeCodeCredential;
 import spiralcraft.security.auth.Permission;
 
 import spiralcraft.servlet.autofilter.SecurityFilter;
@@ -102,9 +104,13 @@ public class Login
   private String failureMessage
     ="Login failed, username/password combination not recognized";
   
-  
+  private String codeFailureMessage="Code not recognized or has expired";
+  private String codeRequiredMessage="Enter the code that was sent to you";
+
   private SecurityFilter securityFilter;
   private Binding<?> onLoginX;
+  
+  private Binding<?> onStageX;
   
   private boolean requireLoginPermission;
   private boolean useChallenge;
@@ -168,6 +174,14 @@ public class Login
   public void setFailureMessage(String failureMessage)
   { this.failureMessage=failureMessage;
   }
+
+  public void setCodeFailureMessage(String m)
+  { this.codeFailureMessage=m;
+  }
+
+  public void setCodeRequiredMessage(String m)
+  { this.codeRequiredMessage=m;
+  }  
   
   protected void setupSession(Focus<?> parentFocus)
   {
@@ -178,6 +192,31 @@ public class Login
     }
   }
 
+
+  public Command<LoginEntry,Void,Void> startOverCommand()
+  {
+    return new QueuedCommand<LoginEntry,Void,Void>
+      (getState()
+      ,new CommandAdapter<LoginEntry,Void,Void>()
+        {
+          @Override
+          public void run()
+          { startOver();
+          }
+        }
+      );
+  }
+
+  private void startOver()
+  {
+    AuthSession session=sessionChannel.get();
+    synchronized (session)
+    { session.clearCredentials();
+    }
+    getState().setValue(null);
+    newEntry();   // fresh challenge, no old digest
+  }
+  
   public Command<LoginEntry,Void,Void> loginCommand()
   {     
     return new QueuedCommand<LoginEntry,Void,Void>
@@ -239,11 +278,38 @@ public class Login
   { return (LoginState) context.getState();
   }
 
+
+  private boolean staged(AuthSession session)
+  { return session.isStagedFor(OneTimeCodeCredential.class.getSimpleName());
+  }
+  
   private boolean login(boolean interactive)
   {
     LoginState state=(LoginState) getState();
     state.setActioned(true);
-    if (interactive)
+    
+    AuthSession session=sessionChannel.get();
+    
+    // Decide before anything touches the session: update() would clear
+    //   the stage we are trying to detect.
+    boolean codeStep=interactive && staged(session);
+    
+    if (codeStep)
+    {
+      LoginEntry entry=state.getValue();
+      String code=entry.getOneTimeCode();
+      entry.setOneTimeCode(null);   // never keep the code in the entry
+      if (code==null || code.trim().isEmpty())
+      {
+        state.addError(codeRequiredMessage);
+        return false;
+      }
+      // Only the code is submitted. The first stage stays in the session.
+      LoginEntry codeEntry=new LoginEntry(sessionChannel);
+      codeEntry.setOneTimeCode(code.trim());
+      codeEntry.submit();
+    }    
+    else if (interactive)
     { 
       // Make sure we take into account anything that's been updated
       //   since we gathered.
@@ -268,7 +334,6 @@ public class Login
       }
     }
     
-    AuthSession session=sessionChannel.get();
       
     boolean authenticated;
     String username=null;
@@ -305,6 +370,25 @@ public class Login
       
     if (!authenticated)
     { 
+      if (staged(session))
+      { 
+        if (codeStep)
+        { state.addError(codeFailureMessage);
+        }
+        else
+        { 
+          if (onStageX!=null)
+          { onStageX.get();
+          }
+          else
+          { log.info("Entering 2FA stage but No action bound");
+          }
+          // log.fine("Staged in login() "+session.getAuthState());
+        }
+        // Leave things the way they are for a staged session 
+        return false;
+      }
+      
       if (interactive)
       {
         state.addError
@@ -543,6 +627,16 @@ public class Login
   }
   
   /**
+   * An expression to be evaluated when a 2FA stage is entered to allow for
+   *   the transmission of the second factor
+   * 
+   * @param x
+   */
+  public void setOnStage(Binding<?> onStageX)
+  { this.onStageX=onStageX;
+  } 
+  
+  /**
    * <p>Assignments which get executed immediately after a successful login
    * </p>
    * 
@@ -611,6 +705,9 @@ public class Login
     if (onLoginX!=null)
     { onLoginX.bind(focus);
     }
+    if (onStageX!=null)
+    { onStageX.bind(focus);
+    }
     return super.bindExports(focus);
     
   }
@@ -634,13 +731,14 @@ public class Login
   {
     super.gather(context);
     LoginState state=getState(context);
-    if (state.getValue()!=null)
+    if (state.getValue()!=null && !staged(sessionChannel.get()))
     { 
       if (debug)
       { log.fine("Updating LoginEntry");
       }
       state.getValue().update();
     }
+    log.fine("gather() Staged:= "+staged(sessionChannel.get())+" "+sessionChannel.get().getAuthState());
     
   }
   
