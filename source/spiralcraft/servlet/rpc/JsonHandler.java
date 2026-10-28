@@ -34,7 +34,7 @@ import spiralcraft.text.ParseException;
  * @author mike
  *
  */
-public class JsonHandler<Tcontext,Tresult>
+public class JsonHandler<Tcontext,Tresult,Tresponse>
   extends AbstractHandler
 {
 
@@ -49,6 +49,7 @@ public class JsonHandler<Tcontext,Tresult>
   private VariableMapBinding<?>[] queryBindings;
   private ThreadLocalChannel<Tcontext> paramsLocal;
   private Binding<Tresult> result=new Binding<Tresult>(Expression.create("null"));
+  private Binding<Tresponse> response;
   private boolean transactional;
   
   
@@ -66,6 +67,10 @@ public class JsonHandler<Tcontext,Tresult>
   
   public void setTransactional(boolean transactional)
   { this.transactional=transactional;
+  }
+  
+  public void setResponse(Binding<Tresponse> response)
+  { this.response=response;
   }
   
   @SuppressWarnings({"unchecked","rawtypes"})
@@ -128,8 +133,14 @@ public class JsonHandler<Tcontext,Tresult>
           (params.getReflector())
             .bindChannel(input, focusChain, null);
       }
-      Focus<Tresult> resultFocus=(Focus<Tresult>) focus.chain(commandLocal.resolve(focus,"result",null));
-      jsonOutput=new ToJson<Tresult>()
+      Focus<?> resultFocus=(Focus<Tresult>) focus.chain(commandLocal.resolve(focus,"result",null));
+      
+      if (response!=null)
+      { 
+        response.bind(resultFocus);
+        resultFocus=resultFocus.chain(response);
+      }
+      jsonOutput=new ToJson()
           .bindChannel(resultFocus.getSubject(),resultFocus,null);
         
     }
